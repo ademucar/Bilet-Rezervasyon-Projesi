@@ -83,6 +83,29 @@ public class ConventionTests
     {
         // Handler'lar CQRS'in is mantigini tasir. Bunlarin WebApi veya
         // Infrastructure'da olmasi, is mantiginin altyapiya sizmasi demektir.
+        //
+        // ------------------------------------------------------------------
+        // BU TEST BIR KEZ HAKLI OLARAK KIRMIZI YANDI -- VE KURAL DARALTILDI
+        // ------------------------------------------------------------------
+        // Ilk yazisimda kural "adi 'Handler' ile biten HER sinif" seklindeydi.
+        // WebApi'ye GlobalExceptionHandler eklendiginde test kirmizi yandi.
+        //
+        // Inceleyince gorduk ki bu bir CQRS handler'i DEGIL: ASP.NET Core'un
+        // IExceptionHandler arayuzunu uygulayan bir altyapi bileseni ve
+        // dogru yerde duruyor.
+        //
+        // Yani KOD dogruydu, KURAL fazla genisti. Testi susturmak yerine
+        // kurali gercekte ne demek istedigimize gore daralttim: ASP.NET
+        // altyapi arayuzlerini uygulayan tipler bu kuralin disinda.
+        //
+        // Bu ayrimi yapmak onemli: bir test kirmizi yandiginda refleksle
+        // "testi kaldirayim" demek, testin degerini yok eder. Once
+        // "kod mu yanlis, kural mi?" diye sorulmali.
+        var altyapiArayuzleri = new[]
+        {
+            typeof(Microsoft.AspNetCore.Diagnostics.IExceptionHandler)
+        };
+
         var yanlisYerdekiHandlerlar = Types.InAssemblies(
             [
                 Ticketing.WebApi.AssemblyReference.Assembly,
@@ -91,10 +114,11 @@ public class ConventionTests
             ])
             .That().HaveNameEndingWith("Handler")
             .GetTypes()
+            .Where(t => !altyapiArayuzleri.Any(i => i.IsAssignableFrom(t)))
             .ToList();
 
         yanlisYerdekiHandlerlar.Should().BeEmpty(
-            "Handler siniflari yalnizca Ticketing.Application icinde bulunmalidir. " +
+            "CQRS handler siniflari yalnizca Ticketing.Application icinde bulunmalidir. " +
             "Yanlis yerdekiler: {0}",
             string.Join(", ", yanlisYerdekiHandlerlar.Select(t => t.FullName)));
     }

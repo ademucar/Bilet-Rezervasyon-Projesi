@@ -6,9 +6,15 @@
 #   cp .env.example .env      # ve icindeki sifreleri degistir
 #   docker compose up -d
 #
-# Not: Backend ve Frontend servisleri Sprint 2'nin sonunda, Dockerfile'lar
-# yazildiginda eklenecek. Su an altyapi servisleri calisiyor -- boylece
-# uygulamayi yerel makinede calistirip veritabanina baglanabiliriz.
+# Servisler ve portlari:
+#   api            -> http://localhost:5000   (Swagger: /openapi/v1.json)
+#   postgres       -> localhost:5432
+#   redis          -> localhost:6379
+#   pgAdmin        -> http://localhost:5050
+#   Redis Insight  -> http://localhost:5540
+#   Mailpit        -> http://localhost:8025
+#
+# Not: Frontend servisi Sprint 3'te React projesi olusturulunca eklenecek.
 
 name: ticketing
 
@@ -147,8 +153,54 @@ services:
     networks:
       - ticketing-network
 
+  # ---------------------------------------------------------------
+  # Backend API
+  # ---------------------------------------------------------------
+  api:
+    build:
+      # Build baglami backend/ klasoru; Dockerfile oradaki yollara gore yazildi.
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: ticketing-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Cift alt cizgi (__) .NET'te ic ice yapilandirmayi temsil eder:
+      # ConnectionStrings__Postgres  ->  ConnectionStrings:Postgres
+      #
+      # Servis adlarini (postgres, redis) host olarak kullaniyorum;
+      # Docker'in ic DNS'i bunlari cozer. "localhost" yazsaydik
+      # container KENDI icine baglanmaya calisirdi.
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      ConnectionStrings__Redis: "redis:6379,password=${REDIS_PASSWORD}"
+      Jwt__Secret: ${JWT_SECRET}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Smtp__Host: ${SMTP_HOST}
+      Smtp__Port: ${SMTP_PORT}
+      Smtp__From: ${SMTP_FROM}
+    ports:
+      - "5000:8080"
+    volumes:
+      # Yuklenen dosyalar container silinince kaybolmasin.
+      - api-uploads:/app/uploads
+    depends_on:
+      # service_healthy KRITIK: sadece "depends_on: postgres" deseydik
+      # Docker container'in BASLADIGINI bekler, HAZIR oldugunu degil.
+      # API, PostgreSQL henuz baglanti kabul etmeden ayaga kalkar ve coker.
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    networks:
+      - ticketing-network
+
+
 volumes:
   postgres-data:
+  api-uploads:
   redis-data:
   pgadmin-data:
   redis-insight-data:

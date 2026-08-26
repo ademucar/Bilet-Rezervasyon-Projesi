@@ -23,6 +23,27 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+
+    <!--
+      EF Core cekirdek paketlerini ACIKCA sabitliyorum.
+
+      NEDEN? Npgsql.EntityFrameworkCore.PostgreSQL 9.0.4, gecisli
+      (transitive) bagimlilik olarak EF Core 9.0.1 cekiyor.
+      Microsoft.EntityFrameworkCore.Design ise 9.0.11.
+
+      Ikisi ayni assembly'nin farkli surumlerini istedigi icin derleyici
+      MSB3277 uyarisi verdi: "cakisan surumler cozumlendi".
+
+      Bu, tam olarak Directory.Packages.props'un onlemek icin var oldugu
+      "diamond dependency" problemidir. Uyari gorunuste zararsizdir ama
+      calisma zamaninda MethodNotFoundException gibi tesbisi cok zor
+      hatalara yol acabilir - cunku derlenen surumle yuklenen surum
+      farkli olur.
+
+      Cozum: surumu tek bir noktadan sabitlemek.
+    -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.11" />
   </ItemGroup>
   <!-- ===================== TEST ALTYAPISI ===================== -->
   <ItemGroup>
