@@ -27,6 +27,16 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(u => u.LastName).HasMaxLength(100).IsRequired();
         builder.Property(u => u.PhoneNumber).HasMaxLength(20);
+        builder.Property(u => u.PasswordResetTokenHash).HasMaxLength(128);
+
+        // Sifre sifirlama tokeni ile kullanici arama sorgusu icin.
+        //
+        // Partial index: yalnizca AKTIF talebi olan kullanicilar index'te.
+        // Kullanicilarin %99.9'unda bu alan null oldugu icin index
+        // neredeyse bos kaliyor -- tabloya yuk bindirmiyor.
+        builder.HasIndex(u => u.PasswordResetTokenHash)
+               .HasFilter("\"PasswordResetTokenHash\" IS NOT NULL")
+               .HasDatabaseName("ix_users_password_reset_token");
 
         // ------------------------------------------------------------------
         // PARTIAL UNIQUE INDEX -- dikkat edilmesi gereken bir ayrinti

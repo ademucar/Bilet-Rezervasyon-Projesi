@@ -1,7 +1,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Ticketing.Application.Abstractions;
+using Ticketing.Application.Abstractions.Email;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
+using Ticketing.Infrastructure.Configuration;
+using Ticketing.Infrastructure.Email;
 using Ticketing.Infrastructure.Security;
 using Ticketing.Infrastructure.Time;
 
@@ -55,6 +59,22 @@ public static class DependencyInjection
         // Singleton: imzalama anahtarini yapicida bir kez olusturuyor.
         // Scoped olsaydi her istekte kriptografi nesnesi kurulurdu.
         services.AddSingleton<ITokenService, TokenService>();
+
+        // ---- E-posta ----
+        services.AddOptions<EmailOptions>()
+                .Bind(configuration.GetSection(EmailOptions.SectionName))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+        services.AddSingleton<IEmailService, SmtpEmailService>();
+
+        // ---- Uygulama adresleri ----
+        services.AddOptions<AppUrlOptions>()
+                .Bind(configuration.GetSection(AppUrlOptions.SectionName))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+        services.AddSingleton<IAppUrlProvider, AppUrlProvider>();
 
         return services;
     }

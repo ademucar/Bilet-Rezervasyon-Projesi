@@ -81,6 +81,42 @@ public class User : AuditableEntity
     /// </summary>
     public DateTimeOffset? LockoutEndAt { get; private set; }
 
+    // ---------------------------------------------------------------
+    // Sifre sifirlama (PDF Sprint 3)
+    // ---------------------------------------------------------------
+
+    /// <summary>
+    /// Sifre sifirlama tokeninin HASH'i.
+    ///
+    /// Refresh token'da oldugu gibi burada da token'in KENDISI degil
+    /// hash'i saklaniyor. Sebep ayni: veritabani sizarsa saldirgan
+    /// bu token'larla herkesin sifresini sifirlayabilirdi.
+    ///
+    /// ------------------------------------------------------------------
+    /// NEDEN AYRI TABLO DEGIL DE User UZERINDE IKI ALAN?
+    /// ------------------------------------------------------------------
+    /// Bir kullanicinin ayni anda en fazla BIR aktif sifre sifirlama
+    /// talebi olmali. Ayri tablo olsaydi birden fazla kayit olusabilir
+    /// ve "hangisi gecerli?" sorusu ortaya cikardi -- ayrica eskilerini
+    /// temizlemek icin bir job yazmak gerekirdi.
+    ///
+    /// Tek alan oldugu icin yeni talep otomatik olarak eskisinin
+    /// USTUNE YAZIYOR; eski link aninda gecersiz oluyor. Bu davranis
+    /// hem daha basit hem de daha guvenli.
+    ///
+    /// PDF'in ER diyagramina yeni tablo eklememis olmamin sebebi de bu.
+    /// </summary>
+    public string? PasswordResetTokenHash { get; private set; }
+
+    /// <summary>
+    /// PDF: "Sifre sifirlama tokeni SURELI olmalidir."
+    ///
+    /// Suresiz olsaydi, e-posta kutusuna bir kez erisen biri (eski
+    /// telefon, paylasilan bilgisayar, sizmis e-posta arsivi) aylar
+    /// sonra bile hesabi ele gecirebilirdi.
+    /// </summary>
+    public DateTimeOffset? PasswordResetTokenExpiresAt { get; private set; }
+
     private readonly List<UserRole> _userRoles = [];
 
     /// <summary>
@@ -180,6 +216,65 @@ public class User : AuditableEntity
         // Sifre degistiginde basarisiz deneme sayacini sifirliyorum.
         // Mantik: kullanici kimligini kanitlamis oldu, cezayi kaldiralim.
         ResetFailedLoginAttempts();
+
+        // Kullanilmamis bir sifirlama tokeni varsa GECERSIZ KIL.
+        //
+        // Senaryo: kullanici "sifremi unuttum" dedi, e-posta geldi ama
+        // sonra sifresini hatirlayip normal yoldan degistirdi.
+        // O eski link hala calisiyor olsaydi, e-postasina erisen biri
+        // gunler sonra sifreyi tekrar degistirebilirdi.
+        ClearPasswordResetToken();
+    }
+
+    // ---------------------------------------------------------------
+    // Sifre sifirlama akisi
+    // ---------------------------------------------------------------
+
+    public void SetPasswordResetToken(string tokenHash, DateTimeOffset expiresAt)
+    {
+        if (string.IsNullOrWhiteSpace(tokenHash))
+        {
+            throw new DomainException("Sifirlama token'i bos olamaz.", "user.reset_token_required");
+        }
+
+        // Yeni talep eskisinin USTUNE yazar -> eski link aninda gecersiz.
+        PasswordResetTokenHash = tokenHash;
+        PasswordResetTokenExpiresAt = expiresAt;
+    }
+
+    public void ClearPasswordResetToken()
+    {
+        PasswordResetTokenHash = null;
+        PasswordResetTokenExpiresAt = null;
+    }
+
+    /// <summary>
+    /// Verilen token hash'i gecerli mi?
+    ///
+    /// Uc kosulun HEPSI saglanmali:
+    ///   1. Aktif bir token var mi?
+    ///   2. Suresi dolmamis mi?
+    ///   3. Hash'ler esitniyor mu?
+    ///
+    /// Karsilastirmayi StringComparison.Ordinal ile yapiyorum.
+    /// Kulture duyarli karsilastirma (varsayilan) hem yavastir hem de
+    /// bazi kulturlerde beklenmedik esitlikler uretebilir. Hash'ler
+    /// metin degil, BAYT dizisinin metin gosterimidir; kultur kavrami
+    /// burada anlamsizdir.
+    /// </summary>
+    public bool IsPasswordResetTokenValid(string tokenHash, DateTimeOffset now)
+    {
+        if (PasswordResetTokenHash is null || PasswordResetTokenExpiresAt is null)
+        {
+            return false;
+        }
+
+        if (now >= PasswordResetTokenExpiresAt.Value)
+        {
+            return false;
+        }
+
+        return string.Equals(PasswordResetTokenHash, tokenHash, StringComparison.Ordinal);
     }
 
     public void UpdateProfile(string firstName, string lastName, string? phoneNumber)

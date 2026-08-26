@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Features.Auth;
 using Ticketing.Application.Features.Auth.Login;
 using Ticketing.Application.Features.Auth.Logout;
+using Ticketing.Application.Features.Auth.Password;
 using Ticketing.Application.Features.Auth.Profile;
 using Ticketing.Application.Features.Auth.RefreshToken;
 using Ticketing.Application.Features.Auth.Register;
@@ -113,4 +114,47 @@ public sealed class AuthController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Me(CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(new GetCurrentUserQuery(), cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    /// Giris yapmis kullanicinin sifresini degistirir.
+    /// Mevcut sifre DOGRULANIR -- yalnizca token'a sahip olmak yetmez.
+    /// Basarili olursa TUM oturumlar kapatilir.
+    /// </summary>
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> ChangePassword(
+        [FromBody] ChangePasswordCommand command,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender.Send(command, cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    /// Sifre sifirlama e-postasi gonderir.
+    ///
+    /// GUVENLIK: E-posta kayitli olsun olmasin HER ZAMAN 204 doner.
+    /// Aksi halde bu endpoint, kayitli e-postalari tespit etmek icin
+    /// kullanilabilecek acik bir tarama araci olurdu.
+    /// </summary>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ForgotPassword(
+        [FromBody] ForgotPasswordCommand command,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender.Send(command, cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    /// Sifirlama anahtariyla yeni sifre belirler.
+    /// Anahtar TEK KULLANIMLIKTIR ve 1 saat gecerlidir.
+    /// </summary>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] ResetPasswordCommand command,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender.Send(command, cancellationToken).ConfigureAwait(false));
 }
