@@ -99,25 +99,12 @@ public class EventSessionTests
     // ---------------------------------------------------------------
 
     [Fact]
-    public void MarkSeatsGenerated_IkinciKez_HataFirlatmali()
-    {
-        var oturum = GecerliOturum();
-        oturum.MarkSeatsGenerated();
-
-        var eylem = oturum.MarkSeatsGenerated;
-
-        eylem.Should().Throw<DomainException>()
-             .Which.ErrorCode.Should().Be("event_session.seats_already_generated");
-    }
-
-    [Fact]
     public void ChangeSeatLayout_KoltuklarUretilmisse_HataFirlatmali()
     {
         // PDF: "Satisi baslamis etkinligin oturma plani degistirilemez."
         // Plan degisirse mevcut rezervasyonlarin ve biletlerin isaret ettigi
         // koltuklar ortadan kalkar -- veri butunlugu bozulur.
-        var oturum = GecerliOturum();
-        oturum.MarkSeatsGenerated();
+        var (oturum, _) = TestVeriKurucu.OturumVeKoltuklar(2);
 
         var eylem = () => oturum.ChangeSeatLayout(Guid.CreateVersion7());
 

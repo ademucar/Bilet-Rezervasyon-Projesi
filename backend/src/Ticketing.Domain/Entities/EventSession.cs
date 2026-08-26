@@ -1,5 +1,6 @@
 using Ticketing.Domain.Common;
 using Ticketing.Domain.Enums;
+using Ticketing.Domain.ValueObjects;
 
 namespace Ticketing.Domain.Entities;
 
@@ -133,8 +134,30 @@ public class EventSession : ConcurrentEntity
     public bool OverlapsWith(DateTimeOffset otherStart, DateTimeOffset otherEnd)
         => StartDate < otherEnd && otherStart < EndDate;
 
-    public void MarkSeatsGenerated()
+    /// <summary>
+    /// Fiziksel koltuklardan (Seat) bu oturuma ait EventSeat kayitlarini uretir.
+    ///
+    /// ------------------------------------------------------------------
+    /// BU METOT NEDEN BURADA? Neden bir servis degil?
+    /// ------------------------------------------------------------------
+    /// EventSeat'ler bu oturuma AITTIR. Onlari uretme yetkisi de oturumun
+    /// kendisinde olmali. Bir "SeatGeneratorService" yazsaydim, o servis
+    /// EventSession'in ic durumunu (AreSeatsGenerated) disaridan
+    /// degistirmek zorunda kalirdi ve kapsulleme bozulurdu.
+    ///
+    /// Bu, "Tell, Don't Ask" ilkesidir: nesneye durumunu SORUP disarida
+    /// karar vermek yerine, ona ne yapmasi gerektigini SOYLE.
+    /// </summary>
+    /// <param name="seats">Oturma planindaki fiziksel koltuklar.</param>
+    /// <param name="ticketTypeId">Bu koltuklarin baglanacagi bilet turu.</param>
+    /// <param name="price">Satis anindaki fiyat. TicketType'tan kopyalanir.</param>
+    public IReadOnlyList<EventSeat> GenerateSeats(
+        IReadOnlyList<Seat> seats,
+        Guid ticketTypeId,
+        Money price)
     {
+        ArgumentNullException.ThrowIfNull(seats);
+
         if (AreSeatsGenerated)
         {
             throw new DomainException(
@@ -142,7 +165,34 @@ public class EventSession : ConcurrentEntity
                 "event_session.seats_already_generated");
         }
 
+        if (seats.Count == 0)
+        {
+            throw new DomainException(
+                "Oturma planinda hic koltuk yok.",
+                "event_session.no_seats_in_layout");
+        }
+
+        var uretilenler = new List<EventSeat>(seats.Count);
+
+        foreach (var seat in seats)
+        {
+            // Pasif koltuklari (kirik, sutun arkasi) atliyorum.
+            // Bunlar icin EventSeat uretmek, koltuk haritasinda satilamaz
+            // ama gorunur bir kayit olusturmak demek olurdu.
+            if (!seat.IsActive)
+            {
+                continue;
+            }
+
+            var eventSeat = EventSeat.Create(Id, seat.Id, ticketTypeId, price);
+
+            _eventSeats.Add(eventSeat);
+            uretilenler.Add(eventSeat);
+        }
+
         AreSeatsGenerated = true;
+
+        return uretilenler;
     }
 
     public void Cancel()
@@ -183,9 +233,4 @@ public class EventSession : ConcurrentEntity
         SeatLayoutId = newSeatLayoutId;
     }
 
-    internal void AddEventSeat(EventSeat seat)
-    {
-        ArgumentNullException.ThrowIfNull(seat);
-        _eventSeats.Add(seat);
-    }
 }
