@@ -1,0 +1,158 @@
+# PDF Sprint 2: "Docker Compose ile asagidaki servisler ayaga kaldirilmalidir:
+# PostgreSQL, Redis, Backend API, Frontend, pgAdmin, Redis Insight, Mailpit"
+#
+# Kullanim:
+#   cd docker
+#   cp .env.example .env      # ve icindeki sifreleri degistir
+#   docker compose up -d
+#
+# Not: Backend ve Frontend servisleri Sprint 2'nin sonunda, Dockerfile'lar
+# yazildiginda eklenecek. Su an altyapi servisleri calisiyor -- boylece
+# uygulamayi yerel makinede calistirip veritabanina baglanabiliriz.
+
+name: ticketing
+
+services:
+  # ---------------------------------------------------------------
+  # PostgreSQL -- ana veritabani
+  # ---------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    container_name: ticketing-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Turkce karakterlerin dogru siralanmasi ve karsilastirilmasi icin.
+      # Varsayilan "C" locale'inde 'ç' harfi 'z'den sonra siralanir ve
+      # etkinlik listesi alfabetik sirada yanlis gorunur.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C.UTF-8"
+    ports:
+      # Yerel gelistirmede pgAdmin disindan da baglanabilmek icin aciyorum.
+      # Uretimde bu port DISARI ACILMAZ; sadece ic ag uzerinden erisilir.
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # ------------------------------------------------------------
+      # NEDEN HEALTHCHECK SART?
+      # ------------------------------------------------------------
+      # Container'in "calisiyor" olmasi, PostgreSQL'in BAGLANTI KABUL
+      # ETTIGI anlamina gelmez. Ilk acilista veritabani dosyalarini
+      # olusturmasi birkac saniye surer.
+      #
+      # Healthcheck olmadan API container'i hemen baslar, baglanti
+      # kuramaz ve cokerdi. "depends_on: condition: service_healthy"
+      # ile birlikte bu sorunu tamamen ortadan kaldiriyoruz.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - ticketing-network
+
+  # ---------------------------------------------------------------
+  # Redis -- cache, dagitik kilit, rate limiting
+  # ---------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: ticketing-redis
+    restart: unless-stopped
+    # --appendonly yes  -> kalicilik (AOF). Redis yeniden baslatildiginda
+    #                      veriler kaybolmaz.
+    #
+    # Bizim icin bu SART DEGIL ama iyi bir aliskanlik: Redis'i yalnizca
+    # cache icin kullaniyoruz, dogruluk kaynagi PostgreSQL. Yine de
+    # gelistirme sirasinda Redis'in her restart'ta bosalmasi kafa
+    # karistirici hata ayiklama seanslarina yol acar.
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ticketing-network
+
+  # ---------------------------------------------------------------
+  # pgAdmin -- veritabani yonetim arayuzu
+  # ---------------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ticketing-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      # Yerel gelistirmede her acilista giris yapmayi zorunlu kilmiyoruz.
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticketing-network
+
+  # ---------------------------------------------------------------
+  # Redis Insight -- Redis gorsel arayuzu
+  # ---------------------------------------------------------------
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: ticketing-redis-insight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis-insight-data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketing-network
+
+  # ---------------------------------------------------------------
+  # Mailpit -- yerel e-posta test sunucusu
+  # ---------------------------------------------------------------
+  #
+  # PDF Sprint 2: "Mailpit veya benzeri yerel e-posta test servisi"
+  #
+  # Ne ise yarar? Uygulama e-posta gonderdiginde Mailpit onu YAKALAR ve
+  # web arayuzunde gosterir -- gercekten kimseye gondermez.
+  #
+  # Bu KRITIK bir guvenlik onlemi: gelistirme sirasinda test verisindeki
+  # gercek bir e-posta adresine yanlislikla "biletiniz hazir" maili
+  # gitmesini engeller. Gercek bir SMTP sunucusu kullansaydik boyle
+  # kazalar kacinilmaz olurdu.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ticketing-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web arayuzu -> http://localhost:8025
+      - "1025:1025"   # SMTP -> uygulama buraya baglanir
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - ticketing-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  pgadmin-data:
+  redis-insight-data:
+
+networks:
+  ticketing-network:
+    driver: bridge

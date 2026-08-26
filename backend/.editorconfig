@@ -1,0 +1,40 @@
+root = true
+
+# ---------------------------------------------------------------
+# Tum C# dosyalari
+# ---------------------------------------------------------------
+[*.cs]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# ---------------------------------------------------------------
+# EF Core migration dosyalari
+# ---------------------------------------------------------------
+#
+# Bu dosyalari BIZ YAZMIYORUZ; "dotnet ef migrations add" komutu uretiyor.
+#
+# TreatWarningsAsErrors=true ayarimiz uretilen bu koda da uygulandigi icin
+# derleme kirildi (CA1861: "sabit dizi yerine static readonly alan tercih
+# edilmeli"). Uretilen kodu elle duzeltmek anlamsiz: bir sonraki migration
+# uretiminde ayni uyarilar geri gelir ve bu dongu hic bitmez.
+#
+# generated_code = true diyerek Roslyn'e "burasi uretilmis kod, stil ve
+# kalite kurallarini uygulama" diyoruz. Bu, Microsoft'un bu durum icin
+# onerdigi resmi yontemdir.
+#
+# ONEMLI: Bu muafiyet SADECE Migrations klasorunu kapsiyor. Kendi
+# yazdigimiz kodda TreatWarningsAsErrors tam gucuyle calismaya devam ediyor.
+[**/Migrations/*.cs]
+generated_code = true
+
+# Muafiyeti acikca da belirtiyorum -- generated_code bazi analizcilerde
+# tek basina yeterli olmayabiliyor.
+dotnet_diagnostic.CA1861.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1310.severity = none
+dotnet_diagnostic.IDE0300.severity = none
+dotnet_diagnostic.IDE0301.severity = none

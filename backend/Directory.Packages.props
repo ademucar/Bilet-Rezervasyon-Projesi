@@ -1,5 +1,4 @@
 <Project>
-
   <!--
     Merkezi Paket Yonetimi (Central Package Management).
 
@@ -13,23 +12,24 @@
     Yeni paket eklerken:  dotnet add <proje> package <ad>
     CLI surumu otomatik olarak buraya yazar.
   -->
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <!-- ===================== WEB API ===================== -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
-
   <!-- ===================== TEST ALTYAPISI ===================== -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-
     <!--
       FluentAssertions surumunu 7.2.0'a SABITLEDIM, 8.x'e cikarmadim.
       Sebep: 8.0 surumuyle birlikte lisans degisti; ticari kullanim ucretli
@@ -37,9 +37,7 @@
       Bunu bilerek yaptim; surumu yukseltmeden once lisansi kontrol et.
     -->
     <PackageVersion Include="FluentAssertions" Version="7.2.0" />
-
     <!-- Katman kurallarini test etmek icin -->
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
   </ItemGroup>
-
 </Project>

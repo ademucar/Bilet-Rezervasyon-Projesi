@@ -43,11 +43,27 @@ public sealed record CancellationPolicy
     /// <summary>Kismi iade orani (0-100 arasi yuzde). Varsayilan: 50.</summary>
     public int PartialRefundPercentage { get; init; }
 
-    private CancellationPolicy(int fullHours, int partialHours, int partialPercentage)
+    /// <summary>
+    /// Parametre adlari, property adlarinin camelCase halidir. Bu ONEMLI:
+    ///
+    /// EF Core bir nesneyi veritabanindan olustururken uygun bir constructor
+    /// arar ve parametreleri PROPERTY ADLARINA gore eslestirir. Parametre adi
+    /// "fullHours" olsaydi EF onu "FullRefundThresholdHours" property'siyle
+    /// eslestiremez ve su hatayi verirdi:
+    ///     "No suitable constructor was found for entity type"
+    ///
+    /// (Ilk yazisimda kisa adlar kullanmistim; migration uretirken tam da
+    /// bu hatayi aldik. Kisa adlar okunakli gorunuyordu ama EF'in
+    /// eslestirme kuralini bozuyordu.)
+    /// </summary>
+    private CancellationPolicy(
+        int fullRefundThresholdHours,
+        int partialRefundThresholdHours,
+        int partialRefundPercentage)
     {
-        FullRefundThresholdHours = fullHours;
-        PartialRefundThresholdHours = partialHours;
-        PartialRefundPercentage = partialPercentage;
+        FullRefundThresholdHours = fullRefundThresholdHours;
+        PartialRefundThresholdHours = partialRefundThresholdHours;
+        PartialRefundPercentage = partialRefundPercentage;
     }
 
     /// <summary>
