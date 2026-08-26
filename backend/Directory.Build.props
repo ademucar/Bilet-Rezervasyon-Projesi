@@ -1,0 +1,56 @@
+<Project>
+
+  <!--
+    Bu dosya, alt klasorlerdeki TUM .csproj dosyalarina otomatik olarak uygulanir.
+    MSBuild, bir projeyi derlerken klasor agacinda yukari dogru yurur ve
+    bulduğu ilk Directory.Build.props dosyasini projenin en basina ekler.
+
+    Boylece "net9.0" gibi ayarlari 8 ayri csproj'da tekrarlamiyorum.
+    Ileride .NET 10'a gecmek istersek tek satir degistirecegiz.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+
+    <!--
+      Nullable reference types: string? ile string arasindaki farki derleyici
+      zorunlu kilar. Null kontrolu unutuldugunda derleme uyarisi aliriz.
+      NullReferenceException'larin buyuk kismi daha kod yazilirken yakalanir.
+    -->
+    <Nullable>enable</Nullable>
+
+    <!--
+      System, System.Linq, System.Collections.Generic gibi namespace'ler her
+      dosyaya otomatik eklenir. Her dosyanin basindaki 10 satirlik using
+      yiginini ortadan kaldirir.
+    -->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!--
+      Uyarilari HATA olarak isle.
+      Bunu bilerek aciyorum: "0 hata ile guzel bir proje" hedefimiz var.
+      Uyarilar birikirse kimse okumaz ve gercek problem gorulmez hale gelir.
+      Derleme kirilirsa uyariyi duzeltmek zorunda kalirsin. Disiplin saglar.
+    -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!--
+      .NET'in yerlesik kod analizcileri. "latest-recommended" seviyesi,
+      performans ve dogruluk konusunda anlamli uyarilar verir.
+      PDF Sprint 19'da ".NET Analyzer" zorunlu tutuluyor.
+    -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!--
+      Merkezi paket yonetimi: paket surumleri Directory.Packages.props'ta
+      tek yerde tutulur. Ayni paketin iki projede farkli surumde olmasi
+      (diamond dependency) sorununu bastan engeller.
+    -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+    <!-- Tum projelerde ayni root namespace mantigini korumak icin -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>

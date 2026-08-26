@@ -1,0 +1,39 @@
+<Project>
+
+  <!--
+    DIKKAT: MSBuild klasor agacinda yukari dogru yururken bulduğu ILK
+    Directory.Build.props dosyasinda durur. Bu dosyayi olusturdugum an
+    ustteki backend/Directory.Build.props otomatik olarak uygulanmaz.
+
+    Bu yuzden once onu ELLE import ediyorum. Bu satiri unutursam
+    net9.0, Nullable, merkezi paket yonetimi gibi tum ortak ayarlar
+    test projelerinde kaybolur ve cok kafa karistirici hatalar alirim.
+  -->
+  <Import Project="../Directory.Build.props" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+
+    <!--
+      CA1707: "Uye adindan alt cizgileri kaldirin"
+
+      Bu kurali SADECE test projelerinde kapatiyorum.
+
+      Sebep: Test isimlendirmesinde yaygin ve okunakli olan bicim
+          Metot_Senaryo_BeklenenSonuc
+      seklindedir. Ornek:
+          StartPayment_SuresiDolmusRezervasyonda_HataFirlatmali
+
+      Test kirmizi yandiginda test isminin tek basina ne oldugunu
+      anlatmasi gerekir. Alt cizgi bu okunabilirligi saglar.
+      CA1707 kutuphane API'leri icin dogru bir kuraldir; testler
+      disariya API sunmaz, bu yuzden burada gecerli degildir.
+
+      Onemli olan: kurali kapatirken NEDEN kapattigimi yazmam.
+      Aciklamasiz bir NoWarn, gelecekte kimsenin dokunamayacagi
+      bir kara kutuya donusur.
+    -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+</Project>

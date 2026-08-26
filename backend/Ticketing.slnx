@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ticketing.Application/Ticketing.Application.csproj" />
+    <Project Path="src/Ticketing.Domain/Ticketing.Domain.csproj" />
+    <Project Path="src/Ticketing.Infrastructure/Ticketing.Infrastructure.csproj" />
+    <Project Path="src/Ticketing.Persistence/Ticketing.Persistence.csproj" />
+    <Project Path="src/Ticketing.WebApi/Ticketing.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ticketing.ArchitectureTests/Ticketing.ArchitectureTests.csproj" />
+    <Project Path="tests/Ticketing.IntegrationTests/Ticketing.IntegrationTests.csproj" />
+    <Project Path="tests/Ticketing.UnitTests/Ticketing.UnitTests.csproj" />
+  </Folder>
+</Solution>
