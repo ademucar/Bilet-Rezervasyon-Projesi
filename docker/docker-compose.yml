@@ -35,9 +35,20 @@ services:
       # etkinlik listesi alfabetik sirada yanlis gorunur.
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C.UTF-8"
     ports:
-      # Yerel gelistirmede pgAdmin disindan da baglanabilmek icin aciyorum.
-      # Uretimde bu port DISARI ACILMAZ; sadece ic ag uzerinden erisilir.
-      - "5432:5432"
+      # ------------------------------------------------------------
+      # HOST PORTU 5433, container ici 5432.
+      # ------------------------------------------------------------
+      # Bu makinede 5432 portu ZATEN DOLU: hem baska bir projenin
+      # container'i hem de kurulu PostgreSQL 17 servisi orayi kullaniyor.
+      #
+      # Onlari durdurmak yerine kendi host portumuzu degistiriyoruz --
+      # baska projeleri bozmamak icin. Container ICINDEKI port hala
+      # 5432; api servisi ic agdan "postgres:5432" ile baglaniyor ve
+      # bu degisiklikten etkilenmiyor.
+      #
+      # Uretimde bu satir tamamen KALDIRILIR; veritabanina yalnizca
+      # ic agdan erisilir, disariya port acilmaz.
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -75,7 +86,8 @@ services:
     # karistirici hata ayiklama seanslarina yol acar.
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      # Redis icin de ayni onlem.
+      - "${REDIS_HOST_PORT:-6380}:6379"
     volumes:
       - redis-data:/data
     healthcheck:

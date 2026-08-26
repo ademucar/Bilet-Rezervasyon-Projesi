@@ -84,6 +84,23 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         var problem = exception switch
         {
             // ==========================================================
+            // 0. GIRDI DOGRULAMA HATASI -> 400 Bad Request
+            // ==========================================================
+            // ValidationBehavior'in firlattigi hata.
+            //
+            // Bu daldan once yoktu ve dogrulama hatalari 500 donuyordu --
+            // uygulamayi ILK KEZ CALISTIRDIGIMDA fark ettim. Derleme
+            // temizdi, testler yesildi ama endpoint yanlis cevap
+            // veriyordu.
+            //
+            // Ders: birim testler ve derleme, "parcalar dogru mu" sorusunu
+            // cevaplar; "sistem dogru mu" sorusunu ancak calistirmak
+            // (veya integration test) cevaplar. Sprint 17'de bu akislari
+            // integration testle koruyacagiz.
+            Application.Common.Exceptions.ValidationException validationEx
+                => CreateValidationProblem(validationEx),
+
+            // ==========================================================
             // 1. IS KURALI IHLALI -> 422 Unprocessable Entity
             // ==========================================================
             // "Suresi dolmus rezervasyonda odeme baslatilamaz" gibi.
@@ -194,6 +211,36 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
         // true = "bu exception'i ben islendim, baska handler'a gitmesin"
         return true;
+    }
+
+    /// <summary>
+    /// Dogrulama hatalarini RFC 7807'nin "errors" uzantisiyla dondurur.
+    ///
+    /// Bicim:
+    ///     {
+    ///       "status": 400, "title": "Dogrulama hatasi",
+    ///       "errors": {
+    ///         "Email":    ["Gecerli bir e-posta adresi giriniz."],
+    ///         "Password": ["Sifre en az 8 karakter olmalidir."]
+    ///       }
+    ///     }
+    ///
+    /// Duz bir liste degil ALAN BAZINDA sozluk donuyoruz cunku frontend
+    /// her mesaji ilgili form alaninin altinda gostermek zorunda.
+    /// Liste donseydik hangi mesajin hangi alana ait oldugu bilinemezdi.
+    /// </summary>
+    private static ProblemDetails CreateValidationProblem(
+        Application.Common.Exceptions.ValidationException exception)
+    {
+        var problem = CreateProblem(
+            StatusCodes.Status400BadRequest,
+            "Dogrulama hatasi",
+            "Gonderilen veriler gecerli degil. Lutfen alanlari kontrol edin.",
+            "validation.failed");
+
+        problem.Extensions["errors"] = exception.Errors;
+
+        return problem;
     }
 
     private static ProblemDetails CreateProblem(

@@ -17,7 +17,7 @@ namespace Ticketing.Persistence;
 /// (PDF: "Controller dogrudan DbContext kullanmamalidir"). Bunu
 /// architecture testi ile zorunlu kildik.
 /// </summary>
-public class TicketingDbContext : DbContext
+public partial class TicketingDbContext : DbContext
 {
     public TicketingDbContext(DbContextOptions<TicketingDbContext> options)
         : base(options)

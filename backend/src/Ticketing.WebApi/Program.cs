@@ -1,5 +1,11 @@
+using Asp.Versioning;
+using Ticketing.Application;
+using Ticketing.Application.Abstractions.Security;
+using Ticketing.Application.Common.Options;
+using Ticketing.Infrastructure;
 using Ticketing.Persistence;
 using Ticketing.WebApi.Middleware;
+using Ticketing.WebApi.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,25 +16,61 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// Persistence katmaninin TUM kayitlari tek satirda.
-// Program.cs, DbContext'in veya repository'lerin varligini bilmiyor.
+// ---- API Versioning ----
+//
+// PDF Sprint 18: "API versioning uygulanmalidir." ve
+// "/api/v1/events" bicimi isteniyor.
+//
+// URL segmenti tabanli surumleme sectim (header veya query yerine):
+//   - Tarayicidan ve Postman'den denemesi kolay
+//   - Onbellek (cache) anahtarlari dogal olarak ayrisir
+//   - Loglarda hangi surumun cagrildigi aciktir
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+
+    // Yanit header'inda desteklenen surumleri bildir.
+    // Istemciler yeni surum ciktigini bu sayede fark eder.
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+// ---- Katmanlar ----
+//
+// Her katman kendi kayitlarini yapiyor. Program.cs, o katmanlarin
+// IC DETAYLARINI bilmiyor -- hangi handler var, hangi DbContext var
+// gibi bilgiler burada gecmiyor.
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 
+// ---- Guvenlik ayarlari ----
+builder.Services.AddOptions<SecurityOptions>()
+       .Bind(builder.Configuration.GetSection(SecurityOptions.SectionName))
+       .ValidateDataAnnotations()
+       .ValidateOnStart();
+
+// ICurrentUser HttpContext'e erisiyor; bu erisim icin gerekli.
+builder.Services.AddHttpContextAccessor();
+
+// Scoped: her HTTP istegi icin bir ornek. Singleton OLAMAZ cunku
+// istege ozel veri (kullanici kimligi) tasiyor.
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorizationPolicies();
+
 // ---- Problem Details ----
-//
-// PDF Sprint 2: "Problem Details standardi kullanilmalidir."
-//
-// Bu kayit yalnizca bizim firlattigimiz exception'lari degil,
-// framework'un urettigi hatalari da (404 Not Found, 405 Method Not
-// Allowed, model binding hatalari) RFC 7807 formatina cevirir.
-//
-// Boylece API'nin TUM hata yanitlari ayni sekle sahip olur ve
-// frontend tek bir hata isleyici yazabilir.
 builder.Services.AddProblemDetails(options =>
 {
     options.CustomizeProblemDetails = context =>
     {
-        // Hangi endpoint'in hata verdigi. Hata ayiklamada cok ise yarar.
         context.ProblemDetails.Instance =
             $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
 
@@ -38,29 +80,18 @@ builder.Services.AddProblemDetails(options =>
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-// ---- Health check ----
-//
-// PDF Sprint 16: "/health, /health/ready, /health/live"
-// Su an temel kayit; veritabani ve Redis kontrolleri Sprint 16'da eklenecek.
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 // ===================================================================
-// HTTP PIPELINE
+// HTTP PIPELINE -- SIRA ONEMLI
 // ===================================================================
-//
-// SIRA ONEMLI. Middleware'ler yazildiklari sirayla calisir ve
-// yanlis sira sessiz hatalara yol acar.
 
-// 1) Exception handler EN BASTA olmali.
-//    Kendisinden SONRA gelen her seyi sarmalar. Asagida olsaydi,
-//    ustundeki middleware'lerin hatalarini yakalayamazdi.
+// 1) En basta: kendisinden sonraki her seyi sarmalar.
 app.UseExceptionHandler();
 
-// 2) Correlation ID, exception handler'dan HEMEN SONRA.
-//    Boylece hata yanitina da correlation ID eklenebiliyor.
+// 2) Hata yanitina da correlation ID eklenebilsin diye hemen sonra.
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -69,12 +100,20 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // Docker icinde HTTPS sertifikasi yok; yonlendirme yalnizca
-    // gercek sertifika varken anlamli. Sprint 15'te reverse proxy
-    // arkasinda dogru yapilandiracagiz.
     app.UseHttpsRedirection();
 }
 
+// ==================================================================
+// SIRA KRITIK: Authentication ONCE, Authorization SONRA
+// ==================================================================
+// UseAuthentication  -> "Sen kimsin?"   (token'i okur, User'i doldurur)
+// UseAuthorization   -> "Yetkin var mi?" (User'a bakip karar verir)
+//
+// Ters yazsaydik Authorization henuz doldurulmamis bir User goreceginden
+// giris yapmis kullanicilar bile 401 alirdi. Ve bu hata cok kafa
+// karistiricidir: token dogru, kod dogru ama calismiyor.
+// ==================================================================
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -84,10 +123,6 @@ await app.RunAsync();
 
 /// <summary>
 /// Integration testlerin WebApplicationFactory ile bu projeyi
-/// baslatabilmesi icin gereken acik giris noktasi.
-///
-/// Top-level statement kullanan bir Program.cs varsayilan olarak
-/// internal bir sinif uretir; test projesi ona erisemez.
-/// Bu partial bildirim onu public yapiyor. (PDF Sprint 17)
+/// baslatabilmesi icin gereken acik giris noktasi. (PDF Sprint 17)
 /// </summary>
 public partial class Program;

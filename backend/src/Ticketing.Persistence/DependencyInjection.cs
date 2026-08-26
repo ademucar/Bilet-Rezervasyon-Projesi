@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Ticketing.Application.Abstractions.Persistence;
 
 namespace Ticketing.Persistence;
 
@@ -73,6 +74,18 @@ public static class DependencyInjection
                     errorCodesToAdd: null);
             });
         });
+
+        // Application katmani somut TicketingDbContext'i degil bu arayuzu
+        // goruyor. Boylece Application, Persistence'a bagimli olmuyor --
+        // architecture testimiz bunu her derlemede dogruluyor.
+        //
+        // GetRequiredService ile AYNI ornegi cozumluyorum, yeni bir tane
+        // olusturmuyorum. Aksi halde tek bir HTTP istegi icinde IKI ayri
+        // DbContext olurdu: biri degisiklikleri takip eder, digeri
+        // kaydeder ve kayitlar sessizce kaybolurdu. Bu, tespit edilmesi
+        // cok zor bir hata sinifidir.
+        services.AddScoped<IApplicationDbContext>(sp =>
+            sp.GetRequiredService<TicketingDbContext>());
 
         return services;
     }

@@ -1,0 +1,22 @@
+using MediatR;
+using Ticketing.Application.Common.Results;
+
+namespace Ticketing.Application.Features.Auth.Register;
+
+/// <summary>
+/// Yeni kullanici kaydi. PDF: POST /api/v1/auth/register
+///
+/// Neden "record"? Cunku bir komut bir VERI TASIYICISIDIR, davranisi yoktur.
+/// record bize deger esitligi ve degismezlik (immutability) veriyor --
+/// yani bir komut olusturulduktan sonra handler'a giderken degistirilemez.
+///
+/// IRequest&lt;Result&lt;AuthResponse&gt;&gt;: bu komut calistiginda
+/// Result&lt;AuthResponse&gt; donecegini TIP SEVIYESINDE belirtiyor.
+/// Handler baska bir sey donemez -- derleyici engeller.
+/// </summary>
+public sealed record RegisterCommand(
+    string Email,
+    string Password,
+    string FirstName,
+    string LastName,
+    string? PhoneNumber) : IRequest<Result<AuthResponse>>;
