@@ -45,3 +45,7 @@ wwwroot/uploads/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Vite
+frontend/dist/
+frontend/.vite/

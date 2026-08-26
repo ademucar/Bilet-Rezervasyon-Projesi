@@ -1,0 +1,141 @@
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ProtectedRoute } from './routes/ProtectedRoute'
+import { PublicOnlyRoute } from './routes/PublicOnlyRoute'
+import { ErrorBoundary } from './components/layout/ErrorBoundary'
+
+// ===================================================================
+// ROUTE BAZLI KOD BOLME (code splitting)
+// ===================================================================
+// PDF Sprint 18: "Route bazli code splitting uygulanmalidir."
+//
+// lazy() ile her sayfa AYRI bir JS parcasina derleniyor ve yalnizca
+// o sayfaya gidildiginde indiriliyor.
+//
+// Neden onemli? Su an 6 sayfa var, fark kucuk. Ama Sprint 5-13'te
+// organizator paneli, admin paneli, koltuk secim ekrani, raporlama
+// grafikleri eklenecek. Hepsi tek pakette olsaydi, sadece giris
+// yapmak isteyen kullanici Recharts kutuphanesini de indirmek
+// zorunda kalirdi.
+//
+// Simdiden kurmak, sonradan eklemekten kolay: yapiyi bastan dogru
+// kurunca yeni sayfa eklerken dusunmeye bile gerek kalmiyor.
+// ===================================================================
+const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })))
+const RegisterPage = lazy(() => import('./features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })))
+const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })))
+const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })))
+const HomePage = lazy(() => import('./features/home/HomePage').then((m) => ({ default: m.HomePage })))
+const UnauthorizedPage = lazy(() => import('./features/misc/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })))
+const NotFoundPage = lazy(() => import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // 1 dakika boyunca veriyi "taze" say, tekrar isteme.
+      // Varsayilan 0'dir; yani her bilesen bagladiginda yeni istek gider.
+      staleTime: 60_000,
+
+      // ==============================================================
+      // 401 ve 403'te YENIDEN DENEME
+      // ==============================================================
+      // Varsayilan davranis basarisiz istegi 3 kez tekrarlar.
+      //
+      // Bu bizim icin ZARARLI olurdu: 401 alan bir istek zaten
+      // interceptor tarafindan token yenilenip tekrarlaniyor.
+      // TanStack Query bir de kendi basina 3 kez denerse, tek bir
+      // basarisizlik 4 gereksiz istege donusur.
+      //
+      // 403'te tekrar denemek ise tamamen anlamsiz: yetki yoksa
+      // 100 kez de denesen yine yok.
+      retry: (failureCount, error) => {
+        const status = (error as { response?: { status?: number } })?.response?.status
+
+        if (status === 401 || status === 403 || status === 404) {
+          return false
+        }
+
+        return failureCount < 2
+      },
+
+      // Sekme degistirip geri geldiginde otomatik yenileme.
+      // Koltuk uygunlugu gibi hizli degisen veriler icin degerli.
+      refetchOnWindowFocus: true,
+    },
+
+    mutations: {
+      // Mutation'lar (POST/PUT/DELETE) ASLA otomatik tekrarlanmamali.
+      //
+      // "Rezervasyon olustur" istegi basarisiz gorunup aslinda
+      // basarili olduysa, tekrar gondermek IKINCI bir rezervasyon
+      // olusturabilir. Backend'de idempotency var ama ona guvenip
+      // gereksiz istek gondermenin anlami yok.
+      retry: false,
+    },
+  },
+})
+
+/** Sayfa yuklenirken gosterilen iskelet. PDF: "Skeleton loading". */
+function PageFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-md space-y-4 px-4">
+        <div className="h-8 w-32 animate-pulse rounded bg-slate-200" />
+        <div className="h-64 animate-pulse rounded-2xl bg-slate-200" />
+      </div>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          {/* Suspense: lazy() ile yuklenen sayfa hazir olana kadar
+              fallback gosterilir. Olmasaydi React hata firlatirdi. */}
+          <Suspense fallback={<PageFallback />}>
+            <Routes>
+              {/* ---- Yalnizca giris YAPMAMIS kullanicilar ---- */}
+              <Route element={<PublicOnlyRoute />}>
+                <Route path="/giris" element={<LoginPage />} />
+                <Route path="/kayit" element={<RegisterPage />} />
+                <Route path="/sifremi-unuttum" element={<ForgotPasswordPage />} />
+                <Route path="/sifre-sifirla" element={<ResetPasswordPage />} />
+              </Route>
+
+              {/* ---- Giris gerektiren sayfalar ---- */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<HomePage />} />
+              </Route>
+
+              {/* ---- Rol gerektiren sayfalar (Sprint 5+ doldurulacak) ----
+                  Yapiyi simdiden kuruyorum ki organizator paneli
+                  eklenirken tartisma olmasin.
+              <Route element={<ProtectedRoute roles={[Roles.Organizer, Roles.Admin]} />}>
+                <Route path="/organizator" element={<OrganizerDashboard />} />
+              </Route>
+              */}
+
+              <Route path="/yetkisiz" element={<UnauthorizedPage />} />
+
+              {/* Turkce yollari kullaniyorum ama Ingilizce deneyenler
+                  icin de yonlendirme koyuyorum -- kirik link olmasin. */}
+              <Route path="/login" element={<Navigate to="/giris" replace />} />
+              <Route path="/register" element={<Navigate to="/kayit" replace />} />
+
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+
+        {/* Devtools yalnizca gelistirmede paketlenir.
+            import.meta.env.DEV, Vite tarafindan uretim derlemesinde
+            false'a sabitlenir ve bu blok tamamen silinir (tree shaking). */}
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      </QueryClientProvider>
+    </ErrorBoundary>
+  )
+}
