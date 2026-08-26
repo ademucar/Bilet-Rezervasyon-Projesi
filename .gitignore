@@ -1,0 +1,47 @@
+# ---------- .NET ----------
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+*.DotSettings.user
+
+# ---------- Node / React ----------
+node_modules/
+dist/
+dist-ssr/
+build/
+.vite/
+*.local
+
+# ---------- Ortam degiskenleri (ASLA commitlenmez) ----------
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+*.secrets.json
+
+# ---------- Test / coverage ----------
+TestResults/
+coverage/
+*.trx
+*.coverage
+.nyc_output/
+playwright-report/
+test-results/
+
+# ---------- Loglar ----------
+logs/
+*.log
+npm-debug.log*
+
+# ---------- Yuklenen dosyalar (uygulama ciktisi) ----------
+uploads/
+wwwroot/uploads/
+
+# ---------- OS ----------
+Thumbs.db
+Desktop.ini
+.DS_Store
