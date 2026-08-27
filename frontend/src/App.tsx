@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { PublicOnlyRoute } from './routes/PublicOnlyRoute'
 import { ErrorBoundary } from './components/layout/ErrorBoundary'
+import { Roles } from './types/auth'
 
 // ===================================================================
 // ROUTE BAZLI KOD BOLME (code splitting)
@@ -30,6 +31,15 @@ const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPassword
 const HomePage = lazy(() => import('./features/home/HomePage').then((m) => ({ default: m.HomePage })))
 const UnauthorizedPage = lazy(() => import('./features/misc/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })))
 const NotFoundPage = lazy(() => import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
+
+// --- Admin paneli ---
+// Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
+// indirmeyecek. Koltuk haritasi ve form kutuphaneleri bu sayfalarda
+// yogun; hepsini ana pakete koysaydik giris yapan herkes bedelini oderdi.
+const VenuesPage = lazy(() => import('./features/admin/pages/VenuesPage').then((m) => ({ default: m.VenuesPage })))
+const VenueDetailPage = lazy(() => import('./features/admin/pages/VenueDetailPage').then((m) => ({ default: m.VenueDetailPage })))
+const HallDetailPage = lazy(() => import('./features/admin/pages/HallDetailPage').then((m) => ({ default: m.HallDetailPage })))
+const SeatLayoutPage = lazy(() => import('./features/admin/pages/SeatLayoutPage').then((m) => ({ default: m.SeatLayoutPage })))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,13 +121,16 @@ export default function App() {
                 <Route path="/" element={<HomePage />} />
               </Route>
 
-              {/* ---- Rol gerektiren sayfalar (Sprint 5+ doldurulacak) ----
-                  Yapiyi simdiden kuruyorum ki organizator paneli
-                  eklenirken tartisma olmasin.
-              <Route element={<ProtectedRoute roles={[Roles.Organizer, Roles.Admin]} />}>
-                <Route path="/organizator" element={<OrganizerDashboard />} />
+              {/* ---- Admin paneli ----
+                  ProtectedRoute roles={['Admin']} -> yalnizca admin gorur.
+                  UNUTMA: bu bir GUVENLIK onlemi degil, kullanici deneyimi.
+                  Gercek kontrol backend'de AdminOnly policy'sinde. */}
+              <Route element={<ProtectedRoute roles={[Roles.Admin]} />}>
+                <Route path="/admin/mekanlar" element={<VenuesPage />} />
+                <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
+                <Route path="/admin/salonlar/:hallId" element={<HallDetailPage />} />
+                <Route path="/admin/oturma-planlari/:layoutId" element={<SeatLayoutPage />} />
               </Route>
-              */}
 
               <Route path="/yetkisiz" element={<UnauthorizedPage />} />
 
