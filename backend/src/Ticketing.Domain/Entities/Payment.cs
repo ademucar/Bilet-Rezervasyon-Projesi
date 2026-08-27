@@ -125,6 +125,22 @@ public class Payment : ConcurrentEntity
         Status = target;
     }
 
+    /// <summary>
+    /// Saglayicinin verdigi islem referansini kaydeder.
+    ///
+    /// Ayri bir metot cunku referans, StartProcessing'den SONRA
+    /// (saglayici cagrisi donunce) belli oluyor. StartProcessing'e
+    /// parametre olarak vermek, cagri sirasini yanlis anlasilir
+    /// kilardi.
+    /// </summary>
+    public void SetProviderReference(string? providerReference)
+    {
+        if (!string.IsNullOrWhiteSpace(providerReference))
+        {
+            ProviderReference = providerReference;
+        }
+    }
+
     /// <summary>Saglayiciya istek gonderildi, cevap bekleniyor.</summary>
     public void StartProcessing(string? providerReference = null)
     {

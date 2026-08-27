@@ -2,10 +2,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ticketing.Application.Abstractions;
 using Ticketing.Application.Abstractions.Email;
+using Ticketing.Application.Abstractions.Payments;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Infrastructure.Configuration;
 using Ticketing.Infrastructure.Email;
+using Ticketing.Infrastructure.Payments;
 using Ticketing.Infrastructure.Security;
 using Ticketing.Infrastructure.Time;
 
@@ -75,6 +77,25 @@ public static class DependencyInjection
                 .ValidateOnStart();
 
         services.AddSingleton<IAppUrlProvider, AppUrlProvider>();
+
+        // ---- Odeme saglayicisi ----
+        //
+        // Hangi saglayicinin kullanilacagi YAPILANDIRMADAN seciliyor.
+        // Boylece gelistirme ortaminda "Failed" secip basarisiz odeme
+        // akisini deneyebiliyoruz -- kod degistirmeden.
+        //
+        // PDF Sprint 8: "En az iki implementasyon hazirlanabilir:
+        // MockPaymentProvider, FailedPaymentProvider."
+        var paymentProvider = configuration["Payment:Provider"] ?? "Mock";
+
+        if (string.Equals(paymentProvider, "Failed", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddSingleton<IPaymentService, FailedPaymentProvider>();
+        }
+        else
+        {
+            services.AddSingleton<IPaymentService, MockPaymentProvider>();
+        }
 
         return services;
     }
