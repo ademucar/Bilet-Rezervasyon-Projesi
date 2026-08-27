@@ -32,6 +32,17 @@ const HomePage = lazy(() => import('./features/home/HomePage').then((m) => ({ de
 const UnauthorizedPage = lazy(() => import('./features/misc/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })))
 const NotFoundPage = lazy(() => import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
 
+// --- Bilet alma akisi (Sprint 7-8) ---
+// Bu bes sayfa ayri parcalar ama AYNI akisin adimlari. Vite,
+// paylastiklari kodu (bookingApi, SeatMap, format) ortak bir parcaya
+// koyup her ikisine de bagliyor -- yani tekrar indirilmiyor.
+const EventsPage = lazy(() => import('./features/booking/pages/EventsPage').then((m) => ({ default: m.EventsPage })))
+const EventDetailPage = lazy(() => import('./features/booking/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage })))
+const SeatSelectionPage = lazy(() => import('./features/booking/pages/SeatSelectionPage').then((m) => ({ default: m.SeatSelectionPage })))
+const ReservationPage = lazy(() => import('./features/booking/pages/ReservationPage').then((m) => ({ default: m.ReservationPage })))
+const MyReservationsPage = lazy(() => import('./features/booking/pages/MyReservationsPage').then((m) => ({ default: m.MyReservationsPage })))
+const MyTicketsPage = lazy(() => import('./features/booking/pages/MyTicketsPage').then((m) => ({ default: m.MyTicketsPage })))
+
 // --- Admin paneli ---
 // Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
 // indirmeyecek. Koltuk haritasi ve form kutuphaneleri bu sayfalarda
@@ -119,6 +130,26 @@ export default function App() {
               {/* ---- Giris gerektiren sayfalar ---- */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<HomePage />} />
+
+                {/* ---- Bilet alma akisi ----
+                    Etkinlik listesi ve detayi backend'de ANONIM erisime
+                    acik. Yine de ProtectedRoute icine koyuyorum: bu
+                    akisin sonu rezervasyon ve odeme, ikisi de giris
+                    gerektiriyor.
+
+                    Kullaniciyi 4 sayfa gezdirip koltugu sectirdikten
+                    SONRA "once giris yapin" demek, en can sikici
+                    deneyimlerden biridir. Kapiyi bastan gosteriyorum.
+
+                    Sprint 11'de arama ve listeleme herkese acilacak
+                    (SEO icin de gerekli); o zaman bu iki rota
+                    disari alinacak. */}
+                <Route path="/etkinlikler" element={<EventsPage />} />
+                <Route path="/etkinlikler/:eventId" element={<EventDetailPage />} />
+                <Route path="/oturumlar/:sessionId/koltuklar" element={<SeatSelectionPage />} />
+                <Route path="/rezervasyonlar/:reservationId" element={<ReservationPage />} />
+                <Route path="/rezervasyonlarim" element={<MyReservationsPage />} />
+                <Route path="/biletlerim" element={<MyTicketsPage />} />
               </Route>
 
               {/* ---- Admin paneli ----
