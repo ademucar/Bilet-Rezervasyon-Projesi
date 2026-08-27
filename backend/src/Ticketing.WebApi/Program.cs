@@ -85,6 +85,25 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // ===================================================================
+// BASLANGIC VERISI -- YALNIZCA GELISTIRMEDE
+// ===================================================================
+// Uretimde ASLA otomatik seed calistirmiyoruz. Sebep: seed kodu
+// yanlislikla veri uzerine yazabilir veya beklenmedik kayitlar
+// olusturabilir. Uretimde veri, kontrollu migration'lar veya admin
+// arayuzu uzerinden girilir.
+//
+// CreateScope kullaniyorum cunku DatabaseSeeder ve DbContext SCOPED
+// kayitli; uygulama koku (root) singleton bir kapsam ve oradan scoped
+// servis cozumlemek InvalidOperationException verir.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<Ticketing.Persistence.Seeding.DatabaseSeeder>();
+
+    await seeder.SeedAsync().ConfigureAwait(false);
+}
+
+// ===================================================================
 // HTTP PIPELINE -- SIRA ONEMLI
 // ===================================================================
 

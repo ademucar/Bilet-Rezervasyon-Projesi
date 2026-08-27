@@ -87,6 +87,8 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<TicketingDbContext>());
 
+        services.AddScoped<Seeding.DatabaseSeeder>();
+
         return services;
     }
 }

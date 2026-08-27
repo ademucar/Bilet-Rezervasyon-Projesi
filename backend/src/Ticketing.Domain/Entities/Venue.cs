@@ -64,6 +64,26 @@ public class Venue : AuditableEntity
         return new Venue(cityId, name.Trim(), address.Trim());
     }
 
+    public void Rename(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException("Mekan adi bos olamaz.", "venue.name_required");
+        }
+
+        Name = name.Trim();
+    }
+
+    public void UpdateAddress(string address)
+    {
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            throw new DomainException("Adres bos olamaz.", "venue.address_required");
+        }
+
+        Address = address.Trim();
+    }
+
     public void SetCoordinates(decimal latitude, decimal longitude)
     {
         // Enlem -90..90, boylam -180..180 araliginda olmalidir.
