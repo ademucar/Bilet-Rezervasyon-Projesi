@@ -279,7 +279,8 @@ public class EventSeatTests
         koltukListesi[0].Deactivate();
         koltukListesi[1].Deactivate();
 
-        var uretilenler = oturum.GenerateSeats(koltukListesi, biletTuru.Id, TestVeriKurucu.Fiyat());
+        var uretilenler = oturum.GenerateSeats(
+            koltukListesi, _ => (biletTuru.Id, TestVeriKurucu.Fiyat()));
 
         uretilenler.Should().HaveCount(3);
     }
@@ -294,7 +295,7 @@ public class EventSeatTests
         bolum.GenerateSeats(1, 2, ["B"]);
 
         var eylem = () => oturum.GenerateSeats(
-            bolum.Seats.ToList(), Guid.CreateVersion7(), TestVeriKurucu.Fiyat());
+            bolum.Seats.ToList(), _ => (Guid.CreateVersion7(), TestVeriKurucu.Fiyat()));
 
         eylem.Should().Throw<DomainException>()
              .Which.ErrorCode.Should().Be("event_session.seats_already_generated");

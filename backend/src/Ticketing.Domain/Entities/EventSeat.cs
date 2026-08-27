@@ -183,6 +183,35 @@ public class EventSeat : ConcurrentEntity
     }
 
     /// <summary>
+    /// Kilit suresini uzatir.
+    ///
+    /// Rezervasyon suresi uzatildiginda koltugun suresi de uzatilmali;
+    /// aksi halde rezervasyon gecerli gorunurken koltuk musait olur ve
+    /// baskasi alabilir.
+    /// </summary>
+    public void ExtendLock(DateTimeOffset newLockedUntil)
+    {
+        if (Status != EventSeatStatus.Locked)
+        {
+            throw new DomainException(
+                "Yalnizca kilitli koltugun suresi uzatilabilir.",
+                "seat.not_locked");
+        }
+
+        // Suresi KISALTMAYI engelliyorum.
+        //
+        // Neden? Uzatma islemi yalnizca ileriye dogru olmali. Yanlis
+        // bir cagri sureyi kisaltsaydi kullanici koltugunu beklenenden
+        // once kaybederdi -- ve sebebi hic anlasilmazdi.
+        if (LockedUntil.HasValue && newLockedUntil <= LockedUntil.Value)
+        {
+            return;
+        }
+
+        LockedUntil = newLockedUntil;
+    }
+
+    /// <summary>
     /// Kilidi kaldirir, koltugu tekrar satisa acar.
     /// Cagrilma yerleri: rezervasyon iptali, odeme basarisizligi,
     /// sure asimi job'i.

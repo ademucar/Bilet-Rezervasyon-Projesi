@@ -147,16 +147,33 @@ public class EventSession : ConcurrentEntity
     ///
     /// Bu, "Tell, Don't Ask" ilkesidir: nesneye durumunu SORUP disarida
     /// karar vermek yerine, ona ne yapmasi gerektigini SOYLE.
+    ///
+    /// ------------------------------------------------------------------
+    /// NEDEN TEK FIYAT DEGIL DE ESLESTIRME FONKSIYONU ALIYOR?
+    /// ------------------------------------------------------------------
+    /// Ilk yazisimda tek bir ticketTypeId ve price aliyordu. Ama gercek
+    /// salonlarda her BOLUM farkli fiyatlidir: "Orta Blok 450 TL",
+    /// "Balkon 250 TL".
+    ///
+    /// Tek fiyatli surumu kullanip sonradan koltuklari tek tek
+    /// duzeltebilirdim -- nitekim ilk denemem oyleydi. Ama o zaman
+    /// EventSeat'in fiyat atama metodunu Application katmanina acmam
+    /// gerekiyordu ve entity yarim kurulmus bir durumdan geciyordu.
+    ///
+    /// Fonksiyon parametresi ile koltuk DOGRU fiyatla DOGUYOR; ara bir
+    /// gecersiz durum hic olusmuyor.
     /// </summary>
     /// <param name="seats">Oturma planindaki fiziksel koltuklar.</param>
-    /// <param name="ticketTypeId">Bu koltuklarin baglanacagi bilet turu.</param>
-    /// <param name="price">Satis anindaki fiyat. TicketType'tan kopyalanir.</param>
+    /// <param name="pricingResolver">
+    /// Bir koltugun bolumune gore bilet turunu ve fiyatini dondurur.
+    /// Bolum eslestirilmemisse null donmeli; o zaman uretim iptal edilir.
+    /// </param>
     public IReadOnlyList<EventSeat> GenerateSeats(
         IReadOnlyList<Seat> seats,
-        Guid ticketTypeId,
-        Money price)
+        Func<Seat, (Guid TicketTypeId, Money Price)?> pricingResolver)
     {
         ArgumentNullException.ThrowIfNull(seats);
+        ArgumentNullException.ThrowIfNull(pricingResolver);
 
         if (AreSeatsGenerated)
         {
@@ -184,7 +201,22 @@ public class EventSession : ConcurrentEntity
                 continue;
             }
 
-            var eventSeat = EventSeat.Create(Id, seat.Id, ticketTypeId, price);
+            var pricing = pricingResolver(seat);
+
+            if (pricing is null)
+            {
+                // ONEMLI: burada patliyorum ve HICBIR SEY kaydedilmiyor.
+                //
+                // Yarim uretim yapip "bu koltuklarin fiyati yok" durumuna
+                // dusmek, sonradan temizlenmesi cok zor bir tutarsizlik
+                // olurdu. "Ya hep ya hic".
+                throw new DomainException(
+                    $"'{seat.GetDisplayLabel()}' koltugunun bolumune bilet turu atanmamis.",
+                    "event_session.section_not_priced");
+            }
+
+            var eventSeat = EventSeat.Create(
+                Id, seat.Id, pricing.Value.TicketTypeId, pricing.Value.Price);
 
             _eventSeats.Add(eventSeat);
             uretilenler.Add(eventSeat);

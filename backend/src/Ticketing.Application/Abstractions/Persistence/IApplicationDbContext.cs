@@ -66,6 +66,7 @@ public interface IApplicationDbContext
     DbSet<Event> Events { get; }
     DbSet<EventSession> EventSessions { get; }
     DbSet<TicketType> TicketTypes { get; }
+    DbSet<TicketTypeSection> TicketTypeSections { get; }
     DbSet<EventSeat> EventSeats { get; }
 
     DbSet<Reservation> Reservations { get; }

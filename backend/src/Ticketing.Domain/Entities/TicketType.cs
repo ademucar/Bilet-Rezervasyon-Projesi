@@ -49,6 +49,11 @@ public class TicketType : AuditableEntity
 
     public Event Event { get; private set; } = null!;
 
+    private readonly List<TicketTypeSection> _sections = [];
+
+    /// <summary>Bu bilet turunun kapsadigi oturma plani bolumleri.</summary>
+    public IReadOnlyCollection<TicketTypeSection> Sections => _sections.AsReadOnly();
+
     public static TicketType Create(
         Guid eventId,
         string name,
@@ -131,6 +136,51 @@ public class TicketType : AuditableEntity
 
         SalesStartDate = start;
         SalesEndDate = end;
+    }
+
+    /// <summary>
+    /// Bu bilet turune bir bolum atar.
+    /// PDF: POST /api/v1/ticket-types/{id}/assign-section
+    /// </summary>
+    public void AssignSection(Guid seatSectionId)
+    {
+        // Ayni bolumu iki kez atamayi sessizce yok sayiyorum.
+        // "Bu bolumu bu bilet turune ata" istegi idempotent olmali:
+        // iki kez cagrilirsa sonuc ayni olmali.
+        if (_sections.Exists(s => s.SeatSectionId == seatSectionId))
+        {
+            return;
+        }
+
+        _sections.Add(new TicketTypeSection(Id, seatSectionId));
+    }
+
+    public void UnassignSection(Guid seatSectionId)
+        => _sections.RemoveAll(s => s.SeatSectionId == seatSectionId);
+
+    /// <summary>
+    /// Bilet turunun temel bilgilerini gunceller.
+    ///
+    /// Fiyat BURADA degismiyor -- onun icin ayri bir metot var
+    /// (ChangePrice), cunku fiyat degisikligi LOGLANMAK zorunda.
+    /// Ayni metotta olsaydi, "sadece adi degistirdim" durumunda da
+    /// gereksiz audit kaydi olusurdu.
+    /// </summary>
+    public void Update(string name, int? quota, bool requiresStudentVerification)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException("Bilet turu adi bos olamaz.", "ticket_type.name_required");
+        }
+
+        if (quota is <= 0)
+        {
+            throw new DomainException("Kontenjan sifirdan buyuk olmalidir.", "ticket_type.invalid_quota");
+        }
+
+        Name = name.Trim();
+        Quota = quota;
+        RequiresStudentVerification = requiresStudentVerification;
     }
 
     public void Deactivate() => IsActive = false;

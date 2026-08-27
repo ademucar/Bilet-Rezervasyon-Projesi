@@ -57,8 +57,11 @@ internal static class TestVeriKurucu
         var bolum = plan.AddSection("Orta Blok", 1);
         bolum.GenerateSeats(rowCount: 1, seatsPerRow: koltukSayisi, rowLabels: ["A"]);
 
+        // Fiyatlandirma fonksiyonu: bu testte tek bolum var, hepsi ayni
+        // bilet turune ait. Gercek senaryoda bolum bazinda degisir.
         var koltuklar = oturum.GenerateSeats(
-            bolum.Seats.ToList(), biletTuru.Id, Fiyat(birimFiyat));
+            bolum.Seats.ToList(),
+            _ => (biletTuru.Id, Fiyat(birimFiyat)));
 
         return (oturum, koltuklar);
     }

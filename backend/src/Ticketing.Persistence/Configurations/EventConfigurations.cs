@@ -162,6 +162,46 @@ internal sealed class TicketTypeConfiguration : IEntityTypeConfiguration<TicketT
         builder.HasIndex(t => new { t.EventId, t.Name })
                .IsUnique()
                .HasFilter("\"IsDeleted\" = false");
+
+        builder.HasMany(t => t.Sections)
+               .WithOne(s => s.TicketType)
+               .HasForeignKey(s => s.TicketTypeId)
+               .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+internal sealed class TicketTypeSectionConfiguration : IEntityTypeConfiguration<TicketTypeSection>
+{
+    public void Configure(EntityTypeBuilder<TicketTypeSection> builder)
+    {
+        builder.ToTable("TicketTypeSections");
+
+        // COMPOSITE KEY: kendine ait kimligi yok.
+        builder.HasKey(ts => new { ts.TicketTypeId, ts.SeatSectionId });
+
+        builder.HasOne(ts => ts.SeatSection)
+               .WithMany()
+               .HasForeignKey(ts => ts.SeatSectionId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        // ==============================================================
+        // PDF is kurali: "Ayni koltuk birden fazla aktif bilet turune
+        // atanamaz."
+        // ==============================================================
+        // Bu index, bir BOLUMUN yalnizca BIR bilet turune ait olmasini
+        // garanti ediyor. Bolum tekil oldugu icin o bolumdeki koltuklar
+        // da otomatik olarak tek bir bilet turune ait oluyor.
+        //
+        // Bu kisit olmasaydi ayni koltuk hem "Standart 250 TL" hem
+        // "VIP 800 TL" olarak gorunurdu ve hangi fiyatin gecerli
+        // oldugu belirsiz kalirdi.
+        //
+        // Composite key'in ILK sutunu TicketTypeId oldugu icin
+        // SeatSectionId tek basina benzersiz DEGIL -- bu yuzden ayri
+        // bir unique index gerekiyor.
+        builder.HasIndex(ts => ts.SeatSectionId)
+               .IsUnique()
+               .HasDatabaseName("ix_ticket_type_sections_section");
     }
 }
 

@@ -45,6 +45,7 @@ public partial class TicketingDbContext : DbContext
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventSession> EventSessions => Set<EventSession>();
     public DbSet<TicketType> TicketTypes => Set<TicketType>();
+    public DbSet<TicketTypeSection> TicketTypeSections => Set<TicketTypeSection>();
     public DbSet<EventSeat> EventSeats => Set<EventSeat>();
 
     // --- Rezervasyon ve odeme ---

@@ -56,6 +56,11 @@ builder.Services.AddOptions<SecurityOptions>()
        .ValidateDataAnnotations()
        .ValidateOnStart();
 
+builder.Services.AddOptions<ReservationOptions>()
+       .Bind(builder.Configuration.GetSection(ReservationOptions.SectionName))
+       .ValidateDataAnnotations()
+       .ValidateOnStart();
+
 // ICurrentUser HttpContext'e erisiyor; bu erisim icin gerekli.
 builder.Services.AddHttpContextAccessor();
 
