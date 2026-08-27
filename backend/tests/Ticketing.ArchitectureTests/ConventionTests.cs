@@ -101,9 +101,24 @@ public class ConventionTests
         // Bu ayrimi yapmak onemli: bir test kirmizi yandiginda refleksle
         // "testi kaldirayim" demek, testin degerini yok eder. Once
         // "kod mu yanlis, kural mi?" diye sorulmali.
+        // ASP.NET Core'un "Handler" ile biten altyapi arayuzleri.
+        //
+        // Bu liste ZAMANLA BUYUYOR ve bu NORMAL:
+        //   Sprint 2'de -> IExceptionHandler       (GlobalExceptionHandler)
+        //   Sprint 5'te -> IAuthorizationHandler   (EventOwnerAuthorizationHandler)
+        //
+        // Her seferinde test kirmizi yaniyor, bakiyoruz, "bu bir CQRS
+        // handler'i degil, framework bileseni" diyip listeye ekliyoruz.
+        //
+        // Bu dongu SAGLIKLI: test her yeni "Handler" sinifini onumuze
+        // getiriyor ve bilincli bir karar vermemizi zorluyor. Kurali
+        // bastan cok gevsek yazsaydik (ornegin yalnizca "CommandHandler"
+        // ile bitenlere baksaydik) yanlis yere konmus gercek bir CQRS
+        // handler'i gozden kacardi.
         var altyapiArayuzleri = new[]
         {
-            typeof(Microsoft.AspNetCore.Diagnostics.IExceptionHandler)
+            typeof(Microsoft.AspNetCore.Diagnostics.IExceptionHandler),
+            typeof(Microsoft.AspNetCore.Authorization.IAuthorizationHandler)
         };
 
         var yanlisYerdekiHandlerlar = Types.InAssemblies(
