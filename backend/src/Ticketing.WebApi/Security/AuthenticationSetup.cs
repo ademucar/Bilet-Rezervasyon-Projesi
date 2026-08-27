@@ -130,23 +130,38 @@ internal static class AuthenticationSetup
 
             // ---- Kaynak bazli politikalar ----
             //
-            // EventOwner, TicketOwner, ReservationOwner su an yalnizca
-            // "giris yapmis olmak" istiyor. Gercek sahiplik kontrolu
-            // handler icinde yapilacak.
+            // PDF Sprint 3: "Resource based authorization uygulanmalidir."
             //
-            // NEDEN? Cunku sahiplik veritabanina bakmadan bilinemez:
-            // "bu etkinlik bu organizatorun mu?" sorusunun cevabi
-            // token'da yok. AuthorizationHandler yazip orada da
-            // veritabanina gidebilirdik ama o zaman ayni sorgu iki kez
-            // calisirdi (bir yetkilendirmede, bir handler'da).
+            // EventOwner artik GERCEK sahiplik kontrolu yapiyor:
+            // EventOwnerAuthorizationHandler veritabanina bakip
+            // "bu etkinlik bu kullanicinin organizator profiline mi ait?"
+            // sorusunu cevapliyor. Admin her zaman gecer.
             //
-            // Sprint 5'te bu politikalari IAuthorizationRequirement ile
-            // gerceklestirecegiz; simdilik iskeleti kuruyoruz ki
-            // controller'lar dogru policy adini kullanmaya bugunden
-            // alissin.
-            .AddPolicy(Policies.EventOwner, policy => policy.RequireAuthenticatedUser())
+            // Rol bazli kontrol bunu YAPAMAZ: token yalnizca "bu kisi
+            // organizator" der, "bu etkinlik onun" demez. O kontrol
+            // olmasaydi her organizator digerlerinin etkinliklerini
+            // duzenleyebilirdi.
+            .AddPolicy(Policies.EventOwner, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new EventOwnerRequirement());
+            })
+            // TicketOwner ve ReservationOwner henuz yalnizca "giris yapmis
+            // ol" istiyor. Sebep: bilet ve rezervasyon Sprint 7-8'de
+            // olusacak; gercek sahiplik kontrollerini o sprintlerde
+            // EventOwner ile ayni kalibi kullanarak yazacagiz.
+            //
+            // Iskeleti simdiden birakiyorum ki controller'lar dogru
+            // policy adini bugunden kullansin ve o gun yalnizca
+            // requirement eklemek yeterli olsun.
             .AddPolicy(Policies.TicketOwner, policy => policy.RequireAuthenticatedUser())
             .AddPolicy(Policies.ReservationOwner, policy => policy.RequireAuthenticatedUser());
+
+        // Handler'i kaydediyorum. Bu satir olmasaydi policy sessizce
+        // BASARISIZ olurdu -- requirement var ama onu degerlendirecek
+        // kimse yok. Herkes 403 alirdi ve sebebi cok gec anlasilirdi.
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
+                              EventOwnerAuthorizationHandler>();
 
         return services;
     }
