@@ -35,6 +35,30 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       },
+
+      // ==============================================================
+      // SIGNALR HUB'I -- PDF Sprint 10
+      // ==============================================================
+      // Bu girdiyi EKLEMEYI UNUTTUM ve gostergemiz sayesinde hemen
+      // yakalandi: ekranda "Canli baglanti yok" yazdi.
+      //
+      // Gosterge olmasaydi harita yine calisirdi (yoklama yedegi
+      // devrede) ve SignalR'in hic baglanmadigini fark etmezdim.
+      // Sprint 10'u "bitti" sanip devam ederdim. Kucuk bir arayuz
+      // parcasinin gercek degeri tam olarak bu.
+      //
+      // ws: true SART -- varsayilan proxy yalnizca HTTP'yi iletir.
+      // SignalR once HTTP ile el sikisip sonra WebSocket'e
+      // YUKSELTIYOR (Upgrade). Bu bayrak olmadan el sikisma
+      // basarili olur, yukseltme sessizce basarisiz olur ve
+      // SignalR daha yavas olan "long polling" moduna duser --
+      // ya da hic baglanamaz.
+      // ==============================================================
+      '/hubs': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 })

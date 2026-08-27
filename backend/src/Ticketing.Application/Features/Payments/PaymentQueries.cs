@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.Payments;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Results;
@@ -139,15 +140,18 @@ internal sealed class RefundPaymentCommandHandler
     private readonly IApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly IDateTimeProvider _clock;
+    private readonly ISeatNotifier _seatNotifier;
 
     public RefundPaymentCommandHandler(
         IApplicationDbContext context,
         IPaymentService paymentService,
-        IDateTimeProvider clock)
+        IDateTimeProvider clock,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _paymentService = paymentService;
         _clock = clock;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result<PaymentDto>> Handle(
@@ -253,6 +257,22 @@ internal sealed class RefundPaymentCommandHandler
         }
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 10: "SeatReleased".
+        //
+        // YALNIZCA TAM IADEDE gonderiyorum. Kismi iadede koltuklar
+        // satilmis kaliyor -- kullanicinin hala gecerli biletleri var.
+        // Kosulsuz gonderseydik, kismi iade sonrasi herkesin
+        // ekraninda koltuklar bosalmis gorunur ama sunucu
+        // rezervasyonu reddederdi. Ekran ile gercek arasindaki bu
+        // ayrilik, kullanicinin sisteme guvenini bitirir.
+        if (payment.GetRefundableAmount().Amount == 0)
+        {
+            await _seatNotifier.SeatsReleasedAsync(
+                reservation.EventSessionId,
+                reservation.Items.Select(i => i.EventSeatId).ToList(),
+                cancellationToken).ConfigureAwait(false);
+        }
 
         var dto = await _context.Payments
             .Where(p => p.Id == payment.Id)

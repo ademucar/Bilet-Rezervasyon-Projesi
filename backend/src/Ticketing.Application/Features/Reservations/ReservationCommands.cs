@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Options;
@@ -23,11 +24,16 @@ internal sealed class CancelReservationCommandHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUser _currentUser;
+    private readonly ISeatNotifier _seatNotifier;
 
-    public CancelReservationCommandHandler(IApplicationDbContext context, ICurrentUser currentUser)
+    public CancelReservationCommandHandler(
+        IApplicationDbContext context,
+        ICurrentUser currentUser,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _currentUser = currentUser;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
@@ -81,6 +87,14 @@ internal sealed class CancelReservationCommandHandler
         }
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 10: "SeatReleased".
+        // Vazgecen kullanicinin koltuklari, oturumu izleyen herkeste
+        // aninda yesile donuyor.
+        await _seatNotifier.SeatsReleasedAsync(
+            reservation.EventSessionId,
+            reservation.Items.Select(i => i.EventSeatId).ToList(),
+            cancellationToken).ConfigureAwait(false);
 
         return Result.Success();
     }
@@ -194,11 +208,16 @@ internal sealed class ExpireReservationsCommandHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly IDateTimeProvider _clock;
+    private readonly ISeatNotifier _seatNotifier;
 
-    public ExpireReservationsCommandHandler(IApplicationDbContext context, IDateTimeProvider clock)
+    public ExpireReservationsCommandHandler(
+        IApplicationDbContext context,
+        IDateTimeProvider clock,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _clock = clock;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result<int>> Handle(
@@ -291,6 +310,35 @@ internal sealed class ExpireReservationsCommandHandler
         if (expired.Count > 0)
         {
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+            // ==========================================================
+            // PDF is kurali: "Rezervasyon suresi doldugunda koltuk
+            // serbest gorunmelidir."
+            // ==========================================================
+            // Bu, Sprint 10'un en gorunur faydasi. SignalR olmasaydi
+            // kullanicinin bosalan koltugu gormesi icin sayfayi
+            // yenilemesi gerekirdi -- ya da Sprint 7'de koydugum
+            // 10 saniyelik yoklamayi beklemesi.
+            //
+            // IKI AYRI OLAY gonderiyorum:
+            //   SeatReleased      -> oturumu izleyen HERKESE
+            //   ReservationExpired -> "senin rezervasyonun bitti"
+            //
+            // Tek olayda birlestirseydik, rezervasyon sahibi kendi
+            // rezervasyonunun mu yoksa baskasininkinin mi bittigini
+            // ayirt edemezdi.
+            foreach (var reservation in expired)
+            {
+                await _seatNotifier.SeatsReleasedAsync(
+                    reservation.EventSessionId,
+                    reservation.Items.Select(i => i.EventSeatId).ToList(),
+                    cancellationToken).ConfigureAwait(false);
+
+                await _seatNotifier.ReservationExpiredAsync(
+                    reservation.EventSessionId,
+                    reservation.Id,
+                    cancellationToken).ConfigureAwait(false);
+            }
         }
 
         return Result.Success(expired.Count);

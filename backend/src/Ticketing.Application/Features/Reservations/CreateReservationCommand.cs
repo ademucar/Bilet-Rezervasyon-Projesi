@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Options;
@@ -90,17 +91,20 @@ internal sealed class CreateReservationCommandHandler
     private readonly ICurrentUser _currentUser;
     private readonly IDateTimeProvider _clock;
     private readonly ReservationOptions _options;
+    private readonly ISeatNotifier _seatNotifier;
 
     public CreateReservationCommandHandler(
         IApplicationDbContext context,
         ICurrentUser currentUser,
         IDateTimeProvider clock,
-        IOptions<ReservationOptions> options)
+        IOptions<ReservationOptions> options,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _currentUser = currentUser;
         _clock = clock;
         _options = options.Value;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result<ReservationDto>> Handle(
@@ -320,6 +324,27 @@ internal sealed class CreateReservationCommandHandler
 
             return Result.Failure<ReservationDto>(ReservationErrors.SeatConflict);
         }
+
+        // ==============================================================
+        // GERCEK ZAMANLI BILDIRIM -- PDF Sprint 10: "SeatLocked"
+        // ==============================================================
+        // SaveChangesAsync'ten SONRA cagriliyor. Bu sira ZORUNLU.
+        //
+        // Once bildirseydik ve kayit DbUpdateConcurrencyException ile
+        // basarisiz olsaydi, oturumu izleyen herkes koltugu KILITLI
+        // gorurdu -- oysa koltuk bosta. Kimse alamazdi ve kimse
+        // nedenini anlayamazdi.
+        //
+        // Commit sonrasi bildirmek, "gordugunu soyle" ilkesi:
+        // yalnizca GERCEKLESMIS bir seyi duyuruyoruz.
+        //
+        // PDF is kurali: "Bir koltuk baska kullanici tarafindan
+        // secildiginde ekran guncellenmelidir."
+        // ==============================================================
+        await _seatNotifier.SeatsLockedAsync(
+            request.EventSessionId,
+            seats.ConvertAll(s => s.Id),
+            cancellationToken).ConfigureAwait(false);
 
         return await LoadDtoAsync(reservation.Id, now, cancellationToken).ConfigureAwait(false);
     }

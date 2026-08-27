@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Enums;
@@ -323,8 +324,13 @@ internal sealed class EventStatusCommandHandler
       IRequestHandler<CancelEventCommand, Result>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ISeatNotifier _seatNotifier;
 
-    public EventStatusCommandHandler(IApplicationDbContext context) => _context = context;
+    public EventStatusCommandHandler(IApplicationDbContext context, ISeatNotifier seatNotifier)
+    {
+        _context = context;
+        _seatNotifier = seatNotifier;
+    }
 
     public async Task<Result> Handle(SubmitEventForApprovalCommand request, CancellationToken cancellationToken)
     {
@@ -371,7 +377,10 @@ internal sealed class EventStatusCommandHandler
 
     public async Task<Result> Handle(CancelEventCommand request, CancellationToken cancellationToken)
     {
+        // Oturumlari da yukluyorum: iptal bildirimini oturum GRUPLARINA
+        // gonderecegiz ve bunun icin kimliklerine ihtiyacimiz var.
         var evt = await _context.Events
+            .Include(e => e.Sessions)
             .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)
             .ConfigureAwait(false);
 
@@ -407,6 +416,29 @@ internal sealed class EventStatusCommandHandler
                 request.Reason))));
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // ==============================================================
+        // PDF Sprint 10: "EventCancelled"
+        // ==============================================================
+        // Sprint 9'da AYNI olay icin Outbox'a da yaziyoruz. Ikisi
+        // birden gereksiz gorunebilir; degil, cunku farkli hedefleri
+        // var:
+        //
+        //   SignalR -> SU AN o oturumun koltuk haritasina bakan
+        //              kisiler. Bilet almak uzereler; bosuna koltuk
+        //              secmelerini engelliyoruz.
+        //
+        //   Outbox  -> BILETI OLAN herkes. Ekranda olsun olmasin,
+        //              kalici bir bildirim ve e-posta aliyorlar.
+        //
+        // SignalR kaybolursa telafisi var (yeniden baglantida liste
+        // cekiliyor); Outbox kaybolamaz. Sprint 9 belgesinde
+        // ayrintili yazdim.
+        await _seatNotifier.EventCancelledAsync(
+            evt.Sessions.Select(x => x.Id).ToList(),
+            evt.Id,
+            evt.Title,
+            cancellationToken).ConfigureAwait(false);
 
         // NOT (Sprint 8): Iptal edilen etkinligin aktif rezervasyonlarinin
         // iptali ve biletlerin iadesi BURADA yapilmiyor.

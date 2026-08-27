@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.Payments;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Results;
@@ -264,15 +265,18 @@ internal sealed class CompletePaymentCommandHandler
     private readonly IApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly IDateTimeProvider _clock;
+    private readonly ISeatNotifier _seatNotifier;
 
     public CompletePaymentCommandHandler(
         IApplicationDbContext context,
         IPaymentService paymentService,
-        IDateTimeProvider clock)
+        IDateTimeProvider clock,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _paymentService = paymentService;
         _clock = clock;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result<PaymentDto>> Handle(
@@ -440,6 +444,25 @@ internal sealed class CompletePaymentCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        // ==============================================================
+        // PDF Sprint 10: "SeatSold"
+        // ==============================================================
+        // PDF is kurali: "Satilan koltuk yeniden secilememelidir."
+        //
+        // SeatLocked yerine AYRI bir olay gonderiyorum cunku istemci
+        // icin anlamlari farkli:
+        //
+        //   Locked -> 10 dakika sonra bosalabilir, umut var
+        //   Sold   -> bir daha asla bosalmayacak
+        //
+        // Istemci bu ayrimi bilmeden dogru rengi ve tiklanabilirligi
+        // secemezdi. Tek olay gonderseydik, satilan koltuk sureli
+        // kilit gibi gorunur ve kullanici bosalmasini beklerdi.
+        await _seatNotifier.SeatsSoldAsync(
+            reservation.EventSessionId,
+            reservation.Items.Select(i => i.EventSeatId).ToList(),
+            cancellationToken).ConfigureAwait(false);
+
         return await LoadAsync(payment.Id, cancellationToken).ConfigureAwait(false);
     }
 
@@ -467,11 +490,16 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
 {
     private readonly IApplicationDbContext _context;
     private readonly IDateTimeProvider _clock;
+    private readonly ISeatNotifier _seatNotifier;
 
-    public FailPaymentCommandHandler(IApplicationDbContext context, IDateTimeProvider clock)
+    public FailPaymentCommandHandler(
+        IApplicationDbContext context,
+        IDateTimeProvider clock,
+        ISeatNotifier seatNotifier)
     {
         _context = context;
         _clock = clock;
+        _seatNotifier = seatNotifier;
     }
 
     public async Task<Result> Handle(FailPaymentCommand request, CancellationToken cancellationToken)
@@ -530,6 +558,14 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
             reservation.Id));
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 10: "SeatReleased".
+        // Basarisiz odemede koltuklar hemen satisa donuyor; bekleyen
+        // kullanicilarin ekraninda aninda yesile ceviriyoruz.
+        await _seatNotifier.SeatsReleasedAsync(
+            reservation.EventSessionId,
+            reservation.Items.Select(i => i.EventSeatId).ToList(),
+            cancellationToken).ConfigureAwait(false);
 
         return Result.Success();
     }

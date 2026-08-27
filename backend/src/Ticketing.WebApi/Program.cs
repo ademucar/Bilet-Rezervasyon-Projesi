@@ -1,3 +1,5 @@
+using Ticketing.Application.Abstractions.RealTime;
+using Ticketing.WebApi.Hubs;
 using Hangfire;
 using Ticketing.Infrastructure.BackgroundJobs;
 using Asp.Versioning;
@@ -94,6 +96,23 @@ builder.Services.AddHealthChecks();
 // ===================================================================
 builder.Services.AddBackgroundJobs(builder.Configuration);
 
+// ===================================================================
+// GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
+// ===================================================================
+builder.Services.AddSignalR(options =>
+{
+    // Gelistirmede ayrintili hata dondur.
+    //
+    // Uretimde KAPALI kalmali: istisna ayrintilari (yigin izi, tip
+    // adlari, dosya yollari) istemciye gitmemeli. Bu, ic yapiyi
+    // saldirgana anlatmak olurdu.
+    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+});
+
+// Singleton: IHubContext zaten singleton ve bu sinif durum tutmuyor.
+// Scoped yapsaydik her istekte gereksiz nesne uretilirdi.
+builder.Services.AddSingleton<ISeatNotifier, SignalRSeatNotifier>();
+
 var app = builder.Build();
 
 // ===================================================================
@@ -149,6 +168,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+
+// ===================================================================
+// KOLTUK HUB'I -- PDF Sprint 10
+// ===================================================================
+// Adres frontend'deki VITE proxy'siyle eslesiyor: /hubs/seats
+app.MapHub<SeatHub>("/hubs/seats");
 
 // ===================================================================
 // HANGFIRE IZLEME EKRANI -- PDF Sprint 9

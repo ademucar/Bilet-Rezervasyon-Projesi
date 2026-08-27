@@ -1,7 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SiteHeader } from '../../../components/layout/SiteHeader'
+import { ConnectionIndicator } from '../components/ConnectionIndicator'
+import { useSeatHub } from '../hooks/useSeatHub'
 import { SeatMap, type SeatMapSection } from '../../../components/seatmap/SeatMap'
 import { Alert } from '../../../components/ui/Alert'
 import { Button } from '../../../components/ui/Button'
@@ -11,6 +13,7 @@ import {
   bookingApi,
   EventSeatStatus,
   newIdempotencyKey,
+  type SeatAvailability,
   type SeatAvailabilityItem,
 } from '../api/bookingApi'
 
@@ -77,30 +80,146 @@ export function SeatSelectionPage() {
   // O(1).
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set())
 
+  /** Etkinlik canli olarak iptal edildiyse gosterilecek uyari. */
+  const [cancelledTitle, setCancelledTitle] = useState<string | null>(null)
+
+  // ================================================================
+  // GELEN OLAYI ONBELLEGE ISLE -- PDF: "Gercek zamanli koltuk
+  // guncelleme"
+  // ================================================================
+  // Olay geldiginde sunucudan listeyi TEKRAR CEKMIYORUZ, elimizdeki
+  // onbellegi YAMALIYORUZ.
+  //
+  // Neden? Populer bir konserde saniyede birkac olay gelir. Her
+  // olayda tam listeyi cekseydik (2000 koltuk, ~200 KB) sunucuyu
+  // yoklamadan bile beter yorardik -- SignalR'in butun kazanci
+  // giderdi.
+  //
+  // Yamalama ile tek bir koltugun durumu degisiyor ve React
+  // yalnizca o <rect>'i yeniden ciziyor.
+  //
+  // setQueryData ile YENI nesneler uretiyorum (yayma operatoru),
+  // mevcut diziyi degistirmiyorum. Yerinde degistirseydim React
+  // referansin ayni oldugunu gorup EKRANI HIC GUNCELLEMEZDI --
+  // sessizce calismayan bir arayuz olurdu.
+  // ================================================================
+  const patchSeatStatus = useCallback(
+    (eventSeatIds: string[], newStatus: number) => {
+      queryClient.setQueryData<SeatAvailability>(
+        ['seat-availability', sessionId],
+        (previous) => {
+          if (!previous) {
+            // Liste henuz yuklenmemis. Olayi atlamak guvenli:
+            // birazdan gelecek ilk cekimde zaten guncel durum var.
+            return previous
+          }
+
+          const hedef = new Set(eventSeatIds)
+          let degisti = false
+
+          const seats = previous.seats.map((seat) => {
+            if (!hedef.has(seat.eventSeatId) || seat.status === newStatus) {
+              return seat
+            }
+
+            degisti = true
+
+            return { ...seat, status: newStatus }
+          })
+
+          // Hicbir sey degismediyse ESKI nesneyi aynen donuyorum.
+          //
+          // Yeni nesne donseydik React "veri degisti" deyip tum
+          // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
+          // icin bosuna bir is.
+          if (!degisti) {
+            return previous
+          }
+
+          return {
+            ...previous,
+            seats,
+
+            // Bos koltuk sayacini da guncelliyorum.
+            //
+            // Unutsaydik baslikta "65 / 68 koltuk bos" yazarken
+            // haritada 60 bos koltuk gorunurdu. Kucuk ama
+            // kullanicinin sisteme guvenini sarsan turden bir
+            // tutarsizlik.
+            availableSeats: seats.filter((x) => x.status === EventSeatStatus.Available).length,
+          }
+        },
+      )
+    },
+    [queryClient, sessionId],
+  )
+
+  const hubStatus = useSeatHub(sessionId || undefined, {
+    onSeatsLocked: (ids) => patchSeatStatus(ids, EventSeatStatus.Locked),
+    onSeatsReleased: (ids) => patchSeatStatus(ids, EventSeatStatus.Available),
+    onSeatsSold: (ids) => patchSeatStatus(ids, EventSeatStatus.Sold),
+
+    // ReservationExpired bu ekranda haritayi ETKILEMIYOR.
+    //
+    // Cunku sunucu ayni anda SeatReleased de gonderiyor ve koltuklari
+    // asil bosaltan o. Burada ikinci kez islem yapmak gereksiz olurdu.
+    //
+    // Peki neden dinliyoruz? Cunku olay, rezervasyon SAHIBI icin
+    // anlamli: kendi rezervasyonunun bittigini ogreniyor. O ekran
+    // (ReservationPage) sunucunun verdigi saniyeden geri sayiyor ve
+    // sifirlaninca sunucuya soruyor -- ayni sonuca oradan variyor.
+    onReservationExpired: () => {},
+
+    // PDF olayi: EventCancelled.
+    //
+    // Kullanici tam koltuk secerken etkinlik iptal edilirse, secime
+    // devam etmesinin anlami yok. Uyariyi ANINDA gostermek, bosuna
+    // koltuk secip rezervasyonda hata almasindan iyi.
+    onEventCancelled: (title) => setCancelledTitle(title),
+
+    // PDF: "Guncel koltuk listesini yeniden cekme"
+    //
+    // Baglanti kopukken gecen surede kacirdigimiz olaylar var ve
+    // SignalR onlari biriktirmiyor. Yamalama ile telafi edemeyiz --
+    // neyi kacirdigimizi bilmiyoruz. Tek dogru yol tam listeyi
+    // bastan cekmek.
+    onReconnected: () => {
+      void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
+    },
+  })
+
   const availabilityQuery = useQuery({
     queryKey: ['seat-availability', sessionId],
     queryFn: () => bookingApi.getSeatAvailability(sessionId),
     enabled: sessionId.length > 0,
 
     // ==============================================================
-    // NEDEN 10 SANIYEDE BIR YENILIYORUZ?
+    // YOKLAMA ARTIK ASIL YOL DEGIL, YEDEK -- PDF Sprint 10
     // ==============================================================
-    // Koltuk uygunlugu, uygulamadaki EN HIZLI degisen veri. Populer
-    // bir konserde sayfa acikken saniyeler icinde onlarca koltuk
-    // baskasi tarafindan kilitlenir.
+    // Sprint 7'de buraya sabit 10 saniyelik bir yoklama koymus ve
+    // su notu birakmistim:
     //
-    // Yenilemeseydik kullanici 5 dakika once cekilmis bir haritaya
-    // bakip dolu bir koltugu secer ve 409 yerdi. Teknik olarak
-    // sistem dogru calisirdi ama kullanici "bu site bozuk" derdi.
+    //   "Bu bir GECICI cozum. Sprint 10'da SignalR gelecek ve
+    //    o zaman bu satir KALDIRILACAK."
     //
-    // Neden 10 saniye? 1 saniye sunucuyu gereksiz yorar (her
-    // kullanici dakikada 60 istek); 60 saniye ise cok gec kalir.
+    // Sprint 10 geldi ve satiri TAMAMEN KALDIRMADIM. Fikrimi
+    // degistiren sey su: SignalR baglantisi HER ZAMAN kurulamiyor.
+    // Kurumsal aglar WebSocket'i engelleyebiliyor, vekil sunucular
+    // uzun baglantilari kesebiliyor, kullanicinin interneti
+    // gidebiliyor.
     //
-    // NOT: Bu bir GECICI cozum. PDF Sprint 10'da SignalR gelecek ve
-    // sunucu degisiklikleri ANINDA itecek. O zaman bu satir
-    // kaldirilacak -- yoklama (polling) yerine olay tabanli olacak.
+    // Yoklamayi tamamen silseydik, bu durumlarda koltuk haritasi
+    // TAMAMEN DONARDI -- Sprint 7'deki halinden bile kotu olurdu.
+    //
+    // Cozum: yoklama SignalR calisirken KAPALI, calismazken ACIK.
+    //
+    //   canli baglanti var  -> false (yoklama yok, olaylar geliyor)
+    //   canli baglanti yok  -> 10 saniye (Sprint 7 davranisi)
+    //
+    // Yani en iyi durumda gercek zamanli, en kotu durumda eskisi
+    // kadar iyi. "Zarif bozulma" (graceful degradation) denen sey.
     // ==============================================================
-    refetchInterval: 10_000,
+    refetchInterval: hubStatus === 'connected' ? false : 10_000,
 
     // staleTime'i 0'a cekiyorum. App.tsx'te varsayilan 60 saniye ve
     // o deger burada YANLIS olurdu: yenileme istegi gitse bile
@@ -331,13 +450,37 @@ export function SeatSelectionPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Koltuk secimi</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold text-slate-900">Koltuk secimi</h1>
+
+          {/* PDF Sprint 10: "Baglanti durumu gostergesi" */}
+          <ConnectionIndicator status={hubStatus} />
+        </div>
 
         {availabilityQuery.data && (
           <p className="mt-1 text-sm text-slate-500">
             {formatDateTime(availabilityQuery.data.startDate)} &middot;{' '}
             {availabilityQuery.data.availableSeats} / {availabilityQuery.data.totalSeats} koltuk bos
           </p>
+        )}
+
+        {/* PDF Sprint 10 olayi: EventCancelled.
+            Kullanici koltuk secerken etkinlik iptal edilirse aninda
+            haber veriyoruz -- rezervasyonda hata almasini beklemeden. */}
+        {cancelledTitle && (
+          <div className="mt-4">
+            <Alert variant="error">
+              <strong>{cancelledTitle}</strong> etkinligi az once iptal edildi.
+              Bu oturum icin bilet alinamaz.{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/etkinlikler')}
+                className="font-medium underline"
+              >
+                Etkinliklere don
+              </button>
+            </Alert>
+          </div>
         )}
 
         {lostSeats.length > 0 && (
