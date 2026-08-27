@@ -1,3 +1,5 @@
+using Hangfire;
+using Ticketing.Infrastructure.BackgroundJobs;
 using Asp.Versioning;
 using Ticketing.Application;
 using Ticketing.Application.Abstractions.Security;
@@ -87,6 +89,11 @@ builder.Services.AddProblemDetails(options =>
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks();
 
+// ===================================================================
+// ARKA PLAN ISLERI -- PDF Sprint 9
+// ===================================================================
+builder.Services.AddBackgroundJobs(builder.Configuration);
+
 var app = builder.Build();
 
 // ===================================================================
@@ -142,6 +149,45 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+
+// ===================================================================
+// HANGFIRE IZLEME EKRANI -- PDF Sprint 9
+// ===================================================================
+// UseAuthentication/UseAuthorization SONRASINA konuldu.
+//
+// Once konsaydi, filtre calistiginda HttpContext.User henuz
+// doldurulmamis olurdu: admin olan kullanici bile panele
+// giremezdi ve sebebi anlasilmazdi.
+// ===================================================================
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = [new HangfireDashboardAuthorizationFilter()],
+
+    // Panelden is SILME ve YENIDEN CALISTIRMA yetkisi.
+    //
+    // Acik birakiyorum cunku bir mesaj dead letter oldugunda
+    // adminin sorunu duzeltip yeniden denemesi gerekiyor -- panelin
+    // asil faydasi bu.
+    //
+    // Erisim zaten Admin roluyle sinirli; salt okunur yapsaydik
+    // dead letter mesajlari icin elle SQL yazmak gerekirdi ki
+    // uretimde cok daha risklidir.
+    IsReadOnlyFunc = _ => false,
+
+    // Panelin kendi "olcum" sayfalarini kapatiyorum: sunucu adi,
+    // makine adi gibi bilgileri gereksiz yere yaymanin anlami yok.
+    DisplayStorageConnectionString = false
+});
+
+// ===================================================================
+// TEKRARLANAN ISLERI KAYDET
+// ===================================================================
+// Uygulama AYAGA KALKTIKTAN SONRA cagiriliyor.
+//
+// builder asamasinda yapsaydik Hangfire deposu (storage) henuz
+// hazir olmazdi ve kayit sirasinda istisna alirdik.
+BackgroundJobSetup.RegisterRecurringJobs(
+    app.Services.GetRequiredService<IRecurringJobManager>());
 
 await app.RunAsync();
 

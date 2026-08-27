@@ -1,7 +1,9 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Ticketing.Application.Abstractions.Messaging;
 using Ticketing.Application.Behaviors;
+using Ticketing.Application.Features.Outbox;
 
 namespace Ticketing.Application;
 
@@ -41,6 +43,40 @@ public static class DependencyInjection
 
         // Bu assembly'deki tum AbstractValidator siniflarini kaydeder.
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
+
+        // ==============================================================
+        // OUTBOX ISLEYICILERI -- PDF Sprint 9
+        // ==============================================================
+        // Bu kaydi ONCE Infrastructure'a yazmistim; derlenmedi, cunku
+        // isleyiciler `internal`. Hatayi gorunce iki secenegim vardi:
+        //
+        //   A) Isleyicileri public yapmak
+        //   B) Kaydi bu katmana tasimak            <-- SECILEN
+        //
+        // (A) yanlis olurdu: bu siniflar disaridan cagrilmak icin
+        // degil, IOutboxMessageHandler arayuzu uzerinden calismak
+        // icin var. public yapmak, baska bir katmanin onlari
+        // dogrudan cagirabilmesi demekti.
+        //
+        // Derleyici burada mimariyi KORUDU: "Application'in ic
+        // detayini disaridan kullanamazsin" dedi ve hakliydi.
+        // Kaydi ait oldugu yere tasimak dogru cozum.
+        //
+        // Scoped: hepsi IApplicationDbContext kullaniyor ve o scoped.
+        // Singleton yapsaydik "captive dependency" olusurdu --
+        // uygulama omru boyunca yasayan tek bir DbContext.
+        //
+        // Assembly taramasi yerine ACIKCA yaziyorum: bir isleyici
+        // eklendiginde bu listeye de eklenmesi gerektigi belli olsun.
+        // Unutulursa processor "kayitli isleyici yok" hatasi verip
+        // dead letter'a dusurur; sessizce kaybolmaz.
+        // ==============================================================
+        services.AddScoped<IOutboxMessageHandler, TicketsIssuedOutboxHandler>();
+        services.AddScoped<IOutboxMessageHandler, PaymentSucceededOutboxHandler>();
+        services.AddScoped<IOutboxMessageHandler, ReservationExpiredOutboxHandler>();
+        services.AddScoped<IOutboxMessageHandler, EventCancelledOutboxHandler>();
+        services.AddScoped<IOutboxMessageHandler, EventReminderOutboxHandler>();
+        services.AddScoped<IOutboxMessageHandler, DailySalesSummaryOutboxHandler>();
 
         return services;
     }

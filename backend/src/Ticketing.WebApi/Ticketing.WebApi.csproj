@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Hangfire.AspNetCore" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

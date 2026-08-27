@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,8 @@ using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Enums;
+using Ticketing.Application.Features.Outbox;
+using Ticketing.Domain.Entities;
 using EventEntity = Ticketing.Domain.Entities.Event;
 
 namespace Ticketing.Application.Features.Events;
@@ -378,6 +381,30 @@ internal sealed class EventStatusCommandHandler
         }
 
         evt.Cancel(request.Reason);
+
+        // ==============================================================
+        // BILDIRIM OUTBOX'A -- PDF Sprint 9: "Etkinlik iptal bildirimi"
+        // ==============================================================
+        // Iptali AYNI transaction icinde kuyruga aliyoruz.
+        //
+        // Bunu tek basina onemli kilan sey olcek: 2000 kisilik bir
+        // konser iptal edildiginde 2000 bildirim yazilacak. Bunu
+        // burada yapsaydik, admin "iptal et" butonuna bastiktan sonra
+        // tarayici dakikalarca beklerdi -- ve zaman asimina ugrarsa
+        // iptal islemi geri alinir, etkinlik iptal edilmemis olurdu.
+        //
+        // Outbox'a tek satir yazmak ise aninda. Bildirimlerin
+        // dagitimini arka plan job'i, kimseyi bekletmeden yapiyor.
+        //
+        // PDF: "Job islemleri kullanici istegini gereksiz yere
+        // bekletmemelidir."
+        // ==============================================================
+        _context.OutboxMessages.Add(OutboxMessage.Create(
+            OutboxMessageTypes.EventCancelled,
+            JsonSerializer.Serialize(new EventCancelledPayload(
+                evt.Id,
+                evt.Title,
+                request.Reason))));
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

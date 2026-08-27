@@ -7,6 +7,7 @@ using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Results;
+using Ticketing.Application.Features.Outbox;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
 using Ticketing.Domain.ValueObjects;
@@ -413,16 +414,29 @@ internal sealed class CompletePaymentCommandHandler
         //
         // Job Sprint 9'da yazilacak; mesajlar o zamana kadar tabloda
         // birikecek ve islenecek.
+        // Sprint 9 notu: Bu iki mesaj AYRI cunku ayri seyler yapiyorlar
+        // ve BIRBIRINDEN BAGIMSIZ basarisiz olabilmeliler.
+        //
+        // Tek mesaj olsaydi ve e-posta gonderimi basarisiz olsaydi,
+        // uygulama ici bildirim de yeniden denenirdi -- kullanici
+        // bildirimi iki kez gorurdu. Ayirinca her biri kendi
+        // RetryCount'unu tutuyor.
         _context.OutboxMessages.Add(OutboxMessage.Create(
-            type: "TicketsIssued",
-            payload: JsonSerializer.Serialize(new
-            {
-                ReservationId = reservation.Id,
-                UserId = reservation.UserId,
-                PaymentId = payment.Id,
-                TicketIds = tickets.Select(t => t.Id).ToList()
-            }),
-            correlationId: null));
+            OutboxMessageTypes.TicketsIssued,
+            JsonSerializer.Serialize(new TicketsIssuedPayload(
+                reservation.Id,
+                reservation.UserId,
+                payment.Id,
+                tickets.Select(t => t.Id).ToList()))));
+
+        _context.OutboxMessages.Add(OutboxMessage.Create(
+            OutboxMessageTypes.PaymentSucceeded,
+            JsonSerializer.Serialize(new PaymentSucceededPayload(
+                payment.Id,
+                reservation.Id,
+                reservation.UserId,
+                payment.Amount.Amount,
+                payment.Amount.Currency))));
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

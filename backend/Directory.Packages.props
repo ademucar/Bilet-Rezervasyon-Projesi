@@ -14,10 +14,37 @@
   -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+    <!--
+      GECISLI (transitive) BAGIMLILIKLARI DA BURADAN SABITLE.
+
+      Sprint 9'da Hangfire eklerken sorun cikti: Hangfire.Core,
+      Newtonsoft.Json 11.0.1'e bagli ve o surumde YUKSEK onem
+      derecesinde bir guvenlik acigi var (GHSA-5crp-9r3c-p9vr:
+      derin ic ice JSON ile StackOverflow -> servis disi birakma).
+
+      "dotnet list package -vulnerable -include-transitive" bunu
+      yakaladi. Bilinen acigi olan bir paketi projeye almak, kendi
+      kodumuzda acik birakmakla ayni sey.
+
+      Bu ozellik acikken, asagida <PackageVersion> ile yazdigimiz
+      surum GECISLI bagimliliklara da uygulanir. Boylece Hangfire
+      11.0.1 istese bile yamali 13.0.3 kullanilir.
+
+      MailKit'te (Sprint 14 notu) durum farkliydi: orada HICBIR
+      surumde yama yoktu, bu yuzden paketi hic almadim. Burada yama
+      VAR; dogru cozum paketi reddetmek degil, yamayi zorlamak.
+    -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <!-- ===================== WEB API ===================== -->
   <ItemGroup>
     <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.24" />
+    <PackageVersion Include="Hangfire.Core" Version="1.8.24" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
+    <!-- Hangfire.Core icin gecisli sabitleme. Yukaridaki aciklamaya bakin. -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
@@ -30,8 +57,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.11" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.11" />
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.11" />
     <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />

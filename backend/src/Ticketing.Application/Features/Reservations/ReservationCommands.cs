@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -6,6 +7,8 @@ using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Options;
 using Ticketing.Application.Common.Results;
+using Ticketing.Application.Features.Outbox;
+using Ticketing.Domain.Entities;
 
 namespace Ticketing.Application.Features.Reservations;
 
@@ -218,6 +221,13 @@ internal sealed class ExpireReservationsCommandHandler
         var expired = await _context.Reservations
             .Include(r => r.Items)
                 .ThenInclude(i => i.EventSeat)
+
+            // Etkinlik basligi, Outbox mesajinin icerigi icin gerekli.
+            // Include etmeseydik her rezervasyon icin ayri bir sorgu
+            // atilirdi (N+1) -- 100 rezervasyonluk bir partide 100
+            // fazladan gidis donus.
+            .Include(r => r.EventSession)
+                .ThenInclude(s => s.Event)
             .Where(r => (r.Status == Domain.Enums.ReservationStatus.Locked
                       || r.Status == Domain.Enums.ReservationStatus.PaymentPending)
                      && r.ExpiresAt <= now)
@@ -247,6 +257,35 @@ internal sealed class ExpireReservationsCommandHandler
                     item.EventSeat.Release();
                 }
             }
+
+            // ==========================================================
+            // BILDIRIMI BURADA GONDERMIYORUZ -- OUTBOX'A YAZIYORUZ
+            // ==========================================================
+            // PDF Sprint 9: "Rezervasyon suresi doldu bildirimi"
+            // Outbox senaryolari arasinda.
+            //
+            // Neden dogrudan e-posta gondermiyorum? Cunku bu bir
+            // DONGU icinde: 100 rezervasyonluk bir partide 100
+            // e-posta gonderimi demek. SMTP sunucusu yavassa (her
+            // biri 2 saniye) job 3 dakika surer, bu sirada bir
+            // sonraki calisma baslayamaz ve suresi dolan yeni
+            // rezervasyonlar temizlenmeden bekler.
+            //
+            // Yani KOLTUKLAR BOSA BEKLER -- dogrudan gelir kaybi.
+            //
+            // Outbox'a yazmak ise sadece bir INSERT: mikrosaniyeler.
+            // Gonderim isi ayri bir job'a devrediliyor.
+            // PDF: "Job islemleri kullanici istegini gereksiz yere
+            // bekletmemelidir."
+            // ==========================================================
+            _context.OutboxMessages.Add(OutboxMessage.Create(
+                OutboxMessageTypes.ReservationExpired,
+                JsonSerializer.Serialize(new ReservationExpiredPayload(
+                    reservation.Id,
+                    reservation.UserId,
+                    reservation.ReservationCode,
+                    reservation.EventSession.Event.Title,
+                    reservation.Items.Count))));
         }
 
         if (expired.Count > 0)

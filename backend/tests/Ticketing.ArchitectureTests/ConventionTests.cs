@@ -149,11 +149,27 @@ public class ConventionTests
         // hem niyeti acikca belirtir hem de JIT'in metod cagrilarini
         // devirtualize etmesine izin vererek kucuk bir performans kazandirir.
         //
-        // Not: Bu test su an hic handler olmadigi icin bos gecer. Sprint 3'te
-        // ilk handler'i yazdigimizda anlam kazanacak. Simdiden yaziyorum ki
-        // ilk handler yanlis yazildiginda hemen fark edelim.
+        // ------------------------------------------------------------------
+        // BU TEST SPRINT 9'DA KIRMIZI YANDI -- YINE KURAL FAZLA GENISTI
+        // ------------------------------------------------------------------
+        // Sprint 9'da IOutboxMessageHandler arayuzunu ekleyince test
+        // basarisiz oldu: "IOutboxMessageHandler sealed degil".
+        //
+        // Elbette degil -- ARAYUZLER SEALED OLAMAZ. Bir arayuzu sealed
+        // yapmak dilde mumkun degildir ve zaten anlamsizdir: arayuzun
+        // varlik sebebi uygulanabilmesidir.
+        //
+        // Yani kod dogruydu, kural yine fazla genisti. Kurali daralttim:
+        // yalnizca SINIFLARA bakiyor.
+        //
+        // Bu, ayni dosyada ucuncu daraltma (bkz. yukaridaki
+        // altyapiArayuzleri listesi). Her seferinde ayni soruyu
+        // soruyorum: "kod mu yanlis, kural mi?" Ve her seferinde
+        // testi silmek yerine kurali kesinlestiriyorum. Boylece test
+        // gercek ihlalleri yakalamaya devam ediyor.
         var sonuc = Types.InAssembly(Ticketing.Application.AssemblyReference.Assembly)
-            .That().HaveNameEndingWith("Handler")
+            .That().AreClasses()
+            .And().HaveNameEndingWith("Handler")
             .Should().BeSealed()
             .GetResult();
 
