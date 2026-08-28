@@ -123,7 +123,10 @@ builder.Services.AddObservability(
 // ===================================================================
 
 // ---- Istek hizi sinirlama ----
-builder.Services.AddRateLimiting();
+// Varsayilan acik; yalnizca yapilandirma acikca "false" derse
+// kapaniyor (entegrasyon testleri icin -- bkz. RateLimitingSetup).
+builder.Services.AddRateLimiting(
+    builder.Configuration.GetValue("RateLimiting:Enabled", defaultValue: true));
 
 // ---- CORS ----
 //

@@ -208,6 +208,49 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <!--
+      ENTEGRASYON TESTI ALTYAPISI (PDF Sprint 17)
+
+      Testcontainers: testler sirasinda GERCEK PostgreSQL ve Redis
+      kapsayicilari baslatiyor.
+
+      Neden InMemory saglayici degil?
+      EF Core InMemory bir veritabani DEGIL, bir sozluk. Bizim en
+      kritik davranisimiz olan xmin tabanli iyimser eszamanlilik
+      orada HIC calismaz - yani "ayni koltugu iki kullanici alamaz"
+      testi InMemory ile YESIL doner ama hicbir sey kanitlamaz.
+      PDF de zaten gercek kapsayici istiyor.
+
+      Mvc.Testing: uygulamayi bellek ici bir sunucuda ayaga kaldirip
+      gercek HTTP istekleri atmamizi sagliyor. Middleware, kimlik
+      dogrulama, model baglama, hata isleyici - hepsi devrede.
+
+      Respawn: her testten once tablolari temizliyor. Testlerin
+      birbirinin verisini gormesi, en sinsi test hatalarindan biri:
+      tek basina gecen test, tum paket calisinca kiriliyor.
+    -->
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.14.0" />
+    <!--
+      SURUM 9.0.11 - EN SON 9.0.19 OLDUGU HALDE. NEDEN?
+
+      9.0.19, Microsoft.Extensions.* paketlerinin 9.0.19 surumunu
+      cekiyor. Bizim EF Core hattimiz ise 9.0.11'e sabitli
+      (yukaridaki "EF Core cekirdek paketleri" blogu).
+
+      NuGet bunu NU1109 ile REDDETTI: "merkezi olarak tanimlanan
+      9.0.11 surumune dusuruldu".
+
+      Bu, Directory.Packages.props'un tam olarak onlemek icin var
+      oldugu durum. Hatayi susturmak icin merkezi surumu 9.0.19'a
+      cikarabilirdim ama o zaman EF Core'un test edilmemis bir
+      surumune gecmis olurdum - ve bunu yalnizca TEST altyapisi
+      icin yapardim.
+
+      Test araci, uretim bagimliliklarini surukleyemez.
+    -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.11" />
+    <PackageVersion Include="Respawn" Version="7.0.0" />
+    <!--
       FluentAssertions surumunu 7.2.0'a SABITLEDIM, 8.x'e cikarmadim.
       Sebep: 8.0 surumuyle birlikte lisans degisti; ticari kullanim ucretli
       hale geldi. 7.x hala Apache 2.0 ve tum ihtiyacimizi karsiliyor.

@@ -34,12 +34,52 @@ public static class RateLimitingSetup
         public const string Search = "search";
     }
 
-    public static IServiceCollection AddRateLimiting(this IServiceCollection services)
+    /// <summary>
+    /// Hiz sinirlamasini yapilandirir.
+    /// </summary>
+    /// <param name="enabled">
+    /// ==========================================================
+    /// NEDEN KAPATILABILIR OLMALI? (PDF Sprint 17)
+    /// ==========================================================
+    /// Entegrasyon testleri ayni istemciden (bellek ici sunucu)
+    /// onlarca giris yapiyor. Auth politikasi 5 dakikada 10 istek
+    /// oldugu icin 11. testten sonra HEPSI 429 alirdi.
+    ///
+    /// Yani hiz siniri, kendi testlerimizi engellerdi ve testler
+    /// SIRALARINA gore gecip kalirdi -- hata ayiklamasi en zor
+    /// test turu.
+    ///
+    /// Bayrak YAPILANDIRMADAN geliyor ve VARSAYILANI acik. Kapali
+    /// olabilmesi icin birinin acikca "false" yazmasi gerekiyor;
+    /// uretimde yanlislikla kapali kalmasi mumkun degil.
+    ///
+    /// Hiz sinirinin GERCEKTEN calistigi ayri bir testte
+    /// (RateLimitingTests) acikca dogrulaniyor -- yani bu bayrak
+    /// bir kapsam bosluguna yol acmiyor.
+    /// ==========================================================
+    /// </param>
+    public static IServiceCollection AddRateLimiting(
+        this IServiceCollection services,
+        bool enabled = true)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddRateLimiter(options =>
         {
+            if (!enabled)
+            {
+                // Politikalar YINE de kaydediliyor: [EnableRateLimiting]
+                // ozniteligi taniyamadigi bir politika adi gorurse
+                // uygulama ACILMAZ.
+                //
+                // Yalnizca sinirlari pratikte sonsuz yapiyoruz.
+                options.AddPolicy(Policies.Authentication, SinirsizPartition());
+                options.AddPolicy(Policies.Transaction, SinirsizPartition());
+                options.AddPolicy(Policies.Search, SinirsizPartition());
+
+                return;
+            }
+
             // ==========================================================
             // SINIRA TAKILAN ISTEK: 429 + Retry-After
             // ==========================================================
@@ -153,6 +193,12 @@ public static class RateLimitingSetup
 
         return services;
     }
+
+    /// <summary>
+    /// Sinir uygulamayan partition (yalnizca testlerde).
+    /// </summary>
+    private static Func<HttpContext, RateLimitPartition<string>> SinirsizPartition()
+        => _ => RateLimitPartition.GetNoLimiter("test");
 
     /// <summary>
     /// Istemci basina sabit pencere sinirlayici uretir.
