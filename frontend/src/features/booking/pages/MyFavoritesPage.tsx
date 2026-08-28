@@ -39,8 +39,8 @@ export function MyFavoritesPage() {
         {favoritesQuery.data?.length === 0 && (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
             <p className="text-sm text-slate-500">
-              Henuz favori etkinliginiz yok. Etkinlik sayfasindaki kalp
-              ikonuna dokunarak ekleyebilirsiniz.
+              Henuz favori etkinliginiz yok. Etkinlik sayfasindaki kalp ikonuna dokunarak
+              ekleyebilirsiniz.
             </p>
             <Link
               to="/etkinlikler"

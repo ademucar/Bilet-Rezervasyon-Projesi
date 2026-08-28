@@ -12,9 +12,7 @@ export function NotFoundPage() {
         </Link>
       }
     >
-      <Alert variant="info">
-        Aradiginiz sayfa tasinmis veya hic var olmamis olabilir.
-      </Alert>
+      <Alert variant="info">Aradiginiz sayfa tasinmis veya hic var olmamis olabilir.</Alert>
     </AuthLayout>
   )
 }

@@ -52,24 +52,21 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
 
       const onceki = queryClient.getQueryData(['favorites'])
 
-      queryClient.setQueryData(
-        ['favorites'],
-        (eski: { id: string }[] | undefined) => {
-          if (!eski) {
-            return eski
-          }
+      queryClient.setQueryData(['favorites'], (eski: { id: string }[] | undefined) => {
+        if (!eski) {
+          return eski
+        }
 
-          return favoriMi
-            ? eski.filter((e) => e.id !== eventId)
-            // Ekleme durumunda TAM etkinlik nesnesi elimizde yok --
+        return favoriMi
+          ? eski.filter((e) => e.id !== eventId)
+          : // Ekleme durumunda TAM etkinlik nesnesi elimizde yok --
             // yalnizca Id var. Gecici bir kayit koyuyorum; dugmenin
             // dolu gorunmesi icin bu yeterli.
             //
             // onSettled'daki invalidate, sunucudan gercek veriyi
             // getirip bu gecici kaydin uzerine yazacak.
-            : [...eski, { id: eventId }]
-        },
-      )
+            [...eski, { id: eventId }]
+      })
 
       return { onceki }
     },

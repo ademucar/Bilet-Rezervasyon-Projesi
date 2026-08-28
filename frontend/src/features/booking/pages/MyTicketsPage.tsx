@@ -42,8 +42,7 @@ export function MyTicketsPage() {
         {isFreshPurchase && (
           <div className="mt-4">
             <Alert variant="success">
-              Odemeniz alindi. Biletleriniz asagida; girise QR kodunuzu
-              okutmaniz yeterli.
+              Odemeniz alindi. Biletleriniz asagida; girise QR kodunuzu okutmaniz yeterli.
             </Alert>
           </div>
         )}
@@ -123,7 +122,9 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
       <div className="min-w-56 flex-1">
         <div className="flex items-start justify-between gap-2">
           <h2 className="font-semibold text-slate-900">{ticket.eventTitle}</h2>
-          <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${badge.className}`}>
+          <span
+            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${badge.className}`}
+          >
             {badge.text}
           </span>
         </div>

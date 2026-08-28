@@ -92,7 +92,9 @@ export function DashboardPage() {
                 onClick={() => setTab(t)}
                 aria-pressed={tab === t}
                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  tab === t ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'
+                  tab === t
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 {t === 'organizer' ? 'Organizator' : 'Yonetici'}
@@ -190,11 +192,7 @@ function OrganizerPanel() {
                   yerine gelen degeri KONTROL EDIYORUM -- cast ile
                   susturmak, gercekten undefined geldiginde calisma
                   zamaninda patlamak demekti. */}
-              <Tooltip
-                formatter={(value) =>
-                  typeof value === 'number' ? String(value) : ''
-                }
-              />
+              <Tooltip formatter={(value) => (typeof value === 'number' ? String(value) : '')} />
               <Line
                 type="monotone"
                 dataKey="ticketCount"
@@ -223,12 +221,7 @@ function OrganizerPanel() {
                   <XAxis type="number" tick={{ fontSize: 11 }} />
                   {/* Yatay cubuk: etkinlik adlari uzun oldugu icin
                       dikey eksende daha okunakli. */}
-                  <YAxis
-                    type="category"
-                    dataKey="title"
-                    width={110}
-                    tick={{ fontSize: 11 }}
-                  />
+                  <YAxis type="category" dataKey="title" width={110} tick={{ fontSize: 11 }} />
                   <Tooltip
                     formatter={(value) =>
                       typeof value === 'number' ? formatMoney(value, d.currency) : ''
@@ -258,10 +251,7 @@ function OrganizerPanel() {
                     </span>
                   </div>
                   <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full bg-brand-500"
-                      style={{ width: `${s.occupancyRate}%` }}
-                    />
+                    <div className="h-full bg-brand-500" style={{ width: `${s.occupancyRate}%` }} />
                   </div>
                 </li>
               ))}
@@ -378,10 +368,7 @@ function AdminPanel() {
                     label={(e: { name?: string }) => e.name ?? ''}
                   >
                     {d.topCategories.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={GRAFIK_RENKLERI[i % GRAFIK_RENKLERI.length]}
-                      />
+                      <Cell key={i} fill={GRAFIK_RENKLERI[i % GRAFIK_RENKLERI.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -474,8 +461,8 @@ function ReportExportPanel() {
       {exportMutation.isSuccess && (
         <div className="mt-4">
           <Alert variant="success">
-            Rapor talebiniz alindi. Uretim arka planda suruyor; hazir
-            oldugunda size bildirim gonderilecek.
+            Rapor talebiniz alindi. Uretim arka planda suruyor; hazir oldugunda size bildirim
+            gonderilecek.
           </Alert>
         </div>
       )}
@@ -487,8 +474,8 @@ function ReportExportPanel() {
       )}
 
       <p className="mt-3 text-xs text-slate-500">
-        Raporlar arka planda uretilir. Buyuk raporlar birkac dakika
-        surebilir; bu sirada sayfadan ayrilabilirsiniz.
+        Raporlar arka planda uretilir. Buyuk raporlar birkac dakika surebilir; bu sirada sayfadan
+        ayrilabilirsiniz.
       </p>
     </section>
   )

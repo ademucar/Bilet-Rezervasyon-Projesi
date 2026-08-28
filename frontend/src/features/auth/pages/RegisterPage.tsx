@@ -33,8 +33,12 @@ export function RegisterPage() {
     // 'onBlur' ikisinin arasindaki dogru denge.
     mode: 'onBlur',
     defaultValues: {
-      email: '', password: '', passwordConfirm: '',
-      firstName: '', lastName: '', phoneNumber: '',
+      email: '',
+      password: '',
+      passwordConfirm: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
     },
   })
 
@@ -112,8 +116,18 @@ export function RegisterPage() {
       >
         {/* Mobilde alt alta, masaustunde yan yana. */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Ad" autoComplete="given-name" error={errors.firstName?.message} {...register('firstName')} />
-          <Input label="Soyad" autoComplete="family-name" error={errors.lastName?.message} {...register('lastName')} />
+          <Input
+            label="Ad"
+            autoComplete="given-name"
+            error={errors.firstName?.message}
+            {...register('firstName')}
+          />
+          <Input
+            label="Soyad"
+            autoComplete="family-name"
+            error={errors.lastName?.message}
+            {...register('lastName')}
+          />
         </div>
 
         <Input

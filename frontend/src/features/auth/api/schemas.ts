@@ -37,7 +37,10 @@ const passwordSchema = z
   .regex(/[0-9]/, 'Sifre en az bir rakam icermelidir.')
 
 export const loginSchema = z.object({
-  email: z.string().min(1, 'E-posta adresi zorunludur.').email('Gecerli bir e-posta adresi giriniz.'),
+  email: z
+    .string()
+    .min(1, 'E-posta adresi zorunludur.')
+    .email('Gecerli bir e-posta adresi giriniz.'),
   // Girise sifre KURALLARI uygulamiyorum -- backend'de de uygulamiyoruz.
   // Sebep: eski kullanicilarin sifresi yeni kurallara uymayabilir ve
   // kendi hesaplarina giremez hale gelirler.
@@ -46,11 +49,17 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    email: z.string().min(1, 'E-posta adresi zorunludur.').email('Gecerli bir e-posta adresi giriniz.'),
+    email: z
+      .string()
+      .min(1, 'E-posta adresi zorunludur.')
+      .email('Gecerli bir e-posta adresi giriniz.'),
     password: passwordSchema,
     passwordConfirm: z.string().min(1, 'Sifre tekrari zorunludur.'),
     firstName: z.string().min(1, 'Ad zorunludur.').max(100, 'Ad en fazla 100 karakter olabilir.'),
-    lastName: z.string().min(1, 'Soyad zorunludur.').max(100, 'Soyad en fazla 100 karakter olabilir.'),
+    lastName: z
+      .string()
+      .min(1, 'Soyad zorunludur.')
+      .max(100, 'Soyad en fazla 100 karakter olabilir.'),
     phoneNumber: z.string().max(20).optional().or(z.literal('')),
   })
   // Sifre tekrari yalnizca FRONTEND kurali -- backend'e hic gonderilmiyor.
@@ -61,7 +70,10 @@ export const registerSchema = z
   })
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().min(1, 'E-posta adresi zorunludur.').email('Gecerli bir e-posta adresi giriniz.'),
+  email: z
+    .string()
+    .min(1, 'E-posta adresi zorunludur.')
+    .email('Gecerli bir e-posta adresi giriniz.'),
 })
 
 export const resetPasswordSchema = z

@@ -56,7 +56,7 @@ export function LoginPage() {
       const message =
         problem.errorCode === 'auth.account_locked'
           ? 'Cok fazla basarisiz deneme yapildi. Lutfen 15 dakika sonra tekrar deneyin.'
-          : problem.detail ?? 'Giris yapilamadi.'
+          : (problem.detail ?? 'Giris yapilamadi.')
 
       setServerError(message)
     },

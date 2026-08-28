@@ -188,7 +188,9 @@ export function NotificationBell() {
         aria-label={count > 0 ? `Bildirimler, ${count} okunmamis` : 'Bildirimler'}
         className="relative rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100"
       >
-        <span aria-hidden="true" className="text-lg leading-none">🔔</span>
+        <span aria-hidden="true" className="text-lg leading-none">
+          🔔
+        </span>
 
         {count > 0 && (
           <span
@@ -227,9 +229,7 @@ export function NotificationBell() {
             )}
 
             {listQuery.data?.items.length === 0 && (
-              <p className="p-6 text-center text-sm text-slate-500">
-                Henuz bildiriminiz yok.
-              </p>
+              <p className="p-6 text-center text-sm text-slate-500">Henuz bildiriminiz yok.</p>
             )}
 
             <ul className="divide-y divide-slate-100">

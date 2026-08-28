@@ -1,6 +1,6 @@
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest'
+import { cleanup } from '@testing-library/react'
+import { afterEach, vi } from 'vitest'
 
 // ==================================================================
 // HER TESTTEN SONRA DOM TEMIZLENIYOR
@@ -14,9 +14,9 @@ import { afterEach, vi } from 'vitest';
 // zor test türüdür.
 // ==================================================================
 afterEach(() => {
-  cleanup();
-  vi.clearAllMocks();
-});
+  cleanup()
+  vi.clearAllMocks()
+})
 
 // ==================================================================
 // jsdom'DA OLMAYAN TARAYICI API'LERI
@@ -37,26 +37,26 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   }),
-});
+})
 
 // Koltuk haritası ve sanal listeler kullanıyor.
 globalThis.ResizeObserver = class {
   observe() {}
   unobserve() {}
   disconnect() {}
-} as unknown as typeof ResizeObserver;
+} as unknown as typeof ResizeObserver
 
 globalThis.IntersectionObserver = class {
   observe() {}
   unobserve() {}
   disconnect() {}
   takeRecords() {
-    return [];
+    return []
   }
-  root = null;
-  rootMargin = '';
-  thresholds = [];
-} as unknown as typeof IntersectionObserver;
+  root = null
+  rootMargin = ''
+  thresholds = []
+} as unknown as typeof IntersectionObserver
 
 // scrollIntoView jsdom'da tanımlı değil; koltuk seçiminde kullanılıyor.
-Element.prototype.scrollIntoView = vi.fn();
+Element.prototype.scrollIntoView = vi.fn()

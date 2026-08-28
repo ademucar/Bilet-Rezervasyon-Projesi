@@ -18,7 +18,9 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
     <div className="min-h-screen">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-          <Link to="/" className="text-lg font-bold text-brand-600">Biletim</Link>
+          <Link to="/" className="text-lg font-bold text-brand-600">
+            Biletim
+          </Link>
 
           {/* nav + aria-label: ekran okuyucular birden fazla nav
               oldugunda hangisinin ne oldugunu bu etiketle ayirt eder. */}
@@ -32,10 +34,7 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         {backTo && (
-          <Link
-            to={backTo.to}
-            className="mb-4 inline-block text-sm text-brand-600 hover:underline"
-          >
+          <Link to={backTo.to} className="mb-4 inline-block text-sm text-brand-600 hover:underline">
             &larr; {backTo.label}
           </Link>
         )}

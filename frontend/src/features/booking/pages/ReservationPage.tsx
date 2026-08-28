@@ -270,8 +270,7 @@ export function ReservationPage() {
               </p>
 
               <p className="mt-1">
-                Koltuklariniz serbest birakildi ve tekrar satisa cikti. Yeniden
-                secim yapmak icin{' '}
+                Koltuklariniz serbest birakildi ve tekrar satisa cikti. Yeniden secim yapmak icin{' '}
                 <Link
                   to={`/oturumlar/${reservation.eventSessionId}/koltuklar`}
                   className="font-medium underline"
@@ -300,9 +299,7 @@ export function ReservationPage() {
                     {item.sectionName} &middot; {item.ticketTypeName}
                   </p>
                 </div>
-                <span className="text-slate-700">
-                  {formatMoney(item.unitPrice, item.currency)}
-                </span>
+                <span className="text-slate-700">{formatMoney(item.unitPrice, item.currency)}</span>
               </li>
             ))}
           </ul>
@@ -345,8 +342,7 @@ export function ReservationPage() {
               {payment === null ? (
                 <>
                   <p className="mt-2 text-sm text-slate-500">
-                    Odemeye gectiginizde koltuklariniz odeme suresince
-                    kilitli kalir.
+                    Odemeye gectiginizde koltuklariniz odeme suresince kilitli kalir.
                   </p>
 
                   <Button
@@ -431,9 +427,7 @@ function PaymentSimulation({
   if (payment.status === PaymentStatus.Failed) {
     return (
       <div className="mt-3">
-        <Alert variant="error">
-          Odeme basarisiz oldu. {payment.failureReason}
-        </Alert>
+        <Alert variant="error">Odeme basarisiz oldu. {payment.failureReason}</Alert>
       </div>
     )
   }
@@ -445,10 +439,9 @@ function PaymentSimulation({
       </p>
 
       <p className="mt-2 text-sm text-slate-600">
-        Gercek bir odeme saglayicisi kullanilmiyor. Normalde bu adimda
-        saglayicinin guvenli sayfasina yonlendirilir, kart bilgilerinizi
-        ORAYA girer ve saglayici sonucu bize bildirirdi. Asagidaki iki
-        buton o bildirimi taklit ediyor.
+        Gercek bir odeme saglayicisi kullanilmiyor. Normalde bu adimda saglayicinin guvenli
+        sayfasina yonlendirilir, kart bilgilerinizi ORAYA girer ve saglayici sonucu bize bildirirdi.
+        Asagidaki iki buton o bildirimi taklit ediyor.
       </p>
 
       <dl className="mt-4 space-y-1 text-xs text-slate-500">
@@ -473,19 +466,14 @@ function PaymentSimulation({
           Odeme basarili
         </Button>
 
-        <Button
-          variant="secondary"
-          className="flex-1"
-          isLoading={isFailing}
-          onClick={onFail}
-        >
+        <Button variant="secondary" className="flex-1" isLoading={isFailing} onClick={onFail}>
           Odeme basarisiz
         </Button>
       </div>
 
       <p className="mt-3 text-xs text-slate-500">
-        Odeme basarisiz olursa rezervasyon iptal edilir ve koltuklar
-        serbest birakilir (PDF Sprint 8 kurali).
+        Odeme basarisiz olursa rezervasyon iptal edilir ve koltuklar serbest birakilir (PDF Sprint 8
+        kurali).
       </p>
     </div>
   )

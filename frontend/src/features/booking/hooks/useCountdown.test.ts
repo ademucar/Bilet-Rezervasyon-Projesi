@@ -1,6 +1,6 @@
-import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useCountdown } from './useCountdown';
+import { act, renderHook } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useCountdown } from './useCountdown'
 
 /**
  * PDF Sprint 17 frontend testi: "Rezervasyon sayacı".
@@ -28,34 +28,34 @@ describe('useCountdown', () => {
     // Sahte zamanlayıcılar: 10 dakika beklemek yerine zamanı
     // ilerletiyoruz. Gerçek beklemeyle test etseydik tek bir test
     // 10 dakika sürerdi ve kimse bu paketi çalıştırmazdı.
-    vi.useFakeTimers();
-  });
+    vi.useFakeTimers()
+  })
 
   afterEach(() => {
-    vi.useRealTimers();
-  });
+    vi.useRealTimers()
+  })
 
   it('başlangıç değerini olduğu gibi gösterir', () => {
-    const { result } = renderHook(() => useCountdown(600));
+    const { result } = renderHook(() => useCountdown(600))
 
-    expect(result.current).toBe(600);
-  });
+    expect(result.current).toBe(600)
+  })
 
   it('süre geçtikçe azalır', () => {
-    const { result } = renderHook(() => useCountdown(600));
+    const { result } = renderHook(() => useCountdown(600))
 
     act(() => {
-      vi.advanceTimersByTime(5000);
-    });
+      vi.advanceTimersByTime(5000)
+    })
 
     // 5 saniye geçti; kalan 595 civarı olmalı.
     // Tam eşitlik aramıyorum: sahte zamanlayıcı ile
     // performance.now() arasında bir tık kayma olabilir ve testi
     // ARADA BİR kıran bir eşitlik kontrolü, testin kendisini
     // güvenilmez yapardı.
-    expect(result.current).toBeLessThanOrEqual(595);
-    expect(result.current).toBeGreaterThan(590);
-  });
+    expect(result.current).toBeLessThanOrEqual(595)
+    expect(result.current).toBeGreaterThan(590)
+  })
 
   /**
    * ================================================================
@@ -70,14 +70,14 @@ describe('useCountdown', () => {
    * ================================================================
    */
   it('sıfırın altına inmez', () => {
-    const { result } = renderHook(() => useCountdown(3));
+    const { result } = renderHook(() => useCountdown(3))
 
     act(() => {
-      vi.advanceTimersByTime(60_000);
-    });
+      vi.advanceTimersByTime(60_000)
+    })
 
-    expect(result.current).toBe(0);
-  });
+    expect(result.current).toBe(0)
+  })
 
   /**
    * Arka plan sekmesi senaryosu.
@@ -94,21 +94,21 @@ describe('useCountdown', () => {
    * taklit ediyorum.
    */
   it('az sayıda tık gelse bile doğru süreyi gösterir', () => {
-    const { result } = renderHook(() => useCountdown(600));
+    const { result } = renderHook(() => useCountdown(600))
 
     act(() => {
       // 180 saniye ilerlet — arka planda olsa bile hook bitiş
       // anına göre yeniden ölçtüğü için doğru sonucu vermeli.
-      vi.advanceTimersByTime(180_000);
-    });
+      vi.advanceTimersByTime(180_000)
+    })
 
-    expect(result.current).toBeLessThanOrEqual(420);
-    expect(result.current).toBeGreaterThan(415);
-  });
+    expect(result.current).toBeLessThanOrEqual(420)
+    expect(result.current).toBeGreaterThan(415)
+  })
 
   it('tanımsız süre için sıfır döner', () => {
-    const { result } = renderHook(() => useCountdown(undefined));
+    const { result } = renderHook(() => useCountdown(undefined))
 
-    expect(result.current).toBe(0);
-  });
-});
+    expect(result.current).toBe(0)
+  })
+})

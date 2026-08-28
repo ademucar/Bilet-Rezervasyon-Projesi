@@ -35,7 +35,10 @@ function StarRating({
 
   if (!onChange) {
     return (
-      <span className={`${boyut} leading-none text-amber-500`} aria-label={`5 uzerinden ${value} puan`}>
+      <span
+        className={`${boyut} leading-none text-amber-500`}
+        aria-label={`5 uzerinden ${value} puan`}
+      >
         <span aria-hidden="true">
           {'★'.repeat(Math.round(value))}
           <span className="text-slate-300">{'★'.repeat(5 - Math.round(value))}</span>
@@ -213,7 +216,10 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
 
             return (
               <div key={puan} className="flex items-center gap-2 text-xs">
-                <span className="w-8 text-slate-500">{puan}{'★'}</span>
+                <span className="w-8 text-slate-500">
+                  {puan}
+                  {'★'}
+                </span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
                   <div className="h-full bg-amber-400" style={{ width: `${yuzde}%` }} />
                 </div>

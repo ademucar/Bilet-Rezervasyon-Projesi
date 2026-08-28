@@ -1,16 +1,16 @@
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { EventFilterPanel } from './EventFilterPanel';
-import { bookingApi, type EventFilters } from '../api/bookingApi';
-import { renderWithProviders } from '../../../test/testUtils';
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import { EventFilterPanel } from './EventFilterPanel'
+import { bookingApi, type EventFilters } from '../api/bookingApi'
+import { renderWithProviders } from '../../../test/testUtils'
 
 /**
  * PDF Sprint 17 frontend testi: "Etkinlik filtreleme".
  */
 
 vi.mock('../api/bookingApi', async (orijinal) => {
-  const gercek = await orijinal<typeof import('../api/bookingApi')>();
+  const gercek = await orijinal<typeof import('../api/bookingApi')>()
 
   return {
     ...gercek,
@@ -18,24 +18,24 @@ vi.mock('../api/bookingApi', async (orijinal) => {
       getCities: vi.fn(),
       getCategories: vi.fn(),
     },
-  };
-});
+  }
+})
 
-const sehirler = vi.mocked(bookingApi.getCities);
-const kategoriler = vi.mocked(bookingApi.getCategories);
+const sehirler = vi.mocked(bookingApi.getCities)
+const kategoriler = vi.mocked(bookingApi.getCategories)
 
 function paneliCiz(filters: EventFilters = {}, onChange = vi.fn(), onReset = vi.fn()) {
   sehirler.mockResolvedValue([
     { id: 'sehir-1', name: 'Istanbul', plateCode: 34 },
     { id: 'sehir-2', name: 'Ankara', plateCode: 6 },
-  ]);
+  ])
 
   kategoriler.mockResolvedValue([
     { id: 'kat-1', name: 'Konser', slug: 'konser', iconName: null },
     { id: 'kat-2', name: 'Tiyatro', slug: 'tiyatro', iconName: null },
-  ]);
+  ])
 
-  const aktifSayi = Object.values(filters).filter((v) => v !== undefined).length;
+  const aktifSayi = Object.values(filters).filter((v) => v !== undefined).length
 
   renderWithProviders(
     <EventFilterPanel
@@ -44,21 +44,21 @@ function paneliCiz(filters: EventFilters = {}, onChange = vi.fn(), onReset = vi.
       onReset={onReset}
       activeCount={aktifSayi}
     />,
-  );
+  )
 
-  return { onChange, onReset };
+  return { onChange, onReset }
 }
 
 describe('EventFilterPanel', () => {
   it('şehir ve kategori listelerini yükler', async () => {
-    paneliCiz();
+    paneliCiz()
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument();
-    });
+      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+    })
 
-    expect(screen.getByRole('option', { name: 'Konser' })).toBeInTheDocument();
-  });
+    expect(screen.getByRole('option', { name: 'Konser' })).toBeInTheDocument()
+  })
 
   /**
    * ================================================================
@@ -75,17 +75,17 @@ describe('EventFilterPanel', () => {
    * ================================================================
    */
   it('şehir seçilince yalnızca cityId bildirilir', async () => {
-    const kullanici = userEvent.setup();
-    const { onChange } = paneliCiz();
+    const kullanici = userEvent.setup()
+    const { onChange } = paneliCiz()
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument();
-    });
+      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+    })
 
-    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), 'sehir-1');
+    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), 'sehir-1')
 
-    expect(onChange).toHaveBeenCalledWith({ cityId: 'sehir-1' });
-  });
+    expect(onChange).toHaveBeenCalledWith({ cityId: 'sehir-1' })
+  })
 
   /**
    * "Tümü" seçeneği filtreyi KALDIRMALI, boş dize göndermemeli.
@@ -96,31 +96,31 @@ describe('EventFilterPanel', () => {
    * boş" derdi.
    */
   it('tümü seçilince filtre kaldırılır', async () => {
-    const kullanici = userEvent.setup();
-    const { onChange } = paneliCiz({ cityId: 'sehir-1' });
+    const kullanici = userEvent.setup()
+    const { onChange } = paneliCiz({ cityId: 'sehir-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument();
-    });
+      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+    })
 
-    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), '');
+    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), '')
 
-    expect(onChange).toHaveBeenCalledWith({ cityId: undefined });
-  });
+    expect(onChange).toHaveBeenCalledWith({ cityId: undefined })
+  })
 
   it('sıfırlama düğmesi onReset çağırır', async () => {
-    const kullanici = userEvent.setup();
-    const { onReset } = paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' });
+    const kullanici = userEvent.setup()
+    const { onReset } = paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument();
-    });
+      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+    })
 
-    const sifirla = screen.getByRole('button', { name: /temizle|sifirla/i });
-    await kullanici.click(sifirla);
+    const sifirla = screen.getByRole('button', { name: /temizle|sifirla/i })
+    await kullanici.click(sifirla)
 
-    expect(onReset).toHaveBeenCalled();
-  });
+    expect(onReset).toHaveBeenCalled()
+  })
 
   /**
    * Aktif filtre sayısı görünmeli.
@@ -130,11 +130,11 @@ describe('EventFilterPanel', () => {
    * listeyi bozuk sanır.
    */
   it('aktif filtre sayısını gösterir', async () => {
-    paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' });
+    paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument();
-    });
+      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+    })
 
     // Metin "2 aktif" seklinde ve JSX'te {activeCount} + " aktif"
     // diye PARCALARA ayrilmis; getByText('2') eslesmiyor.
@@ -145,6 +145,6 @@ describe('EventFilterPanel', () => {
     // SAYININ gorunmesi.
     expect(
       screen.getByText((_, element) => element?.textContent?.trim() === '2 aktif'),
-    ).toBeInTheDocument();
-  });
-});
+    ).toBeInTheDocument()
+  })
+})

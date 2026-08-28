@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { SeatMap, type SeatMapSection } from './SeatMap';
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
+import { SeatMap, type SeatMapSection } from './SeatMap'
 
 /**
  * PDF Sprint 17 frontend testi: "Koltuk seçimi".
@@ -41,7 +41,7 @@ function bolum(): SeatMapSection[] {
         },
       ],
     },
-  ];
+  ]
 }
 
 describe('SeatMap', () => {
@@ -65,45 +65,43 @@ describe('SeatMap', () => {
    * ================================================================
    */
   it('salt okunur haritada koltuklar başlıkla tanımlanır', () => {
-    const { container } = render(<SeatMap sections={bolum()} />);
+    const { container } = render(<SeatMap sections={bolum()} />)
 
     // SVG <title> içeriğini doğrudan okuyoruz.
     //
     // getByTitle ile de denedim ama başlık metni JSX'te parçalara
     // ayrılmış ({section.name} - {seat.label}) ve DOM'da birden
     // fazla metin düğümü olarak duruyor; sorgu eşleştiremiyor.
-    const basliklar = [...container.querySelectorAll('title')].map(
-      (t) => t.textContent ?? '',
-    );
+    const basliklar = [...container.querySelectorAll('title')].map((t) => t.textContent ?? '')
 
-    expect(basliklar).toHaveLength(3);
-    expect(basliklar.join(' ')).toContain('A-1');
-    expect(basliklar.join(' ')).toContain('A-2');
+    expect(basliklar).toHaveLength(3)
+    expect(basliklar.join(' ')).toContain('A-1')
+    expect(basliklar.join(' ')).toContain('A-2')
 
     // Satılmış koltuğun durumu da başlıkta yazmalı: ekran okuyucu
     // kullanıcısı koltuğun neden seçilemediğini rengi görerek
     // anlayamaz.
-    expect(basliklar.join(' ')).toContain('satıldı');
-  });
+    expect(basliklar.join(' ')).toContain('satıldı')
+  })
 
   it('etkileşimli haritada koltuklar erişilebilir adla çizilir', () => {
-    render(<SeatMap sections={bolum()} onSeatClick={vi.fn()} />);
+    render(<SeatMap sections={bolum()} onSeatClick={vi.fn()} />)
 
-    expect(screen.getByLabelText(/A-1/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/A-2/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/A-3/)).toBeInTheDocument();
-  });
+    expect(screen.getByLabelText(/A-1/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/A-2/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/A-3/)).toBeInTheDocument()
+  })
 
   it('müsait koltuğa tıklanınca id ile haber verir', async () => {
-    const tiklama = vi.fn();
-    const kullanici = userEvent.setup();
+    const tiklama = vi.fn()
+    const kullanici = userEvent.setup()
 
-    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />);
+    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />)
 
-    await kullanici.click(screen.getByLabelText(/A-1/));
+    await kullanici.click(screen.getByLabelText(/A-1/))
 
-    expect(tiklama).toHaveBeenCalledExactlyOnceWith('koltuk-1');
-  });
+    expect(tiklama).toHaveBeenCalledExactlyOnceWith('koltuk-1')
+  })
 
   /**
    * ================================================================
@@ -120,15 +118,15 @@ describe('SeatMap', () => {
    * ================================================================
    */
   it('satılmış koltuğa tıklanamaz', async () => {
-    const tiklama = vi.fn();
-    const kullanici = userEvent.setup();
+    const tiklama = vi.fn()
+    const kullanici = userEvent.setup()
 
-    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />);
+    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />)
 
-    await kullanici.click(screen.getByLabelText(/A-2/));
+    await kullanici.click(screen.getByLabelText(/A-2/))
 
-    expect(tiklama).not.toHaveBeenCalled();
-  });
+    expect(tiklama).not.toHaveBeenCalled()
+  })
 
   /**
    * Seçili koltuk ekran okuyucuya da bildirilmeli.
@@ -139,16 +137,12 @@ describe('SeatMap', () => {
    */
   it('seçili koltuğu aria-pressed ile bildirir', () => {
     render(
-      <SeatMap
-        sections={bolum()}
-        onSeatClick={vi.fn()}
-        selectedSeatIds={new Set(['koltuk-1'])}
-      />,
-    );
+      <SeatMap sections={bolum()} onSeatClick={vi.fn()} selectedSeatIds={new Set(['koltuk-1'])} />,
+    )
 
-    expect(screen.getByLabelText(/A-1/)).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByLabelText(/A-3/)).toHaveAttribute('aria-pressed', 'false');
-  });
+    expect(screen.getByLabelText(/A-1/)).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByLabelText(/A-3/)).toHaveAttribute('aria-pressed', 'false')
+  })
 
   /**
    * ================================================================
@@ -164,22 +158,22 @@ describe('SeatMap', () => {
    * ================================================================
    */
   it('koltuklar klavyeyle seçilebilir', async () => {
-    const tiklama = vi.fn();
-    const kullanici = userEvent.setup();
+    const tiklama = vi.fn()
+    const kullanici = userEvent.setup()
 
-    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />);
+    render(<SeatMap sections={bolum()} onSeatClick={tiklama} />)
 
-    screen.getByLabelText(/A-1/).focus();
-    await kullanici.keyboard('{Enter}');
+    screen.getByLabelText(/A-1/).focus()
+    await kullanici.keyboard('{Enter}')
 
-    expect(tiklama).toHaveBeenCalledWith('koltuk-1');
-  });
+    expect(tiklama).toHaveBeenCalledWith('koltuk-1')
+  })
 
   it('koltuk yoksa açıklayıcı mesaj gösterir', () => {
-    render(<SeatMap sections={[]} emptyMessage="Bu oturumda koltuk yok." />);
+    render(<SeatMap sections={[]} emptyMessage="Bu oturumda koltuk yok." />)
 
-    expect(screen.getByText('Bu oturumda koltuk yok.')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Bu oturumda koltuk yok.')).toBeInTheDocument()
+  })
 
   /**
    * onSeatClick verilmezse harita salt okunur olmalı.
@@ -188,8 +182,8 @@ describe('SeatMap', () => {
    * ama seçim yaptırmıyor.
    */
   it('tıklama işleyicisi yoksa koltuklar buton olmaz', () => {
-    render(<SeatMap sections={bolum()} />);
+    render(<SeatMap sections={bolum()} />)
 
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
-  });
-});
+    expect(screen.queryAllByRole('button')).toHaveLength(0)
+  })
+})

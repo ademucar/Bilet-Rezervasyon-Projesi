@@ -31,7 +31,12 @@ export function VenueDetailPage() {
     enabled: Boolean(venueId),
   })
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<HallForm>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<HallForm>({
     defaultValues: { name: '', capacity: 500 },
   })
 
@@ -57,9 +62,7 @@ export function VenueDetailPage() {
   if (venueQuery.isError || !venueQuery.data) {
     return (
       <AdminLayout title="Mekan bulunamadi" backTo={{ label: 'Mekanlar', to: '/admin/mekanlar' }}>
-        <Alert variant="error">
-          {toProblem(venueQuery.error).detail ?? 'Mekan yuklenemedi.'}
-        </Alert>
+        <Alert variant="error">{toProblem(venueQuery.error).detail ?? 'Mekan yuklenemedi.'}</Alert>
       </AdminLayout>
     )
   }
@@ -75,9 +78,7 @@ export function VenueDetailPage() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Salonlar</h2>
 
-        <Button onClick={() => setShowForm((v) => !v)}>
-          {showForm ? 'Vazgec' : 'Yeni salon'}
-        </Button>
+        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgec' : 'Yeni salon'}</Button>
       </div>
 
       {showForm && (
@@ -113,7 +114,9 @@ export function VenueDetailPage() {
             })}
           />
 
-          <Button type="submit" isLoading={createHall.isPending}>Kaydet</Button>
+          <Button type="submit" isLoading={createHall.isPending}>
+            Kaydet
+          </Button>
         </form>
       )}
 
@@ -136,9 +139,7 @@ export function VenueDetailPage() {
                   <p className="text-sm text-slate-500">{h.capacity} kisilik</p>
                 </div>
 
-                <span className="text-sm text-slate-500">
-                  {h.seatLayoutCount} oturma plani
-                </span>
+                <span className="text-sm text-slate-500">{h.seatLayoutCount} oturma plani</span>
               </Link>
             </li>
           ))}

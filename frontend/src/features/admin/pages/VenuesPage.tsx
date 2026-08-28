@@ -39,7 +39,12 @@ export function VenuesPage() {
     queryFn: () => adminApi.getVenues({ search: search || undefined }),
   })
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<VenueForm>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<VenueForm>({
     defaultValues: { name: '', address: '', cityId: '' },
   })
 
@@ -72,9 +77,7 @@ export function VenuesPage() {
           className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
 
-        <Button onClick={() => setShowForm((v) => !v)}>
-          {showForm ? 'Vazgec' : 'Yeni mekan'}
-        </Button>
+        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgec' : 'Yeni mekan'}</Button>
       </div>
 
       {showForm && (
@@ -114,16 +117,22 @@ export function VenuesPage() {
             >
               <option value="">Sehir secin</option>
               {citiesQuery.data?.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
 
             {errors.cityId && (
-              <p role="alert" className="text-sm text-red-600">{errors.cityId.message}</p>
+              <p role="alert" className="text-sm text-red-600">
+                {errors.cityId.message}
+              </p>
             )}
           </div>
 
-          <Button type="submit" isLoading={createMutation.isPending}>Kaydet</Button>
+          <Button type="submit" isLoading={createMutation.isPending}>
+            Kaydet
+          </Button>
         </form>
       )}
 

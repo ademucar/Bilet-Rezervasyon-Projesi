@@ -98,8 +98,8 @@ export function EventDetailPage() {
         {!isOnSale && !isCancelled && (
           <div className="mt-4">
             <Alert variant="info">
-              Bu etkinlik icin bilet satisi su anda kapali. Satis
-              {' '}{formatDateTime(ev.salesStartDate)} tarihinde aciliyor.
+              Bu etkinlik icin bilet satisi su anda kapali. Satis{' '}
+              {formatDateTime(ev.salesStartDate)} tarihinde aciliyor.
             </Alert>
           </div>
         )}

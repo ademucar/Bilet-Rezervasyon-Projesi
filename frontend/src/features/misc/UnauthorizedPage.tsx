@@ -16,17 +16,15 @@ export function UnauthorizedPage() {
         </Link>
       }
     >
-      <Alert variant="error">
-        Bu sayfayi goruntulemek icin gerekli yetkiye sahip degilsiniz.
-      </Alert>
+      <Alert variant="error">Bu sayfayi goruntulemek icin gerekli yetkiye sahip degilsiniz.</Alert>
 
       {user && (
         // Mevcut rolu GOSTERIYORUM. Kullanici "ama ben organizatorum"
         // derken aslinda rolunun verilmedigini boylece gorebiliyor.
         // Destek talebi acmadan once sorunu kendisi anlayabiliyor.
         <p className="mt-4 text-sm text-slate-500">
-          <strong>{user.email}</strong> hesabiyla giris yaptiniz.
-          Mevcut rolleriniz: {user.roles.join(', ') || 'yok'}
+          <strong>{user.email}</strong> hesabiyla giris yaptiniz. Mevcut rolleriniz:{' '}
+          {user.roles.join(', ') || 'yok'}
         </p>
       )}
     </AuthLayout>

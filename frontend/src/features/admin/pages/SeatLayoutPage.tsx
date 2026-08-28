@@ -31,7 +31,12 @@ export function SeatLayoutPage() {
     defaultValues: { name: '', colorHex: '#4f46e5' },
   })
 
-  const seatsForm = useForm<{ sectionId: string; rowCount: number; seatsPerRow: number; useLetters: boolean }>({
+  const seatsForm = useForm<{
+    sectionId: string
+    rowCount: number
+    seatsPerRow: number
+    useLetters: boolean
+  }>({
     defaultValues: { sectionId: '', rowCount: 10, seatsPerRow: 20, useLetters: true },
   })
 
@@ -52,7 +57,12 @@ export function SeatLayoutPage() {
   })
 
   const generateSeats = useMutation({
-    mutationFn: (data: { sectionId: string; rowCount: number; seatsPerRow: number; useLetters: boolean }) =>
+    mutationFn: (data: {
+      sectionId: string
+      rowCount: number
+      seatsPerRow: number
+      useLetters: boolean
+    }) =>
       adminApi.generateSeats(layoutId!, {
         sectionId: data.sectionId,
         rowCount: data.rowCount,
@@ -70,9 +80,7 @@ export function SeatLayoutPage() {
       // Alan bazli dogrulama hatalarini da gosteriyorum.
       // Yalnizca `detail` gosterseydik "Gonderilen veriler gecerli
       // degil" gibi hicbir sey anlatmayan bir mesaj cikardi.
-      const fieldErrors = problem.errors
-        ? Object.values(problem.errors).flat().join(' ')
-        : null
+      const fieldErrors = problem.errors ? Object.values(problem.errors).flat().join(' ') : null
 
       setError(fieldErrors ?? problem.detail ?? 'Koltuklar uretilemedi.')
       setNotice(null)
@@ -111,14 +119,22 @@ export function SeatLayoutPage() {
       {layout.isInUse && (
         <div className="mb-6">
           <Alert variant="info">
-            Bu plan bir etkinlik oturumunda kullaniliyor. Yapisi degistirilemez;
-            yalnizca goruntuleyebilirsiniz.
+            Bu plan bir etkinlik oturumunda kullaniliyor. Yapisi degistirilemez; yalnizca
+            goruntuleyebilirsiniz.
           </Alert>
         </div>
       )}
 
-      {error && <div className="mb-4"><Alert variant="error">{error}</Alert></div>}
-      {notice && <div className="mb-4"><Alert variant="success">{notice}</Alert></div>}
+      {error && (
+        <div className="mb-4">
+          <Alert variant="error">{error}</Alert>
+        </div>
+      )}
+      {notice && (
+        <div className="mb-4">
+          <Alert variant="success">{notice}</Alert>
+        </div>
+      )}
 
       {!layout.isInUse && (
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
@@ -153,13 +169,13 @@ export function SeatLayoutPage() {
                   className="h-10 w-16 cursor-pointer rounded border border-slate-300"
                   {...sectionForm.register('colorHex')}
                 />
-                <span className="text-sm text-slate-500">
-                  Koltuk haritasinda bu bolumun rengi
-                </span>
+                <span className="text-sm text-slate-500">Koltuk haritasinda bu bolumun rengi</span>
               </div>
             </div>
 
-            <Button type="submit" isLoading={addSection.isPending}>Bolum ekle</Button>
+            <Button type="submit" isLoading={addSection.isPending}>
+              Bolum ekle
+            </Button>
           </form>
 
           {/* ---- Koltuk uretimi ---- */}
@@ -187,7 +203,8 @@ export function SeatLayoutPage() {
                     <option value="">Bolum secin</option>
                     {layout.sections.map((s) => (
                       <option key={s.id} value={s.id} disabled={s.seatCount > 0}>
-                        {s.name}{s.seatCount > 0 ? ` (${s.seatCount} koltuk mevcut)` : ''}
+                        {s.name}
+                        {s.seatCount > 0 ? ` (${s.seatCount} koltuk mevcut)` : ''}
                       </option>
                     ))}
                   </select>
@@ -202,12 +219,20 @@ export function SeatLayoutPage() {
                   <Input
                     label="Sira basina koltuk"
                     type="number"
-                    {...seatsForm.register('seatsPerRow', { valueAsNumber: true, min: 1, max: 500 })}
+                    {...seatsForm.register('seatsPerRow', {
+                      valueAsNumber: true,
+                      min: 1,
+                      max: 500,
+                    })}
                   />
                 </div>
 
                 <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" className="rounded" {...seatsForm.register('useLetters')} />
+                  <input
+                    type="checkbox"
+                    className="rounded"
+                    {...seatsForm.register('useLetters')}
+                  />
                   Siralari harfle adlandir (A, B, C...)
                 </label>
 

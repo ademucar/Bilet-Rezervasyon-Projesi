@@ -49,8 +49,8 @@ export function ForgotPasswordPage() {
         }
       >
         <Alert variant="success">
-          Girdiginiz adres sistemimizde kayitliysa, sifre sifirlama baglantisi gonderildi.
-          Baglanti <strong>1 saat</strong> gecerlidir.
+          Girdiginiz adres sistemimizde kayitliysa, sifre sifirlama baglantisi gonderildi. Baglanti{' '}
+          <strong>1 saat</strong> gecerlidir.
         </Alert>
 
         <p className="mt-4 text-sm text-slate-500">

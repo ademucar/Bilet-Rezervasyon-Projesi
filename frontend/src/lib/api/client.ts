@@ -1,8 +1,4 @@
-import axios, {
-  AxiosError,
-  type AxiosInstance,
-  type InternalAxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '../../stores/authStore'
 import type { AuthResponse, ProblemDetails } from '../../types/auth'
 
@@ -127,7 +123,11 @@ api.interceptors.response.use(
     // Giris/kayit endpointlerinde 401 NORMALDIR ("sifre yanlis").
     // Bunlari yenilemeye calismak anlamsiz olur.
     const url = original?.url ?? ''
-    if (url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/refresh-token')) {
+    if (
+      url.includes('/auth/login') ||
+      url.includes('/auth/register') ||
+      url.includes('/auth/refresh-token')
+    ) {
       return Promise.reject(error)
     }
 

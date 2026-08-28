@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, type RenderOptions } from '@testing-library/react';
-import type { ReactElement, ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { render, type RenderOptions } from '@testing-library/react'
+import type { ReactElement, ReactNode } from 'react'
+import { MemoryRouter } from 'react-router-dom'
 
 /**
  * ==================================================================
@@ -45,18 +45,18 @@ function testQueryClient(): QueryClient {
       },
       mutations: { retry: false },
     },
-  });
+  })
 }
 
 interface Secenekler extends Omit<RenderOptions, 'wrapper'> {
   /** Başlangıç adresi. Yönlendirme testlerinde kullanılıyor. */
-  route?: string;
+  route?: string
 }
 
 export function renderWithProviders(ui: ReactElement, secenekler: Secenekler = {}) {
-  const { route = '/', ...rest } = secenekler;
+  const { route = '/', ...rest } = secenekler
 
-  const client = testQueryClient();
+  const client = testQueryClient()
 
   function Sarmalayici({ children }: { children: ReactNode }) {
     return (
@@ -68,11 +68,11 @@ export function renderWithProviders(ui: ReactElement, secenekler: Secenekler = {
         */}
         <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
       </QueryClientProvider>
-    );
+    )
   }
 
   return {
     ...render(ui, { wrapper: Sarmalayici, ...rest }),
     queryClient: client,
-  };
+  }
 }

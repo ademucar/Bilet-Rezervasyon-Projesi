@@ -1,8 +1,5 @@
 import { useMemo } from 'react'
-import {
-  SeatMap as BaseSeatMap,
-  type SeatMapSection,
-} from '../../../components/seatmap/SeatMap'
+import { SeatMap as BaseSeatMap, type SeatMapSection } from '../../../components/seatmap/SeatMap'
 import type { SectionDetail } from '../api/adminApi'
 
 interface SeatMapProps {

@@ -1,10 +1,10 @@
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { LoginPage } from './LoginPage';
-import { authApi } from '../api/authApi';
-import { useAuthStore } from '../../../stores/authStore';
-import { renderWithProviders } from '../../../test/testUtils';
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { LoginPage } from './LoginPage'
+import { authApi } from '../api/authApi'
+import { useAuthStore } from '../../../stores/authStore'
+import { renderWithProviders } from '../../../test/testUtils'
 
 /**
  * PDF Sprint 17 frontend testleri: "Login formu" ve "API hata ekranı".
@@ -29,22 +29,22 @@ vi.mock('../api/authApi', () => ({
   authApi: {
     login: vi.fn(),
   },
-}));
+}))
 
-const girisYap = vi.mocked(authApi.login);
+const girisYap = vi.mocked(authApi.login)
 
 describe('LoginPage', () => {
   beforeEach(() => {
-    useAuthStore.setState({ accessToken: null, refreshToken: null, user: null });
-  });
+    useAuthStore.setState({ accessToken: null, refreshToken: null, user: null })
+  })
 
   it('e-posta ve şifre alanlarını gösterir', () => {
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    expect(screen.getByLabelText('E-posta')).toBeInTheDocument();
-    expect(screen.getByLabelText('Sifre')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /giris yap/i })).toBeInTheDocument();
-  });
+    expect(screen.getByLabelText('E-posta')).toBeInTheDocument()
+    expect(screen.getByLabelText('Sifre')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /giris yap/i })).toBeInTheDocument()
+  })
 
   /**
    * ================================================================
@@ -59,37 +59,37 @@ describe('LoginPage', () => {
    * ================================================================
    */
   it('boş form gönderilince istek atılmaz ve hata gösterilir', async () => {
-    const kullanici = userEvent.setup();
+    const kullanici = userEvent.setup()
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }));
+    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('E-posta')).toBeInvalid();
-    });
+      expect(screen.getByLabelText('E-posta')).toBeInvalid()
+    })
 
-    expect(girisYap).not.toHaveBeenCalled();
-  });
+    expect(girisYap).not.toHaveBeenCalled()
+  })
 
   it('geçersiz e-posta biçimi reddedilir', async () => {
-    const kullanici = userEvent.setup();
+    const kullanici = userEvent.setup()
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    await kullanici.type(screen.getByLabelText('E-posta'), 'bu-bir-eposta-degil');
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!');
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }));
+    await kullanici.type(screen.getByLabelText('E-posta'), 'bu-bir-eposta-degil')
+    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('E-posta')).toBeInvalid();
-    });
+      expect(screen.getByLabelText('E-posta')).toBeInvalid()
+    })
 
-    expect(girisYap).not.toHaveBeenCalled();
-  });
+    expect(girisYap).not.toHaveBeenCalled()
+  })
 
   it('geçerli form gönderilince API çağrılır', async () => {
-    const kullanici = userEvent.setup();
+    const kullanici = userEvent.setup()
 
     girisYap.mockResolvedValue({
       accessToken: 'token',
@@ -104,17 +104,17 @@ describe('LoginPage', () => {
         isEmailConfirmed: true,
         roles: ['User'],
       },
-    });
+    })
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com');
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!');
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }));
+    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
+    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
 
     await waitFor(() => {
-      expect(girisYap).toHaveBeenCalled();
-    });
+      expect(girisYap).toHaveBeenCalled()
+    })
 
     // İLK ARGÜMANI kontrol ediyorum, toHaveBeenCalledWith değil.
     //
@@ -128,8 +128,8 @@ describe('LoginPage', () => {
     expect(girisYap.mock.calls[0][0]).toEqual({
       email: 'test@ornek.com',
       password: 'Test1234!',
-    });
-  });
+    })
+  })
 
   // ==============================================================
   // PDF: "API hata ekranı"
@@ -148,24 +148,24 @@ describe('LoginPage', () => {
    * ================================================================
    */
   it('sunucu hatası ekranda gösterilir', async () => {
-    const kullanici = userEvent.setup();
+    const kullanici = userEvent.setup()
 
     girisYap.mockRejectedValue(
       Object.assign(new Error('istek basarisiz'), {
         detail: 'E-posta veya sifre hatali.',
       }),
-    );
+    )
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com');
-    await kullanici.type(screen.getByLabelText('Sifre'), 'YanlisSifre1!');
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }));
+    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
+    await kullanici.type(screen.getByLabelText('Sifre'), 'YanlisSifre1!')
+    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+  })
 
   /**
    * Hata sonrası form KULLANILABİLİR kalmalı.
@@ -175,22 +175,20 @@ describe('LoginPage', () => {
    * zorunda kalırdı.
    */
   it('hata sonrası tekrar denenebilir', async () => {
-    const kullanici = userEvent.setup();
+    const kullanici = userEvent.setup()
 
-    girisYap.mockRejectedValue(
-      Object.assign(new Error('hata'), { detail: 'Bir hata olustu.' }),
-    );
+    girisYap.mockRejectedValue(Object.assign(new Error('hata'), { detail: 'Bir hata olustu.' }))
 
-    renderWithProviders(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
-    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com');
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!');
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }));
+    await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
+    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
 
-    expect(screen.getByRole('button', { name: /giris yap/i })).toBeEnabled();
-  });
-});
+    expect(screen.getByRole('button', { name: /giris yap/i })).toBeEnabled()
+  })
+})

@@ -24,39 +24,83 @@ import { Roles } from './types/auth'
 // Simdiden kurmak, sonradan eklemekten kolay: yapiyi bastan dogru
 // kurunca yeni sayfa eklerken dusunmeye bile gerek kalmiyor.
 // ===================================================================
-const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })))
-const RegisterPage = lazy(() => import('./features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })))
-const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })))
-const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })))
-const HomePage = lazy(() => import('./features/home/HomePage').then((m) => ({ default: m.HomePage })))
-const UnauthorizedPage = lazy(() => import('./features/misc/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })))
-const NotFoundPage = lazy(() => import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
+const LoginPage = lazy(() =>
+  import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
+)
+const RegisterPage = lazy(() =>
+  import('./features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })),
+)
+const ForgotPasswordPage = lazy(() =>
+  import('./features/auth/pages/ForgotPasswordPage').then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
+)
+const ResetPasswordPage = lazy(() =>
+  import('./features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+)
+const HomePage = lazy(() =>
+  import('./features/home/HomePage').then((m) => ({ default: m.HomePage })),
+)
+const UnauthorizedPage = lazy(() =>
+  import('./features/misc/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })),
+)
+const NotFoundPage = lazy(() =>
+  import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
+)
 
 // --- Bilet alma akisi (Sprint 7-8) ---
 // Bu bes sayfa ayri parcalar ama AYNI akisin adimlari. Vite,
 // paylastiklari kodu (bookingApi, SeatMap, format) ortak bir parcaya
 // koyup her ikisine de bagliyor -- yani tekrar indirilmiyor.
-const EventsPage = lazy(() => import('./features/booking/pages/EventsPage').then((m) => ({ default: m.EventsPage })))
-const EventDetailPage = lazy(() => import('./features/booking/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage })))
-const SeatSelectionPage = lazy(() => import('./features/booking/pages/SeatSelectionPage').then((m) => ({ default: m.SeatSelectionPage })))
-const ReservationPage = lazy(() => import('./features/booking/pages/ReservationPage').then((m) => ({ default: m.ReservationPage })))
-const MyReservationsPage = lazy(() => import('./features/booking/pages/MyReservationsPage').then((m) => ({ default: m.MyReservationsPage })))
-const MyTicketsPage = lazy(() => import('./features/booking/pages/MyTicketsPage').then((m) => ({ default: m.MyTicketsPage })))
-const MyFavoritesPage = lazy(() => import('./features/booking/pages/MyFavoritesPage').then((m) => ({ default: m.MyFavoritesPage })))
+const EventsPage = lazy(() =>
+  import('./features/booking/pages/EventsPage').then((m) => ({ default: m.EventsPage })),
+)
+const EventDetailPage = lazy(() =>
+  import('./features/booking/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage })),
+)
+const SeatSelectionPage = lazy(() =>
+  import('./features/booking/pages/SeatSelectionPage').then((m) => ({
+    default: m.SeatSelectionPage,
+  })),
+)
+const ReservationPage = lazy(() =>
+  import('./features/booking/pages/ReservationPage').then((m) => ({ default: m.ReservationPage })),
+)
+const MyReservationsPage = lazy(() =>
+  import('./features/booking/pages/MyReservationsPage').then((m) => ({
+    default: m.MyReservationsPage,
+  })),
+)
+const MyTicketsPage = lazy(() =>
+  import('./features/booking/pages/MyTicketsPage').then((m) => ({ default: m.MyTicketsPage })),
+)
+const MyFavoritesPage = lazy(() =>
+  import('./features/booking/pages/MyFavoritesPage').then((m) => ({ default: m.MyFavoritesPage })),
+)
 
 // --- Raporlama paneli (Sprint 13) ---
 // Recharts agir bir kutuphane (~100 KB). Ayri parcada tutmak SART:
 // bilet alan normal kullanici bu kodu HIC indirmiyor.
-const DashboardPage = lazy(() => import('./features/reports/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })))
+const DashboardPage = lazy(() =>
+  import('./features/reports/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
+)
 
 // --- Admin paneli ---
 // Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
 // indirmeyecek. Koltuk haritasi ve form kutuphaneleri bu sayfalarda
 // yogun; hepsini ana pakete koysaydik giris yapan herkes bedelini oderdi.
-const VenuesPage = lazy(() => import('./features/admin/pages/VenuesPage').then((m) => ({ default: m.VenuesPage })))
-const VenueDetailPage = lazy(() => import('./features/admin/pages/VenueDetailPage').then((m) => ({ default: m.VenueDetailPage })))
-const HallDetailPage = lazy(() => import('./features/admin/pages/HallDetailPage').then((m) => ({ default: m.HallDetailPage })))
-const SeatLayoutPage = lazy(() => import('./features/admin/pages/SeatLayoutPage').then((m) => ({ default: m.SeatLayoutPage })))
+const VenuesPage = lazy(() =>
+  import('./features/admin/pages/VenuesPage').then((m) => ({ default: m.VenuesPage })),
+)
+const VenueDetailPage = lazy(() =>
+  import('./features/admin/pages/VenueDetailPage').then((m) => ({ default: m.VenueDetailPage })),
+)
+const HallDetailPage = lazy(() =>
+  import('./features/admin/pages/HallDetailPage').then((m) => ({ default: m.HallDetailPage })),
+)
+const SeatLayoutPage = lazy(() =>
+  import('./features/admin/pages/SeatLayoutPage').then((m) => ({ default: m.SeatLayoutPage })),
+)
 
 const queryClient = new QueryClient({
   defaultOptions: {

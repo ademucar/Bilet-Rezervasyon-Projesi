@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import { ConnectionIndicator } from './ConnectionIndicator';
-import type { ConnectionStatus } from '../hooks/useSeatHub';
+import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
+import { ConnectionIndicator } from './ConnectionIndicator'
+import type { ConnectionStatus } from '../hooks/useSeatHub'
 
 /**
  * PDF Sprint 17 frontend testi: "SignalR güncellemesi".
@@ -26,27 +26,22 @@ import type { ConnectionStatus } from '../hooks/useSeatHub';
  * ==================================================================
  */
 describe('ConnectionIndicator', () => {
-  const durumlar: ConnectionStatus[] = [
-    'connecting',
-    'connected',
-    'reconnecting',
-    'disconnected',
-  ];
+  const durumlar: ConnectionStatus[] = ['connecting', 'connected', 'reconnecting', 'disconnected']
 
   it.each(durumlar)('%s durumu için bir metin gösterir', (durum) => {
-    render(<ConnectionIndicator status={durum} />);
+    render(<ConnectionIndicator status={durum} />)
 
-    const gosterge = screen.getByRole('status');
+    const gosterge = screen.getByRole('status')
 
-    expect(gosterge).toBeInTheDocument();
-    expect(gosterge.textContent?.trim()).not.toBe('');
-  });
+    expect(gosterge).toBeInTheDocument()
+    expect(gosterge.textContent?.trim()).not.toBe('')
+  })
 
   it('bağlıyken canlı olduğunu bildirir', () => {
-    render(<ConnectionIndicator status="connected" />);
+    render(<ConnectionIndicator status="connected" />)
 
-    expect(screen.getByRole('status')).toHaveTextContent(/canli/i);
-  });
+    expect(screen.getByRole('status')).toHaveTextContent(/canli/i)
+  })
 
   /**
    * ================================================================
@@ -66,10 +61,10 @@ describe('ConnectionIndicator', () => {
    * ================================================================
    */
   it('bağlantı yokken kullanıcıyı uyarır', () => {
-    render(<ConnectionIndicator status="disconnected" />);
+    render(<ConnectionIndicator status="disconnected" />)
 
-    expect(screen.getByRole('status')).toHaveTextContent(/yok/i);
-  });
+    expect(screen.getByRole('status')).toHaveTextContent(/yok/i)
+  })
 
   /**
    * ================================================================
@@ -84,8 +79,8 @@ describe('ConnectionIndicator', () => {
    * ================================================================
    */
   it('durum bölgesi ekran okuyucuya bildiriliyor', () => {
-    render(<ConnectionIndicator status="reconnecting" />);
+    render(<ConnectionIndicator status="reconnecting" />)
 
-    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
-  });
-});
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite')
+  })
+})

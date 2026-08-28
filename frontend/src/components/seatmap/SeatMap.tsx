@@ -231,7 +231,9 @@ export function SeatMap({
                         fill={seat.fill}
                         stroke={isSelected ? '#15803d' : 'transparent'}
                         strokeWidth={2}
-                        className={clickable ? 'cursor-pointer transition-opacity hover:opacity-70' : ''}
+                        className={
+                          clickable ? 'cursor-pointer transition-opacity hover:opacity-70' : ''
+                        }
                         onClick={clickable ? () => onSeatClick?.(seat.id) : undefined}
                         // Klavye erisimi: yalnizca tiklanabilir koltuklar
                         // odaklanabilir olmali. Salt okunur haritada

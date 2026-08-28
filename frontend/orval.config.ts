@@ -1,4 +1,4 @@
-import { defineConfig } from 'orval';
+import { defineConfig } from 'orval'
 
 /**
  * ==================================================================
@@ -72,4 +72,4 @@ export default defineConfig({
       afterAllFilesWrite: 'npx oxlint --fix',
     },
   },
-});
+})

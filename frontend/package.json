@@ -13,7 +13,9 @@
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "api:generate": "orval",
-    "api:check": "orval && git diff --exit-code src/lib/api/generated"
+    "api:check": "orval && git diff --exit-code src/lib/api/generated",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -44,6 +46,7 @@
     "jsdom": "^30.0.1",
     "orval": "^8.26.0",
     "oxlint": "^1.79.0",
+    "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2",

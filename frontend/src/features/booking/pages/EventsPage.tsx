@@ -79,8 +79,7 @@ export function EventsPage() {
     const sayilmayanlar = new Set(['pageNumber', 'pageSize', 'sortBy', 'sortDirection'])
 
     return Object.entries(filters).filter(
-      ([anahtar, deger]) =>
-        !sayilmayanlar.has(anahtar) && deger !== undefined && deger !== '',
+      ([anahtar, deger]) => !sayilmayanlar.has(anahtar) && deger !== undefined && deger !== '',
     ).length
   }, [filters])
 
@@ -211,9 +210,7 @@ export function EventsPage() {
 
             {data && data.items.length === 0 && (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-                <p className="text-sm text-slate-500">
-                  Bu kriterlere uyan etkinlik bulunamadi.
-                </p>
+                <p className="text-sm text-slate-500">Bu kriterlere uyan etkinlik bulunamadi.</p>
 
                 {/* Bos sonucta CIKIS YOLU gosteriyorum.
                     Yoksa kullanici hangi filtrenin sonucu bosalttigini
@@ -232,9 +229,7 @@ export function EventsPage() {
 
             {data && data.items.length > 0 && (
               <>
-                <p className="mb-3 text-sm text-slate-500">
-                  {data.totalCount} etkinlik bulundu
-                </p>
+                <p className="mb-3 text-sm text-slate-500">{data.totalCount} etkinlik bulundu</p>
 
                 <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {data.items.map((ev) => (

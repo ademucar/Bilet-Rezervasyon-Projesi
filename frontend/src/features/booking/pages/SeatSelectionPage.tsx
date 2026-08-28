@@ -105,51 +105,48 @@ export function SeatSelectionPage() {
   // ================================================================
   const patchSeatStatus = useCallback(
     (eventSeatIds: string[], newStatus: number) => {
-      queryClient.setQueryData<SeatAvailability>(
-        ['seat-availability', sessionId],
-        (previous) => {
-          if (!previous) {
-            // Liste henuz yuklenmemis. Olayi atlamak guvenli:
-            // birazdan gelecek ilk cekimde zaten guncel durum var.
-            return previous
+      queryClient.setQueryData<SeatAvailability>(['seat-availability', sessionId], (previous) => {
+        if (!previous) {
+          // Liste henuz yuklenmemis. Olayi atlamak guvenli:
+          // birazdan gelecek ilk cekimde zaten guncel durum var.
+          return previous
+        }
+
+        const hedef = new Set(eventSeatIds)
+        let degisti = false
+
+        const seats = previous.seats.map((seat) => {
+          if (!hedef.has(seat.eventSeatId) || seat.status === newStatus) {
+            return seat
           }
 
-          const hedef = new Set(eventSeatIds)
-          let degisti = false
+          degisti = true
 
-          const seats = previous.seats.map((seat) => {
-            if (!hedef.has(seat.eventSeatId) || seat.status === newStatus) {
-              return seat
-            }
+          return { ...seat, status: newStatus }
+        })
 
-            degisti = true
+        // Hicbir sey degismediyse ESKI nesneyi aynen donuyorum.
+        //
+        // Yeni nesne donseydik React "veri degisti" deyip tum
+        // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
+        // icin bosuna bir is.
+        if (!degisti) {
+          return previous
+        }
 
-            return { ...seat, status: newStatus }
-          })
+        return {
+          ...previous,
+          seats,
 
-          // Hicbir sey degismediyse ESKI nesneyi aynen donuyorum.
+          // Bos koltuk sayacini da guncelliyorum.
           //
-          // Yeni nesne donseydik React "veri degisti" deyip tum
-          // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
-          // icin bosuna bir is.
-          if (!degisti) {
-            return previous
-          }
-
-          return {
-            ...previous,
-            seats,
-
-            // Bos koltuk sayacini da guncelliyorum.
-            //
-            // Unutsaydik baslikta "65 / 68 koltuk bos" yazarken
-            // haritada 60 bos koltuk gorunurdu. Kucuk ama
-            // kullanicinin sisteme guvenini sarsan turden bir
-            // tutarsizlik.
-            availableSeats: seats.filter((x) => x.status === EventSeatStatus.Available).length,
-          }
-        },
-      )
+          // Unutsaydik baslikta "65 / 68 koltuk bos" yazarken
+          // haritada 60 bos koltuk gorunurdu. Kucuk ama
+          // kullanicinin sisteme guvenini sarsan turden bir
+          // tutarsizlik.
+          availableSeats: seats.filter((x) => x.status === EventSeatStatus.Available).length,
+        }
+      })
     },
     [queryClient, sessionId],
   )
@@ -259,22 +256,14 @@ export function SeatSelectionPage() {
   // ================================================================
   const lostSeats = useMemo(
     () =>
-      seats.filter(
-        (s) => selected.has(s.eventSeatId) && s.status !== EventSeatStatus.Available,
-      ),
+      seats.filter((s) => selected.has(s.eventSeatId) && s.status !== EventSeatStatus.Available),
     [seats, selected],
   )
 
-  const lostIds = useMemo(
-    () => new Set(lostSeats.map((s) => s.eventSeatId)),
-    [lostSeats],
-  )
+  const lostIds = useMemo(() => new Set(lostSeats.map((s) => s.eventSeatId)), [lostSeats])
 
   const activeSelected = useMemo<ReadonlySet<string>>(
-    () =>
-      lostIds.size === 0
-        ? selected
-        : new Set([...selected].filter((id) => !lostIds.has(id))),
+    () => (lostIds.size === 0 ? selected : new Set([...selected].filter((id) => !lostIds.has(id)))),
     [selected, lostIds],
   )
 
@@ -470,8 +459,8 @@ export function SeatSelectionPage() {
         {cancelledTitle && (
           <div className="mt-4">
             <Alert variant="error">
-              <strong>{cancelledTitle}</strong> etkinligi az once iptal edildi.
-              Bu oturum icin bilet alinamaz.{' '}
+              <strong>{cancelledTitle}</strong> etkinligi az once iptal edildi. Bu oturum icin bilet
+              alinamaz.{' '}
               <button
                 type="button"
                 onClick={() => navigate('/etkinlikler')}
@@ -488,9 +477,8 @@ export function SeatSelectionPage() {
             <Alert variant="error">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span>
-                  {lostSeats.map((s) => s.displayLabel).join(', ')} koltugu siz
-                  secerken baska bir kullanici tarafindan alindi. Seciminizden
-                  cikardim.
+                  {lostSeats.map((s) => s.displayLabel).join(', ')} koltugu siz secerken baska bir
+                  kullanici tarafindan alindi. Seciminizden cikardim.
                 </span>
 
                 <button
@@ -548,14 +536,17 @@ export function SeatSelectionPage() {
 
             {selectedSeats.length === 0 ? (
               <p className="mt-3 text-sm text-slate-500">
-                Haritadan koltuk secin. Sectiginiz koltuklar rezervasyon
-                olusturana kadar kimseye kapatilmaz.
+                Haritadan koltuk secin. Sectiginiz koltuklar rezervasyon olusturana kadar kimseye
+                kapatilmaz.
               </p>
             ) : (
               <>
                 <ul className="mt-3 space-y-2">
                   {selectedSeats.map((seat) => (
-                    <li key={seat.eventSeatId} className="flex items-start justify-between gap-2 text-sm">
+                    <li
+                      key={seat.eventSeatId}
+                      className="flex items-start justify-between gap-2 text-sm"
+                    >
                       <div>
                         <p className="font-medium text-slate-900">{seat.displayLabel}</p>
                         <p className="text-xs text-slate-500">
@@ -606,9 +597,8 @@ export function SeatSelectionPage() {
             </Button>
 
             <p className="mt-3 text-xs text-slate-500">
-              Rezervasyon olusturunca koltuklar <strong>10 dakika</strong> size
-              kilitlenir. Bu sure icinde odemeyi tamamlamazsaniz koltuklar
-              otomatik olarak serbest birakilir.
+              Rezervasyon olusturunca koltuklar <strong>10 dakika</strong> size kilitlenir. Bu sure
+              icinde odemeyi tamamlamazsaniz koltuklar otomatik olarak serbest birakilir.
             </p>
           </aside>
         </div>

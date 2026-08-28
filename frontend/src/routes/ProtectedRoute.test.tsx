@@ -1,9 +1,9 @@
-import { screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { Route, Routes } from 'react-router-dom';
-import { ProtectedRoute } from './ProtectedRoute';
-import { useAuthStore } from '../stores/authStore';
-import { renderWithProviders } from '../test/testUtils';
+import { screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { Route, Routes } from 'react-router-dom'
+import { ProtectedRoute } from './ProtectedRoute'
+import { useAuthStore } from '../stores/authStore'
+import { renderWithProviders } from '../test/testUtils'
 
 /**
  * PDF Sprint 17 frontend testi: "Yetkisiz route".
@@ -20,7 +20,7 @@ function rotalariCiz(baslangic: string, roller?: string[]) {
       </Route>
     </Routes>,
     { route: baslangic },
-  );
+  )
 }
 
 /** Oturum durumunu doğrudan store üzerinden kuruyor. */
@@ -35,7 +35,7 @@ function oturumAc(roller: string[]) {
       isEmailConfirmed: true,
       roles: roller,
     },
-  });
+  })
 }
 
 describe('ProtectedRoute', () => {
@@ -51,23 +51,23 @@ describe('ProtectedRoute', () => {
     // Yani en kritik güvenlik testimiz, hiçbir şey doğrulamayan bir
     // teste dönüşürdü.
     // ==============================================================
-    useAuthStore.setState({ accessToken: null, refreshToken: null, user: null });
-  });
+    useAuthStore.setState({ accessToken: null, refreshToken: null, user: null })
+  })
 
   it('giriş yapmamış kullanıcıyı giriş sayfasına yönlendirir', () => {
-    rotalariCiz('/panel');
+    rotalariCiz('/panel')
 
-    expect(screen.getByText('Giris Sayfasi')).toBeInTheDocument();
-    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument();
-  });
+    expect(screen.getByText('Giris Sayfasi')).toBeInTheDocument()
+    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument()
+  })
 
   it('giriş yapmış kullanıcıyı içeri alır', () => {
-    oturumAc(['User']);
+    oturumAc(['User'])
 
-    rotalariCiz('/panel');
+    rotalariCiz('/panel')
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+  })
 
   /**
    * ================================================================
@@ -86,21 +86,21 @@ describe('ProtectedRoute', () => {
    * ================================================================
    */
   it('rolü yetersiz kullanıcıyı yetkisiz sayfasına yönlendirir', () => {
-    oturumAc(['User']);
+    oturumAc(['User'])
 
-    rotalariCiz('/panel', ['Admin']);
+    rotalariCiz('/panel', ['Admin'])
 
-    expect(screen.getByText('Yetkisiz Sayfasi')).toBeInTheDocument();
-    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument();
-  });
+    expect(screen.getByText('Yetkisiz Sayfasi')).toBeInTheDocument()
+    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument()
+  })
 
   it('doğru role sahip kullanıcıyı içeri alır', () => {
-    oturumAc(['Admin']);
+    oturumAc(['Admin'])
 
-    rotalariCiz('/panel', ['Admin']);
+    rotalariCiz('/panel', ['Admin'])
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument();
-  });
+    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+  })
 
   /**
    * Birden fazla rol kabul edilen sayfalar var (örneğin raporlar
@@ -108,10 +108,10 @@ describe('ProtectedRoute', () => {
    * sahip olması yeterli olmalı.
    */
   it('kabul edilen rollerden birine sahip olmak yeterli', () => {
-    oturumAc(['Organizer']);
+    oturumAc(['Organizer'])
 
-    rotalariCiz('/panel', ['Admin', 'Organizer']);
+    rotalariCiz('/panel', ['Admin', 'Organizer'])
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+  })
+})

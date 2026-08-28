@@ -21,10 +21,14 @@ export function HallDetailPage() {
     enabled: Boolean(hallId),
   })
 
-  const { register, handleSubmit, reset, formState: { errors } } =
-    useForm<{ name: string; description?: string }>({
-      defaultValues: { name: '', description: '' },
-    })
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{ name: string; description?: string }>({
+    defaultValues: { name: '', description: '' },
+  })
 
   const createLayout = useMutation({
     mutationFn: (data: { name: string; description?: string }) =>
@@ -68,7 +72,9 @@ export function HallDetailPage() {
           {...register('description')}
         />
 
-        <Button type="submit" isLoading={createLayout.isPending}>Olustur</Button>
+        <Button type="submit" isLoading={createLayout.isPending}>
+          Olustur
+        </Button>
       </form>
 
       {layoutsQuery.isPending && (

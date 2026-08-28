@@ -117,7 +117,10 @@ export const adminApi = {
     return data
   },
 
-  createHall: async (venueId: string, body: { name: string; capacity: number }): Promise<string> => {
+  createHall: async (
+    venueId: string,
+    body: { name: string; capacity: number },
+  ): Promise<string> => {
     const { data } = await api.post<string>(`/venues/${venueId}/halls`, body)
     return data
   },
