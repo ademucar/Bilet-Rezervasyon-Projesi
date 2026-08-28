@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ticketing.Persistence.Interceptors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ticketing.Application.Abstractions.Persistence;
@@ -56,8 +57,24 @@ public static class DependencyInjection
                 "degiskenini kontrol edin.");
         }
 
-        services.AddDbContext<TicketingDbContext>(options =>
+        // ==============================================================
+        // DENETIM ALANI INTERCEPTOR'I -- Sprint 12'de eklendi
+        // ==============================================================
+        // CreatedAt / UpdatedAt / soft delete alanlarini otomatik
+        // dolduruyor. Gerekcesi ve nasil bulundugu
+        // AuditFieldsInterceptor icinde ayrintili yazili.
+        //
+        // Scoped: ICurrentUser scoped (HttpContext'e bagli) ve
+        // interceptor onu kullaniyor. Singleton yapsaydik "captive
+        // dependency" olusur, tum istekler ILK istegin kullanicisini
+        // gorurdu -- denetim izi tamamen yanlis olurdu.
+        // ==============================================================
+        services.AddScoped<AuditFieldsInterceptor>();
+
+        services.AddDbContext<TicketingDbContext>((sp, options) =>
         {
+            options.AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>());
+
             options.UseNpgsql(connectionString, npgsql =>
             {
                 // Migration'lar bu assembly'de aransin.

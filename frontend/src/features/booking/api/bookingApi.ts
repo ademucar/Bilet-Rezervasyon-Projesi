@@ -275,6 +275,35 @@ export interface CityDto {
   plateCode: number
 }
 
+// ===================================================================
+// YORUM VE FAVORI -- PDF Sprint 12
+// ===================================================================
+
+export interface ReviewDto {
+  id: string
+  userId: string
+  /** "Adem U." -- backend soyadi KISALTARAK donuyor (gizlilik). */
+  userDisplayName: string
+  rating: number
+  comment: string
+  createdAt: string
+  updatedAt: string | null
+  /** Bu yorum bana mi ait? Duzenle/Sil dugmeleri icin. */
+  isMine: boolean
+}
+
+export interface ReviewSummary {
+  averageRating: number
+  totalCount: number
+  /** Puan -> adet. Backend 1-5 arasi TUM anahtarlari dolduruyor. */
+  ratingCounts: Record<string, number>
+}
+
+export interface EventReviewsResult {
+  summary: ReviewSummary
+  reviews: Paged<ReviewDto>
+}
+
 export const bookingApi = {
   getEvents: async (params: EventFilters) => {
     // ==============================================================
@@ -399,6 +428,43 @@ export const bookingApi = {
 
   failPayment: async (id: string, reason: string): Promise<void> => {
     await api.post(`/payments/${id}/fail`, { reason })
+  },
+
+  // ---- Yorumlar (PDF Sprint 12) ----
+
+  getEventReviews: async (eventId: string, pageNumber = 1): Promise<EventReviewsResult> => {
+    const { data } = await api.get<EventReviewsResult>(`/events/${eventId}/reviews`, {
+      params: { pageNumber, pageSize: 10 },
+    })
+    return data
+  },
+
+  createReview: async (eventId: string, body: { rating: number; comment: string }) => {
+    const { data } = await api.post<string>(`/events/${eventId}/reviews`, body)
+    return data
+  },
+
+  updateReview: async (id: string, body: { rating: number; comment: string }): Promise<void> => {
+    await api.put(`/reviews/${id}`, body)
+  },
+
+  deleteReview: async (id: string): Promise<void> => {
+    await api.delete(`/reviews/${id}`)
+  },
+
+  // ---- Favoriler (PDF Sprint 12) ----
+
+  addFavorite: async (eventId: string): Promise<void> => {
+    await api.post(`/events/${eventId}/favorite`)
+  },
+
+  removeFavorite: async (eventId: string): Promise<void> => {
+    await api.delete(`/events/${eventId}/favorite`)
+  },
+
+  getMyFavorites: async (): Promise<EventListItem[]> => {
+    const { data } = await api.get<EventListItem[]>('/users/me/favorites')
+    return data
   },
 
   getMyTickets: async (status?: number): Promise<TicketDto[]> => {

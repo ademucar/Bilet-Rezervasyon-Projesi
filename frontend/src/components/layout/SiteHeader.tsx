@@ -55,6 +55,9 @@ export function SiteHeader() {
           <NavLink to="/biletlerim" className={linkClass}>
             Biletlerim
           </NavLink>
+          <NavLink to="/favorilerim" className={linkClass}>
+            Favorilerim
+          </NavLink>
 
           {/* Admin baglantisini yalnizca admin GORUR.
               UNUTMA: bu bir guvenlik onlemi DEGIL, kullanici deneyimi.

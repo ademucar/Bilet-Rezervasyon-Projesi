@@ -1,6 +1,7 @@
 using Hangfire;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Ticketing.Application.Features.Events;
 using Ticketing.Application.Features.Outbox;
 using Ticketing.Application.Features.Reservations;
 
@@ -186,6 +187,39 @@ public sealed partial class TicketingJobs
     }
 
     // ==================================================================
+    // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 icin eklendi
+    // ==================================================================
+    // PDF Sprint 9 bu isi SAYMIYOR. Sprint 12'yi yazarken ortaya cikti:
+    // "Etkinlik tamamlanmadan yorum yapilamaz" kurali, etkinlikleri
+    // Completed durumuna gecirecek bir mekanizma OLMADAN hicbir zaman
+    // saglanamazdi.
+    //
+    // Yani PDF'in bir sprintteki kurali, baska bir sprintte olmayan bir
+    // isi zorunlu kiliyor. Sprintleri tek tek okuyup "bu gercekten
+    // calisir mi?" diye sormanin karsiligi.
+    // ==================================================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 60)]
+    [AutomaticRetry(Attempts = 0)]
+    public async Task CompletePastEventsAsync(CancellationToken cancellationToken)
+    {
+        var result = await _sender
+            .Send(new CompletePastEventsCommand(), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!result.IsSuccess)
+        {
+            throw new InvalidOperationException(
+                $"Etkinlik tamamlama basarisiz: {result.Error.Code} - {result.Error.Message}");
+        }
+
+        if (result.Value > 0)
+        {
+            LogEventsCompleted(_logger, result.Value);
+        }
+    }
+
+    // ==================================================================
     // 5) GUNLUK SATIS OZETI
     // ==================================================================
 
@@ -242,6 +276,12 @@ public sealed partial class TicketingJobs
         Level = LogLevel.Information,
         Message = "{Count} etkinlik hatirlatmasi kuyruga alindi.")]
     private static partial void LogRemindersQueued(ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 9105,
+        Level = LogLevel.Information,
+        Message = "{Count} etkinlik tamamlandi olarak isaretlendi.")]
+    private static partial void LogEventsCompleted(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9104,

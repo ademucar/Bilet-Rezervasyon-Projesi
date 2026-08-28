@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { SiteHeader } from '../../../components/layout/SiteHeader'
 import { Alert } from '../../../components/ui/Alert'
+import { EventReviews } from '../components/EventReviews'
+import { FavoriteButton } from '../components/FavoriteButton'
 import { toProblem } from '../../../lib/api/client'
 import { formatDateTime } from '../../../lib/format'
 import { bookingApi, EventStatus } from '../api/bookingApi'
@@ -72,10 +74,17 @@ export function EventDetailPage() {
           &larr; Etkinlikler
         </Link>
 
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">{ev.title}</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {ev.venueName} - {ev.venueAddress}, {ev.cityName}
-        </p>
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">{ev.title}</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {ev.venueName} - {ev.venueAddress}, {ev.cityName}
+            </p>
+          </div>
+
+          {/* PDF Sprint 12: favori dugmesi */}
+          <FavoriteButton eventId={ev.id} />
+        </div>
 
         {isCancelled && (
           <div className="mt-4">
@@ -177,6 +186,9 @@ export function EventDetailPage() {
             </ul>
           )}
         </section>
+
+        {/* PDF Sprint 12: yorumlar ve puanlama */}
+        <EventReviews eventId={ev.id} eventStatus={ev.status} />
       </main>
     </div>
   )

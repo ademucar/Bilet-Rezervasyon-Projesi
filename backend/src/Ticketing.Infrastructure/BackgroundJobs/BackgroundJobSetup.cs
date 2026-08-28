@@ -17,6 +17,7 @@ public static class BackgroundJobSetup
         public const string ProcessOutbox = "process-outbox";
         public const string EventReminders = "event-reminders";
         public const string DailySalesSummary = "daily-sales-summary";
+        public const string CompletePastEvents = "complete-past-events";
     }
 
     /// <summary>
@@ -165,5 +166,22 @@ public static class BackgroundJobSetup
             JobIds.DailySalesSummary,
             job => job.GenerateDailySalesSummaryAsync(CancellationToken.None),
             "30 0 * * *");
+
+        // ---- 5) Gecmis etkinlikleri tamamla: SAATTE BIR ----
+        //
+        // Sprint 12 icin eklendi (bkz. TicketingJobs aciklamasi).
+        //
+        // Neden saatte bir? Bu is kullaniciyi BEKLETMIYOR ama
+        // geciktikce yorum yapmayi geciktiriyor. Etkinlik bitiminden
+        // sonraki 6 saatlik pay zaten var; ustune bir saatlik gecikme
+        // fark etmez.
+        //
+        // Dakikada bir calistirmanin anlami yok: etkinlikler dakika
+        // dakika bitmiyor. Gunde bir de cok seyrek olurdu -- sabah
+        // biten bir etkinlik icin aksama kadar yorum yapilamazdi.
+        recurringJobs.AddOrUpdate<TicketingJobs>(
+            JobIds.CompletePastEvents,
+            job => job.CompletePastEventsAsync(CancellationToken.None),
+            Cron.Hourly());
     }
 }

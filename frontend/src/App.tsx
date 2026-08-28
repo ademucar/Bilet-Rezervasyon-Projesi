@@ -42,6 +42,7 @@ const SeatSelectionPage = lazy(() => import('./features/booking/pages/SeatSelect
 const ReservationPage = lazy(() => import('./features/booking/pages/ReservationPage').then((m) => ({ default: m.ReservationPage })))
 const MyReservationsPage = lazy(() => import('./features/booking/pages/MyReservationsPage').then((m) => ({ default: m.MyReservationsPage })))
 const MyTicketsPage = lazy(() => import('./features/booking/pages/MyTicketsPage').then((m) => ({ default: m.MyTicketsPage })))
+const MyFavoritesPage = lazy(() => import('./features/booking/pages/MyFavoritesPage').then((m) => ({ default: m.MyFavoritesPage })))
 
 // --- Admin paneli ---
 // Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
@@ -150,6 +151,7 @@ export default function App() {
                 <Route path="/rezervasyonlar/:reservationId" element={<ReservationPage />} />
                 <Route path="/rezervasyonlarim" element={<MyReservationsPage />} />
                 <Route path="/biletlerim" element={<MyTicketsPage />} />
+                <Route path="/favorilerim" element={<MyFavoritesPage />} />
               </Route>
 
               {/* ---- Admin paneli ----
