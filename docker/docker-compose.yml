@@ -209,6 +209,42 @@ services:
     networks:
       - ticketing-network
 
+  # ==================================================================
+  # FRONTEND -- PDF Sprint 2 compose servisi
+  # ==================================================================
+  # Sprint 19 denetiminde bu servisin EKSIK oldugunu buldum.
+  # PDF iki yerde istiyor:
+  #   Sprint 2  -> compose servisleri arasinda "Frontend"
+  #   Zorunlu   -> "Tum proje Docker Compose ile ayaga
+  #                 kaldirilabilmelidir."
+  #
+  # Yoktu; arayuzu calistirmak icin ayrica `npm run dev` gerekiyordu.
+  # ==================================================================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        # nginx ayni kaynaktan API'ye vekillik ediyor; tarayici
+        # acisindan CORS devreye girmiyor.
+        VITE_API_URL: /api
+    container_name: ticketing-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      # service_started YETERLI, service_healthy DEGIL.
+      #
+      # Frontend statik dosya sunuyor; API hazir olmasa bile sayfa
+      # aciliyor ve kullanici "sunucuya ulasilamiyor" hatasi
+      # goruyor. service_healthy beklemek, API cokmusse arayuzun
+      # HIC acilmamasina yol acardi -- oysa o an kullaniciya
+      # anlamli bir hata gostermek istiyoruz.
+      api:
+        condition: service_started
+    networks:
+      - ticketing-network
+
 
 volumes:
   postgres-data:
