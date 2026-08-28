@@ -35,6 +35,28 @@ export default defineConfig({
     globals: true,
 
     css: false,
+
+    // ==============================================================
+    // E2E DOSYALARI VITEST'TEN HARIC
+    // ==============================================================
+    // Sprint 17'de Playwright ekledikten sonra `npm test` su hatayi
+    // verdi:
+    //
+    //   Playwright Test did not expect test.describe() to be called here
+    //
+    // Sebep: Vitest varsayilan olarak TUM *.spec.ts dosyalarini
+    // topluyor ve e2e/ klasorundeki Playwright testlerini de kendi
+    // calistirmaya calisiyor.
+    //
+    // 36 birim testi yine geciyordu ama paket "1 failed" raporluyordu
+    // -- ve surekli kirmizi gorunen bir test paketi, bir sure sonra
+    // hic bakilmayan bir test paketine donusur.
+    //
+    // Iki arac ayri sorumluluklara sahip: Vitest bilesenleri,
+    // Playwright akisi test ediyor. Dosya duzeyinde de ayirmak
+    // gerekiyordu.
+    // ==============================================================
+    exclude: ['node_modules/**', 'dist/**', 'e2e/**'],
   },
 
   server: {
