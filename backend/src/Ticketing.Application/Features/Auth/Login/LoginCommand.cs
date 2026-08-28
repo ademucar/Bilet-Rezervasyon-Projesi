@@ -5,7 +5,10 @@ using Microsoft.Extensions.Options;
 using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Common.Options;
+using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
+using Ticketing.Application.Common.Security;
 
 namespace Ticketing.Application.Features.Auth.Login;
 
@@ -42,24 +45,27 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 /// <summary>
 /// Giris akisi. PDF Sprint 15'in "Brute force korumasi" maddesini de karsilar.
 /// </summary>
-internal sealed class LoginCommandHandler
+internal sealed partial class LoginCommandHandler
     : IRequestHandler<LoginCommand, Result<AuthResponse>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly SecurityOptions _security;
+    private readonly ILogger<LoginCommandHandler> _logger;
 
     public LoginCommandHandler(
         IApplicationDbContext context,
         IPasswordHasher passwordHasher,
         ITokenService tokenService,
-        IOptions<SecurityOptions> security)
+        IOptions<SecurityOptions> security,
+        ILogger<LoginCommandHandler> logger)
     {
         _context = context;
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
         _security = security.Value;
+        _logger = logger;
     }
 
     public async Task<Result<AuthResponse>> Handle(
@@ -100,6 +106,27 @@ internal sealed class LoginCommandHandler
                 request.Password,
                 "$2a$12$C6UzMDM.H6dfI/f/IKcEe.7ZLQhO7BsLFcHy5UbfHYHmqLQ8sBEHu");
 
+            // ==========================================================
+            // PDF Sprint 16: "Basarisiz login" loglanmalidir.
+            // ==========================================================
+            // E-POSTA MASKELI (Sprint 15 gerekcesi): basarisiz giris
+            // loglari saldiri sirasinda BINLERCE satir uretiyor. Acik
+            // yazsaydik, saldirganin denedigi tum adresler log
+            // dosyasinda toplu bir liste olusturur -- yani saldirgan
+            // basarisiz olsa bile bizim loglarimiz onun ise yarardi.
+            //
+            // Sebebi de ayri bir alan olarak veriyorum ("kullanici yok"
+            // / "sifre yanlis"). Ayni mesaji kullansaydik, uretimde
+            // "hangi hesaplar VAR?" sorusunu loglardan cevaplamak
+            // imkansiz olurdu -- oysa bu, bir saldirinin hedefli mi
+            // yoksa korlemesine mi oldugunu anlamak icin gerekli.
+            //
+            // DIKKAT: bu ayrim yalnizca LOGDA var. Kullaniciya donen
+            // yanit ikisinde de ayni ("E-posta veya sifre hatali") --
+            // aksi halde hesap sayimi (user enumeration) yapilabilirdi.
+            // ==========================================================
+            LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "kullanici_yok");
+
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
@@ -108,6 +135,15 @@ internal sealed class LoginCommandHandler
         // harcar hem de saldirganin kilit durumunu atlatmasina yarar.
         if (user.IsLockedOut())
         {
+            // Kilitli hesaba giris denemesi, DEVAM EDEN bir saldirinin
+            // en net isaretidir: hesap zaten kilitlendigi halde biri
+            // hala deniyor.
+            //
+            // Burada kullanici KIMLIGINI (Guid) logluyorum, e-postayi
+            // degil: hesap zaten belirlenmis durumda ve destek ekibi
+            // Guid ile kullaniciya ulasabiliyor.
+            LogLoginBlocked(_logger, user.Id, "hesap_kilitli");
+
             return Result.Failure<AuthResponse>(AuthErrors.AccountLocked);
         }
 
@@ -126,6 +162,21 @@ internal sealed class LoginCommandHandler
             // Kaydetmezsek sayac hic artmaz ve brute force korumasi
             // hicbir sey yapmaz -- calistigini sanip korumasiz kaliriz.
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+            LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "sifre_yanlis");
+
+            // Bu deneme hesabi KILITLEDIYSE ayrica logluyorum.
+            //
+            // Neden ayri bir olay? Cunku bu, izleme sisteminde alarm
+            // kurulacak esik: tek bir basarisiz giris gurultu, ama
+            // "son 10 dakikada 50 hesap kilitlendi" bir saldiri.
+            //
+            // Ayni EventId'yi kullansaydik bu iki durumu birbirinden
+            // ayiran bir alarm kurali yazilamazdi.
+            if (user.IsLockedOut())
+            {
+                LogAccountLocked(_logger, user.Id, _security.MaxFailedLoginAttempts);
+            }
 
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
@@ -146,6 +197,14 @@ internal sealed class LoginCommandHandler
 
         var accessToken = _tokenService.CreateAccessToken(user.Id, user.Email, roles);
 
+        // PDF Sprint 16: "Login" loglanmalidir.
+        //
+        // Token'i veya e-postayi LOGLAMIYORUM. Kullanici kimligi ve
+        // rolleri yeterli: "kim giris yapti" sorusunu cevapliyor ama
+        // log dosyasi tek basina ne bir kullanici listesi ne de bir
+        // oturum ele gecirme araci oluyor.
+        LogLoginSucceeded(_logger, user.Id, roles.Count);
+
         return Result.Success(new AuthResponse(
             accessToken.Value,
             accessToken.ExpiresAt,
@@ -155,6 +214,52 @@ internal sealed class LoginCommandHandler
                 user.Id, user.Email, user.FirstName, user.LastName,
                 user.IsEmailConfirmed, roles)));
     }
+
+    // ==============================================================
+    // LOG TANIMLARI
+    // ==============================================================
+    // [LoggerMessage] kaynak ureteci kullaniyorum (CA1848):
+    // _logger.LogInformation("...", arg) yazsaydik her cagride
+    // string bicimlendirme ve kutulama (boxing) olurdu -- log
+    // seviyesi kapali olsa BILE.
+    //
+    // Uretilen kod once IsEnabled kontrolu yapiyor; kapaliysa
+    // hicbir tahsis yapmiyor.
+    // ==============================================================
+
+    [LoggerMessage(
+        EventId = LogEvents.LoginBasarili,
+        Level = LogLevel.Information,
+        Message = "Giris basarili. Kullanici: {UserId}, Rol sayisi: {RoleCount}")]
+    private static partial void LogLoginSucceeded(ILogger logger, Guid userId, int roleCount);
+
+    /// <remarks>
+    /// Warning seviyesi, Information degil.
+    ///
+    /// Sebep: uretim ortamlarinda Information cogu zaman
+    /// filtreleniyor. Basarisiz girisi Information yapsaydik,
+    /// "son 5 dakikada 100 basarisiz giris" alarmi HIC tetiklenmezdi
+    /// -- kural dogru olurdu ama besleyen veri hic gelmezdi.
+    ///
+    /// Bu, guvenlik acisindan en degerli log satirimiz.
+    /// </remarks>
+    [LoggerMessage(
+        EventId = LogEvents.LoginBasarisiz,
+        Level = LogLevel.Warning,
+        Message = "Giris basarisiz. E-posta: {MaskedEmail}, Sebep: {Reason}")]
+    private static partial void LogLoginFailed(ILogger logger, string maskedEmail, string reason);
+
+    [LoggerMessage(
+        EventId = LogEvents.LoginBasarisiz,
+        Level = LogLevel.Warning,
+        Message = "Giris engellendi. Kullanici: {UserId}, Sebep: {Reason}")]
+    private static partial void LogLoginBlocked(ILogger logger, Guid userId, string reason);
+
+    [LoggerMessage(
+        EventId = LogEvents.HesapKilitlendi,
+        Level = LogLevel.Warning,
+        Message = "Hesap kilitlendi. Kullanici: {UserId}, Basarisiz deneme: {Attempts}")]
+    private static partial void LogAccountLocked(ILogger logger, Guid userId, int attempts);
 
     private async Task<IReadOnlyCollection<string>> GetRoleNamesAsync(
         Guid userId,

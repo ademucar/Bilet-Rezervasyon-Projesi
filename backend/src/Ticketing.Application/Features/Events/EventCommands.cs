@@ -6,6 +6,8 @@ using Ticketing.Application.Abstractions.Caching;
 using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
+using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Enums;
 using Ticketing.Application.Features.Outbox;
@@ -113,16 +115,35 @@ public sealed class CreateEventCommandValidator : AbstractValidator<CreateEventC
     }
 }
 
-internal sealed class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Result<Guid>>
+internal sealed partial class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Result<Guid>>
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUser _currentUser;
+    private readonly ILogger<CreateEventCommandHandler> _logger;
 
-    public CreateEventCommandHandler(IApplicationDbContext context, ICurrentUser currentUser)
+    public CreateEventCommandHandler(
+        IApplicationDbContext context,
+        ICurrentUser currentUser,
+        ILogger<CreateEventCommandHandler> logger)
     {
         _context = context;
         _currentUser = currentUser;
+        _logger = logger;
     }
+
+    // PDF Sprint 16: "Etkinlik olusturma" loglanmalidir.
+    //
+    // Etkinlik BASLIGINI logluyorum. Bu bir istisna: baska yerlerde
+    // kullanici metnini loglamaktan kaciniyorum. Burada guvenli
+    // cunku etkinlik basligi zaten HERKESE ACIK bir veri --
+    // yayinlandiginda ana sayfada gorunecek. Gizli bir sey degil ve
+    // destek icin en pratik tanimlayici.
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikOlusturuldu,
+        Level = LogLevel.Information,
+        Message = "Etkinlik olusturuldu. Id: {EventId}, Baslik: {Title}, Organizator: {OrganizerProfileId}")]
+    private static partial void LogEventCreated(
+        ILogger logger, Guid eventId, string title, Guid organizerProfileId);
 
     public async Task<Result<Guid>> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
@@ -194,6 +215,11 @@ internal sealed class CreateEventCommandHandler : IRequestHandler<CreateEventCom
 
         _context.Events.Add(evt);
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: "Etkinlik olusturma" loglanmalidir.
+        // SaveChanges'ten sonra: log ancak gercekten kaydedildiyse
+        // atiliyor.
+        LogEventCreated(_logger, evt.Id, evt.Title, organizerProfileId.Value);
 
         return Result.Success(evt.Id);
     }
@@ -319,7 +345,7 @@ public sealed record PublishEventCommand(Guid EventId) : IRequest<Result>;
 /// <summary>PDF: POST /api/v1/events/{id}/cancel</summary>
 public sealed record CancelEventCommand(Guid EventId, string? Reason) : IRequest<Result>;
 
-internal sealed class EventStatusCommandHandler
+internal sealed partial class EventStatusCommandHandler
     : IRequestHandler<SubmitEventForApprovalCommand, Result>,
       IRequestHandler<PublishEventCommand, Result>,
       IRequestHandler<CancelEventCommand, Result>
@@ -327,15 +353,50 @@ internal sealed class EventStatusCommandHandler
     private readonly IApplicationDbContext _context;
     private readonly ISeatNotifier _seatNotifier;
     private readonly ICacheService _cache;
+    private readonly ILogger<EventStatusCommandHandler> _logger;
+
+    // PDF Sprint 16: "Etkinlik yayinlama" loglanmalidir.
+    //
+    // ==============================================================
+    // NEDEN OLUSTURMADAN AYRI BIR OLAY?
+    // ==============================================================
+    // Yayinlama, is acisindan donusu olmayan bir esik: o an etkinlik
+    // herkese gorunur olur ve bilet satisi baslar. Taslak olusturmak
+    // ise sonucu olmayan bir hazirlik adimi.
+    //
+    // "Kim, ne zaman yayinladi?" bir DENETIM sorusudur ve cevabinin
+    // baska olaylarin arasinda kaybolmamasi gerekiyor.
+    // ==============================================================
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikYayinlandi,
+        Level = LogLevel.Information,
+        Message = "Etkinlik yayinlandi. Id: {EventId}, Baslik: {Title}")]
+    private static partial void LogEventPublished(ILogger logger, Guid eventId, string title);
+
+    // Iptal, Warning seviyesinde -- hata oldugu icin degil,
+    // GORULMESI gerektigi icin.
+    //
+    // Bir etkinligin iptali para iadesi zinciri baslatiyor ve
+    // yuzlerce kullaniciya bildirim gidiyor. Sprint 15'te iade icin
+    // verdigimiz kararin aynisi: is etkisi buyuk olan olaylar,
+    // normal trafigin arasinda kaybolmamali.
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikIptalEdildi,
+        Level = LogLevel.Warning,
+        Message = "Etkinlik IPTAL edildi. Id: {EventId}, Baslik: {Title}, Sebep: {Reason}")]
+    private static partial void LogEventCancelled(
+        ILogger logger, Guid eventId, string title, string? reason);
 
     public EventStatusCommandHandler(
         IApplicationDbContext context,
         ISeatNotifier seatNotifier,
-        ICacheService cache)
+        ICacheService cache,
+        ILogger<EventStatusCommandHandler> logger)
     {
         _context = context;
         _seatNotifier = seatNotifier;
         _cache = cache;
+        _logger = logger;
     }
 
     /// <summary>
@@ -419,6 +480,14 @@ internal sealed class EventStatusCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+        // Log, SaveChanges'ten SONRA.
+        //
+        // Once loglasaydik ve kaydetme basarisiz olsaydi, logda
+        // "yayinlandi" yazardi ama veritabaninda yayinlanmamis
+        // olurdu. Loglarin gercekle celismesi, hic log olmamasindan
+        // daha kotudur: sorun arastiran kisi yanlis yone gider.
+        LogEventPublished(_logger, evt.Id, evt.Title);
+
         // Yayinlanan etkinlik artik herkese gorunur olmali.
         //
         // Temizlemeseydik, daha once 404 alan bir istek yuzunden
@@ -495,6 +564,10 @@ internal sealed class EventStatusCommandHandler
             evt.Id,
             evt.Title,
             cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: etkinlik iptali. Warning seviyesinde --
+        // yuzlerce kullaniciyi ve para iadesi zincirini etkiliyor.
+        LogEventCancelled(_logger, evt.Id, evt.Title, request.Reason);
 
         // Onbellek temizligi BURADA en kritik.
         //

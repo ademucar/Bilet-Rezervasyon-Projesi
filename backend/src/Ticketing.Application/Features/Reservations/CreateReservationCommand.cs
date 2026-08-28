@@ -7,6 +7,8 @@ using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Options;
+using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
 using Ticketing.Application.Features.Outbox;
 using Ticketing.Domain.Entities;
@@ -85,7 +87,7 @@ public sealed class CreateReservationCommandValidator : AbstractValidator<Create
     }
 }
 
-internal sealed class CreateReservationCommandHandler
+internal sealed partial class CreateReservationCommandHandler
     : IRequestHandler<CreateReservationCommand, Result<ReservationDto>>
 {
     private readonly IApplicationDbContext _context;
@@ -93,20 +95,68 @@ internal sealed class CreateReservationCommandHandler
     private readonly IDateTimeProvider _clock;
     private readonly ReservationOptions _options;
     private readonly ISeatNotifier _seatNotifier;
+    private readonly ILogger<CreateReservationCommandHandler> _logger;
 
     public CreateReservationCommandHandler(
         IApplicationDbContext context,
         ICurrentUser currentUser,
         IDateTimeProvider clock,
         IOptions<ReservationOptions> options,
-        ISeatNotifier seatNotifier)
+        ISeatNotifier seatNotifier,
+        ILogger<CreateReservationCommandHandler> logger)
     {
         _context = context;
         _currentUser = currentUser;
         _clock = clock;
         _options = options.Value;
         _seatNotifier = seatNotifier;
+        _logger = logger;
     }
+
+    // ==============================================================
+    // PDF Sprint 16: "Koltuk kilitleme"
+    // ==============================================================
+    // PDF bunu rezervasyondan AYRI bir madde olarak istiyor ve hakli:
+    // koltuk kilitleme, projedeki en yogun yaris kosulunun yasandigi
+    // nokta.
+    // ==============================================================
+    [LoggerMessage(
+        EventId = LogEvents.KoltuklarKilitlendi,
+        Level = LogLevel.Information,
+        Message = "Koltuklar kilitlendi. Oturum: {SessionId}, Koltuk: {SeatCount}, Sure: {LockMinutes} dk")]
+    private static partial void LogSeatsLocked(
+        ILogger logger, Guid sessionId, int seatCount, int lockMinutes);
+
+    /// <remarks>
+    /// ==============================================================
+    /// CAKISMA NEDEN AYRI VE NEDEN WARNING?
+    /// ==============================================================
+    /// Bu satir olmadan "koltugu secmistim ama alamadim" sikayetini
+    /// arastirmak imkansiz: kullanicinin ekraninda koltuk BOSTU,
+    /// veritabaninda ise baskasina ait. Log olmadan hangi iki istegin
+    /// carpistigini goremeyiz.
+    ///
+    /// Warning cunku bu bir HATA DEGIL -- sistem tam olarak dogru
+    /// calisti ve veri butunlugunu korudu. Ama SIKLIGI onemli:
+    /// cakisma orani aniden artiyorsa ya bot trafigi var ya da bir
+    /// etkinlik beklenenden populer. Ikisi de mudahale gerektirir.
+    ///
+    /// Error yapsaydik izleme panosu surekli alarm calardi ve gercek
+    /// hatalar bu gurultude kaybolurdu (Sprint 15'te konustugumuz
+    /// alarm yorgunlugu).
+    /// </remarks>
+    [LoggerMessage(
+        EventId = LogEvents.KoltukCakismasi,
+        Level = LogLevel.Warning,
+        Message = "Koltuk cakismasi. Oturum: {SessionId}, Istenen koltuk: {SeatCount}")]
+    private static partial void LogSeatConflict(ILogger logger, Guid sessionId, int seatCount);
+
+    [LoggerMessage(
+        EventId = LogEvents.RezervasyonOlusturuldu,
+        Level = LogLevel.Information,
+        Message = "Rezervasyon olusturuldu. Id: {ReservationId}, Kod: {Code}, Koltuk: {SeatCount}")]
+    private static partial void LogReservationCreated(
+        ILogger logger, Guid reservationId, string code, int seatCount);
 
     public async Task<Result<ReservationDto>> Handle(
         CreateReservationCommand request,
@@ -280,9 +330,23 @@ internal sealed class CreateReservationCommandHandler
         try
         {
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+            // PDF Sprint 16: "Koltuk kilitleme".
+            //
+            // SaveChanges'ten SONRA: kilit ancak veritabani onayladiysa
+            // gercek. Once loglasaydik, asagidaki catch'e dusen her
+            // cakismada logda "kilitlendi" satiri kalirdi -- ve o satir
+            // yalan olurdu.
+            LogSeatsLocked(
+                _logger,
+                request.EventSessionId,
+                seats.Count,
+                _options.LockDurationMinutes);
         }
         catch (DbUpdateConcurrencyException)
         {
+            LogSeatConflict(_logger, request.EventSessionId, seats.Count);
+
             // ==========================================================
             // OPTIMISTIC CONCURRENCY DEVREDE
             // ==========================================================
@@ -380,6 +444,14 @@ internal sealed class CreateReservationCommandHandler
             request.EventSessionId,
             seats.ConvertAll(s => s.Id),
             cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: "Rezervasyon olusturma".
+        //
+        // Rezervasyon KODUNU logluyorum cunku destek talebinde
+        // kullanicinin elindeki tek tanimlayici o ("ABC-123 numarali
+        // rezervasyonum"). Guid'i kullanici bilmiyor.
+        LogReservationCreated(
+            _logger, reservation.Id, reservation.ReservationCode, seats.Count);
 
         return await LoadDtoAsync(reservation.Id, now, cancellationToken).ConfigureAwait(false);
     }

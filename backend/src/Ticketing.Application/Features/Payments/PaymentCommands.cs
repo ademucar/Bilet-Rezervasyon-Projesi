@@ -7,6 +7,8 @@ using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
+using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
 using Ticketing.Application.Features.Outbox;
 using Ticketing.Domain.Entities;
@@ -64,25 +66,53 @@ public sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePaym
             .When(x => x.IdempotencyKey is not null);
 }
 
-internal sealed class CreatePaymentCommandHandler
+internal sealed partial class CreatePaymentCommandHandler
     : IRequestHandler<CreatePaymentCommand, Result<PaymentDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly ICurrentUser _currentUser;
     private readonly IDateTimeProvider _clock;
+    private readonly ILogger<CreatePaymentCommandHandler> _logger;
 
     public CreatePaymentCommandHandler(
         IApplicationDbContext context,
         IPaymentService paymentService,
         ICurrentUser currentUser,
-        IDateTimeProvider clock)
+        IDateTimeProvider clock,
+        ILogger<CreatePaymentCommandHandler> logger)
     {
         _context = context;
         _paymentService = paymentService;
         _currentUser = currentUser;
         _clock = clock;
+        _logger = logger;
     }
+
+    // ==============================================================
+    // PDF Sprint 16: "Odeme" loglanmalidir.
+    // ==============================================================
+    // TUTARI logluyorum ama KART BILGISI YOK -- zaten hicbir yerde
+    // saklamiyoruz (simulasyon saglayici kullaniyoruz).
+    //
+    // Tutar hassas veri degil ama is acisindan kritik: uretimde
+    // "bugun ne kadar odeme alindi?" sorusunun ilk cevabi loglardan
+    // geliyor, rapor sisteminden degil -- cunku rapor sistemi de
+    // bozulmus olabilir.
+    // ==============================================================
+    [LoggerMessage(
+        EventId = LogEvents.OdemeBaslatildi,
+        Level = LogLevel.Information,
+        Message = "Odeme baslatildi. Id: {PaymentId}, Rezervasyon: {ReservationId}, Tutar: {Amount} {Currency}")]
+    private static partial void LogPaymentStarted(
+        ILogger logger, Guid paymentId, Guid reservationId, decimal amount, string currency);
+
+    [LoggerMessage(
+        EventId = LogEvents.OdemeBasarisiz,
+        Level = LogLevel.Warning,
+        Message = "Odeme saglayici tarafindan REDDEDILDI. Id: {PaymentId}, Rezervasyon: {ReservationId}")]
+    private static partial void LogPaymentRejected(
+        ILogger logger, Guid paymentId, Guid reservationId);
 
     public async Task<Result<PaymentDto>> Handle(
         CreatePaymentCommand request,
@@ -227,12 +257,22 @@ internal sealed class CreatePaymentCommandHandler
 
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
+            LogPaymentRejected(_logger, payment.Id, reservation.Id);
+
             return Result.Failure<PaymentDto>(PaymentErrors.ProviderRejected);
         }
 
         payment.SetProviderReference(providerResult.ProviderReference);
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: "Odeme" loglanmalidir.
+        LogPaymentStarted(
+            _logger,
+            payment.Id,
+            reservation.Id,
+            payment.Amount.Amount,
+            payment.Amount.Currency);
 
         return await LoadAsync(payment.Id, cancellationToken).ConfigureAwait(false);
     }
@@ -259,25 +299,37 @@ internal sealed class CreatePaymentCommandHandler
 public sealed record CompletePaymentCommand(Guid PaymentId, string? ProviderReference)
     : IRequest<Result<PaymentDto>>;
 
-internal sealed class CompletePaymentCommandHandler
+internal sealed partial class CompletePaymentCommandHandler
     : IRequestHandler<CompletePaymentCommand, Result<PaymentDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly IDateTimeProvider _clock;
     private readonly ISeatNotifier _seatNotifier;
+    private readonly ILogger<CompletePaymentCommandHandler> _logger;
 
     public CompletePaymentCommandHandler(
         IApplicationDbContext context,
         IPaymentService paymentService,
         IDateTimeProvider clock,
-        ISeatNotifier seatNotifier)
+        ISeatNotifier seatNotifier,
+        ILogger<CompletePaymentCommandHandler> logger)
     {
         _context = context;
         _paymentService = paymentService;
         _clock = clock;
         _seatNotifier = seatNotifier;
+        _logger = logger;
     }
+
+    // Odemenin BASARIYLA tamamlandigi an: para alindi, biletler
+    // uretildi. Sistemdeki en degerli tekil olay.
+    [LoggerMessage(
+        EventId = LogEvents.OdemeBasarili,
+        Level = LogLevel.Information,
+        Message = "Odeme BASARILI. Id: {PaymentId}, Tutar: {Amount} {Currency}, Uretilen bilet: {TicketCount}")]
+    private static partial void LogPaymentSucceeded(
+        ILogger logger, Guid paymentId, decimal amount, string currency, int ticketCount);
 
     public async Task<Result<PaymentDto>> Handle(
         CompletePaymentCommand request,
@@ -479,6 +531,14 @@ internal sealed class CompletePaymentCommandHandler
             reservation.EventSessionId,
             reservation.Items.Select(i => i.EventSeatId).ToList(),
             cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: "Odeme" -- basariyla tamamlanma ani.
+        LogPaymentSucceeded(
+            _logger,
+            payment.Id,
+            payment.Amount.Amount,
+            payment.Amount.Currency,
+            tickets.Count);
 
         return await LoadAsync(payment.Id, cancellationToken).ConfigureAwait(false);
     }

@@ -5,6 +5,8 @@ using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
+using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
@@ -143,25 +145,53 @@ public sealed record RefundPaymentCommand(
     string? Reason,
     string? IdempotencyKey = null) : IRequest<Result<PaymentDto>>;
 
-internal sealed class RefundPaymentCommandHandler
+internal sealed partial class RefundPaymentCommandHandler
     : IRequestHandler<RefundPaymentCommand, Result<PaymentDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly IDateTimeProvider _clock;
     private readonly ISeatNotifier _seatNotifier;
+    private readonly ILogger<RefundPaymentCommandHandler> _logger;
 
     public RefundPaymentCommandHandler(
         IApplicationDbContext context,
         IPaymentService paymentService,
         IDateTimeProvider clock,
-        ISeatNotifier seatNotifier)
+        ISeatNotifier seatNotifier,
+        ILogger<RefundPaymentCommandHandler> logger)
     {
         _context = context;
         _paymentService = paymentService;
         _clock = clock;
         _seatNotifier = seatNotifier;
+        _logger = logger;
     }
+
+    // ==============================================================
+    // PDF Sprint 16: "Iade" loglanmalidir.
+    // ==============================================================
+    // WARNING seviyesi -- hata oldugu icin degil, GORULMESI
+    // gerektigi icin.
+    //
+    // Iade, sistemdeki tek PARA CIKISI. Hacminde ani bir artis ya
+    // bir yazilim hatasinin ya da bir kotuye kullanimin isaretidir;
+    // ikisi de hizli mudahale gerektirir.
+    //
+    // Information yapsaydik uretim filtrelerinde kaybolurdu ve
+    // "gunluk iade tutari su esigi asti" alarmini besleyecek veri
+    // hic gelmezdi.
+    //
+    // Tam/kismi ayrimini AYRI bir alan olarak veriyorum: tam iade
+    // koltuklari serbest birakiyor (satis kaybi), kismi iade
+    // birakmiyor. Ayni satirda toplanirsa bu ayrim sorgulanamaz.
+    // ==============================================================
+    [LoggerMessage(
+        EventId = LogEvents.IadeYapildi,
+        Level = LogLevel.Warning,
+        Message = "IADE yapildi. Odeme: {PaymentId}, Tutar: {Amount} {Currency}, Tam iade: {IsFull}, Sebep: {Reason}")]
+    private static partial void LogRefunded(
+        ILogger logger, Guid paymentId, decimal amount, string currency, bool isFull, string? reason);
 
     public async Task<Result<PaymentDto>> Handle(
         RefundPaymentCommand request,
@@ -302,6 +332,20 @@ internal sealed class RefundPaymentCommandHandler
         }
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // PDF Sprint 16: "Iade" loglanmalidir.
+        //
+        // SaveChanges'ten SONRA: para hareketi ancak kaydedildiyse
+        // gercek. Bu, para iceren bir islemde ozellikle onemli --
+        // logda gorunup veritabaninda olmayan bir iade, mutabakat
+        // sirasinda saatler kaybettirir.
+        LogRefunded(
+            _logger,
+            payment.Id,
+            amount,
+            payment.Amount.Currency,
+            payment.GetRefundableAmount().Amount == 0,
+            request.Reason);
 
         // PDF Sprint 10: "SeatReleased".
         //
