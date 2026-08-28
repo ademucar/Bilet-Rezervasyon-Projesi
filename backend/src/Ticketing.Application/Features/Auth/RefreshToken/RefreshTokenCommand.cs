@@ -176,8 +176,12 @@ internal sealed class RefreshTokenCommandHandler
             newToken.Value,
             newToken.ExpiresAt,
             new UserSummary(
-                user.Id, user.Email, user.FirstName, user.LastName,
-                user.IsEmailConfirmed, roles)));
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.IsEmailConfirmed,
+                roles)));
     }
 
     /// <summary>

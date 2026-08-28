@@ -5,7 +5,7 @@ public enum ReportFormat
 {
     Csv = 1,
     Excel = 2,
-    Pdf = 3
+    Pdf = 3,
 }
 
 /// <summary>

@@ -16,5 +16,5 @@ public enum TicketStatus
     Refunded = 4,
 
     /// <summary>Etkinlik gecti, bilet kullanilmadi.</summary>
-    Expired = 5
+    Expired = 5,
 }

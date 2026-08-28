@@ -70,6 +70,6 @@ public class AuditLog : Entity
             NewValues = newValues,
             IpAddress = ipAddress,
             CorrelationId = correlationId,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
 }

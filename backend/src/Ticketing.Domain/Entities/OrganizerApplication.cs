@@ -56,7 +56,7 @@ public class OrganizerApplication : AuditableEntity
             ContactEmail = contactEmail.Trim().ToLowerInvariant(),
             TaxNumber = taxNumber,
             Description = description,
-            Status = OrganizerApplicationStatus.Pending
+            Status = OrganizerApplicationStatus.Pending,
         };
     }
 

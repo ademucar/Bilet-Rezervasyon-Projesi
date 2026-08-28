@@ -65,7 +65,7 @@ public class Notification : Entity
             Message = message ?? string.Empty,
             RelatedEntityId = relatedEntityId,
             ActionPath = actionPath,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
     }
 

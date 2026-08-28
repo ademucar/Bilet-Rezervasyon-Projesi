@@ -81,7 +81,7 @@ public class UploadedFile : AuditableEntity
             StoredFileName = storedFileName,
             ContentType = contentType,
             SizeInBytes = sizeInBytes,
-            StoragePath = storagePath
+            StoragePath = storagePath,
         };
     }
 

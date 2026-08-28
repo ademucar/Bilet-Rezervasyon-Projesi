@@ -20,7 +20,7 @@ public enum ReportType
     EventOccupancy = 2,
     RevenueByEvent = 3,
     TicketTypeSales = 4,
-    PaymentStatuses = 5
+    PaymentStatuses = 5,
 }
 
 // ===================================================================

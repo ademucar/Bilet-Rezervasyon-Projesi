@@ -74,7 +74,7 @@ internal sealed class NotifyExpiringReservationsCommandHandler
                 r.UserId,
                 r.ReservationCode,
                 r.ExpiresAt,
-                EventTitle = r.EventSession.Event.Title
+                EventTitle = r.EventSession.Event.Title,
             })
             .Take(request.BatchSize)
             .ToListAsync(cancellationToken)

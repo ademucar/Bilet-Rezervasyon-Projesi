@@ -185,7 +185,14 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                         MaxRetries,
                         now);
 
-                    if (message.IsDeadLettered) { deadLettered++; } else { failed++; }
+                    if (message.IsDeadLettered)
+                    {
+                        deadLettered++;
+                    }
+                    else
+                    {
+                        failed++;
+                    }
 
                     continue;
                 }

@@ -18,5 +18,5 @@ public enum NotificationType
     RefundCompleted = 10,
     ReportReady = 11,
     OrganizerApplicationApproved = 12,
-    OrganizerApplicationRejected = 13
+    OrganizerApplicationRejected = 13,
 }

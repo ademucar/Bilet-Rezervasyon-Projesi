@@ -34,7 +34,7 @@ public enum ErrorType
     Forbidden = 6,
 
     /// <summary>Beklenmeyen hata. -> HTTP 500</summary>
-    Unexpected = 7
+    Unexpected = 7,
 }
 
 /// <summary>

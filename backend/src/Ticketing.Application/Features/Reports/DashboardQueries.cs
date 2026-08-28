@@ -200,7 +200,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             {
                 Date = g.Key,
                 Count = g.Count(),
-                Revenue = g.Sum(t => t.Price.Amount)
+                Revenue = g.Sum(t => t.Price.Amount),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -235,7 +235,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .GroupBy(t => new
             {
                 t.EventSeat.EventSession.Event.Id,
-                t.EventSeat.EventSession.Event.Title
+                t.EventSeat.EventSession.Event.Title,
             })
 
             // ==========================================================
@@ -264,7 +264,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 g.Key.Id,
                 g.Key.Title,
                 Count = g.Count(),
-                Revenue = g.Sum(t => t.Price.Amount)
+                Revenue = g.Sum(t => t.Price.Amount),
             })
             .OrderByDescending(x => x.Revenue)
             .Take(10)
@@ -283,7 +283,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             {
                 SectionName = g.Key,
                 Total = g.Count(),
-                Sold = g.Count(x => x.Status == EventSeatStatus.Sold)
+                Sold = g.Count(x => x.Status == EventSeatStatus.Sold),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

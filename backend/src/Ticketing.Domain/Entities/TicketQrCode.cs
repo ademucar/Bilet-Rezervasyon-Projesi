@@ -64,7 +64,7 @@ public class TicketQrCode : Entity
         {
             TicketId = ticketId,
             QrValue = GenerateSecureValue(),
-            GeneratedAt = now
+            GeneratedAt = now,
         };
 
     /// <summary>

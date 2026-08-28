@@ -57,5 +57,5 @@ public enum EventStatus
     Cancelled = 7,
 
     /// <summary>Admin uygunsuz buldu ve askiya aldi. Published'a geri donebilir.</summary>
-    Suspended = 8
+    Suspended = 8,
 }

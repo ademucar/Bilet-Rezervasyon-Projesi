@@ -22,5 +22,5 @@ public enum EventSessionStatus
     Cancelled = 4,
 
     /// <summary>Ertelendi. Yeni tarih belirlenene kadar satis durur.</summary>
-    Postponed = 5
+    Postponed = 5,
 }

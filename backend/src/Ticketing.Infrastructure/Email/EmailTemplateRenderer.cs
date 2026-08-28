@@ -180,8 +180,9 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             // Baglantiyi KACIRMADAN kullaniyorum: bu deger kullanicidan
             // gelmiyor, sunucunun urettigi bir adres. Kacirsaydim
             // "&amp;" gibi karakterler bozulur ve baglanti calismazdi.
-            Buton(d.TryGetValue("ResetUrl", out var url) ? url : _urls.FrontendUrl,
-                  "Sifremi sifirla") +
+            Buton(
+                d.TryGetValue("ResetUrl", out var url) ? url : _urls.FrontendUrl,
+                "Sifremi sifirla") +
 
             $"<p style=\"color:#64748b;font-size:13px;\">Bu baglanti " +
             $"{H(d, "ExpiryMinutes")} dakika gecerlidir.</p>" +

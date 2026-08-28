@@ -37,7 +37,7 @@ public class Payment : ConcurrentEntity
         [PaymentStatus.Successful] =
         [
             PaymentStatus.Refunded
-        ]
+        ],
 
         // Failed, Cancelled, Refunded son durumlar.
         //
@@ -109,7 +109,7 @@ public class Payment : ConcurrentEntity
             RefundedAmount = Money.Zero(amount.Currency),
             ProviderName = providerName,
             Status = PaymentStatus.Pending,
-            IdempotencyKey = idempotencyKey
+            IdempotencyKey = idempotencyKey,
         };
     }
 

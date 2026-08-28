@@ -211,8 +211,12 @@ internal sealed partial class LoginCommandHandler
             refreshToken.Value,
             refreshToken.ExpiresAt,
             new UserSummary(
-                user.Id, user.Email, user.FirstName, user.LastName,
-                user.IsEmailConfirmed, roles)));
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.IsEmailConfirmed,
+                roles)));
     }
 
     // ==============================================================

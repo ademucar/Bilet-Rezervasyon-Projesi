@@ -136,7 +136,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
                 SeatLabel = t.EventSeat.Seat.RowLabel + "-" + t.EventSeat.Seat.SeatNumber,
                 SectionName = t.EventSeat.Seat.SeatSection.Name,
                 Price = t.Price.Amount,
-                Currency = t.Price.Currency
+                Currency = t.Price.Currency,
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -181,7 +181,8 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
         {
             // Bilet verilerini BURADA kaciriyorum: bu metin sablona
             // HTML olarak giriyor ve orada tekrar kacirilmiyor.
-            listeHtml.Append(CultureInfo.InvariantCulture,
+            listeHtml.Append(
+                CultureInfo.InvariantCulture,
                 $"<li>{WebUtility.HtmlEncode(ticket.SectionName)} " +
                 $"{WebUtility.HtmlEncode(ticket.SeatLabel)} - " +
                 $"{ticket.Price} {WebUtility.HtmlEncode(ticket.Currency)} " +
@@ -610,7 +611,7 @@ internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
                 r.Status,
                 r.ReservationCode,
                 r.TotalAmount,
-                EventTitle = r.EventSession.Event.Title
+                EventTitle = r.EventSession.Event.Title,
             })
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);

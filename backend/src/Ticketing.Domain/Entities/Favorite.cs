@@ -31,6 +31,6 @@ public class Favorite
         {
             UserId = userId,
             EventId = eventId,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
 }

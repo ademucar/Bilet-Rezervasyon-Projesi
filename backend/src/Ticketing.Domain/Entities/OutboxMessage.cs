@@ -128,7 +128,7 @@ public class OutboxMessage : Entity
             Type = type,
             Payload = payload,
             CorrelationId = correlationId,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
     }
 

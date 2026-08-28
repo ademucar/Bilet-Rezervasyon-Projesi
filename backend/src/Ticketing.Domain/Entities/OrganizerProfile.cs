@@ -62,7 +62,7 @@ public class OrganizerProfile : AuditableEntity
         {
             UserId = userId,
             CompanyName = companyName.Trim(),
-            ContactEmail = contactEmail.Trim().ToLowerInvariant()
+            ContactEmail = contactEmail.Trim().ToLowerInvariant(),
         };
     }
 

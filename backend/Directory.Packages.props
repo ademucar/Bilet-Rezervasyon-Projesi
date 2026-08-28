@@ -66,6 +66,45 @@
       okuyup gosteriyor. Sorumluluklar ayri kaliyor.
     -->
     <PackageVersion Include="Scalar.AspNetCore" Version="2.17.2" />
+    <!--
+      STYLECOP (PDF Sprint 19: "StyleCop")
+
+      .NET analizorleri KOD KALITESINI denetliyor (CA kurallari);
+      StyleCop ise KOD DUZENINI (SA kurallari): uye sirasi,
+      parantez yerlesimi, bosluk kullanimi.
+
+      Ikisi ayri seyler ve ortusmuyorlar. Ekip buyudugunde
+      "nerede ne olacak" tartismasini bitiriyor.
+
+      NOT: StyleCop varsayilan ayarlariyla yuzlerce uyari uretiyor ve
+      TreatWarningsAsErrors acik oldugu icin derlemeyi durdurur.
+      Bizim yazim tarzimizla celisen kurallar .editorconfig'te
+      GEREKCESIYLE kapatildi.
+    -->
+    <!--
+      SURUM 1.2.0-beta.556 - KARARLI SURUM (1.1.118) CALISMIYOR
+      ==========================================================
+      1.1.118 ile derleme 12 adet AD0001 hatasi verdi: analizorun
+      KENDISI cokuyordu.
+
+          'SA1500BracesForMultiLineStatementsMustNotShareLine'
+          cozumleyicisi 'Object reference not set to an instance
+          of an object.' iletisiyle NullReferenceException olusturdu
+
+      Sebep: 1.1.118 Subat 2018'de yayinlandi. Koleksiyon ifadeleri,
+      hedef tipli new(), file-scoped namespace, desen eslestirme -
+      kullandigimiz sozdiziminin cogu ondan SONRA geldi. Analizor
+      ayristiramadigi agac dugumlerinde null'a dusuyor.
+
+      1.2.0-beta uzun suredir "beta" ama modern C#'i destekleyen tek
+      surum. Sprint 16'da Redis instrumentation icin verdigim
+      kararin aynisi: kararli surum YOKSA ve etki alani SINIRLIYSA
+      beta kabul edilebilir.
+
+      Etki alani burada gercekten sinirli: StyleCop yalnizca
+      DERLEME zamaninda calisiyor, uretime hicbir sey gitmiyor.
+    -->
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

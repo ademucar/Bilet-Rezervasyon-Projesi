@@ -185,8 +185,10 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
             application.UserId, application.CompanyName, application.ContactEmail);
 
         profile.Update(
-            application.CompanyName, application.ContactEmail,
-            application.ContactPhone, application.Description);
+            application.CompanyName,
+            application.ContactEmail,
+            application.ContactPhone,
+            application.Description);
 
         // Admin onayladigi icin dogrulanmis sayiyoruz.
         profile.Verify();
@@ -306,8 +308,16 @@ internal sealed class GetOrganizerApplicationsQueryHandler
             // dibinde kalir ve surekli beklerdi.
             .OrderBy(a => a.CreatedAt)
             .Select(a => new OrganizerApplicationDto(
-                a.Id, a.UserId, a.User.Email, a.CompanyName, a.ContactEmail,
-                a.TaxNumber, a.Description, a.Status, a.RejectionReason, a.CreatedAt))
+                a.Id,
+                a.UserId,
+                a.User.Email,
+                a.CompanyName,
+                a.ContactEmail,
+                a.TaxNumber,
+                a.Description,
+                a.Status,
+                a.RejectionReason,
+                a.CreatedAt))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 

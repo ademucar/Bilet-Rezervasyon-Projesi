@@ -265,9 +265,9 @@ public static class FileUploadValidator
         if (uzanti.Equals(".webp", StringComparison.OrdinalIgnoreCase))
         {
             return baytlar.Length >= 12
-                && baytlar[8] == 0x57   // W
-                && baytlar[9] == 0x45   // E
-                && baytlar[10] == 0x42  // B
+                && baytlar[8] == 0x57 // W
+                && baytlar[9] == 0x45 // E
+                && baytlar[10] == 0x42 // B
                 && baytlar[11] == 0x50; // P
         }
 

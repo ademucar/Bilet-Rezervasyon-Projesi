@@ -388,7 +388,7 @@ internal sealed class GetEventOccupancyReportQueryHandler
                 Locked = e.Sessions.SelectMany(s => s.EventSeats)
                     .Count(es => es.Status == EventSeatStatus.Locked),
                 Available = e.Sessions.SelectMany(s => s.EventSeats)
-                    .Count(es => es.Status == EventSeatStatus.Available)
+                    .Count(es => es.Status == EventSeatStatus.Available),
             })
             .OrderByDescending(x => x.EventDate)
             .ToListAsync(cancellationToken)
@@ -477,7 +477,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
             .GroupBy(t => new
             {
                 t.EventSeat.EventSession.Event.Id,
-                t.EventSeat.EventSession.Event.Title
+                t.EventSeat.EventSession.Event.Title,
             })
 
             // ==========================================================
@@ -506,7 +506,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
                 g.Key.Id,
                 g.Key.Title,
                 Count = g.Count(),
-                Revenue = g.Sum(t => t.Price.Amount)
+                Revenue = g.Sum(t => t.Price.Amount),
             })
             .OrderByDescending(x => x.Revenue)
             .ToListAsync(cancellationToken)
@@ -601,7 +601,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
                 Refunded = g.Count(t => t.Status == TicketStatus.Refunded),
                 Revenue = g.Where(t => t.Status == TicketStatus.Active
                                     || t.Status == TicketStatus.Used)
-                           .Sum(t => t.Price.Amount)
+                           .Sum(t => t.Price.Amount),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -712,7 +712,7 @@ internal sealed class GetPaymentStatusReportQueryHandler
             {
                 Status = g.Key,
                 Count = g.Count(),
-                Total = g.Sum(p => p.Amount.Amount)
+                Total = g.Sum(p => p.Amount.Amount),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

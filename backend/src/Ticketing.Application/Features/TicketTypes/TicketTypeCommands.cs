@@ -244,12 +244,12 @@ internal sealed class ChangeTicketTypePriceCommandHandler
                 oldValues: JsonSerializer.Serialize(new
                 {
                     Amount = oldPrice.Amount,
-                    Currency = oldPrice.Currency
+                    Currency = oldPrice.Currency,
                 }),
                 newValues: JsonSerializer.Serialize(new
                 {
                     Amount = newPrice.Amount,
-                    Currency = newPrice.Currency
+                    Currency = newPrice.Currency,
                 }),
                 ipAddress: _currentUser.IpAddress,
                 correlationId: _currentUser.CorrelationId));
@@ -473,7 +473,7 @@ internal sealed class GetTicketTypesQueryHandler
                 t.RequiresStudentVerification,
                 t.SalesStartDate,
                 t.SalesEndDate,
-                SectionIds = t.Sections.Select(s => s.SeatSectionId).ToList()
+                SectionIds = t.Sections.Select(s => s.SeatSectionId).ToList(),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

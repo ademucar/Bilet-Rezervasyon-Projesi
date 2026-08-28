@@ -53,7 +53,7 @@ public class EventCategory : AuditableEntity
         return new EventCategory(name.Trim(), slug.Trim().ToLowerInvariant())
         {
             IconName = iconName,
-            DisplayOrder = displayOrder
+            DisplayOrder = displayOrder,
         };
     }
 }

@@ -45,7 +45,7 @@ public class ReservationItem : Entity
             ReservationId = reservationId,
             EventSeatId = eventSeatId,
             TicketTypeId = ticketTypeId,
-            UnitPrice = unitPrice
+            UnitPrice = unitPrice,
         };
 
     internal void AttachTicket(Guid ticketId)

@@ -54,7 +54,7 @@ public class Review : AuditableEntity
             UserId = userId,
             EventId = eventId,
             Rating = rating,
-            Comment = comment?.Trim() ?? string.Empty
+            Comment = comment?.Trim() ?? string.Empty,
         };
     }
 

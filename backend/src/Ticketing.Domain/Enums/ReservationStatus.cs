@@ -25,5 +25,5 @@ public enum ReservationStatus
     Cancelled = 6,
 
     /// <summary>Iade edildi.</summary>
-    Refunded = 7
+    Refunded = 7,
 }

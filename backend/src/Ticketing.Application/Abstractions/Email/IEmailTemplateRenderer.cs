@@ -10,7 +10,7 @@ public enum EmailTemplate
     TicketDetails = 5,
     EventReminder = 6,
     EventCancelled = 7,
-    RefundCompleted = 8
+    RefundCompleted = 8,
 }
 
 /// <summary>Uretilmis e-posta: konu + HTML govde.</summary>

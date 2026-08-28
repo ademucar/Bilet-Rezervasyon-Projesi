@@ -27,5 +27,5 @@ public enum EventSeatStatus
     /// Gercek salonlarda ses-isik masasi, engelli erisim koridoru gibi
     /// sebeplerle satisa kapatilan koltuklar olur.
     /// </summary>
-    Blocked = 4
+    Blocked = 4,
 }

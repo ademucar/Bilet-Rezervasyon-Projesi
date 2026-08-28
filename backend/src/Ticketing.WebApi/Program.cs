@@ -521,7 +521,8 @@ BackgroundJobSetup.RegisterRecurringJobs(
 // duyacaklarimiz -- kaybolur. Tam olarak isimize yarayacak an.
 try
 {
-    Log.Information("Ticketing API baslatiliyor. Ortam: {Environment}",
+    Log.Information(
+        "Ticketing API baslatiliyor. Ortam: {Environment}",
         app.Environment.EnvironmentName);
 
     await app.RunAsync();

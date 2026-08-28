@@ -19,5 +19,5 @@ public enum PaymentStatus
     Cancelled = 5,
 
     /// <summary>Iade yapildi (tam veya kismi).</summary>
-    Refunded = 6
+    Refunded = 6,
 }

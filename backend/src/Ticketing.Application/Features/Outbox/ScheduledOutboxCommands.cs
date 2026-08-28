@@ -63,7 +63,7 @@ internal sealed class SendEventRemindersCommandHandler
                 s.Id,
                 s.StartDate,
                 EventTitle = s.Event.Title,
-                VenueName = s.Event.Venue.Name
+                VenueName = s.Event.Venue.Name,
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -205,7 +205,7 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
                 Currency = g.Key,
                 Gross = g.Sum(p => p.Amount.Amount),
                 Refunded = g.Sum(p => p.RefundedAmount.Amount),
-                Count = g.Count()
+                Count = g.Count(),
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

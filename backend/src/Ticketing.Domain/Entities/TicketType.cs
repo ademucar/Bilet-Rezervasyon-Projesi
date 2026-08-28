@@ -82,7 +82,7 @@ public class TicketType : AuditableEntity
             Price = price,
             Quota = quota,
             IsActive = true,
-            RequiresStudentVerification = requiresStudentVerification
+            RequiresStudentVerification = requiresStudentVerification,
         };
     }
 

@@ -14,5 +14,5 @@ public enum PaymentTransactionType
     Refund = 2,
 
     /// <summary>Iptal (henuz tahsil edilmemis islemin geri alinmasi).</summary>
-    Void = 3
+    Void = 3,
 }

@@ -42,7 +42,7 @@ public class Reservation : ConcurrentEntity
         [ReservationStatus.Confirmed] =
         [
             ReservationStatus.Refunded
-        ]
+        ],
 
         // Expired, Cancelled, Refunded bilerek YOK -- son durumlar.
         //
@@ -172,7 +172,7 @@ public class Reservation : ConcurrentEntity
             ExpiresAt = now.Add(lockDuration),
             IdempotencyKey = idempotencyKey,
             ReservationCode = GenerateCode(),
-            TotalAmount = Money.Zero(seats[0].Price.Currency)
+            TotalAmount = Money.Zero(seats[0].Price.Currency),
         };
 
         foreach (var seat in seats)

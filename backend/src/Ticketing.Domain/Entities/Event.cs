@@ -89,7 +89,7 @@ public class Event : ConcurrentEntity
         [
             EventStatus.Published,
             EventStatus.Cancelled
-        ]
+        ],
 
         // Completed ve Cancelled bilerek YOK.
         // Bunlar son durumlar; hicbir yere gecemezler.
@@ -229,7 +229,7 @@ public class Event : ConcurrentEntity
             MaxTicketsPerUser = maxTicketsPerUser,
             MinimumAge = minimumAge,
             Status = EventStatus.Draft,
-            CancellationPolicy = CancellationPolicy.Default
+            CancellationPolicy = CancellationPolicy.Default,
         };
     }
 

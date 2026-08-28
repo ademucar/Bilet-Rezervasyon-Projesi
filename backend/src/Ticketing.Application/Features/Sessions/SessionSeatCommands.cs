@@ -201,7 +201,7 @@ internal sealed class GetSeatAvailabilityQueryHandler
                 TicketTypeName = es.TicketType.Name,
                 es.Price,
                 es.Status,
-                es.LockedUntil
+                es.LockedUntil,
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

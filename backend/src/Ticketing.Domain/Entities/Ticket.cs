@@ -86,7 +86,7 @@ public class Ticket : AuditableEntity
             EventSeatId = reservationItem.EventSeatId,
             Price = reservationItem.UnitPrice,
             Status = TicketStatus.Active,
-            TicketNumber = GenerateTicketNumber(now)
+            TicketNumber = GenerateTicketNumber(now),
         };
 
         reservationItem.AttachTicket(ticket.Id);

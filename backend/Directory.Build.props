@@ -95,4 +95,15 @@
     <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
 
+  <!-- ============ KOD DUZENI (PDF Sprint 19) ============ -->
+  <ItemGroup>
+    <!--
+      PrivateAssets="all": StyleCop yalnizca DERLEME zamaninda
+      calisiyor. Bu olmadan, projemize referans veren baska bir
+      proje de StyleCop'u miras alirdi; oysa bu bizim ic
+      kalite tercihimiz, tuketicimizin sorunu degil.
+    -->
+    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
+  </ItemGroup>
+
 </Project>

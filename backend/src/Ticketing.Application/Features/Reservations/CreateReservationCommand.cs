@@ -211,7 +211,7 @@ internal sealed partial class CreateReservationCommandHandler
                 s.Status,
                 s.EventId,
                 EventStatus = s.Event.Status,
-                s.Event.MaxTicketsPerUser
+                s.Event.MaxTicketsPerUser,
             })
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);

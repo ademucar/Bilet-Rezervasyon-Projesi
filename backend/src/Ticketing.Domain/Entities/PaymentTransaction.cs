@@ -57,6 +57,6 @@ public class PaymentTransaction : Entity
             Status = status,
             ProviderReference = providerReference,
             Message = message,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
 }

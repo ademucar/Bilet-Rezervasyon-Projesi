@@ -262,20 +262,27 @@ internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
         }
 
         // Bu uc token istiyor: guvenlik gereksinimini isaretle.
-        operation.Security =
-        [
-            new OpenApiSecurityRequirement
+        // Sema referansi ayri bir degiskene aliniyor.
+        //
+        // Ic ice sozluk baslaticisi olarak yazdigimda StyleCop
+        // SA1500 verdi ("cok satirli blogun parantezleri ayni
+        // satiri paylasmamali") -- ve hakliydi: "}] = []," satiri
+        // uc farkli seyi ayni yere sikistiriyordu.
+        var sema = new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
             {
-                [new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = SecuritySchemeTransformer.SchemeName,
-                    },
-                }] = [],
+                Type = ReferenceType.SecurityScheme,
+                Id = SecuritySchemeTransformer.SchemeName,
             },
-        ];
+        };
+
+        var gereksinim = new OpenApiSecurityRequirement
+        {
+            [sema] = [],
+        };
+
+        operation.Security = [gereksinim];
 
         // ==============================================================
         // ROL / POLITIKA BILGISI ACIKLAMAYA EKLENIYOR

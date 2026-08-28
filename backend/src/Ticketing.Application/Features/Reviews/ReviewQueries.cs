@@ -152,7 +152,7 @@ internal sealed class GetEventReviewsQueryHandler
                 r.Rating,
                 r.Comment,
                 r.CreatedAt,
-                r.UpdatedAt
+                r.UpdatedAt,
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
