@@ -49,3 +49,7 @@ Desktop.ini
 # Vite
 frontend/dist/
 frontend/.vite/
+
+# Sprint 13: uretilen rapor dosyalari.
+# Gecici ciktilar -- depoya girmemeli.
+report-exports/

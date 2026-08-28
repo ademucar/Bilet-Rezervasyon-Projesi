@@ -63,6 +63,21 @@
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.11" />
     <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <!--
+      Sprint 13 rapor disa aktarimi.
+
+      ClosedXML : MIT lisansi. Excel (.xlsx) uretimi.
+      QuestPDF  : Community lisansi - yillik geliri 1M USD altindaki
+                  kuruluslar icin ucretsiz. Bu proje icin uygun.
+                  Lisans TURU kodda acikca belirtilmek ZORUNDA
+                  (bkz. ReportExportService).
+
+      CSV icin paket ALMIYORUM: RFC 4180 kacis kurallari 20 satirlik
+      bir metot. Ucuncu bir bagimlilik eklemek, guvenlik taramasi ve
+      surum takibi maliyetine degmez.
+    -->
+    <PackageVersion Include="ClosedXML" Version="0.105.1" />
+    <PackageVersion Include="QuestPDF" Version="2026.8.0" />
     <PackageVersion Include="StackExchange.Redis" Version="2.8.58" />
     <!--
       EF Core cekirdek paketlerini ACIKCA sabitliyorum.

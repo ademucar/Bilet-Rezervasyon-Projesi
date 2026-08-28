@@ -44,6 +44,11 @@ const MyReservationsPage = lazy(() => import('./features/booking/pages/MyReserva
 const MyTicketsPage = lazy(() => import('./features/booking/pages/MyTicketsPage').then((m) => ({ default: m.MyTicketsPage })))
 const MyFavoritesPage = lazy(() => import('./features/booking/pages/MyFavoritesPage').then((m) => ({ default: m.MyFavoritesPage })))
 
+// --- Raporlama paneli (Sprint 13) ---
+// Recharts agir bir kutuphane (~100 KB). Ayri parcada tutmak SART:
+// bilet alan normal kullanici bu kodu HIC indirmiyor.
+const DashboardPage = lazy(() => import('./features/reports/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })))
+
 // --- Admin paneli ---
 // Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
 // indirmeyecek. Koltuk haritasi ve form kutuphaneleri bu sayfalarda
@@ -152,6 +157,7 @@ export default function App() {
                 <Route path="/rezervasyonlarim" element={<MyReservationsPage />} />
                 <Route path="/biletlerim" element={<MyTicketsPage />} />
                 <Route path="/favorilerim" element={<MyFavoritesPage />} />
+                <Route path="/panel" element={<DashboardPage />} />
               </Route>
 
               {/* ---- Admin paneli ----

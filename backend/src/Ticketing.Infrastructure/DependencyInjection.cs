@@ -7,7 +7,10 @@ using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Infrastructure.Configuration;
 using Ticketing.Infrastructure.Email;
+using Ticketing.Application.Abstractions.Reporting;
+using Ticketing.Application.Features.Reports;
 using Ticketing.Infrastructure.Payments;
+using Ticketing.Infrastructure.Reporting;
 using Ticketing.Infrastructure.Security;
 using Ticketing.Infrastructure.Time;
 
@@ -77,6 +80,14 @@ public static class DependencyInjection
                 .ValidateOnStart();
 
         services.AddSingleton<IAppUrlProvider, AppUrlProvider>();
+
+        // ---- Raporlama (PDF Sprint 13) ----
+        //
+        // Singleton: ikisi de durum tutmuyor.
+        // ReportExporter yalnizca girdi -> cikti donusumu yapiyor;
+        // FileSystemReportStore ise kok klasoru bir kez okuyor.
+        services.AddSingleton<IReportExporter, ReportExporter>();
+        services.AddSingleton<IReportFileStore, FileSystemReportStore>();
 
         // ---- Odeme saglayicisi ----
         //

@@ -43,6 +43,13 @@ public static class OutboxMessageTypes
 
     /// <summary>PDF: "Rapor hazirlama".</summary>
     public const string DailySalesSummary = "DailySalesSummary";
+
+    /// <summary>
+    /// PDF Sprint 13: "Rapor uretimi background job olarak
+    /// calistirilmali ve tamamlandiginda kullaniciya bildirim
+    /// gonderilmelidir."
+    /// </summary>
+    public const string ReportExport = "ReportExport";
 }
 
 // ===================================================================

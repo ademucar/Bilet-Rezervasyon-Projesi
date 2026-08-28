@@ -67,6 +67,14 @@ export function SiteHeader() {
               Rolu `user` uzerinden okuyorum, store.getState() ile
               DEGIL: getState() abonelik kurmaz, kullanici degisince
               bu satir yeniden hesaplanmazdi. */}
+          {/* Panel: organizator VEYA admin gorebilir.
+              Normal kullanici gorse de backend 403 doner. */}
+          {(user?.roles.includes(Roles.Admin) || user?.roles.includes(Roles.Organizer)) && (
+            <NavLink to="/panel" className={linkClass}>
+              Panel
+            </NavLink>
+          )}
+
           {user?.roles.includes(Roles.Admin) && (
             <NavLink to="/admin/mekanlar" className={linkClass}>
               Yonetim

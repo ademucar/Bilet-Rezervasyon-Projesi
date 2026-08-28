@@ -1,0 +1,124 @@
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using Ticketing.Application.Abstractions.Reporting;
+using Ticketing.Application.Features.Reports;
+
+namespace Ticketing.Infrastructure.Reporting;
+
+/// <summary>
+/// Uretilen rapor dosyalarini diskte saklar. PDF Sprint 13.
+/// </summary>
+/// <remarks>
+/// ==================================================================
+/// NEDEN VERITABANI DEGIL, DISK?
+/// ==================================================================
+/// Dosyalari veritabaninda bytea olarak da tutabilirdik. Tutmadim:
+///
+///   - Rapor dosyalari megabaytlarca olabilir. Veritabaninin her
+///     yedegi bu dosyalari da tasir ve yedek boyutu hizla buyur.
+///   - PostgreSQL buyuk ikili veriyi TOAST tablolarina tasiyor;
+///     sorgular yavaslar.
+///   - Rapor dosyasi GECICI bir cikti. Kaybolsa yeniden uretilebilir.
+///     Veritabani ise dogruluk kaynagimiz; oraya gecici veri koymak
+///     iki farkli sorumlulugu karistirmak olurdu.
+///
+/// ------------------------------------------------------------------
+/// URETIMDE NE DEGISIR?
+/// ------------------------------------------------------------------
+/// Birden fazla sunucuya olceklenirse disk PAYLASILMAZ: rapor
+/// sunucu-1'de uretilir, kullanici sunucu-2'ye baglanir ve dosyayi
+/// bulamaz.
+///
+/// O zaman bu sinifin yerine bir S3/Azure Blob uygulamasi gelir --
+/// arayuz (IReportFileStore) ayni kaldigi icin Application katmaninda
+/// TEK SATIR degismez. Zaten arayuzun varlik sebebi bu.
+/// ==================================================================
+/// </remarks>
+internal sealed class FileSystemReportStore : IReportFileStore
+{
+    private readonly string _root;
+
+    public FileSystemReportStore(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        // Yapilandirilabilir; verilmezse uygulama klasoru altinda.
+        _root = configuration["Reports:StoragePath"]
+            ?? Path.Combine(AppContext.BaseDirectory, "report-exports");
+
+        Directory.CreateDirectory(_root);
+    }
+
+    /// <summary>
+    /// Dosya yolunu uretir.
+    /// </summary>
+    /// <remarks>
+    /// ==============================================================
+    /// DOSYA ADI OLARAK GUID -- KULLANICI GIRDISI DEGIL
+    /// ==============================================================
+    /// Rapor basligini dosya adi yapsaydik, ilerde ozellestirilebilir
+    /// bir baslik "../../appsettings.json" olabilirdi ve dizin gecisi
+    /// (path traversal) acigi olusurdu.
+    ///
+    /// Guid.ToString("N") yalnizca 32 onaltilik karakter uretiyor --
+    /// tanim geregi guvenli. Gercek dosya adi ve icerik turu ayri bir
+    /// meta dosyasinda duruyor.
+    /// ==============================================================
+    /// </remarks>
+    private string DosyaYolu(Guid exportId, string uzanti)
+        => Path.Combine(_root, $"{exportId:N}.{uzanti}");
+
+    public async Task SaveAsync(
+        Guid exportId,
+        ExportedReport report,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(report);
+
+        await File.WriteAllBytesAsync(DosyaYolu(exportId, "bin"), report.Content, cancellationToken)
+            .ConfigureAwait(false);
+
+        // Dosya adi ve icerik turu ayri bir meta dosyasinda.
+        //
+        // Indirme sirasinda tarayiciya dogru Content-Type ve dosya adi
+        // vermek icin gerekli. Bunlari dosya adina gomseydik
+        // ayristirmak gerekirdi ve yukaridaki guvenlik faydasi
+        // kaybolurdu.
+        var meta = JsonSerializer.Serialize(new ReportFileMeta(
+            report.FileName, report.ContentType, report.Content.Length));
+
+        await File.WriteAllTextAsync(DosyaYolu(exportId, "json"), meta, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<ExportedReport?> GetAsync(Guid exportId, CancellationToken cancellationToken)
+    {
+        var binPath = DosyaYolu(exportId, "bin");
+        var metaPath = DosyaYolu(exportId, "json");
+
+        if (!File.Exists(binPath) || !File.Exists(metaPath))
+        {
+            return null;
+        }
+
+        var metaJson = await File.ReadAllTextAsync(metaPath, cancellationToken)
+            .ConfigureAwait(false);
+
+        var meta = JsonSerializer.Deserialize<ReportFileMeta>(metaJson);
+
+        if (meta is null)
+        {
+            return null;
+        }
+
+        var content = await File.ReadAllBytesAsync(binPath, cancellationToken)
+            .ConfigureAwait(false);
+
+        return new ExportedReport(meta.FileName, meta.ContentType, content);
+    }
+
+    public Task<bool> ExistsAsync(Guid exportId, CancellationToken cancellationToken)
+        => Task.FromResult(File.Exists(DosyaYolu(exportId, "bin")));
+
+    private sealed record ReportFileMeta(string FileName, string ContentType, int Size);
+}

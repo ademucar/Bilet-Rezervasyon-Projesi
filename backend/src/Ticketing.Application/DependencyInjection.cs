@@ -78,6 +78,10 @@ public static class DependencyInjection
         services.AddScoped<IOutboxMessageHandler, EventReminderOutboxHandler>();
         services.AddScoped<IOutboxMessageHandler, DailySalesSummaryOutboxHandler>();
 
+        // Sprint 13: rapor disa aktarimi.
+        // PDF: "Rapor uretimi background job olarak calistirilmali."
+        services.AddScoped<IOutboxMessageHandler, Features.Reports.ReportExportOutboxHandler>();
+
         return services;
     }
 }
