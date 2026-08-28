@@ -92,6 +92,19 @@ public static class LogEvents
     /// <summary>Etkinlik iptal edildi.</summary>
     public const int EtkinlikIptalEdildi = 1103;
 
+    /// <summary>Etkinlik guncellendi.</summary>
+    public const int EtkinlikGuncellendi = 1104;
+
+    /// <summary>
+    /// Etkinlik silindi (soft delete).
+    /// </summary>
+    /// <remarks>
+    /// Warning seviyesinde loglaniyor: silme geri alinmasi zor bir
+    /// islem ve denetimde gorulmesi gerekiyor. Iade ve iptal icin
+    /// verdigimiz kararin aynisi (Sprint 16).
+    /// </remarks>
+    public const int EtkinlikSilindi = 1105;
+
     // ==============================================================
     // REZERVASYON -- PDF: "Rezervasyon olusturma", "Koltuk kilitleme"
     // ==============================================================

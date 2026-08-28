@@ -126,6 +126,94 @@ public sealed class EventsController : ApiControllerBase
     }
 
     /// <summary>
+    /// Etkinligin duzenlenebilir alanlarini gunceller.
+    /// </summary>
+    /// <remarks>
+    /// PDF is kurali: "Yayina alinmis etkinligin kritik alanlari
+    /// KONTROLSUZ degistirilemez."
+    ///
+    /// Kural iki seviyede isliyor:
+    ///
+    /// - **Baslik, aciklama, yas siniri**: yayindayken de
+    ///   degistirilebilir. Yazim hatasi duzeltmek yasak olmamali.
+    ///   Yalnizca iptal edilmis veya tamamlanmis etkinlikte kapali.
+    ///
+    /// - **Tarihler**: satis BASLADIYSA degistirilemez. Bilet almis
+    ///   kullanicilarin altindan tarihi cekmek kabul edilemez;
+    ///   o durumda dogru islem etkinligi iptal etmektir.
+    ///
+    /// Tarih alanlarinin ucu birlikte gonderilmeli veya hicbiri
+    /// gonderilmemelidir.
+    /// </remarks>
+    /// <response code="204">Guncellendi.</response>
+    /// <response code="404">Etkinlik bulunamadi.</response>
+    /// <response code="422">Satis baslamis; tarihler degistirilemez.</response>
+    [HttpPut("{id:guid}")]
+    [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> UpdateEvent(
+        Guid id,
+        [FromBody] UpdateEventRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        // ==========================================================
+        // KIMLIK ADRESTEN, GOVDEDEN DEGIL
+        // ==========================================================
+        // Govdede de bir EventId tasisaydik, ikisi FARKLI olabilirdi:
+        // adreste kendi etkinligini, govdede baskasininkini gonderen
+        // bir istek EventOwner kontrolunu atlatabilirdi.
+        //
+        // Yetkilendirme adresteki kimlige bakiyor; komutu da ondan
+        // kuruyoruz. Boylece iki kaynak arasinda fark olusamiyor.
+        // ==========================================================
+        return HandleResult(await Sender
+            .Send(
+                new UpdateEventCommand(
+                    id,
+                    request.Title,
+                    request.Description,
+                    request.MinimumAge,
+                    request.EventDate,
+                    request.SalesStartDate,
+                    request.SalesEndDate),
+                cancellationToken)
+            .ConfigureAwait(false));
+    }
+
+    /// <summary>
+    /// Etkinligi siler (soft delete).
+    /// </summary>
+    /// <remarks>
+    /// Yalnizca HIC BILET SATILMAMIS ve aktif rezervasyonu OLMAYAN
+    /// etkinlikler silinebilir.
+    ///
+    /// Bileti olan bir etkinlik icin dogru islem SILMEK degil IPTAL
+    /// etmektir (`POST /events/{id}/cancel`): iptal, iade zincirini
+    /// ve kullanici bildirimlerini baslatir. Silmek ise o biletleri
+    /// sessizce gecersiz kilardi.
+    ///
+    /// Kayit fiziksel olarak silinmiyor: IsDeleted isaretleniyor ve
+    /// global sorgu filtresi gizliyor. Bilet, odeme ve denetim
+    /// kayitlari korunuyor.
+    /// </remarks>
+    /// <response code="204">Silindi.</response>
+    /// <response code="404">Etkinlik bulunamadi.</response>
+    /// <response code="409">Bileti satilmis veya aktif rezervasyonu var.</response>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteEvent(Guid id, CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new DeleteEventCommand(id), cancellationToken)
+            .ConfigureAwait(false));
+
+    /// <summary>
     /// Etkinlige oturum ekler. PDF: POST /api/v1/events/{id}/sessions
     ///
     /// EventOwner policy'si: yalnizca etkinligin sahibi organizator
@@ -201,3 +289,18 @@ public sealed record AddSessionRequest(
     Guid SeatLayoutId);
 
 public sealed record CancelEventRequest(string? Reason);
+
+/// <summary>Etkinlik guncelleme istegi.</summary>
+/// <param name="Title">Etkinlik basligi.</param>
+/// <param name="Description">Etkinlik aciklamasi.</param>
+/// <param name="MinimumAge">Yas siniri. null = sinir yok.</param>
+/// <param name="EventDate">Etkinlik tarihi. Tarihler ucu birlikte gonderilmeli.</param>
+/// <param name="SalesStartDate">Satis baslangici.</param>
+/// <param name="SalesEndDate">Satis bitisi.</param>
+public sealed record UpdateEventRequest(
+    string Title,
+    string Description,
+    int? MinimumAge,
+    DateTimeOffset? EventDate,
+    DateTimeOffset? SalesStartDate,
+    DateTimeOffset? SalesEndDate);
