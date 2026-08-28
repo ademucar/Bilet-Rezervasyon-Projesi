@@ -11,7 +11,9 @@ using Ticketing.Application.Abstractions.Reporting;
 using Ticketing.Application.Features.Reports;
 using Ticketing.Infrastructure.Payments;
 using Ticketing.Infrastructure.Reporting;
+using Ticketing.Application.Abstractions.Storage;
 using Ticketing.Infrastructure.Security;
+using Ticketing.Infrastructure.Storage;
 using Ticketing.Infrastructure.Time;
 
 namespace Ticketing.Infrastructure;
@@ -92,6 +94,13 @@ public static class DependencyInjection
         // FileSystemReportStore ise kok klasoru bir kez okuyor.
         services.AddSingleton<IReportExporter, ReportExporter>();
         services.AddSingleton<IReportFileStore, FileSystemReportStore>();
+
+        // ---- Dosya depolama (PDF Sprint 15) ----
+        //
+        // Singleton: kok klasoru bir kez okuyup olusturuyor, baska
+        // durum tutmuyor. Her istekte yeniden Directory.CreateDirectory
+        // cagirmanin anlami yok.
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
 
         // ---- Odeme saglayicisi ----
         //
