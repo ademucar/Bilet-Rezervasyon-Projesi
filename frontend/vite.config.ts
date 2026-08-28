@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -9,6 +10,32 @@ export default defineConfig({
     // tailwind.config.js dosyasina gerek yok; yapilandirma CSS icinde.
     tailwindcss(),
   ],
+
+  // ==================================================================
+  // TESTLER -- PDF Sprint 17
+  // ==================================================================
+  // Vitest'i AYRI bir yapilandirma dosyasina koymadim: boylece
+  // testler, uygulamanin GERCEK derleme ayarlariyla (Tailwind eklentisi,
+  // React eklentisi, yol takma adlari) calisiyor.
+  //
+  // Ayri dosya olsaydi ikisi zamanla birbirinden ayrisir ve
+  // "testte calisiyor, uygulamada calismiyor" durumu ortaya cikardi.
+  // ==================================================================
+  test: {
+    // jsdom: tarayici DOM'unu Node icinde taklit ediyor.
+    // Gercek tarayici (Playwright) E2E testlerinde kullaniliyor;
+    // birim testleri icin jsdom cok daha hizli.
+    environment: 'jsdom',
+
+    // Her test dosyasindan once calisan kurulum (jest-dom eslesmeleri,
+    // temizlik).
+    setupFiles: ['./src/test/setup.ts'],
+
+    // describe/it/expect'i her dosyada import etmeye gerek kalmasin.
+    globals: true,
+
+    css: false,
+  },
 
   server: {
     port: 5173,
