@@ -36,7 +36,27 @@ WORKDIR /src
 #
 # Ters sirada yapsaydik her kucuk kod degisikligi 2-3 dakikalik
 # paket indirmesi anlamina gelirdi.
-COPY Directory.Build.props Directory.Packages.props ./
+# ==================================================================
+# .editorconfig DA KOPYALANMALI -- SPRINT 19'DA BULUNAN HATA
+# ==================================================================
+# Ilk halinde yalnizca Directory.Build.props ve Directory.Packages.props
+# kopyalaniyordu. Imaj derlemesi su hatayla kiriliyordu:
+#
+#   error CA1861: Prefer 'static readonly' fields over constant array
+#   arguments  [Migrations/20260826171245_InitialCreate.cs]
+#
+# Oysa .editorconfig'te bu kural Migrations klasoru icin ZATEN
+# kapatilmisti. Sorun kuralda degil, dosyanin imaja HIC GIRMEMESINDE
+# idi: .editorconfig derleme baglaminin kokunde duruyor ve
+# "COPY src/ src/" onu kapsamiyor.
+#
+# Analizor ayarlari olmadan derlenen kod, YEREL derlemeden FARKLI
+# kurallara tabi oluyordu. Yerelde 0 hata, imajda 24 hata.
+#
+# Bu hatayi ancak imaji GERCEKTEN derlemeye calisinca gordum --
+# Sprint 19'a kadar kimse denememisti.
+# ==================================================================
+COPY Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src/Ticketing.Domain/Ticketing.Domain.csproj              src/Ticketing.Domain/
 COPY src/Ticketing.Application/Ticketing.Application.csproj    src/Ticketing.Application/
 COPY src/Ticketing.Infrastructure/Ticketing.Infrastructure.csproj src/Ticketing.Infrastructure/
