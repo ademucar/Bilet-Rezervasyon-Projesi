@@ -201,6 +201,33 @@ internal sealed partial class RefundPaymentCommandHandler
             .Include(p => p.Reservation)
                 .ThenInclude(r => r.Items)
                     .ThenInclude(i => i.EventSeat)
+
+            // ==========================================================
+            // BU Include SPRINT 17'DE, ENTEGRASYON TESTIYLE EKLENDI
+            // ==========================================================
+            // Asagidaki idempotency kontrolu payment.Transactions
+            // uzerinde calisiyor. Ama bu koleksiyon YUKLENMIYORDU:
+            // lazy loading kapali oldugu icin her zaman BOS geliyordu.
+            //
+            // Sonuc: kontrol her seferinde "daha once islenmemis"
+            // diyordu ve idempotency HIC calismiyordu. Sprint 15'te
+            // yazdim, dogru gorunuyordu, tek satiri bile calismiyordu.
+            //
+            // Bunu ancak entegrasyon testi yakaladi: ayni
+            // Idempotency-Key ile iki kismi iade gonderdim ve
+            // veritabaninda IKI iade kaydi buldum -- yani ayni para
+            // iki kez geri gonderilmisti.
+            //
+            // NOT: tam iadede domain korumasi (toplam iade odenen
+            // tutari asamaz) ikinci istegi zaten reddediyordu. Hata
+            // yalnizca KISMI iadede gorunur oluyordu -- bu yuzden
+            // fark edilmesi bu kadar zordu.
+            //
+            // Sprint 12 (denetim alanlari), Sprint 15 (baglanmamis
+            // maskeleyici), Sprint 16 (correlation ID) ile ayni
+            // desen: yazilmis ama beslenmemis kod.
+            // ==========================================================
+            .Include(p => p.Transactions)
             .FirstOrDefaultAsync(p => p.Id == request.PaymentId, cancellationToken)
             .ConfigureAwait(false);
 
