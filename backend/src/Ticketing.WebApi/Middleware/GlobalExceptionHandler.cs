@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Ticketing.Domain.Common;
 
+using Ticketing.Application.Common.Security;
+
 namespace Ticketing.WebApi.Middleware;
 
 /// <summary>
@@ -166,7 +168,51 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 errorCode: "request.cancelled"),
 
             // ==========================================================
-            // 5. GERCEK HATA -> 500
+            // 5. ISTEK COK BUYUK / BOZUK -> 413 veya 400
+            // ==========================================================
+            // ==========================================================
+            // BU DALI SPRINT 15'TE TESTLE BULDUM
+            // ==========================================================
+            // Program.cs'te MaxRequestBodySize = 1 MB ayarladiktan sonra
+            // 2 MB'lik bir istek gonderip dogruladim. Sonuc 500 dondu.
+            //
+            // 500 YANLIS ve iki acidan zararli:
+            //   1) Istemciye "sunucu bozuk" diyor. Oysa sunucu tam olarak
+            //      dogru calisti -- korumasi devreye girdi. Istemci
+            //      "sonra tekrar denerim" diye dusunup ayni buyuk istegi
+            //      tekrar gonderiyor ve sonsuza kadar basarisiz oluyor.
+            //   2) 500'ler izleme panosunda alarm uretiyor. Saldirgan
+            //      buyuk istekler gondererek sahte alarm yagmuru
+            //      olusturabilirdi.
+            //
+            // Kestrel sinir asimini BadHttpRequestException olarak
+            // firlatiyor ve icinde DOGRU durum kodunu tasiyor
+            // (413 Payload Too Large). Onu kullaniyorum -- kendim
+            // tahmin etmiyorum, cunku ayni istisna bozuk govde icin
+            // 400 ile de gelebiliyor.
+            //
+            // DERS: bir korumayi eklemek yetmiyor; TETIKLENDIGINDE ne
+            // dondugunu de dogrulamak gerekiyor. Ayar dogruydu, yanit
+            // yanlisti ve bunu yalnizca calistirinca gordum.
+            // ==========================================================
+            BadHttpRequestException badRequestEx => CreateProblem(
+                statusCode: badRequestEx.StatusCode,
+                title: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
+                    ? "Istek cok buyuk"
+                    : "Gecersiz istek",
+                detail: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
+                    ? "Gonderdiginiz istek izin verilen boyutu asiyor."
+                    : "Istek govdesi okunamadi veya bicimi gecersiz.",
+
+                // Istisnanin KENDI mesajini donmuyorum: icinde Kestrel'in
+                // ic ayrintilari (sinir degeri, ayristirici durumu) gecer
+                // ve bu saldirgana yapilandirmamizi acik eder.
+                errorCode: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
+                    ? "request.too_large"
+                    : "request.malformed"),
+
+            // ==========================================================
+            // 6. GERCEK HATA -> 500
             // ==========================================================
             _ => CreateProblem(
                 statusCode: StatusCodes.Status500InternalServerError,
@@ -200,7 +246,15 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         if (_environment.IsDevelopment())
         {
             problem.Extensions["exception"] = exception.GetType().Name;
-            problem.Extensions["stackTrace"] = exception.StackTrace;
+
+            // Stack trace de maskeleniyor: icinde degisken degerleri
+            // gecmese bile, ic ice sarilmis istisnalarin mesajlari
+            // stack trace metnine dahil olabiliyor.
+            //
+            // Burasi yalnizca gelistirme ortami ama gelistirme
+            // ortamindaki veriler de gercek: tarayici konsolundan
+            // kopyalanip hata kaydina yapistiriliyor.
+            problem.Extensions["stackTrace"] = SensitiveDataMasker.Mask(exception.StackTrace);
         }
 
         // RFC 7807: Problem Details icin zorunlu icerik tipi.
@@ -296,7 +350,25 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         {
             // Stack trace GECMIYORUM: beklenen bir durum icin 40 satirlik
             // stack trace yazmak log dosyalarini gereksiz sisirir.
-            LogClientError(statusCode, exception.Message);
+            //
+            // ==========================================================
+            // MESAJ MASKELENIYOR -- PDF Sprint 15: "Hassas veri maskeleme"
+            // ==========================================================
+            // exception.Message KULLANICI GIRDISI ICEREBILIYOR. Somut
+            // ornekler:
+            //
+            //   - JSON ayristirma hatasi, govdenin bir parcasini mesaja
+            //     koyar. Login istegi basarisiz ayristirilirsa SIFRE
+            //     loga duser.
+            //   - FluentValidation mesajlari, dogrulanan degeri
+            //     iceren bicimde yazilabiliyor.
+            //   - Npgsql kisit ihlali mesajlari, cakisan DEGERI yaziyor.
+            //
+            // Loglar "guvenli" degildir: yedeklenir, merkezi sisteme
+            // gonderilir, ekran goruntusu alinip paylasilir. Oraya
+            // dusen bir JWT, o kullanicinin hesabi demektir.
+            // ==========================================================
+            LogClientError(statusCode, SensitiveDataMasker.Mask(exception.Message));
         }
     }
 }
