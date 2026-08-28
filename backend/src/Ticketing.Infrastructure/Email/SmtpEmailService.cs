@@ -6,6 +6,8 @@ using MimeKit;
 using MimeKit.Text;
 using Ticketing.Application.Abstractions.Email;
 
+using Ticketing.Application.Common.Security;
+
 namespace Ticketing.Infrastructure.Email;
 
 /// <summary>
@@ -144,7 +146,42 @@ internal sealed partial class SmtpEmailService : IEmailService
 
             await client.SendAsync(message, cancellationToken).ConfigureAwait(false);
 
-            LogSent(_logger, recipient, subject);
+            // ==========================================================
+            // E-POSTA KISMEN MASKELENIYOR -- PDF Sprint 15
+            // ==========================================================
+            // E-posta adresi KVKK/GDPR kapsaminda kisisel veri. Her
+            // gonderimde acik acik loglamak, log dosyalarini bir
+            // kullanici listesine cevirir -- ve o dosyalar yedeklenip
+            // merkezi sistemlere gidiyor.
+            //
+            // Tamamen gizlemiyorum: destek talebinde "hangi kullanici?"
+            // sorusunu cevaplayabilmemiz gerekiyor. Ilk uc harf +
+            // alan adi bunun icin yeterli ipucu veriyor ama adresleri
+            // TOPLU olarak toplamayi engelliyor.
+            //
+            // IsEnabled KONTROLU (CA1873): bu log Debug seviyesinde ve
+            // uretimde genellikle KAPALI. Kontrol olmadan MaskEmail her
+            // e-postada bosuna calisir ve bir string tahsis ederdi.
+            //
+            // Kaynak ureteci normalde bu kontrolu KENDISI ekliyor -- ama
+            // yalnizca cagriya PARAMETRE OLARAK gecilen degerler icin.
+            // Burada parametreyi biz hesapliyoruz, o yuzden kontrolu de
+            // elle yazmamiz gerekiyor.
+            // ==========================================================
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                // Maskeleme SONUCU bir yerel degiskene aliniyor.
+                //
+                // Dogrudan cagriyi parametre olarak yazsaydim CA1873
+                // yine uyarirdi: analizor, uretilen LoggerMessage
+                // metodunun IsEnabled kontrolunu taniyamiyor ve
+                // "parametre icinde metot cagrisi" gordugu her yerde
+                // uyariyor. Yerel degiskene almak hem analizoru
+                // memnun ediyor hem de kodu okunur birakiyor.
+                var maskeliAlici = SensitiveDataMasker.MaskEmail(recipient);
+
+                LogSent(_logger, maskeliAlici, subject);
+            }
         }
         finally
         {
