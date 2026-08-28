@@ -4,26 +4,26 @@ import { useMemo } from 'react'
  * ==================================================================
  * PAYLASILAN KOLTUK HARITASI
  * ==================================================================
- * Bu bilesen ONCE admin panelinde (Sprint 4) yazildi ve yalnizca
+ * Bu bileşen ONCE admin panelinde (Sprint 4) yazildi ve yalnızca
  * adminApi'nin SectionDetail tipini taniyordu.
  *
  * Sprint 7'de bilet alma ekranini yazarken sorun cikti: oradaki veri
- * SeatAvailabilityItem, alanlari bambaska ve koltuklarin 4 farkli
- * durumu var (bos / kilitli / satilmis / bloke).
+ * SeatAvailabilityItem, alanlari bambaska ve koltuklarin 4 farklı
+ * durumu var (boş / kilitli / satilmis / bloke).
  *
- * Onumde iki secenek vardi:
+ * Onumde iki seçenek vardi:
  *
- *   A) Ikinci bir koltuk haritasi yazmak
+ *   A) Ikinci bir koltuk haritası yazmak
  *      -> 200 satirlik yerlesim hesabi KOPYALANIRDI. Bir hizalama
  *         hatasini duzeltince digerinde duzelmezdi. Klasik teknik borc.
  *
  *   B) Bileseni GENELLESTIRMEK  <-- SECILEN
- *      -> Bilesen artik "hangi API'den geldigini" bilmiyor. Yalnizca
- *         "sira, numara, renk, tiklanabilir mi" biliyor.
+ *      -> Bilesen artık "hangi API'den geldigini" bilmiyor. Yalnızca
+ *         "sıra, numara, renk, tıklanabilir mi" biliyor.
  *
  * Cagiran taraflar kendi verilerini bu sade modele CEVIRIYOR. Boylece
- * renk kurallari (admin: bolum rengi / bilet alma: durum rengi) her
- * ekranin kendi isi oluyor -- ki zaten oyle olmali.
+ * renk kurallari (admin: bölüm rengi / bilet alma: durum rengi) her
+ * ekranin kendi isi oluyor -- ki zaten oyle olmalı.
  * ==================================================================
  */
 
@@ -31,13 +31,13 @@ export interface SeatMapSeat {
   id: string
   rowLabel: string
   seatNumber: number
-  /** Kullaniciya gosterilecek etiket. Ornek: "A-12". */
+  /** Kullanıcıya gösterilecek etiket. Ornek: "A-12". */
   label: string
-  /** Dolgu rengi. Renk kararini CAGIRAN verir; bilesen kural bilmez. */
+  /** Dolgu rengi. Renk kararini CAGIRAN verir; bileşen kural bilmez. */
   fill: string
-  /** Tiklanabilir mi? Satilmis koltuk icin false. */
+  /** Tıklanabilir mi? Satilmis koltuk için false. */
   selectable: boolean
-  /** Ekran okuyucu ve fare ipucu icin ek aciklama. Ornek: "satildi". */
+  /** Ekran okuyucu ve fare ipucu için ek açıklama. Ornek: "satıldı". */
   description?: string
 }
 
@@ -57,7 +57,7 @@ interface SeatMapProps {
   sections: SeatMapSection[]
   /** Koltuga tiklandiginda. Verilmezse harita salt okunur olur. */
   onSeatClick?: (seatId: string) => void
-  /** Secili koltuklar. Cerceve ve aria-pressed icin kullanilir. */
+  /** Seçili koltuklar. Cerceve ve aria-pressed için kullanilir. */
   selectedSeatIds?: ReadonlySet<string>
   legend?: SeatMapLegendItem[]
   emptyMessage?: string
@@ -68,7 +68,7 @@ interface PositionedRow {
   seats: SeatMapSeat[]
 }
 
-// Koltuk gorsel sabitleri (SVG birimi).
+// Koltuk görsel sabitleri (SVG birimi).
 const SEAT_SIZE = 18
 const SEAT_GAP = 4
 const ROW_LABEL_WIDTH = 28
@@ -77,20 +77,20 @@ const SECTION_TITLE_HEIGHT = 24
 
 /**
  * ------------------------------------------------------------------
- * NEDEN SVG? Neden div/CSS grid degil?
+ * NEDEN SVG? Neden div/CSS grid değil?
  * ------------------------------------------------------------------
  * 1) OLCEKLENEBILIRLIK: SVG vektoreldir. viewBox ile harita, kapsayici
- *    genisligine gore kendini olceklendirir -- mobilde de masaustunde
- *    de bozulmadan calisir.
+ *    genisligine göre kendini olceklendirir -- mobilde de masaustunde
+ *    de bozulmadan çalışır.
  *
  * 2) PERFORMANS: 2000 koltuk = 2000 DOM elemani. <div> ile her biri
- *    tam bir CSS kutu modeli hesaplamasi gerektirir. SVG <rect> cok
+ *    tam bir CSS kutu modeli hesaplamasi gerektirir. SVG <rect> çok
  *    daha hafiftir.
  *
  * ------------------------------------------------------------------
- * ERISILEBILIRLIK
+ * ERİŞİLEBİLİRLİK
  * ------------------------------------------------------------------
- * SVG varsayilan olarak ekran okuyuculara KAPALIDIR. Her koltuga
+ * SVG varsayılan olarak ekran okuyuculara KAPALIDIR. Her koltuga
  * <title> ekliyoruz ve role="button" veriyoruz ki klavyeyle
  * gezilebilsin. PDF Sprint 18: "Keyboard navigation desteklenmelidir."
  * ------------------------------------------------------------------
@@ -100,20 +100,20 @@ export function SeatMap({
   onSeatClick,
   selectedSeatIds,
   legend,
-  emptyMessage = 'Gosterilecek koltuk yok.',
+  emptyMessage = 'Gösterilecek koltuk yok.',
 }: SeatMapProps) {
   const isInteractive = Boolean(onSeatClick)
 
   /**
    * Yerlesim hesabi.
    *
-   * useMemo ile SARILI cunku bu hesap 2000 koltuk icin binlerce
-   * nesne uretiyor. Her render'da tekrar calissaydi (ornegin
-   * kullanici bir koltuk sectiginde) arayuz gozle gorulur sekilde
+   * useMemo ile SARILI çünkü bu hesap 2000 koltuk için binlerce
+   * nesne uretiyor. Her render'da tekrar calissaydi (örneğin
+   * kullanıcı bir koltuk sectiginde) arayüz gozle gorulur şekilde
    * takilirdi.
    *
-   * Bagimlilik yalnizca `sections`: secim degistiginde yerlesim
-   * DEGISMEZ, yalnizca renkler degisir.
+   * Bagimlilik yalnızca `sections`: seçim degistiginde yerlesim
+   * DEGISMEZ, yalnızca renkler degisir.
    */
   const layout = useMemo(() => {
     let currentY = 0
@@ -123,17 +123,17 @@ export function SeatMap({
 
     const ordered = sections.slice().sort((a, b) => a.displayOrder - b.displayOrder)
 
-    // Duz `for` dongusu kullaniyorum, `.map()` degil.
+    // Duz `for` dongusu kullanıyorum, `.map()` değil.
     //
-    // Sebep: burada bir DONUSUM degil, BIRIKIM yapiyoruz -- her bolum
-    // bir oncekinin bittigi yerden basliyor (currentY) ve en genis
-    // bolumu ariyoruz (maxWidth). `.map()` icinde disaridaki
+    // Sebep: burada bir DONUSUM değil, BIRIKIM yapiyoruz -- her bölüm
+    // bir oncekinin bittigi yerden başlıyor (currentY) ve en genis
+    // bolumu ariyoruz (maxWidth). `.map()` içinde disaridaki
     // degiskenleri degistirmek hem okuyucuyu yaniltir hem de
-    // "render sirasinda degisken atamasi" olarak lint uyarisi alir.
+    // "render sırasında degisken atamasi" olarak lint uyarısı alır.
     for (const section of ordered) {
-      // Koltuklari SIRALARA grupla.
+      // Koltukları SIRALARA grupla.
       //
-      // Map kullaniyorum, duz nesne degil: Map ekleme sirasini KORUR.
+      // Map kullanıyorum, duz nesne değil: Map ekleme sırasını KORUR.
       // Duz nesnede sayisal gorunumlu anahtarlar ("1", "2") otomatik
       // olarak siralanir ve "A, B, C" ile "1, 2, 10" karisik
       // davranislar gosterir.
@@ -174,7 +174,7 @@ export function SeatMap({
 
   if (sections.length === 0) {
     // PDF Sprint 18: "Empty state" zorunlu.
-    // Bos bir alan gostermek yerine ne oldugunu soyluyoruz.
+    // Boş bir alan göstermek yerine ne olduğunu soyluyoruz.
     return (
       <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
         <p className="text-sm text-slate-500">{emptyMessage}</p>
@@ -184,9 +184,9 @@ export function SeatMap({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white p-4">
-      {/* SAHNE gostergesi: kullanicinin yonunu bulmasi icin.
-          Koltuk haritasinda "on taraf neresi?" sorusu cevapsiz kalirsa
-          kullanici hangi koltugun sahneye yakin oldugunu anlayamaz. */}
+      {/* SAHNE göstergesi: kullanıcının yönünü bulmasi için.
+          Koltuk haritasında "on taraf neresi?" sorusu cevapsiz kalirsa
+          kullanıcı hangi koltuğun sahneye yakın olduğunu anlayamaz. */}
       <div className="mb-6 rounded-lg bg-slate-800 py-2 text-center text-xs font-medium tracking-widest text-white">
         SAHNE
       </div>
@@ -198,7 +198,7 @@ export function SeatMap({
         width="100%"
         style={{ height: 'auto', maxHeight: '70vh' }}
         role="group"
-        aria-label="Koltuk plani"
+        aria-label="Koltuk planı"
       >
         {layout.sections.map(({ section, rows, top }) => (
           <g key={section.id} transform={`translate(0, ${top})`}>
@@ -235,9 +235,9 @@ export function SeatMap({
                           clickable ? 'cursor-pointer transition-opacity hover:opacity-70' : ''
                         }
                         onClick={clickable ? () => onSeatClick?.(seat.id) : undefined}
-                        // Klavye erisimi: yalnizca tiklanabilir koltuklar
-                        // odaklanabilir olmali. Salt okunur haritada
-                        // 2000 koltugun arasinda Tab ile gezinmek
+                        // Klavye erişimi: yalnızca tıklanabilir koltuklar
+                        // odaklanabilir olmalı. Salt okunur haritada
+                        // 2000 koltuğun arasında Tab ile gezinmek
                         // iskence olurdu.
                         tabIndex={clickable ? 0 : undefined}
                         role={isInteractive ? 'button' : undefined}
@@ -247,7 +247,7 @@ export function SeatMap({
                           clickable
                             ? (e) => {
                                 // Enter ve Space, buton davranisinin
-                                // standardi. Yalnizca onClick koysaydik
+                                // standardi. Yalnızca onClick koysaydık
                                 // klavye kullanicisi koltuk secemezdi.
                                 if (e.key === 'Enter' || e.key === ' ') {
                                   e.preventDefault()
@@ -258,7 +258,7 @@ export function SeatMap({
                         }
                       >
                         {/* Ekran okuyucu bunu okur. SVG icindeki <title>
-                            ayni zamanda fare ipucu olarak da gorunur. */}
+                            aynı zamanda fare ipucu olarak da görünür. */}
                         <title>
                           {section.name} - {seat.label}
                           {seat.description ? ` (${seat.description})` : ''}

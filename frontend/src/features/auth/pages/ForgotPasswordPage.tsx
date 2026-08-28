@@ -24,27 +24,27 @@ export function ForgotPasswordPage() {
   })
 
   // ==================================================================
-  // BASARILI EKRANI -- GUVENLIK ACISINDAN KRITIK METIN
+  // BASARILI EKRANI -- GÜVENLİK ACISINDAN KRITIK METİN
   // ==================================================================
-  // "E-posta gonderildi" DEMIYORUZ.
-  // "EGER bu adres kayitliysa gonderildi" diyoruz.
+  // "E-posta gönderildi" DEMIYORUZ.
+  // "EGER bu adres kayıtlıysa gönderildi" diyoruz.
   //
-  // Fark neden onemli? Backend, adres kayitli olsun olmasin AYNI
-  // cevabi doner (kullanici numaralandirmayi engellemek icin).
-  // Frontend "gonderildi" deseydi, backend'deki tum o ozeni bosa
-  // cikarmis olurduk -- kullanici mesaja bakip adresin kayitli
-  // oldugunu varsayardi.
+  // Fark neden önemli? Backend, adres kayıtlı olsun olmasın AYNI
+  // cevabi döner (kullanıcı numaralandirmayi engellemek için).
+  // Frontend "gönderildi" deseydi, backend'deki tüm o ozeni bosa
+  // cikarmis olurduk -- kullanıcı mesaja bakip adresin kayıtlı
+  // olduğunu varsayardi.
   //
-  // Guvenlik zinciri en zayif halkasi kadar guclu. Arayuz metni de
+  // Güvenlik zinciri en zayif halkasi kadar güçlü. Arayuz metni de
   // o zincirin bir halkasi.
   // ==================================================================
   if (mutation.isSuccess) {
     return (
       <AuthLayout
-        title="E-postanizi kontrol edin"
+        title="E-postanızı kontrol edin"
         footer={
           <Link to="/giris" className="font-medium text-brand-600 hover:underline">
-            Giris ekranina don
+            Giriş ekranına dön
           </Link>
         }
       >
@@ -54,7 +54,7 @@ export function ForgotPasswordPage() {
         </Alert>
 
         <p className="mt-4 text-sm text-slate-500">
-          E-posta gelmediyse spam klasorunu kontrol edin.
+          E-posta gelmediyse spam klasörünü kontrol edin.
         </p>
       </AuthLayout>
     )
@@ -62,11 +62,11 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      title="Sifremi unuttum"
-      subtitle="E-posta adresinizi girin, size bir sifirlama baglantisi gonderelim."
+      title="Şifremi unuttum"
+      subtitle="E-posta adresinizi girin, size bir sıfırlama bağlantısı gönderelim."
       footer={
         <Link to="/giris" className="font-medium text-brand-600 hover:underline">
-          Giris ekranina don
+          Giriş ekranına dön
         </Link>
       }
     >
@@ -75,13 +75,13 @@ export function ForgotPasswordPage() {
           label="E-posta"
           type="email"
           autoComplete="email"
-          placeholder="ornek@eposta.com"
+          placeholder="örnek@eposta.com"
           error={errors.email?.message}
           {...register('email')}
         />
 
         <Button type="submit" isLoading={mutation.isPending} className="w-full">
-          Sifirlama baglantisi gonder
+          Sıfırlama bağlantısı gönder
         </Button>
       </form>
     </AuthLayout>

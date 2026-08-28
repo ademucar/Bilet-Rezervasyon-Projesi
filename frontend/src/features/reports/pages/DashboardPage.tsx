@@ -50,24 +50,24 @@ function MetricCard({
   )
 }
 
-// Grafik renkleri. Tek yerde: iki grafikte farkli palet kullanmak
+// Grafik renkleri. Tek yerde: iki grafikte farklı palet kullanmak
 // panelin dagilmis gorunmesine yol acar.
 const GRAFIK_RENKLERI = ['#2563eb', '#7c3aed', '#0891b2', '#ea580c', '#65a30d']
 
 /**
  * ==================================================================
- * ORGANIZATOR VE ADMIN PANELI -- PDF Sprint 13
+ * ORGANİZATÖR VE ADMIN PANELİ -- PDF Sprint 13
  * ==================================================================
  * Iki panel TEK sayfada, sekmeli.
  *
- * Neden ayri iki sayfa degil? Cunku admin olan bir kullanici cogu
- * zaman AYNI ZAMANDA organizator (bizim demo kullanicimiz gibi) ve
- * iki panel arasinda gidip gelmek istiyor. Ayri adresler olsaydi
+ * Neden ayrı iki sayfa değil? Çünkü admin olan bir kullanıcı çoğu
+ * zaman AYNI ZAMANDA organizatör (bizim demo kullanicimiz gibi) ve
+ * iki panel arasında gidip gelmek istiyor. Ayrı adresler olsaydı
  * her gecis tam sayfa yuklemesi olurdu.
  *
- * Admin sekmesi YALNIZCA admin rolunde gorunuyor. Bu bir guvenlik
- * onlemi DEGIL, kullanici deneyimi -- gercek kontrol backend'deki
- * AdminOnly policy'sinde (dogrulandi: normal kullanici 403 aliyor).
+ * Admin sekmesi YALNIZCA admin rolunde görünüyor. Bu bir güvenlik
+ * önlemi DEĞİL, kullanıcı deneyimi -- gerçek kontrol backend'deki
+ * AdminOnly policy'sinde (dogrulandi: normal kullanıcı 403 aliyor).
  * ==================================================================
  */
 export function DashboardPage() {
@@ -97,7 +97,7 @@ export function DashboardPage() {
                     : 'bg-white text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                {t === 'organizer' ? 'Organizator' : 'Yonetici'}
+                {t === 'organizer' ? 'Organizatör' : 'Yönetici'}
               </button>
             ))}
           </div>
@@ -112,7 +112,7 @@ export function DashboardPage() {
 }
 
 // ===================================================================
-// ORGANIZATOR PANELI -- PDF'in 10 metrigi
+// ORGANİZATÖR PANELİ -- PDF'in 10 metriği
 // ===================================================================
 
 function OrganizerPanel() {
@@ -146,32 +146,32 @@ function OrganizerPanel() {
       {/* ---- 7 sayisal metrik ---- */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard label="Toplam etkinlik" value={String(d.totalEvents)} />
-        <MetricCard label="Yayindaki etkinlik" value={String(d.publishedEvents)} />
-        <MetricCard label="Satilan bilet" value={String(d.totalTicketsSold)} />
+        <MetricCard label="Yayındaki etkinlik" value={String(d.publishedEvents)} />
+        <MetricCard label="Satılan bilet" value={String(d.totalTicketsSold)} />
         <MetricCard label="Toplam gelir" value={formatMoney(d.totalRevenue, d.currency)} />
         <MetricCard
-          label="Iade edilen bilet"
+          label="İade edilen bilet"
           value={String(d.refundedTickets)}
           tone={d.refundedTickets > 0 ? 'warning' : 'default'}
         />
         <MetricCard
-          label="Doluluk orani"
+          label="Doluluk oranı"
           value={`%${d.occupancyRate}`}
           hint="Satilan / uretilmis koltuk"
         />
         <MetricCard
-          label="En cok satan bilet turu"
-          // Hic satis yoksa null geliyor -- tire gostermek "0" yazmaktan
-          // daha dogru: "0 adet Tam bilet" ile "hic bilet turu yok"
-          // farkli seyler.
+          label="En çok satan bilet türü"
+          // Hic satış yoksa null geliyor -- tire göstermek "0" yazmaktan
+          // daha doğru: "0 adet Tam bilet" ile "hiç bilet türü yok"
+          // farklı şeyler.
           value={d.topTicketTypeName ?? '-'}
           hint={d.topTicketTypeName ? `${d.topTicketTypeCount} adet` : undefined}
         />
       </div>
 
-      {/* ---- 8) Gunluk satis grafigi ---- */}
+      {/* ---- 8) Günlük satış grafigi ---- */}
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-semibold text-slate-900">Gunluk satis (son 30 gun)</h2>
+        <h2 className="font-semibold text-slate-900">Günlük satış (son 30 gün)</h2>
 
         {/* ResponsiveContainer: grafik kapsayicinin genisligine uyum
             saglar. Sabit genislik verseydik mobilde tasardi. */}
@@ -189,8 +189,8 @@ function OrganizerPanel() {
               <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               {/* Recharts formatter'i genis bir tip kullaniyor
                   (ValueType | undefined). Kendi tipimize daraltmak
-                  yerine gelen degeri KONTROL EDIYORUM -- cast ile
-                  susturmak, gercekten undefined geldiginde calisma
+                  yerine gelen değeri KONTROL EDIYORUM -- cast ile
+                  susturmak, gerçekten undefined geldiğinde calisma
                   zamaninda patlamak demekti. */}
               <Tooltip formatter={(value) => (typeof value === 'number' ? String(value) : '')} />
               <Line
@@ -207,19 +207,19 @@ function OrganizerPanel() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* ---- 9) Etkinlik bazli gelir ---- */}
+        {/* ---- 9) Etkinlik bazlı gelir ---- */}
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Etkinlik bazli gelir</h2>
+          <h2 className="font-semibold text-slate-900">Etkinlik bazlı gelir</h2>
 
           {d.revenueByEvent.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">Henuz satis yok.</p>
+            <p className="mt-4 text-sm text-slate-500">Henüz satış yok.</p>
           ) : (
             <div className="mt-4 h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={d.revenueByEvent} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis type="number" tick={{ fontSize: 11 }} />
-                  {/* Yatay cubuk: etkinlik adlari uzun oldugu icin
+                  {/* Yatay cubuk: etkinlik adları uzun olduğu için
                       dikey eksende daha okunakli. */}
                   <YAxis type="category" dataKey="title" width={110} tick={{ fontSize: 11 }} />
                   <Tooltip
@@ -234,12 +234,12 @@ function OrganizerPanel() {
           )}
         </section>
 
-        {/* ---- 10) Bolum bazli doluluk ---- */}
+        {/* ---- 10) Bölüm bazlı doluluk ---- */}
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Bolum bazli doluluk</h2>
+          <h2 className="font-semibold text-slate-900">Bölüm bazlı doluluk</h2>
 
           {d.sectionOccupancies.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">Henuz koltuk uretilmemis.</p>
+            <p className="mt-4 text-sm text-slate-500">Henüz koltuk üretilmemiş.</p>
           ) : (
             <ul className="mt-4 space-y-3">
               {d.sectionOccupancies.map((s) => (
@@ -264,7 +264,7 @@ function OrganizerPanel() {
 }
 
 // ===================================================================
-// ADMIN PANELI -- PDF'in 10 metrigi
+// ADMIN PANELİ -- PDF'in 10 metriği
 // ===================================================================
 
 function AdminPanel() {
@@ -296,33 +296,33 @@ function AdminPanel() {
   return (
     <div className="mt-6 space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Toplam kullanici" value={String(d.totalUsers)} />
-        <MetricCard label="Toplam organizator" value={String(d.totalOrganizers)} />
+        <MetricCard label="Toplam kullanıcı" value={String(d.totalUsers)} />
+        <MetricCard label="Toplam organizatör" value={String(d.totalOrganizers)} />
         <MetricCard label="Toplam etkinlik" value={String(d.totalEvents)} />
-        <MetricCard label="Aktif satis" value={String(d.activeSales)} hint="Satisi acik etkinlik" />
+        <MetricCard label="Aktif satış" value={String(d.activeSales)} hint="Satışı açık etkinlik" />
         <MetricCard
-          label="Toplam islem hacmi"
+          label="Toplam işlem hacmi"
           value={formatMoney(d.totalTransactionVolume, d.currency)}
-          hint="Iade dusulmemis"
+          hint="İade düşülmemiş"
         />
         <MetricCard
-          label="Iptal edilen etkinlik"
+          label="İptal edilen etkinlik"
           value={String(d.cancelledEvents)}
           tone={d.cancelledEvents > 0 ? 'warning' : 'default'}
         />
         <MetricCard
-          label="Basarisiz odeme orani"
+          label="Başarısız ödeme oranı"
           value={`%${d.failedPaymentRate}`}
-          hint="Sonuclanmis odemeler icinde"
-          // %20 uzeri kirmizi: odeme saglayicisinda bir sorun
+          hint="Sonuçlanmış ödemeler içinde"
+          // %20 üzeri kırmızı: ödeme saglayicisinda bir sorun
           // olabilecegini gosteren esik.
           tone={d.failedPaymentRate > 20 ? 'danger' : 'default'}
         />
         <MetricCard
-          label="Sistem hatasi"
+          label="Sistem hatası"
           value={String(d.systemErrorCount)}
-          hint="Dead letter olmus mesaj"
-          // Sifirdan buyukse HER ZAMAN kirmizi: bunlar insan
+          hint="Dead letter olmuş mesaj"
+          // Sifirdan buyukse HER ZAMAN kırmızı: bunlar insan
           // mudahalesi bekleyen isler.
           tone={d.systemErrorCount > 0 ? 'danger' : 'default'}
         />
@@ -330,11 +330,11 @@ function AdminPanel() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">En populer sehirler</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Satilan bilet sayisina gore</p>
+          <h2 className="font-semibold text-slate-900">En popüler şehirler</h2>
+          <p className="mt-0.5 text-xs text-slate-500">Satılan bilet sayısına göre</p>
 
           {d.topCities.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">Henuz satis yok.</p>
+            <p className="mt-4 text-sm text-slate-500">Henüz satış yok.</p>
           ) : (
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -351,11 +351,11 @@ function AdminPanel() {
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">En populer kategoriler</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Satilan bilet sayisina gore</p>
+          <h2 className="font-semibold text-slate-900">En popüler kategoriler</h2>
+          <p className="mt-0.5 text-xs text-slate-500">Satılan bilet sayısına göre</p>
 
           {d.topCategories.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">Henuz satis yok.</p>
+            <p className="mt-4 text-sm text-slate-500">Henüz satış yok.</p>
           ) : (
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -413,17 +413,17 @@ function ReportExportPanel() {
             value={type}
             onChange={(e) => setType(Number(e.target.value))}
           >
-            <option value={ReportType.SalesSummary}>Satis ozeti</option>
-            <option value={ReportType.EventOccupancy}>Etkinlik dolulugu</option>
-            <option value={ReportType.RevenueByEvent}>Etkinlik bazli gelir</option>
-            <option value={ReportType.TicketTypeSales}>Bilet turu satislari</option>
-            <option value={ReportType.PaymentStatuses}>Odeme durumlari</option>
+            <option value={ReportType.SalesSummary}>Satış özeti</option>
+            <option value={ReportType.EventOccupancy}>Etkinlik doluluğu</option>
+            <option value={ReportType.RevenueByEvent}>Etkinlik bazlı gelir</option>
+            <option value={ReportType.TicketTypeSales}>Bilet türü satışları</option>
+            <option value={ReportType.PaymentStatuses}>Ödeme durumlari</option>
           </select>
         </div>
 
         <div className="space-y-1.5">
           <label htmlFor="rapor-bicim" className="block text-xs font-medium text-slate-600">
-            Bicim
+            Biçim
           </label>
           <select
             id="rapor-bicim"
@@ -443,7 +443,7 @@ function ReportExportPanel() {
             isLoading={exportMutation.isPending}
             onClick={() => exportMutation.mutate()}
           >
-            Rapor olustur
+            Rapor oluştur
           </Button>
         </div>
       </div>
@@ -451,17 +451,17 @@ function ReportExportPanel() {
       {/* ==============================================================
           BEKLENTIYI ACIKCA SOYLUYORUM
           ==============================================================
-          PDF: "Rapor uretimi background job olarak calistirilmali ve
-          tamamlandiginda kullaniciya bildirim gonderilmelidir."
+          PDF: "Rapor üretimi background job olarak calistirilmali ve
+          tamamlandiginda kullanıcıya bildirim gonderilmelidir."
 
-          Yani dugmeye basinca dosya INMEZ. Bunu yazmasaydik kullanici
+          Yani dugmeye basinca dosya INMEZ. Bunu yazmasaydik kullanıcı
           bir sey olmadigini dusunup dugmeye tekrar tekrar basardi --
-          ve her basis yeni bir rapor uretirdi.
+          ve her basis yeni bir rapor üretirdi.
           ============================================================== */}
       {exportMutation.isSuccess && (
         <div className="mt-4">
           <Alert variant="success">
-            Rapor talebiniz alindi. Uretim arka planda suruyor; hazir oldugunda size bildirim
+            Rapor talebiniz alındı. Üretim arka planda sürüyor; hazır olduğunda size bildirim
             gonderilecek.
           </Alert>
         </div>
@@ -474,8 +474,8 @@ function ReportExportPanel() {
       )}
 
       <p className="mt-3 text-xs text-slate-500">
-        Raporlar arka planda uretilir. Buyuk raporlar birkac dakika surebilir; bu sirada sayfadan
-        ayrilabilirsiniz.
+        Raporlar arka planda üretilir. Büyük raporlar birkaç dakika sürebilir; bu sırada sayfadan
+        ayrılabilirsiniz.
       </p>
     </section>
   )

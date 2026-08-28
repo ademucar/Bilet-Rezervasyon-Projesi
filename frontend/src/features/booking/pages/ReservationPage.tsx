@@ -17,12 +17,12 @@ import {
 
 /**
  * ==================================================================
- * REZERVASYON VE ODEME EKRANI -- PDF Sprint 7 + Sprint 8
+ * REZERVASYON VE ÖDEME EKRANI -- PDF Sprint 7 + Sprint 8
  * ==================================================================
- * Iki sprintin frontend'i tek sayfada bulusuyor cunku kullanici
- * acisindan bunlar tek bir an: "koltugum tutuldu, sureyi kaybetmeden
- * odeyeyim". Ayri sayfalara bolseydik geri sayim sifirdan baslar,
- * kullanici da her geciste bir tur yukleme beklerdi.
+ * Iki sprintin frontend'i tek sayfada bulusuyor çünkü kullanıcı
+ * acisindan bunlar tek bir an: "koltugum tutuldu, süreyi kaybetmeden
+ * odeyeyim". Ayrı sayfalara bolseydik geri sayım sıfırdan başlar,
+ * kullanıcı da her geciste bir tur yukleme beklerdi.
  * ==================================================================
  */
 export function ReservationPage() {
@@ -37,34 +37,34 @@ export function ReservationPage() {
     queryFn: () => bookingApi.getReservation(reservationId),
     enabled: reservationId.length > 0,
 
-    // Bu veri HIC bayatlamamali.
+    // Bu veri HİÇ bayatlamamali.
     //
-    // App.tsx'teki 60 saniyelik varsayilan burada tehlikeli olurdu:
-    // kullanici sekmeye geri dondugunde bir dakikalik eski
-    // "remainingSeconds" degeriyle sayaci baslatirdik ve sure
-    // oldugundan uzun gorunurdu.
+    // App.tsx'teki 60 saniyelik varsayılan burada tehlikeli olurdu:
+    // kullanıcı sekmeye geri dondugunde bir dakikalik eski
+    // "remainingSeconds" degeriyle sayaci baslatirdik ve süre
+    // oldugundan uzun görünürdü.
     staleTime: 0,
   })
 
   const reservation = reservationQuery.data
 
-  // Geri sayim SUNUCUNUN verdigi saniyeden basliyor.
-  // Detayli gerekce useCountdown icinde.
+  // Geri sayım SUNUCUNUN verdiği saniyeden başlıyor.
+  // Detayli gerekce useCountdown içinde.
   const remaining = useCountdown(reservation?.remainingSeconds)
 
   // ================================================================
-  // "OLU" REZERVASYON UC HALDE OLUR -- VE UCU AYNI SEY DEGIL
+  // "OLU" REZERVASYON UC HALDE OLUR -- VE UCU AYNI SEY DEĞİL
   // ================================================================
-  // Ilk yazimimda ucunu tek bir `isExpired` degiskeninde toplamistim.
-  // Tarayicida denerken hatayi gordum: odemeyi "basarisiz" olarak
-  // isaretleyince ekranda "Rezervasyon suresi doldu" yaziyor ve
-  // sayac hala 09:42'den geri sayiyordu.
+  // İlk yazimimda ucunu tek bir `isExpired` degiskeninde toplamistim.
+  // Tarayicida denerken hatayi gordum: ödemeyi "başarısız" olarak
+  // isaretleyince ekranda "Rezervasyon süresi doldu" yazıyor ve
+  // sayaç hâlâ 09:42'den geri sayiyordu.
   //
-  // Oysa rezervasyon IPTAL olmustu, suresi dolmamisti. Kullaniciya
-  // yanlis sebebi soylemek, "neden bilet alamadim?" sorusunu
+  // Oysa rezervasyon İPTAL olmustu, süresi dolmamisti. Kullanıcıya
+  // yanlış sebebi söylemek, "neden bilet alamadim?" sorusunu
   // cevapsiz birakir -- hatta destek talebine yol acar.
   //
-  // Ayirt etmek zorundayiz.
+  // Ayırt etmek zorundayız.
   // ================================================================
   const isCancelled = reservation?.status === ReservationStatus.Cancelled
 
@@ -72,7 +72,7 @@ export function ReservationPage() {
     reservation?.status === ReservationStatus.Expired ||
     (reservation !== undefined && !isCancelled && remaining === 0)
 
-  /** Bu rezervasyonla artik hicbir sey yapilamaz. */
+  /** Bu rezervasyonla artık hiçbir sey yapılamaz. */
   const isDead = isCancelled || isTimedOut
 
   const isConfirmed = reservation?.status === ReservationStatus.Confirmed
@@ -80,14 +80,14 @@ export function ReservationPage() {
   // ----------------------------------------------------------------
   // SURE DOLDUGUNDA SUNUCUYLA TEYITLES
   // ----------------------------------------------------------------
-  // Sayac sifira dustugunde ekranda "sureniz doldu" yaziyoruz ama
-  // bu YALNIZCA istemcinin tahmini. Gercek karari veren sunucu.
+  // Sayac sıfıra dustugunde ekranda "süreniz doldu" yazıyoruz ama
+  // bu YALNIZCA istemcinin tahmini. Gerçek karari veren sunucu.
   //
-  // Bu yuzden sifira dusunce bir kez daha soruyoruz. Ornegin
-  // kullanici baska bir sekmede sureyi uzatmis olabilir; o zaman
-  // sunucu yeni sureyi doner ve sayac devam eder.
+  // Bu yüzden sıfıra dusunce bir kez daha soruyoruz. Ornegin
+  // kullanıcı başka bir sekmede süreyi uzatmis olabilir; o zaman
+  // sunucu yeni süreyi döner ve sayaç devam eder.
   //
-  // useRef ile "bir kez" garantisi: olmasaydi her render'da yeni
+  // useRef ile "bir kez" garantisi: olmasaydı her render'da yeni
   // istek gider, sonsuz donguye girerdik.
   // ----------------------------------------------------------------
   const expiryCheckedRef = useRef(false)
@@ -104,17 +104,17 @@ export function ReservationPage() {
   }, [remaining, reservation, reservationQuery])
 
   // ================================================================
-  // ODEME BASLAT
+  // ÖDEME BASLAT
   // ================================================================
   const paymentKeyRef = useRef<string | null>(null)
 
   const startPayment = useMutation({
     mutationFn: () => {
-      // Anahtar rezervasyona bagli ve SABIT kaliyor.
+      // Anahtar rezervasyona bağlı ve SABIT kaliyor.
       //
-      // Kullanici "Odemeye gec"e iki kez basarsa ikinci istek ayni
-      // anahtarla gider ve backend yeni bir odeme kaydi olusturmaz --
-      // ilkini doner. Cift cekim riski boylece istemci tarafinda da
+      // Kullanıcı "Ödemeye geç"e iki kez basarsa ikinci istek aynı
+      // anahtarla gider ve backend yeni bir ödeme kaydı olusturmaz --
+      // ilkini döner. Cift çekim riski boylece istemci tarafında da
       // kapaniyor.
       paymentKeyRef.current ??= newIdempotencyKey()
 
@@ -132,8 +132,8 @@ export function ReservationPage() {
     onSuccess: (result) => {
       setPayment(result)
 
-      // Biletler ARTIK olustu; bilet listesi onbellegi bayat.
-      // invalidate etmezsek kullanici "Biletlerim"e gidince eski
+      // Biletler ARTIK oluştu; bilet listesi önbelleği bayat.
+      // invalidate etmezsek kullanıcı "Biletlerim"e gidince eski
       // (biletsiz) listeyi gorurdu.
       void queryClient.invalidateQueries({ queryKey: ['my-tickets'] })
       void queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] })
@@ -144,7 +144,7 @@ export function ReservationPage() {
 
   const failPayment = useMutation({
     mutationFn: (paymentId: string) =>
-      bookingApi.failPayment(paymentId, 'Kullanici odemeyi tamamlamadi (simulasyon).'),
+      bookingApi.failPayment(paymentId, 'Kullanıcı ödemeyi tamamlamadı (simülasyon).'),
 
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] })
@@ -153,7 +153,7 @@ export function ReservationPage() {
   })
 
   const cancelReservation = useMutation({
-    mutationFn: () => bookingApi.cancelReservation(reservationId, 'Kullanici vazgecti.'),
+    mutationFn: () => bookingApi.cancelReservation(reservationId, 'Kullanıcı vazgeçti.'),
     onSuccess: () => navigate('/etkinlikler'),
   })
 
@@ -161,8 +161,8 @@ export function ReservationPage() {
     mutationFn: () => bookingApi.extendReservation(reservationId),
     onSuccess: (updated) => {
       // Sunucudan gelen yeni remainingSeconds onbellege yaziliyor;
-      // useCountdown bagimliligi degistigi icin sayac kendiliginden
-      // yeni sureden baslar.
+      // useCountdown bagimliligi degistigi için sayaç kendiliginden
+      // yeni sureden başlar.
       queryClient.setQueryData(['reservation', reservationId], updated)
     },
   })
@@ -190,8 +190,8 @@ export function ReservationPage() {
   }
 
   // Son 60 saniyede sayaci kirmiziya cevirip nabiz veriyorum.
-  // Renk degisimi, kullanicinin ekrandan gozunu ayirmisken bile
-  // cevresel gorusuyle fark edebilecegi bir uyari.
+  // Renk degisimi, kullanıcının ekrandan gozunu ayirmisken bile
+  // cevresel gorusuyle fark edebilecegi bir uyarı.
   const isUrgent = remaining > 0 && remaining <= 60
 
   return (
@@ -204,10 +204,10 @@ export function ReservationPage() {
           Kod: <span className="font-mono">{reservation.reservationCode}</span>
         </p>
 
-        {/* ---- GERI SAYIM ----
-             Yalnizca rezervasyon HALA CANLIYKEN gosteriliyor.
-             Iptal edilmis bir rezervasyonun yaninda geri sayan bir
-             sayac, kullaniciya "hala vaktin var" diye yalan soyler. */}
+        {/* ---- GERİ SAYIM ----
+             Yalnızca rezervasyon HALA CANLIYKEN gösteriliyor.
+             İptal edilmiş bir rezervasyonun yaninda geri sayan bir
+             sayaç, kullanıcıya "hâlâ vaktin var" diye yalan söyler. */}
         {!isConfirmed && !isDead && (
           <div
             className={`mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 ${
@@ -215,16 +215,16 @@ export function ReservationPage() {
             }`}
           >
             <div>
-              <p className="text-sm font-medium text-slate-700">Odeme icin kalan sure</p>
+              <p className="text-sm font-medium text-slate-700">Ödeme için kalan süre</p>
 
               <p
                 className={`mt-1 font-mono text-3xl font-bold tabular-nums ${
                   isUrgent ? 'text-red-600' : 'text-amber-700'
                 }`}
                 // role="timer" + aria-live="off": ekran okuyucu her
-                // saniye konusmasin. Saniyede bir okunan bir sayac
-                // ekran okuyucu kullanicisi icin kullanilamaz olurdu.
-                // Kritik uyariyi asagidaki metin veriyor.
+                // saniye konusmasin. Saniyede bir okunan bir sayaç
+                // ekran okuyucu kullanicisi için kullanilamaz olurdu.
+                // Kritik uyariyi aşağıdaki metin veriyor.
                 role="timer"
                 aria-live="off"
               >
@@ -235,14 +235,14 @@ export function ReservationPage() {
             <div className="flex gap-2">
               <Button
                 variant="secondary"
-                // Uzatma bir KEZ yapilabiliyor (backend kurali).
-                // Butonu pasiflestirmek, kullanicinin deneyip hata
+                // Uzatma bir KEZ yapilabiliyor (backend kuralı).
+                // Butonu pasiflestirmek, kullanıcının deneyip hata
                 // almasindan iyi.
                 disabled={reservation.extensionCount > 0}
                 isLoading={extendReservation.isPending}
                 onClick={() => extendReservation.mutate()}
               >
-                {reservation.extensionCount > 0 ? 'Sure uzatildi' : '5 dakika uzat'}
+                {reservation.extensionCount > 0 ? 'Süre uzatıldı' : '5 dakika uzat'}
               </Button>
 
               <Button
@@ -250,23 +250,23 @@ export function ReservationPage() {
                 isLoading={cancelReservation.isPending}
                 onClick={() => cancelReservation.mutate()}
               >
-                Vazgec
+                Vazgeç
               </Button>
             </div>
           </div>
         )}
 
         {/* ---- OLU REZERVASYON ----
-             SEBEBI dogru soylemek onemli. "Suresi doldu" ile "iptal
-             edildi" kullanici icin farkli seyler: birincisinde
-             "geciktim", ikincisinde "ben (veya odeme) iptal ettim".
-             Yanlis sebep, kullanicinin ne yaptigini anlamasini
+             SEBEBI doğru söylemek önemli. "Süresi doldu" ile "iptal
+             edildi" kullanıcı için farklı şeyler: birincisinde
+             "geciktim", ikincisinde "ben (veya ödeme) iptal ettim".
+             Yanlis sebep, kullanıcının ne yaptigini anlamasini
              engeller. */}
         {isDead && !isConfirmed && (
           <div className="mt-6">
             <Alert variant="error">
               <p className="font-medium">
-                {isCancelled ? 'Bu rezervasyon iptal edildi' : 'Rezervasyon suresi doldu'}
+                {isCancelled ? 'Bu rezervasyon iptal edildi' : 'Rezervasyon süresi doldu'}
               </p>
 
               <p className="mt-1">
@@ -312,7 +312,7 @@ export function ReservationPage() {
           </div>
         </section>
 
-        {/* ---- ODEME ---- */}
+        {/* ---- ÖDEME ---- */}
         {isConfirmed ? (
           <div className="mt-6">
             <Alert variant="success">
@@ -325,7 +325,7 @@ export function ReservationPage() {
         ) : (
           !isDead && (
             <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="font-semibold text-slate-900">Odeme</h2>
+              <h2 className="font-semibold text-slate-900">Ödeme</h2>
 
               {startPayment.isError && (
                 <div className="mt-3">
@@ -342,7 +342,7 @@ export function ReservationPage() {
               {payment === null ? (
                 <>
                   <p className="mt-2 text-sm text-slate-500">
-                    Odemeye gectiginizde koltuklariniz odeme suresince kilitli kalir.
+                    Ödemeye geçtiğinizde koltuklarınız ödeme süresince kilitli kalır.
                   </p>
 
                   <Button
@@ -380,40 +380,40 @@ interface PaymentSimulationProps {
 
 /**
  * ==================================================================
- * ODEME SIMULASYONU -- PDF Sprint 8
+ * ÖDEME SIMULASYONU -- PDF Sprint 8
  * ==================================================================
- * PDF: "Gercek bir odeme saglayicisi entegre edilmeyecektir. Ancak
- * gercek bir entegrasyona benzer bir yapi kurulmalidir."
+ * PDF: "Gerçek bir ödeme sağlayıcısı entegre edilmeyecektir. Ancak
+ * gerçek bir entegrasyona benzer bir yapi kurulmalidir."
  *
  * ------------------------------------------------------------------
  * NEDEN SAHTE BIR KART FORMU KOYMUYORUM?
  * ------------------------------------------------------------------
- * Ilk aklima gelen, gercekci gorunsun diye kart numarasi alanlari
+ * İlk aklima gelen, gercekci gorunsun diye kart numarasi alanlari
  * olan bir form cizmekti. VAZGECTIM, iki sebeple:
  *
- * 1) Gercek bir entegrasyonda kart bilgisi BIZIM sayfamiza HIC
- *    girilmez. Kullanici saglayicinin (Iyzico, Stripe) kendi
- *    sayfasina yonlendirilir veya iframe icinde onun formunu
+ * 1) Gerçek bir entegrasyonda kart bilgisi BIZIM sayfamiza HİÇ
+ *    girilmez. Kullanıcı sağlayıcının (Iyzico, Stripe) kendi
+ *    sayfasına yönlendirilir veya iframe içinde onun formunu
  *    doldurur. Kart verisi bizim sunucumuza ugramaz -- PCI-DSS
  *    zorunlulugu budur. Kart formu cizmek, ogrenilmesi GEREKEN
  *    seyin tam tersini ogretirdi.
  *
- * 2) Sahte de olsa kart alani gosteren bir ekran, birinin oraya
+ * 2) Sahte de olsa kart alanı gosteren bir ekran, birinin oraya
  *    GERCEK kart numarasi yazmasina davetiye cikarir.
  *
- * Bunun yerine simulasyonun ne oldugunu acikca yaziyorum ve iki
- * sonucu da denenebilir kiliyorum -- basarisiz odeme yolu en az
- * basarili yol kadar test edilmeli.
+ * Bunun yerine simulasyonun ne olduğunu acikca yazıyorum ve iki
+ * sonucu da denenebilir kiliyorum -- başarısız ödeme yolu en az
+ * başarılı yol kadar test edilmeli.
  * ------------------------------------------------------------------
  * BU BUTONLAR GERCEKTE KIM?
  * ------------------------------------------------------------------
- * "Odemeyi onayla" butonu POST /payments/{id}/complete cagiriyor.
- * Gercek hayatta bu adresi KULLANICI degil, SAGLAYICI cagirir
+ * "Ödemeyi onayla" butonu POST /payments/{id}/complete cagiriyor.
+ * Gerçek hayatta bu adresi KULLANICI değil, SAGLAYICI cagirir
  * (callback / webhook).
  *
- * Backend bunu bildigi icin callback'e koru korune guvenmiyor:
+ * Backend bunu bildigi için callback'e koru korune guvenmiyor:
  * islemi saglayiciya sorup DOGRULUYOR (VerifyPaymentAsync). Yani
- * bu butona basmak "bilet ver" demek degil, "saglayici bize haber
+ * bu butona basmak "bilet ver" demek değil, "sağlayıcı bize haber
  * verdi" demek. Dogrulama gecmezse bilet uretilmiyor.
  * ==================================================================
  */
@@ -435,22 +435,22 @@ function PaymentSimulation({
   return (
     <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        Odeme simulasyonu
+        Ödeme simülasyonu
       </p>
 
       <p className="mt-2 text-sm text-slate-600">
-        Gercek bir odeme saglayicisi kullanilmiyor. Normalde bu adimda saglayicinin guvenli
-        sayfasina yonlendirilir, kart bilgilerinizi ORAYA girer ve saglayici sonucu bize bildirirdi.
-        Asagidaki iki buton o bildirimi taklit ediyor.
+        Gerçek bir ödeme sağlayıcısı kullanılmıyor. Normalde bu adımda sağlayıcının güvenli
+        sayfasına yönlendirilir, kart bilgilerinizi ORAYA girer ve sağlayıcı sonucu bize bildirirdi.
+        Aşağıdaki iki buton o bildirimi taklit ediyor.
       </p>
 
       <dl className="mt-4 space-y-1 text-xs text-slate-500">
         <div className="flex gap-2">
-          <dt>Saglayici:</dt>
+          <dt>Sağlayıcı:</dt>
           <dd className="font-medium text-slate-700">{payment.providerName}</dd>
         </div>
         <div className="flex gap-2">
-          <dt>Islem referansi:</dt>
+          <dt>İşlem referansı:</dt>
           <dd className="font-mono text-slate-700">{payment.providerReference ?? '-'}</dd>
         </div>
         <div className="flex gap-2">
@@ -463,17 +463,17 @@ function PaymentSimulation({
 
       <div className="mt-5 flex flex-wrap gap-3">
         <Button className="flex-1" isLoading={isCompleting} onClick={onComplete}>
-          Odeme basarili
+          Ödeme başarılı
         </Button>
 
         <Button variant="secondary" className="flex-1" isLoading={isFailing} onClick={onFail}>
-          Odeme basarisiz
+          Ödeme başarısız
         </Button>
       </div>
 
       <p className="mt-3 text-xs text-slate-500">
-        Odeme basarisiz olursa rezervasyon iptal edilir ve koltuklar serbest birakilir (PDF Sprint 8
-        kurali).
+        Ödeme başarısız olursa rezervasyon iptal edilir ve koltuklar serbest bırakılır (PDF Sprint 8
+        kuralı).
       </p>
     </div>
   )

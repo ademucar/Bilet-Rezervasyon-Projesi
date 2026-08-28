@@ -9,17 +9,17 @@ interface AuthLayoutProps {
 }
 
 /**
- * Kimlik dogrulama ekranlarinin ortak cercevesi.
+ * Kimlik doğrulama ekranlarinin ortak cercevesi.
  *
- * Bes ekran (giris, kayit, sifremi unuttum, sifre sifirla, yetkisiz)
- * ayni duzeni paylasiyor. Her birinde tekrar yazsaydim, birinde
- * baslik boyutunu degistirdigimde digerleri geride kalirdi.
+ * Bes ekran (giriş, kayıt, sifremi unuttum, şifre sıfırla, yetkisiz)
+ * aynı düzeni paylasiyor. Her birinde tekrar yazsaydim, birinde
+ * baslik boyutunu degistirdigimde digerleri geride kalırdı.
  */
 export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
       {/* max-w-md + w-full: mobilde tam genislik, masaustunde sinirli.
-          PDF Sprint 18: "Responsive tasarim uygulanmalidir." */}
+          PDF Sprint 18: "Responsive tasarım uygulanmalıdır." */}
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-block text-2xl font-bold text-brand-600">
@@ -28,7 +28,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         </div>
 
         {/* main: sayfanin ana icerigi. Ekran okuyucular "ana icerige atla"
-            komutuyla dogrudan buraya gelebiliyor. */}
+            komutuyla doğrudan buraya gelebiliyor. */}
         <main className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
           {subtitle && <p className="mt-1.5 text-sm text-slate-500">{subtitle}</p>}

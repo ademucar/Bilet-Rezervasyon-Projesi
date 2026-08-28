@@ -11,9 +11,9 @@ import { AdminLayout } from '../components/AdminLayout'
 import { SeatMap } from '../components/SeatMap'
 
 /**
- * Oturma plani tasarlama ekrani.
- * PDF Sprint 4: "Bolum ekleme", "Sira ve koltuk olusturma",
- * "Gorsel koltuk plani", "Plan onizleme".
+ * Oturma planı tasarlama ekrani.
+ * PDF Sprint 4: "Bölüm ekleme", "Sıra ve koltuk oluşturma",
+ * "Görsel koltuk planı", "Plan önizleme".
  */
 export function SeatLayoutPage() {
   const { layoutId } = useParams<{ layoutId: string }>()
@@ -44,7 +44,7 @@ export function SeatLayoutPage() {
     mutationFn: (data: { name: string; colorHex: string }) =>
       adminApi.addSection(layoutId!, {
         name: data.name,
-        // Yeni bolum en sona eklensin.
+        // Yeni bölüm en sona eklensin.
         displayOrder: (layoutQuery.data?.sections.length ?? 0) + 1,
         colorHex: data.colorHex,
       }),
@@ -53,7 +53,7 @@ export function SeatLayoutPage() {
       sectionForm.reset()
       setError(null)
     },
-    onError: (e) => setError(toProblem(e).detail ?? 'Bolum eklenemedi.'),
+    onError: (e) => setError(toProblem(e).detail ?? 'Bölüm eklenemedi.'),
   })
 
   const generateSeats = useMutation({
@@ -71,25 +71,25 @@ export function SeatLayoutPage() {
       }),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: ['seat-layout', layoutId] })
-      setNotice(`${count} koltuk uretildi.`)
+      setNotice(`${count} koltuk üretildi.`)
       setError(null)
     },
     onError: (e) => {
       const problem = toProblem(e)
 
-      // Alan bazli dogrulama hatalarini da gosteriyorum.
-      // Yalnizca `detail` gosterseydik "Gonderilen veriler gecerli
-      // degil" gibi hicbir sey anlatmayan bir mesaj cikardi.
+      // Alan bazlı doğrulama hatalarini da gösteriyorum.
+      // Yalnızca `detail` gosterseydik "Gonderilen veriler geçerli
+      // değil" gibi hiçbir sey anlatmayan bir mesaj çıkardı.
       const fieldErrors = problem.errors ? Object.values(problem.errors).flat().join(' ') : null
 
-      setError(fieldErrors ?? problem.detail ?? 'Koltuklar uretilemedi.')
+      setError(fieldErrors ?? problem.detail ?? 'Koltuklar üretilemedi.')
       setNotice(null)
     },
   })
 
   if (layoutQuery.isPending) {
     return (
-      <AdminLayout title="Yukleniyor...">
+      <AdminLayout title="Yükleniyor...">
         <div className="h-64 animate-pulse rounded-xl bg-slate-200" aria-busy="true" />
       </AdminLayout>
     )
@@ -97,9 +97,9 @@ export function SeatLayoutPage() {
 
   if (layoutQuery.isError || !layoutQuery.data) {
     return (
-      <AdminLayout title="Plan bulunamadi">
+      <AdminLayout title="Plan bulunamadı">
         <Alert variant="error">
-          {toProblem(layoutQuery.error).detail ?? 'Oturma plani yuklenemedi.'}
+          {toProblem(layoutQuery.error).detail ?? 'Oturma planı yüklenemedi.'}
         </Alert>
       </AdminLayout>
     )
@@ -112,15 +112,15 @@ export function SeatLayoutPage() {
     <AdminLayout
       title={layout.name}
       subtitle={`${layout.hallName} - ${layout.totalSeatCount} / ${layout.hallCapacity} koltuk`}
-      backTo={{ label: 'Oturma planlari', to: `/admin/salonlar/${layout.hallId}` }}
+      backTo={{ label: 'Oturma planları', to: `/admin/salonlar/${layout.hallId}` }}
     >
-      {/* Plan kullanimdaysa DUZENLEME FORMLARINI HIC GOSTERMIYORUM.
-          Gosterip sonra hata vermek kullaniciyi bosuna ugrastirir. */}
+      {/* Plan kullanimdaysa DUZENLEME FORMLARINI HİÇ GOSTERMIYORUM.
+          Gosterip sonra hata vermek kullanıcıyı boşuna ugrastirir. */}
       {layout.isInUse && (
         <div className="mb-6">
           <Alert variant="info">
-            Bu plan bir etkinlik oturumunda kullaniliyor. Yapisi degistirilemez; yalnizca
-            goruntuleyebilirsiniz.
+            Bu plan bir etkinlik oturumunda kullanılıyor. Yapısı degistirilemez; yalnızca
+            görüntüleyebilirsiniz.
           </Alert>
         </div>
       )}
@@ -138,19 +138,19 @@ export function SeatLayoutPage() {
 
       {!layout.isInUse && (
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          {/* ---- Bolum ekleme ---- */}
+          {/* ---- Bölüm ekleme ---- */}
           <form
             onSubmit={sectionForm.handleSubmit((d) => addSection.mutate(d))}
             className="space-y-4 rounded-xl border border-slate-200 bg-white p-6"
             noValidate
           >
-            <h2 className="text-sm font-semibold text-slate-900">1. Bolum ekle</h2>
+            <h2 className="text-sm font-semibold text-slate-900">1. Bölüm ekle</h2>
 
             <Input
-              label="Bolum adi"
+              label="Bölüm adı"
               placeholder="Orta Blok"
               error={sectionForm.formState.errors.name?.message}
-              {...sectionForm.register('name', { required: 'Bolum adi zorunludur.' })}
+              {...sectionForm.register('name', { required: 'Bölüm adı zorunludur.' })}
             />
 
             <div className="space-y-1.5">
@@ -159,9 +159,9 @@ export function SeatLayoutPage() {
               </label>
 
               <div className="flex items-center gap-3">
-                {/* type="color" tarayicinin renk secicisini acar ve
-                    HER ZAMAN gecerli #RRGGBB uretir. Metin girisi
-                    kullansaydik backend'in regex dogrulamasina takilan
+                {/* type="color" tarayıcının renk secicisini acar ve
+                    HER ZAMAN geçerli #RRGGBB üretir. Metin girişi
+                    kullansaydık backend'in regex dogrulamasina takilan
                     girdiler olusabilirdi. */}
                 <input
                   id="colorHex"
@@ -169,30 +169,30 @@ export function SeatLayoutPage() {
                   className="h-10 w-16 cursor-pointer rounded border border-slate-300"
                   {...sectionForm.register('colorHex')}
                 />
-                <span className="text-sm text-slate-500">Koltuk haritasinda bu bolumun rengi</span>
+                <span className="text-sm text-slate-500">Koltuk haritasında bu bölümün rengi</span>
               </div>
             </div>
 
             <Button type="submit" isLoading={addSection.isPending}>
-              Bolum ekle
+              Bölüm ekle
             </Button>
           </form>
 
-          {/* ---- Koltuk uretimi ---- */}
+          {/* ---- Koltuk üretimi ---- */}
           <form
             onSubmit={seatsForm.handleSubmit((d) => generateSeats.mutate(d))}
             className="space-y-4 rounded-xl border border-slate-200 bg-white p-6"
             noValidate
           >
-            <h2 className="text-sm font-semibold text-slate-900">2. Koltuk uret</h2>
+            <h2 className="text-sm font-semibold text-slate-900">2. Koltuk üret</h2>
 
             {layout.sections.length === 0 ? (
-              <p className="text-sm text-slate-500">Once bir bolum eklemelisiniz.</p>
+              <p className="text-sm text-slate-500">Önce bir bölüm eklemelisiniz.</p>
             ) : (
               <>
                 <div className="space-y-1.5">
                   <label htmlFor="sectionId" className="block text-sm font-medium text-slate-700">
-                    Bolum
+                    Bölüm
                   </label>
 
                   <select
@@ -200,7 +200,7 @@ export function SeatLayoutPage() {
                     className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500"
                     {...seatsForm.register('sectionId', { required: true })}
                   >
-                    <option value="">Bolum secin</option>
+                    <option value="">Bölüm seçin</option>
                     {layout.sections.map((s) => (
                       <option key={s.id} value={s.id} disabled={s.seatCount > 0}>
                         {s.name}
@@ -212,12 +212,12 @@ export function SeatLayoutPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <Input
-                    label="Sira sayisi"
+                    label="Sıra sayısı"
                     type="number"
                     {...seatsForm.register('rowCount', { valueAsNumber: true, min: 1, max: 500 })}
                   />
                   <Input
-                    label="Sira basina koltuk"
+                    label="Sıra başına koltuk"
                     type="number"
                     {...seatsForm.register('seatsPerRow', {
                       valueAsNumber: true,
@@ -233,19 +233,19 @@ export function SeatLayoutPage() {
                     className="rounded"
                     {...seatsForm.register('useLetters')}
                   />
-                  Siralari harfle adlandir (A, B, C...)
+                  Sıraları harfle adlandır (A, B, C...)
                 </label>
 
-                {/* Kalan kapasiteyi ONCEDEN gosteriyorum.
-                    Backend zaten reddedecek ama kullanici 900 koltuk
-                    girip "kapasite asildi" hatasi almadan once
+                {/* Kalan kapasiteyi ONCEDEN gösteriyorum.
+                    Backend zaten reddedecek ama kullanıcı 900 koltuk
+                    girip "kapasite aşıldı" hatası almadan önce
                     sinirini bilmeli. */}
                 <p className="text-xs text-slate-500">
                   Kalan kapasite: <strong>{remainingCapacity}</strong> koltuk
                 </p>
 
                 <Button type="submit" isLoading={generateSeats.isPending}>
-                  Koltuklari uret
+                  Koltukları üret
                 </Button>
               </>
             )}
@@ -253,7 +253,7 @@ export function SeatLayoutPage() {
         </div>
       )}
 
-      <h2 className="mb-3 text-lg font-semibold text-slate-900">Onizleme</h2>
+      <h2 className="mb-3 text-lg font-semibold text-slate-900">Önizleme</h2>
 
       <SeatMap sections={layout.sections} />
     </AdminLayout>
@@ -261,12 +261,12 @@ export function SeatLayoutPage() {
 }
 
 /**
- * Sira etiketlerini uretir: A, B, C ... Z, AA, AB ...
+ * Sıra etiketlerini üretir: A, B, C ... Z, AA, AB ...
  *
  * KARISABILECEK HARFLERI ATLIYORUM: I, O, Q.
- * Sebep: gercek salonlarda gorevli "I sirasi mi 1 sirasi mi?" diye
- * sorar; kullanici da bilette "O" mu "0" mi ayirt edemez. Bilet
- * numarasi uretiminde de ayni mantigi uygulamistik.
+ * Sebep: gerçek salonlarda gorevli "I sırası mi 1 sırası mi?" diye
+ * sorar; kullanıcı da bilette "O" mu "0" mi ayırt edemez. Bilet
+ * numarasi uretiminde de aynı mantığı uygulamıştık.
  */
 function buildRowLabels(count: number): string[] {
   const alphabet = 'ABCDEFGHJKLMNPRSTUVYZ'

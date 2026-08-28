@@ -14,7 +14,7 @@ export function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  // Token URL'den geliyor: /sifre-sifirla?token=xxx
+  // Token URL'den geliyor: /şifre-sıfırla?token=xxx
   // Backend'in e-postaya koydugu link bu bicimde.
   const token = searchParams.get('token')
 
@@ -33,29 +33,29 @@ export function ResetPasswordPage() {
     onSuccess: () => {
       // Sifirlamadan sonra OTOMATIK GIRIS YAPMIYORUZ.
       //
-      // Neden? Backend sifirlama sonrasi tum oturumlari kapatiyor ve
-      // yeni token dondurmuyor. Ayrica kullanicinin yeni sifresini
+      // Neden? Backend sıfırlama sonrası tüm oturumlari kapatiyor ve
+      // yeni token dondurmuyor. Ayrıca kullanıcının yeni sifresini
       // bir kez girerek dogrulamasi, sifreyi akilda tutmasina yardim
-      // eder. Guvenlik acisindan da temiz bir baslangic.
+      // eder. Güvenlik acisindan da temiz bir başlangıç.
       navigate('/giris?sebep=sifre-sifirlandi', { replace: true })
     },
   })
 
-  // Token yoksa formu HIC gostermiyorum.
+  // Token yoksa formu HİÇ gostermiyorum.
   //
-  // Formu gosterip kullaniciya sifre yazdirmak, sonra "token yok"
+  // Formu gosterip kullanıcıya şifre yazdirmak, sonra "token yok"
   // demek zaman kaybi ve sinir bozucu olurdu. Engeli en basta
   // bildirmek daha iyi bir deneyim.
   if (!token) {
     return (
-      <AuthLayout title="Gecersiz baglanti">
+      <AuthLayout title="Geçersiz bağlantı">
         <Alert variant="error">
-          Bu sifre sifirlama baglantisi gecersiz. Lutfen yeni bir talep olusturun.
+          Bu şifre sıfırlama bağlantısı geçersiz. Lütfen yeni bir talep oluşturun.
         </Alert>
 
         <div className="mt-4">
           <Link to="/sifremi-unuttum" className="font-medium text-brand-600 hover:underline">
-            Yeni baglanti iste
+            Yeni bağlantı iste
           </Link>
         </div>
       </AuthLayout>
@@ -64,25 +64,25 @@ export function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      title="Yeni sifre belirle"
-      subtitle="Hesabiniz icin yeni bir sifre olusturun."
+      title="Yeni şifre belirle"
+      subtitle="Hesabınız için yeni bir şifre oluşturun."
       footer={
         <Link to="/giris" className="font-medium text-brand-600 hover:underline">
-          Giris ekranina don
+          Giriş ekranına dön
         </Link>
       }
     >
       {mutation.isError && (
         <div className="mb-4">
           <Alert variant="error">
-            {toProblem(mutation.error).detail ?? 'Sifre sifirlanamadi.'}
+            {toProblem(mutation.error).detail ?? 'Şifre sıfırlanamadı.'}
           </Alert>
         </div>
       )}
 
       <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4" noValidate>
         <Input
-          label="Yeni sifre"
+          label="Yeni şifre"
           type="password"
           autoComplete="new-password"
           error={errors.password?.message}
@@ -90,7 +90,7 @@ export function ResetPasswordPage() {
         />
 
         <Input
-          label="Yeni sifre tekrar"
+          label="Yeni şifre tekrar"
           type="password"
           autoComplete="new-password"
           error={errors.passwordConfirm?.message}
@@ -98,11 +98,11 @@ export function ResetPasswordPage() {
         />
 
         <p className="text-xs text-slate-500">
-          Sifreniz en az 8 karakter olmali; buyuk harf, kucuk harf ve rakam icermelidir.
+          Şifreniz en az 8 karakter olmalı; büyük harf, küçük harf ve rakam içermelidir.
         </p>
 
         <Button type="submit" isLoading={mutation.isPending} className="w-full">
-          Sifreyi guncelle
+          Şifreyi güncelle
         </Button>
       </form>
     </AuthLayout>

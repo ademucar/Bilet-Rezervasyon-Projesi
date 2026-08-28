@@ -5,14 +5,14 @@ import { Alert } from '../../components/ui/Alert'
 export function NotFoundPage() {
   return (
     <AuthLayout
-      title="Sayfa bulunamadi"
+      title="Sayfa bulunamadı"
       footer={
         <Link to="/" className="font-medium text-brand-600 hover:underline">
-          Ana sayfaya don
+          Ana sayfaya dön
         </Link>
       }
     >
-      <Alert variant="info">Aradiginiz sayfa tasinmis veya hic var olmamis olabilir.</Alert>
+      <Alert variant="info">Aradığınız sayfa taşınmış veya hiç var olmamış olabilir.</Alert>
     </AuthLayout>
   )
 }

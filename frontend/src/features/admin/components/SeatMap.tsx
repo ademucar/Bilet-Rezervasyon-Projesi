@@ -6,7 +6,7 @@ interface SeatMapProps {
   sections: SectionDetail[]
   /** Koltuga tiklandiginda. Verilmezse harita salt okunur olur. */
   onSeatClick?: (seatId: string) => void
-  /** Secili koltuklarin Id'leri. */
+  /** Seçili koltuklarin Id'leri. */
   selectedSeatIds?: ReadonlySet<string>
 }
 
@@ -22,24 +22,24 @@ const INACTIVE_COLOR = '#e2e8f0'
  * bilet alma ekrani da bir harita isteyince cizim mantigini
  * components/seatmap/SeatMap.tsx'e tasidim.
  *
- * Geriye kalan bu dosya artik yalnizca bir CEVIRICI: adminApi'nin
+ * Geriye kalan bu dosya artık yalnızca bir CEVIRICI: adminApi'nin
  * SectionDetail tipini, paylasilan bilesenin anladigi sade modele
  * doksturuyor.
  *
- * Admin sayfalarinin import satirlarina DOKUNMADIM. Onlar hala
+ * Admin sayfalarinin import satirlarina DOKUNMADIM. Onlar hâlâ
  * `import { SeatMap } from '../components/SeatMap'` diyor ve
- * calisiyorlar. Refactor'un dogru yapilmis olmasinin olcusu budur:
+ * calisiyorlar. Refactor'un doğru yapilmis olmasinin olcusu budur:
  * cagiran taraf degisikligi fark etmez.
  *
  * ------------------------------------------------------------------
  * ADMIN'DE RENK NE ANLAMA GELIR?
  * ------------------------------------------------------------------
- * Burada koltugun SATIS durumu yok -- oturum bile secilmemis.
- * Renk yalnizca BOLUMU anlatiyor. Bilet alma ekraninda ise renk
- * "bos mu, kilitli mi, satilmis mi" demek.
+ * Burada koltuğun SATIS durumu yok -- oturum bile secilmemis.
+ * Renk yalnızca BOLUMU anlatiyor. Bilet alma ekraninda ise renk
+ * "boş mu, kilitli mi, satilmis mi" demek.
  *
- * Iki ekranin renk kurali farkli oldugu icin renk secimini
- * paylasilan bilesene KOYMADIM; her ekran kendi kuralini yaziyor.
+ * Iki ekranin renk kuralı farklı olduğu için renk secimini
+ * paylasilan bilesene KOYMADIM; her ekran kendi kuralini yazıyor.
  * ==================================================================
  */
 export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps) {
@@ -55,7 +55,7 @@ export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps
           seatNumber: seat.seatNumber,
           label: seat.displayLabel,
 
-          // Renk oncelik sirasi: secili > pasif > bolum rengi
+          // Renk oncelik sırası: seçili > pasif > bölüm rengi
           fill: selectedSeatIds?.has(seat.id)
             ? SELECTED_COLOR
             : seat.isActive
@@ -75,7 +75,7 @@ export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps
         label: `${s.name} (${s.seatCount})`,
         color: s.colorHex ?? DEFAULT_SECTION_COLOR,
       })),
-      { label: 'Devre disi', color: INACTIVE_COLOR },
+      { label: 'Devre dışı', color: INACTIVE_COLOR },
     ],
     [sections],
   )
@@ -86,7 +86,7 @@ export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps
       onSeatClick={onSeatClick}
       selectedSeatIds={selectedSeatIds}
       legend={legend}
-      emptyMessage="Henuz bolum eklenmemis. Once bir bolum olusturun, sonra koltuk uretin."
+      emptyMessage="Henüz bölüm eklenmemiş. Önce bir bölüm oluşturun, sonra koltuk üretin."
     />
   )
 }

@@ -7,18 +7,18 @@ import { formatDate } from '../../../lib/format'
 import { bookingApi, EventStatus, type ReviewDto } from '../api/bookingApi'
 
 /**
- * Yildiz gostergesi. Salt okunur veya secilebilir.
+ * Yildiz göstergesi. Salt okunur veya secilebilir.
  *
  * ==================================================================
- * ERISILEBILIRLIK: YILDIZLAR SADECE GORSEL DEGIL
+ * ERİŞİLEBİLİRLİK: YILDIZLAR SADECE GORSEL DEĞİL
  * ==================================================================
- * Yildizlari yalnizca sembol olarak cizseydik ekran okuyucu
- * "yildiz yildiz yildiz" derdi -- kac tane oldugunu saymak
- * kullaniciya kalirdi.
+ * Yildizlari yalnızca sembol olarak cizseydik ekran okuyucu
+ * "yıldız yıldız yıldız" derdi -- kac tane olduğunu saymak
+ * kullanıcıya kalırdı.
  *
- * Salt okunur halde tek bir aria-label ("5 uzerinden 4 puan")
- * veriyorum ve yildizlari aria-hidden yapiyorum. Secilebilir halde
- * ise gercek radio dugmeleri kullaniyorum -- klavyeyle ok tuslariyla
+ * Salt okunur halde tek bir aria-label ("5 üzerinden 4 puan")
+ * veriyorum ve yildizlari aria-hidden yapıyorum. Secilebilir halde
+ * ise gerçek radio dugmeleri kullanıyorum -- klavyeyle ok tuslariyla
  * gezilebiliyor.
  * ==================================================================
  */
@@ -37,7 +37,7 @@ function StarRating({
     return (
       <span
         className={`${boyut} leading-none text-amber-500`}
-        aria-label={`5 uzerinden ${value} puan`}
+        aria-label={`5 üzerinden ${value} puan`}
       >
         <span aria-hidden="true">
           {'★'.repeat(Math.round(value))}
@@ -49,12 +49,12 @@ function StarRating({
 
   return (
     <fieldset className="flex items-center gap-1">
-      <legend className="sr-only">Puaniniz</legend>
+      <legend className="sr-only">Puanınız</legend>
 
       {[1, 2, 3, 4, 5].map((puan) => (
         <label key={puan} className="cursor-pointer">
-          {/* Gercek radio: klavye ve ekran okuyucu icin.
-              sr-only ile gorsel olarak gizli ama erisilebilir. */}
+          {/* Gerçek radio: klavye ve ekran okuyucu için.
+              sr-only ile görsel olarak gizli ama erişilebilir. */}
           <input
             type="radio"
             name="puan"
@@ -85,34 +85,34 @@ interface EventReviewsProps {
 
 /**
  * ==================================================================
- * ETKINLIK YORUMLARI -- PDF Sprint 12
+ * ETKİNLİK YORUMLARI -- PDF Sprint 12
  * ==================================================================
  * PDF is kurallarinin arayuze yansimasi:
  *
- *   "Etkinlik tamamlanmadan yorum yapilamaz"
- *      -> form yalnizca Completed durumunda gorunuyor
+ *   "Etkinlik tamamlanmadan yorum yapılamaz"
+ *      -> form yalnızca Completed durumunda görünüyor
  *
- *   "Yalnizca gecerli bilet almis kullanici yorum yapabilir"
+ *   "Yalnızca geçerli bilet almis kullanıcı yorum yapabilir"
  *      -> bunu ISTEMCIDE bilemiyoruz (bilet bilgisi burada yok).
- *         Kullanici deneyip 403 aliyor ve NET bir mesaj goruyor.
+ *         Kullanıcı deneyip 403 aliyor ve NET bir mesaj görüyor.
  *
- *   "Kullanici yalnizca kendi yorumunu duzenleyebilir"
- *      -> Duzenle/Sil dugmeleri yalnizca isMine=true olanlarda
+ *   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir"
+ *      -> Düzenle/Sil dugmeleri yalnızca isMine=true olanlarda
  *
  * ------------------------------------------------------------------
- * NEDEN BILET KONTROLUNU ISTEMCIDE YAPMIYORUM?
+ * NEDEN BİLET KONTROLUNU ISTEMCIDE YAPMIYORUM?
  * ------------------------------------------------------------------
  * Yapabilirdim: "biletlerim" listesini cekip bu etkinlik var mi diye
- * bakardim. Yapmadim cunku:
+ * bakardim. Yapmadim çünkü:
  *
- *   1) Fazladan bir istek, herkes icin, yalnizca bir dugmeyi
+ *   1) Fazladan bir istek, herkes için, yalnızca bir dugmeyi
  *      gizlemek ugruna
- *   2) Sunucu ZATEN kontrol ediyor -- istemcideki kontrol yalnizca
- *      kolaylik olurdu, guvenlik degil
+ *   2) Sunucu ZATEN kontrol ediyor -- istemcideki kontrol yalnızca
+ *      kolaylik olurdu, güvenlik değil
  *   3) Yanlis pozitif riski: bilet listesi bayatsa dugmeyi haksiz
  *      yere gizlerdim
  *
- * Hatayi acikca gostermek, sessizce dugme gizlemekten daha durust.
+ * Hatayi acikca göstermek, sessizce dugme gizlemekten daha durust.
  * ------------------------------------------------------------------
  */
 export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
@@ -130,7 +130,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
   const tazele = () => {
     void queryClient.invalidateQueries({ queryKey: ['reviews', eventId] })
 
-    // Etkinlik detayi onbellegi de bayatladi olabilir (ortalama puan).
+    // Etkinlik detayı önbelleği de bayatladi olabilir (ortalama puan).
     void queryClient.invalidateQueries({ queryKey: ['event', eventId] })
   }
 
@@ -173,13 +173,13 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
   const data = reviewsQuery.data
   const ozet = data?.summary
 
-  // PDF: "Etkinlik tamamlanmadan yorum yapilamaz."
+  // PDF: "Etkinlik tamamlanmadan yorum yapılamaz."
   const yorumYapilabilir = eventStatus === EventStatus.Completed
 
-  // Kullanicinin zaten bir yorumu var mi?
+  // Kullanıcının zaten bir yorumu var mi?
   //
   // Varsa "yeni yorum" formunu gostermiyorum -- backend zaten
-  // reddedecek ve kullanici bosuna yazmis olacakti.
+  // reddedecek ve kullanıcı boşuna yazmis olacakti.
   const mevcutYorumum = data?.reviews.items.find((r) => r.isMine)
 
   const hata = createReview.isError
@@ -233,7 +233,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
       {/* ---- YORUM FORMU ---- */}
       {!yorumYapilabilir ? (
         <p className="mt-5 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-500">
-          Yorumlar etkinlik tamamlandiktan sonra acilir.
+          Yorumlar etkinlik tamamlandıktan sonra açılır.
         </p>
       ) : (
         (!mevcutYorumum || editingId) && (
@@ -250,7 +250,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
             }}
           >
             <p className="text-sm font-medium text-slate-700">
-              {editingId ? 'Yorumunuzu duzenleyin' : 'Deneyiminizi paylasin'}
+              {editingId ? 'Yorumunuzu düzenleyin' : 'Deneyiminizi paylaşın'}
             </p>
 
             <StarRating value={rating} onChange={setRating} size="lg" />
@@ -262,15 +262,15 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
               maxLength={2000}
               required
               aria-label="Yorumunuz"
-              placeholder="Etkinlik hakkinda ne dusunuyorsunuz?"
+              placeholder="Etkinlik hakkında ne düşünüyorsunuz?"
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition-colors focus:border-brand-500"
             />
 
             {hata && (
               <Alert variant="error">
-                {/* Backend'in mesajini oldugu gibi gosteriyorum:
-                    "gecerli biletiniz yok" veya "zaten yorumunuz var"
-                    gibi mesajlar zaten kullanici diliyle yazildi. */}
+                {/* Backend'in mesajini olduğu gibi gösteriyorum:
+                    "geçerli biletiniz yok" veya "zaten yorumunuz var"
+                    gibi mesajlar zaten kullanıcı diliyle yazildi. */}
                 {hata.detail}
               </Alert>
             )}
@@ -286,7 +286,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
 
               {editingId && (
                 <Button type="button" variant="secondary" onClick={duzenlemeyiIptalEt}>
-                  Vazgec
+                  Vazgeç
                 </Button>
               )}
             </div>
@@ -305,7 +305,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
 
       {data && data.reviews.items.length === 0 && (
         <p className="mt-5 text-sm text-slate-500">
-          Henuz yorum yok. {yorumYapilabilir ? 'Ilk yorumu siz yapin.' : ''}
+          Henuz yorum yok. {yorumYapilabilir ? 'İlk yorumu siz yapın.' : ''}
         </p>
       )}
 
@@ -327,16 +327,16 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
                   <span className="text-xs text-slate-500">
                     {formatDate(review.createdAt)}
                     {/* Duzenlenmis yorumlari isaretliyorum.
-                        Seffaflik: okuyan kisi metnin sonradan
+                        Seffaflik: okuyan kişi metnin sonradan
                         degistirilmis olabilecegini bilmeli. */}
                     {review.updatedAt && ' (duzenlendi)'}
                   </span>
                 </div>
               </div>
 
-              {/* PDF: "Kullanici yalnizca kendi yorumunu duzenleyebilir."
-                  Dugmeler yalnizca kendi yorumunda gorunuyor.
-                  Gercek kontrol backend'de -- bu yalnizca deneyim. */}
+              {/* PDF: "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
+                  Dugmeler yalnızca kendi yorumunda görünüyor.
+                  Gerçek kontrol backend'de -- bu yalnızca deneyim. */}
               {review.isMine && !editingId && (
                 <div className="flex gap-2 text-xs">
                   <button
@@ -344,7 +344,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
                     onClick={() => duzenlemeyeBasla(review)}
                     className="font-medium text-brand-600 hover:underline"
                   >
-                    Duzenle
+                    Düzenle
                   </button>
                   <button
                     type="button"

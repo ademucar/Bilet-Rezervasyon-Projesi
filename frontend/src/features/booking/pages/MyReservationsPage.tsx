@@ -8,31 +8,31 @@ import { formatDateTime, formatMoney } from '../../../lib/format'
 import { bookingApi, ReservationStatus } from '../api/bookingApi'
 
 const STATUS_LABELS: Record<number, { text: string; className: string }> = {
-  [ReservationStatus.Pending]: { text: 'Olusturuluyor', className: 'bg-slate-100 text-slate-600' },
-  [ReservationStatus.Locked]: { text: 'Odeme bekliyor', className: 'bg-amber-50 text-amber-700' },
+  [ReservationStatus.Pending]: { text: 'Oluşturuluyor', className: 'bg-slate-100 text-slate-600' },
+  [ReservationStatus.Locked]: { text: 'Ödeme bekliyor', className: 'bg-amber-50 text-amber-700' },
   [ReservationStatus.PaymentPending]: {
-    text: 'Odeme suruyor',
+    text: 'Ödeme sürüyor',
     className: 'bg-amber-50 text-amber-700',
   },
-  [ReservationStatus.Confirmed]: { text: 'Onaylandi', className: 'bg-emerald-50 text-emerald-700' },
-  [ReservationStatus.Expired]: { text: 'Suresi doldu', className: 'bg-slate-100 text-slate-600' },
-  [ReservationStatus.Cancelled]: { text: 'Iptal edildi', className: 'bg-red-50 text-red-700' },
-  [ReservationStatus.Refunded]: { text: 'Iade edildi', className: 'bg-amber-50 text-amber-700' },
+  [ReservationStatus.Confirmed]: { text: 'Onaylandı', className: 'bg-emerald-50 text-emerald-700' },
+  [ReservationStatus.Expired]: { text: 'Süresi doldu', className: 'bg-slate-100 text-slate-600' },
+  [ReservationStatus.Cancelled]: { text: 'İptal edildi', className: 'bg-red-50 text-red-700' },
+  [ReservationStatus.Refunded]: { text: 'İade edildi', className: 'bg-amber-50 text-amber-700' },
 }
 
 /**
  * Rezervasyonlarim.
  *
- * Bu ekranin varlik sebebi somut: kullanici odeme sayfasindayken
- * sekmeyi kapatirsa, koltuklari HALA kilitli ama sayfaya donecek
- * bir baglantisi kalmiyor. Buradan devam edebiliyor.
+ * Bu ekranin varlik sebebi somut: kullanıcı ödeme sayfasindayken
+ * sekmeyi kapatirsa, koltukları HALA kilitli ama sayfaya donecek
+ * bir bağlantısı kalmiyor. Buradan devam edebiliyor.
  */
 export function MyReservationsPage() {
   const reservationsQuery = useQuery({
     queryKey: ['my-reservations'],
     queryFn: () => bookingApi.getMyReservations(),
 
-    // Kalan sure burada da gosteriliyor; bayat veri yaniltici olur.
+    // Kalan süre burada da gösteriliyor; bayat veri yanıltıcı olur.
     staleTime: 0,
   })
 
@@ -59,12 +59,12 @@ export function MyReservationsPage() {
 
         {reservationsQuery.data?.length === 0 && (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-            <p className="text-sm text-slate-500">Henuz rezervasyonunuz yok.</p>
+            <p className="text-sm text-slate-500">Henüz rezervasyonunuz yok.</p>
             <Link
               to="/etkinlikler"
               className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline"
             >
-              Etkinliklere goz at
+              Etkinliklere göz at
             </Link>
           </div>
         )}
@@ -76,13 +76,13 @@ export function MyReservationsPage() {
               className: 'bg-slate-100 text-slate-600',
             }
 
-            // Odemeye devam edilebilir mi?
+            // Ödemeye devam edilebilir mi?
             //
-            // Hem durum uygun olmali hem de sure bitmemis olmali.
-            // Yalnizca duruma baksaydik, suresi dolmus ama arka plan
-            // isi (Sprint 9) henuz temizlememis bir rezervasyon icin
-            // "Odemeye devam et" gosterirdik ve kullanici tiklayinca
-            // hata alirdi.
+            // Hem durum uygun olmalı hem de süre bitmemis olmalı.
+            // Yalnızca duruma baksaydik, süresi dolmuş ama arka plan
+            // isi (Sprint 9) henüz temizlememis bir rezervasyon için
+            // "Ödemeye devam et" gosterirdik ve kullanıcı tıklayınca
+            // hata alırdı.
             const canContinue =
               (r.status === ReservationStatus.Locked ||
                 r.status === ReservationStatus.PaymentPending) &&
@@ -124,7 +124,7 @@ export function MyReservationsPage() {
                         to={`/rezervasyonlar/${r.id}`}
                         className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700"
                       >
-                        Odemeye devam et
+                        Ödemeye devam et
                       </Link>
                     </div>
                   ) : (

@@ -42,8 +42,8 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />)
 
     expect(screen.getByLabelText('E-posta')).toBeInTheDocument()
-    expect(screen.getByLabelText('Sifre')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /giris yap/i })).toBeInTheDocument()
+    expect(screen.getByLabelText('Şifre')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /giriş yap/i })).toBeInTheDocument()
   })
 
   /**
@@ -63,7 +63,7 @@ describe('LoginPage', () => {
 
     renderWithProviders(<LoginPage />)
 
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
+    await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 
     await waitFor(() => {
       expect(screen.getByLabelText('E-posta')).toBeInvalid()
@@ -78,8 +78,8 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />)
 
     await kullanici.type(screen.getByLabelText('E-posta'), 'bu-bir-eposta-degil')
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
+    await kullanici.type(screen.getByLabelText('Şifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 
     await waitFor(() => {
       expect(screen.getByLabelText('E-posta')).toBeInvalid()
@@ -100,7 +100,7 @@ describe('LoginPage', () => {
         id: 'k1',
         email: 'test@ornek.com',
         firstName: 'Test',
-        lastName: 'Kullanici',
+        lastName: 'Kullanıcı',
         isEmailConfirmed: true,
         roles: ['User'],
       },
@@ -109,8 +109,8 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />)
 
     await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
+    await kullanici.type(screen.getByLabelText('Şifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 
     await waitFor(() => {
       expect(girisYap).toHaveBeenCalled()
@@ -152,15 +152,15 @@ describe('LoginPage', () => {
 
     girisYap.mockRejectedValue(
       Object.assign(new Error('istek basarisiz'), {
-        detail: 'E-posta veya sifre hatali.',
+        detail: 'E-posta veya şifre hatalı.',
       }),
     )
 
     renderWithProviders(<LoginPage />)
 
     await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
-    await kullanici.type(screen.getByLabelText('Sifre'), 'YanlisSifre1!')
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
+    await kullanici.type(screen.getByLabelText('Şifre'), 'YanlisSifre1!')
+    await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -177,18 +177,18 @@ describe('LoginPage', () => {
   it('hata sonrası tekrar denenebilir', async () => {
     const kullanici = userEvent.setup()
 
-    girisYap.mockRejectedValue(Object.assign(new Error('hata'), { detail: 'Bir hata olustu.' }))
+    girisYap.mockRejectedValue(Object.assign(new Error('hata'), { detail: 'Bir hata oluştu.' }))
 
     renderWithProviders(<LoginPage />)
 
     await kullanici.type(screen.getByLabelText('E-posta'), 'test@ornek.com')
-    await kullanici.type(screen.getByLabelText('Sifre'), 'Test1234!')
-    await kullanici.click(screen.getByRole('button', { name: /giris yap/i }))
+    await kullanici.type(screen.getByLabelText('Şifre'), 'Test1234!')
+    await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
     })
 
-    expect(screen.getByRole('button', { name: /giris yap/i })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /giriş yap/i })).toBeEnabled()
   })
 })

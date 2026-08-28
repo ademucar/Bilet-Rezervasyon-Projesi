@@ -14,7 +14,7 @@ interface HallForm {
   capacity: number
 }
 
-/** Mekan detayi ve salon yonetimi. PDF Sprint 4: "Salon yonetimi". */
+/** Mekan detayı ve salon yönetimi. PDF Sprint 4: "Salon yönetimi". */
 export function VenueDetailPage() {
   const { venueId } = useParams<{ venueId: string }>()
   const queryClient = useQueryClient()
@@ -24,10 +24,10 @@ export function VenueDetailPage() {
   const venueQuery = useQuery({
     queryKey: ['venue', venueId],
     queryFn: () => adminApi.getVenue(venueId!),
-    // enabled: venueId yoksa sorguyu HIC calistirma.
+    // enabled: venueId yoksa sorguyu HİÇ calistirma.
     //
-    // Bu olmasaydi `/venues/undefined` gibi anlamsiz bir istek gider
-    // ve 404 alirdik. Kullanici bunu "sayfa bozuk" olarak gorurdu.
+    // Bu olmasaydı `/venues/undefined` gibi anlamsiz bir istek gider
+    // ve 404 alırdık. Kullanıcı bunu "sayfa bozuk" olarak gorurdu.
     enabled: Boolean(venueId),
   })
 
@@ -48,12 +48,12 @@ export function VenueDetailPage() {
       setShowForm(false)
       setFormError(null)
     },
-    onError: (error) => setFormError(toProblem(error).detail ?? 'Salon olusturulamadi.'),
+    onError: (error) => setFormError(toProblem(error).detail ?? 'Salon oluşturulamadı.'),
   })
 
   if (venueQuery.isPending) {
     return (
-      <AdminLayout title="Yukleniyor...">
+      <AdminLayout title="Yükleniyor...">
         <div className="h-40 animate-pulse rounded-xl bg-slate-200" aria-busy="true" />
       </AdminLayout>
     )
@@ -61,8 +61,8 @@ export function VenueDetailPage() {
 
   if (venueQuery.isError || !venueQuery.data) {
     return (
-      <AdminLayout title="Mekan bulunamadi" backTo={{ label: 'Mekanlar', to: '/admin/mekanlar' }}>
-        <Alert variant="error">{toProblem(venueQuery.error).detail ?? 'Mekan yuklenemedi.'}</Alert>
+      <AdminLayout title="Mekan bulunamadı" backTo={{ label: 'Mekanlar', to: '/admin/mekanlar' }}>
+        <Alert variant="error">{toProblem(venueQuery.error).detail ?? 'Mekan yüklenemedi.'}</Alert>
       </AdminLayout>
     )
   }
@@ -78,7 +78,7 @@ export function VenueDetailPage() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Salonlar</h2>
 
-        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgec' : 'Yeni salon'}</Button>
+        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgeç' : 'Yeni salon'}</Button>
       </div>
 
       {showForm && (
@@ -94,9 +94,9 @@ export function VenueDetailPage() {
           {formError && <Alert variant="error">{formError}</Alert>}
 
           <Input
-            label="Salon adi"
+            label="Salon adı"
             error={errors.name?.message}
-            {...register('name', { required: 'Salon adi zorunludur.' })}
+            {...register('name', { required: 'Salon adı zorunludur.' })}
           />
 
           <Input
@@ -104,13 +104,13 @@ export function VenueDetailPage() {
             type="number"
             error={errors.capacity?.message}
             {...register('capacity', {
-              // valueAsNumber SART: HTML input her zaman STRING doner.
-              // Bu olmasaydi backend'e "500" (metin) gonderirdik ve
-              // model binding hatasi alirdik.
+              // valueAsNumber ŞART: HTML input her zaman STRING döner.
+              // Bu olmasaydı backend'e "500" (metin) gonderirdik ve
+              // model binding hatası alırdık.
               valueAsNumber: true,
               required: 'Kapasite zorunludur.',
-              min: { value: 1, message: 'Kapasite sifirdan buyuk olmalidir.' },
-              max: { value: 200000, message: 'Kapasite 200.000 asamaz.' },
+              min: { value: 1, message: 'Kapasite sıfırdan büyük olmalıdır.' },
+              max: { value: 200000, message: 'Kapasite 200.000 aşamaz.' },
             })}
           />
 
@@ -123,7 +123,7 @@ export function VenueDetailPage() {
       {venue.halls.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
           <p className="text-sm text-slate-500">
-            Bu mekanda henuz salon yok. Etkinlik olusturabilmek icin en az bir salon gerekir.
+            Bu mekanda henüz salon yok. Etkinlik oluşturabilmek için en az bir salon gerekir.
           </p>
         </div>
       ) : (

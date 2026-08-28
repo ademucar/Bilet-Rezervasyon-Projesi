@@ -1,16 +1,16 @@
 /**
  * Backend'in dondugu tiplerin TypeScript karsiliklari.
  *
- * PDF Sprint 18: "Swagger dokumanindan TypeScript client uretimi
+ * PDF Sprint 18: "Swagger dokumanindan TypeScript client üretimi
  * arastirilmalidir (NSwag, Orval)."
  *
- * Su an elle yaziyorum cunku yalnizca 3 tip var ve otomatik uretim
+ * Su an elle yazıyorum çünkü yalnızca 3 tip var ve otomatik üretim
  * kurulumu (kod ureteci, npm script, CI adimi) simdi gereksiz
- * karmasiklik olurdu. Endpoint sayisi 30'u gectiginde -- ki Sprint 5'ten
- * sonra gececek -- Orval kurup bu dosyayi otomatik uretilene
+ * karmasiklik olurdu. Endpoint sayısı 30'u geçtiğinde -- ki Sprint 5'ten
+ * sonra gececek -- Orval kurup bu dosyayı otomatik uretilene
  * degistirecegiz.
  *
- * Bu bilincli bir "simdilik" karari; unutulmamasi icin buraya yaziyorum.
+ * Bu bilinçli bir "şimdilik" karari; unutulmamasi için buraya yazıyorum.
  */
 
 export interface UserSummary {
@@ -34,8 +34,8 @@ export interface AuthResponse {
  * Backend'in RFC 7807 Problem Details yaniti.
  *
  * `errorCode` ve `errors` alanlarini BIZ ekledik (RFC uzantisi).
- * Frontend hata kontrolunu `detail` metnine gore DEGIL `errorCode`e
- * gore yapmali -- metin degisince kod bozulmasin.
+ * Frontend hata kontrolunu `detail` metnine göre DEĞİL `errorCode`e
+ * göre yapmali -- metin değişince kod bozulmasin.
  */
 export interface ProblemDetails {
   type?: string
@@ -45,11 +45,11 @@ export interface ProblemDetails {
   instance?: string
   errorCode?: string
   correlationId?: string
-  /** Alan bazinda dogrulama hatalari: { "Email": ["..."], "Password": ["..."] } */
+  /** Alan bazinda doğrulama hatalari: { "Email": ["..."], "Password": ["..."] } */
   errors?: Record<string, string[]>
 }
 
-/** Sistemdeki roller. Backend'deki Role.Names ile birebir ayni olmali. */
+/** Sistemdeki roller. Backend'deki Role.Names ile birebir aynı olmalı. */
 export const Roles = {
   User: 'User',
   Organizer: 'Organizer',

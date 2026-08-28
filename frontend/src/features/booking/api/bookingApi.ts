@@ -3,19 +3,19 @@ import type { Paged } from '../../admin/api/adminApi'
 
 /**
  * ==================================================================
- * BILET ALMA API KATMANI -- PDF Sprint 7 ve 8
+ * BİLET ALMA API KATMANI -- PDF Sprint 7 ve 8
  * ==================================================================
- * Backend DTO'lariyla birebir esleyen tipler.
+ * Backend DTO'lariyla birebir eşleyen tipler.
  *
  * Sayilarin (enum) TypeScript karsiliklarini `as const` nesnesiyle
- * yaziyorum, TypeScript `enum` anahtar kelimesiyle degil.
+ * yazıyorum, TypeScript `enum` anahtar kelimesiyle değil.
  *
  * Neden? TypeScript enum'u derlendiginde ORTADA bir JavaScript
  * nesnesi birakir; `as const` ise tamamen silinir ve pakete tek
- * bayt eklemez. Ayrica `enum` degerleri yapisal olarak degil
+ * bayt eklemez. Ayrıca `enum` değerleri yapisal olarak değil
  * NOMINAL karsilastirilir; backend'den gelen ham sayi (3) bir
- * TS enum'una dogrudan atanamaz, cast gerekir. `as const` ile
- * bu sorun hic dogmuyor.
+ * TS enum'una doğrudan atanamaz, cast gerekir. `as const` ile
+ * bu sorun hiç dogmuyor.
  * ==================================================================
  */
 
@@ -65,7 +65,7 @@ export const EventStatus = {
 } as const
 
 // ===================================================================
-// ETKINLIK
+// ETKİNLİK
 // ===================================================================
 
 export interface EventListItem {
@@ -168,14 +168,14 @@ export interface ReservationDto {
   totalAmount: number
   currency: string
   expiresAt: string
-  /** Sunucunun hesapladigi kalan sure. Geri sayim bundan baslar. */
+  /** Sunucunun hesapladigi kalan süre. Geri sayım bundan başlar. */
   remainingSeconds: number
   extensionCount: number
   items: ReservationItemDto[]
 }
 
 // ===================================================================
-// ODEME VE BILET
+// ÖDEME VE BİLET
 // ===================================================================
 
 export interface PaymentTransactionDto {
@@ -220,16 +220,16 @@ export interface TicketDto {
  * ------------------------------------------------------------------
  * IDEMPOTENCY ANAHTARI
  * ------------------------------------------------------------------
- * Backend hem rezervasyon hem odeme olustururken "Idempotency-Key"
- * header'ini kabul ediyor: ayni anahtarla gelen ikinci istek YENI
- * kayit olusturmuyor, ilkini donduruyor.
+ * Backend hem rezervasyon hem ödeme olustururken "Idempotency-Key"
+ * header'ini kabul ediyor: aynı anahtarla gelen ikinci istek YENI
+ * kayıt olusturmuyor, ilkini döndürüyor.
  *
- * Anahtari ISTEMCI uretmek ZORUNDA. Sunucu uretseydi hicbir ise
+ * Anahtari ISTEMCI uretmek ZORUNDA. Sunucu uretseydi hiçbir ise
  * yaramazdi: ag kopmasi yuzunden tekrarlanan istek sunucuya
- * ulastiginda "yeni istek" gorunurdu.
+ * ulastiginda "yeni istek" görünürdü.
  *
- * crypto.randomUUID() tarayicida yerlesik ve kriptografik olarak
- * guclu. Kutuphane eklemeye gerek yok.
+ * crypto.randomUUID() tarayıcıda yerlesik ve kriptografik olarak
+ * güçlü. Kutuphane eklemeye gerek yok.
  * ------------------------------------------------------------------
  */
 export function newIdempotencyKey(): string {
@@ -239,10 +239,10 @@ export function newIdempotencyKey(): string {
 /**
  * Etkinlik listeleme filtreleri. PDF Sprint 11.
  *
- * Backend'deki GetEventsQuery ile birebir esleyen alanlar. Alan adi
+ * Backend'deki GetEventsQuery ile birebir eşleyen alanlar. Alan adı
  * uyusmazsa filtre SESSIZCE calismaz -- ASP.NET taninmayan sorgu
- * parametresini yok sayar, hata dondurmez. Bu yuzden adlari
- * kopyalayarak aliyorum.
+ * parametresini yok sayar, hata dondurmez. Bu yüzden adları
+ * kopyalayarak alıyorum.
  */
 export interface EventFilters {
   search?: string
@@ -282,20 +282,20 @@ export interface CityDto {
 export interface ReviewDto {
   id: string
   userId: string
-  /** "Adem U." -- backend soyadi KISALTARAK donuyor (gizlilik). */
+  /** "Adem U." -- backend soyadi KISALTARAK dönüyor (gizlilik). */
   userDisplayName: string
   rating: number
   comment: string
   createdAt: string
   updatedAt: string | null
-  /** Bu yorum bana mi ait? Duzenle/Sil dugmeleri icin. */
+  /** Bu yorum bana mi ait? Düzenle/Sil dugmeleri için. */
   isMine: boolean
 }
 
 export interface ReviewSummary {
   averageRating: number
   totalCount: number
-  /** Puan -> adet. Backend 1-5 arasi TUM anahtarlari dolduruyor. */
+  /** Puan -> adet. Backend 1-5 arasi TÜM anahtarlari dolduruyor. */
   ratingCounts: Record<string, number>
 }
 
@@ -307,16 +307,16 @@ export interface EventReviewsResult {
 export const bookingApi = {
   getEvents: async (params: EventFilters) => {
     // ==============================================================
-    // BOS ALANLARI TEMIZLE
+    // BOŞ ALANLARI TEMIZLE
     // ==============================================================
-    // Axios, undefined degerleri zaten atliyor ama BOS METIN ('')
-    // gonderiyor: ?cityId=&categoryId=
+    // Axios, undefined değerleri zaten atliyor ama BOŞ METİN ('')
+    // gönderiyor: ?cityId=&categoryId=
     //
-    // Backend tarafinda Guid? alanina bos metin baglanmaya calisilinca
-    // model binding hatasi olusur ve istek 400 doner. Yani kullanici
-    // filtreyi "Tumu"ne cevirdiginde liste tamamen bozulurdu.
+    // Backend tarafında Guid? alanina boş metin baglanmaya calisilinca
+    // model binding hatası olusur ve istek 400 döner. Yani kullanıcı
+    // filtreyi "Tümü"ne cevirdiginde liste tamamen bozulurdu.
     //
-    // Temizligi TEK YERDE yapiyorum ki her cagirim yerinde
+    // Temizligi TEK YERDE yapıyorum ki her cagirim yerinde
     // tekrarlanmasin.
     // ==============================================================
     const temiz = Object.fromEntries(
@@ -329,7 +329,7 @@ export const bookingApi = {
     return data
   },
 
-  /** PDF Sprint 11: populer etkinlikler (Redis'te 10 dakika). */
+  /** PDF Sprint 11: popüler etkinlikler (Redis'te 10 dakika). */
   getPopularEvents: async (count = 8): Promise<EventListItem[]> => {
     const { data } = await api.get<EventListItem[]>('/events/popular', { params: { count } })
     return data
@@ -391,9 +391,9 @@ export const bookingApi = {
   createPayment: async (reservationId: string, idempotencyKey: string): Promise<PaymentDto> => {
     // TUTAR GONDERMIYORUZ.
     //
-    // PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
-    // guvenilmemelidir." Backend tutari rezervasyondan okuyor.
-    // Buraya bir `amount` alani eklemek, kullanicinin tarayici
+    // PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
+    // güvenilmemelidir." Backend tutari rezervasyondan okuyor.
+    // Buraya bir `amount` alanı eklemek, kullanıcının tarayıcı
     // konsolundan 1000 TL'lik bileti 1 TL'ye almasina kapi acardi.
     const { data } = await api.post<PaymentDto>(
       '/payments',
@@ -409,11 +409,11 @@ export const bookingApi = {
   },
 
   /**
-   * Odemeyi tamamlar.
+   * Ödemeyi tamamlar.
    *
-   * GOVDE BOS GONDERILIYOR -- bilincli bir karar.
+   * GOVDE BOŞ GONDERILIYOR -- bilinçli bir karar.
    *
-   * Backend, govdede referans gelmezse KENDI kaydettigi referansi
+   * Backend, govdede referans gelmezse KENDİ kaydettigi referansı
    * kullaniyor (CompletePaymentCommand: `request.ProviderReference
    * ?? payment.ProviderReference`).
    *

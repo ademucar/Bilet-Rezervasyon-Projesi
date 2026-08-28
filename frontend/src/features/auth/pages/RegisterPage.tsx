@@ -26,11 +26,11 @@ export function RegisterPage() {
     resolver: zodResolver(registerSchema),
     // mode: 'onBlur' -> alandan cikinca dogrula.
     //
-    // 'onChange' olsaydi kullanici daha ilk harfi yazarken "en az 8
-    // karakter" hatasi gorurdu -- henuz yazmayi bitirmemisken
+    // 'onChange' olsaydı kullanıcı daha ilk harfi yazarken "en az 8
+    // karakter" hatası gorurdu -- henüz yazmayi bitirmemisken
     // azarlanmis hissettirir.
-    // 'onSubmit' (varsayilan) ise geri bildirimi cok geciktirir.
-    // 'onBlur' ikisinin arasindaki dogru denge.
+    // 'onSubmit' (varsayılan) ise geri bildirimi çok geciktirir.
+    // 'onBlur' ikisinin arasindaki doğru denge.
     mode: 'onBlur',
     defaultValues: {
       email: '',
@@ -45,26 +45,26 @@ export function RegisterPage() {
   const mutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (auth) => {
-      // Kayittan sonra otomatik giris: backend zaten token donuyor.
-      // Kullaniciyi bir de giris ekranina yollamak gereksiz surtunme.
+      // Kayittan sonra otomatik giriş: backend zaten token dönüyor.
+      // Kullaniciyi bir de giriş ekranına yollamak gereksiz surtunme.
       setSession(auth)
       navigate('/', { replace: true })
     },
     onError: (error) => {
       const problem = toProblem(error)
 
-      // E-posta cakismasini ILGILI ALANIN altinda gosteriyorum,
-      // sayfanin tepesinde genel bir uyari olarak degil.
-      // Kullanici hangi alani duzeltecegini aninda goruyor.
+      // E-posta cakismasini ILGILI ALANIN altinda gösteriyorum,
+      // sayfanin tepesinde genel bir uyarı olarak değil.
+      // Kullanıcı hangi alanı duzeltecegini anında görüyor.
       if (problem.errorCode === 'auth.email_in_use') {
-        setError('email', { message: 'Bu e-posta adresi zaten kullaniliyor.' })
+        setError('email', { message: 'Bu e-posta adresi zaten kullanılıyor.' })
         return
       }
 
-      // Backend'den gelen alan bazli dogrulama hatalarini formla eslestir.
+      // Backend'den gelen alan bazlı doğrulama hatalarini formla eslestir.
       // Normalde frontend dogrulamasi bunlari zaten yakalar; buraya
       // dusmesi kurallarin ayristigi anlamina gelir -- yine de
-      // kullaniciyi bilgisiz birakmiyoruz.
+      // kullanıcıyı bilgisiz birakmiyoruz.
       if (problem.errors) {
         Object.entries(problem.errors).forEach(([field, messages]) => {
           const key = field.charAt(0).toLowerCase() + field.slice(1)
@@ -73,19 +73,19 @@ export function RegisterPage() {
         return
       }
 
-      setServerError(problem.detail ?? 'Kayit olusturulamadi.')
+      setServerError(problem.detail ?? 'Kayıt oluşturulamadı.')
     },
   })
 
   return (
     <AuthLayout
-      title="Kayit ol"
-      subtitle="Birkac adimda hesabinizi olusturun"
+      title="Kayıt ol"
+      subtitle="Birkaç adımda hesabınızı oluşturun"
       footer={
         <>
           Zaten hesabiniz var mi?{' '}
           <Link to="/giris" className="font-medium text-brand-600 hover:underline">
-            Giris yapin
+            Giriş yapın
           </Link>
         </>
       }
@@ -101,7 +101,7 @@ export function RegisterPage() {
           setServerError(null)
 
           // passwordConfirm backend'e GONDERILMIYOR.
-          // O yalnizca frontend'in yazim hatasi kontrolu; sunucunun
+          // O yalnızca frontend'in yazım hatası kontrolü; sunucunun
           // bilmesine gerek yok ve gondermek gereksiz veri olurdu.
           mutation.mutate({
             email: data.email,
@@ -134,13 +134,13 @@ export function RegisterPage() {
           label="E-posta"
           type="email"
           autoComplete="email"
-          placeholder="ornek@eposta.com"
+          placeholder="örnek@eposta.com"
           error={errors.email?.message}
           {...register('email')}
         />
 
         <Input
-          label="Telefon (istege bagli)"
+          label="Telefon (isteğe bağlı)"
           type="tel"
           autoComplete="tel"
           placeholder="+90 555 000 0000"
@@ -149,18 +149,18 @@ export function RegisterPage() {
         />
 
         <Input
-          label="Sifre"
+          label="Şifre"
           type="password"
-          // "new-password": sifre yoneticisine "bu yeni bir sifre,
-          // guclu bir tane onerebilirsin" der. "current-password"
-          // yazsaydik kayitli sifreyi doldurmaya calisirdi.
+          // "new-password": şifre yoneticisine "bu yeni bir şifre,
+          // güçlü bir tane onerebilirsin" der. "current-password"
+          // yazsaydık kayıtlı sifreyi doldurmaya calisirdi.
           autoComplete="new-password"
           error={errors.password?.message}
           {...register('password')}
         />
 
         <Input
-          label="Sifre tekrar"
+          label="Şifre tekrar"
           type="password"
           autoComplete="new-password"
           error={errors.passwordConfirm?.message}
@@ -168,11 +168,11 @@ export function RegisterPage() {
         />
 
         <p className="text-xs text-slate-500">
-          Sifreniz en az 8 karakter olmali; buyuk harf, kucuk harf ve rakam icermelidir.
+          Şifreniz en az 8 karakter olmalı; büyük harf, küçük harf ve rakam içermelidir.
         </p>
 
         <Button type="submit" isLoading={isSubmitting || mutation.isPending} className="w-full">
-          Hesap olustur
+          Hesap oluştur
         </Button>
       </form>
     </AuthLayout>

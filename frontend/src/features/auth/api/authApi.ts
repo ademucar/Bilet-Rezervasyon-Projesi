@@ -4,10 +4,10 @@ import type { AuthResponse, UserSummary } from '../../../types/auth'
 /**
  * Auth endpointlerinin tek noktadan cagrildigi katman.
  *
- * PDF Sprint 18: "API istekleri component icinde dagink sekilde
+ * PDF Sprint 18: "API istekleri component içinde dagink şekilde
  * yazilmamalidir."
  *
- * Bilesenler axios'u hic gormuyor; yalnizca bu fonksiyonlari cagiriyor.
+ * Bilesenler axios'u hiç gormuyor; yalnızca bu fonksiyonlari cagiriyor.
  * Yarin bir endpoint'in yolu degisirse tek dosyada duzeltiyoruz.
  */
 

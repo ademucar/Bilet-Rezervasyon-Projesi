@@ -26,7 +26,7 @@ const kategoriler = vi.mocked(bookingApi.getCategories)
 
 function paneliCiz(filters: EventFilters = {}, onChange = vi.fn(), onReset = vi.fn()) {
   sehirler.mockResolvedValue([
-    { id: 'sehir-1', name: 'Istanbul', plateCode: 34 },
+    { id: 'sehir-1', name: 'İstanbul', plateCode: 34 },
     { id: 'sehir-2', name: 'Ankara', plateCode: 6 },
   ])
 
@@ -54,7 +54,7 @@ describe('EventFilterPanel', () => {
     paneliCiz()
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'İstanbul' })).toBeInTheDocument()
     })
 
     expect(screen.getByRole('option', { name: 'Konser' })).toBeInTheDocument()
@@ -79,10 +79,10 @@ describe('EventFilterPanel', () => {
     const { onChange } = paneliCiz()
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'İstanbul' })).toBeInTheDocument()
     })
 
-    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), 'sehir-1')
+    await kullanici.selectOptions(screen.getByLabelText(/şehir/i), 'sehir-1')
 
     expect(onChange).toHaveBeenCalledWith({ cityId: 'sehir-1' })
   })
@@ -100,10 +100,10 @@ describe('EventFilterPanel', () => {
     const { onChange } = paneliCiz({ cityId: 'sehir-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'İstanbul' })).toBeInTheDocument()
     })
 
-    await kullanici.selectOptions(screen.getByLabelText(/sehir/i), '')
+    await kullanici.selectOptions(screen.getByLabelText(/şehir/i), '')
 
     expect(onChange).toHaveBeenCalledWith({ cityId: undefined })
   })
@@ -113,10 +113,10 @@ describe('EventFilterPanel', () => {
     const { onReset } = paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'İstanbul' })).toBeInTheDocument()
     })
 
-    const sifirla = screen.getByRole('button', { name: /temizle|sifirla/i })
+    const sifirla = screen.getByRole('button', { name: /temizle|sıfırla/i })
     await kullanici.click(sifirla)
 
     expect(onReset).toHaveBeenCalled()
@@ -133,16 +133,16 @@ describe('EventFilterPanel', () => {
     paneliCiz({ cityId: 'sehir-1', categoryId: 'kat-1' })
 
     await waitFor(() => {
-      expect(screen.getByRole('option', { name: 'Istanbul' })).toBeInTheDocument()
+      expect(screen.getByRole('option', { name: 'İstanbul' })).toBeInTheDocument()
     })
 
     // Metin "2 aktif" seklinde ve JSX'te {activeCount} + " aktif"
-    // diye PARCALARA ayrilmis; getByText('2') eslesmiyor.
+    // diye PARCALARA ayrilmis; getByText('2') eşleşmiyor.
     //
-    // Fonksiyon eslestirici kullaniyorum: elemanin TOPLAM metnini
+    // Fonksiyon eslestirici kullanıyorum: elemanin TOPLAM metnini
     // okuyor. Tam metni ("2 aktif") yazmak da calisirdi ama o zaman
     // kelime degistiginde test kirilirdi -- oysa test edilen sey
-    // SAYININ gorunmesi.
+    // SAYININ görünmesi.
     expect(
       screen.getByText((_, element) => element?.textContent?.trim() === '2 aktif'),
     ).toBeInTheDocument()

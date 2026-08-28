@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   title: string
   subtitle?: string
   children: ReactNode
-  /** Sayfa basligi ustunde gosterilecek geri baglantisi. */
+  /** Sayfa basligi ustunde gösterilecek geri bağlantısı. */
   backTo?: { label: string; to: string }
 }
 
@@ -23,8 +23,8 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
           </Link>
 
           {/* nav + aria-label: ekran okuyucular birden fazla nav
-              oldugunda hangisinin ne oldugunu bu etiketle ayirt eder. */}
-          <nav aria-label="Yonetim menusu" className="flex gap-1 text-sm">
+              olduğunda hangisinin ne olduğunu bu etiketle ayırt eder. */}
+          <nav aria-label="Yönetim menüsü" className="flex gap-1 text-sm">
             <AdminLink to="/admin/mekanlar">Mekanlar</AdminLink>
           </nav>
 
@@ -55,7 +55,7 @@ function AdminLink({ to, children }: { to: string; children: ReactNode }) {
     <NavLink
       to={to}
       // NavLink, aktif route'u kendisi tespit eder ve className'e
-      // isActive gonderir. Bunu elle useLocation ile yapsaydik her
+      // isActive gönderir. Bunu elle useLocation ile yapsaydik her
       // menu ogesinde tekrar yazmamiz gerekirdi.
       className={({ isActive }) =>
         `rounded-lg px-3 py-2 transition-colors ${

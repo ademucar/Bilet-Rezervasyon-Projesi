@@ -2,13 +2,13 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 /**
- * Yalnizca GIRIS YAPMAMIS kullanicilarin gorebilecegi sayfalar.
+ * Yalnızca GIRIS YAPMAMIS kullanicilarin gorebilecegi sayfalar.
  *
- * Neden gerekli? Giris yapmis bir kullanici /giris adresine
- * gittiginde giris formunu gormesi anlamsizdir -- kafa karistirir
- * ve "acaba oturumum mu kapandi?" dusundurur.
+ * Neden gerekli? Giriş yapmış bir kullanıcı /giriş adresine
+ * gittiginde giriş formunu gormesi anlamsizdir -- kafa karistirir
+ * ve "acaba oturumum mu kapandı?" dusundurur.
  *
- * Bu bilesen onu ana sayfaya yonlendiriyor.
+ * Bu bileşen önü ana sayfaya yonlendiriyor.
  */
 export function PublicOnlyRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())

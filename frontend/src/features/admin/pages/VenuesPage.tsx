@@ -15,7 +15,7 @@ interface VenueForm {
   cityId: string
 }
 
-/** Mekan listesi ve olusturma. PDF Sprint 4: "Mekan listeleme". */
+/** Mekan listesi ve oluşturma. PDF Sprint 4: "Mekan listeleme". */
 export function VenuesPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
@@ -25,9 +25,9 @@ export function VenuesPage() {
   const citiesQuery = useQuery({
     queryKey: ['cities'],
     queryFn: adminApi.getCities,
-    // Sehirler neredeyse hic degismez. 24 saat taze say.
-    // Varsayilan staleTime 1 dakika olsaydi kullanici her sayfa
-    // gecisinde ayni 20 sehri tekrar indirirdi.
+    // Şehirler neredeyse hiç degismez. 24 saat taze say.
+    // Varsayılan staleTime 1 dakika olsaydı kullanıcı her sayfa
+    // gecisinde aynı 20 şehri tekrar indirirdi.
     staleTime: 24 * 60 * 60 * 1000,
   })
 
@@ -51,22 +51,22 @@ export function VenuesPage() {
   const createMutation = useMutation({
     mutationFn: adminApi.createVenue,
     onSuccess: () => {
-      // Listeyi gecersiz kil -> TanStack Query otomatik yeniden ceker.
+      // Listeyi geçersiz kil -> TanStack Query otomatik yeniden ceker.
       //
       // Alternatif, donen Id ile listeyi ELLE guncellemekti. Onu
-      // yapmadim cunku liste sunucuda siralaniyor ve sayfalaniyor;
-      // elle ekleme yanlis sirada gosterebilir veya sayfa sinirlarini
-      // bozabilir. Yeniden cekmek daha basit ve her zaman dogru.
+      // yapmadim çünkü liste sunucuda siralaniyor ve sayfalaniyor;
+      // elle ekleme yanlış sırada gosterebilir veya sayfa sinirlarini
+      // bozabilir. Yeniden cekmek daha basit ve her zaman doğru.
       queryClient.invalidateQueries({ queryKey: ['venues'] })
       reset()
       setShowForm(false)
       setFormError(null)
     },
-    onError: (error) => setFormError(toProblem(error).detail ?? 'Mekan olusturulamadi.'),
+    onError: (error) => setFormError(toProblem(error).detail ?? 'Mekan oluşturulamadı.'),
   })
 
   return (
-    <AdminLayout title="Mekanlar" subtitle="Etkinlik mekanlarini ve salonlarini yonetin">
+    <AdminLayout title="Mekanlar" subtitle="Etkinlik mekanlarını ve salonlarını yönetin">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <input
           type="search"
@@ -77,7 +77,7 @@ export function VenuesPage() {
           className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
 
-        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgec' : 'Yeni mekan'}</Button>
+        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgeç' : 'Yeni mekan'}</Button>
       </div>
 
       {showForm && (
@@ -94,9 +94,9 @@ export function VenuesPage() {
           {formError && <Alert variant="error">{formError}</Alert>}
 
           <Input
-            label="Mekan adi"
+            label="Mekan adı"
             error={errors.name?.message}
-            {...register('name', { required: 'Mekan adi zorunludur.' })}
+            {...register('name', { required: 'Mekan adı zorunludur.' })}
           />
 
           <Input
@@ -107,15 +107,15 @@ export function VenuesPage() {
 
           <div className="space-y-1.5">
             <label htmlFor="cityId" className="block text-sm font-medium text-slate-700">
-              Sehir
+              Şehir
             </label>
 
             <select
               id="cityId"
               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500"
-              {...register('cityId', { required: 'Sehir secilmelidir.' })}
+              {...register('cityId', { required: 'Şehir seçilmelidir.' })}
             >
-              <option value="">Sehir secin</option>
+              <option value="">Şehir seçin</option>
               {citiesQuery.data?.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -136,19 +136,19 @@ export function VenuesPage() {
         </form>
       )}
 
-      {/* PDF Sprint 18: loading, empty ve error state'lerinin UCU DE olmali. */}
+      {/* PDF Sprint 18: loading, empty ve error state'lerinin UCU DE olmalı. */}
       {venuesQuery.isPending && <SkeletonList />}
 
       {venuesQuery.isError && (
         <Alert variant="error">
-          {toProblem(venuesQuery.error).detail ?? 'Mekanlar yuklenemedi.'}
+          {toProblem(venuesQuery.error).detail ?? 'Mekanlar yüklenemedi.'}
         </Alert>
       )}
 
       {venuesQuery.data?.items.length === 0 && (
         <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
           <p className="text-sm text-slate-500">
-            {search ? `"${search}" icin sonuc bulunamadi.` : 'Henuz mekan eklenmemis.'}
+            {search ? `"${search}" için sonuç bulunamadı.` : 'Henüz mekan eklenmemiş.'}
           </p>
         </div>
       )}
@@ -176,10 +176,10 @@ export function VenuesPage() {
   )
 }
 
-/** PDF Sprint 18: "Skeleton loading hazirlanmalidir." */
+/** PDF Sprint 18: "Skeleton loading hazırlanmalıdır." */
 function SkeletonList() {
   return (
-    <ul className="space-y-2" aria-busy="true" aria-label="Yukleniyor">
+    <ul className="space-y-2" aria-busy="true" aria-label="Yükleniyor">
       {[1, 2, 3].map((i) => (
         <li key={i} className="h-[74px] animate-pulse rounded-xl bg-slate-200" />
       ))}

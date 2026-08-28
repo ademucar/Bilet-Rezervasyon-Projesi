@@ -14,13 +14,13 @@ import { bookingApi } from '../api/bookingApi'
  * ------------------------------------------------------------------
  * Kalp ikonu, sunucu cevabini BEKLEMEDEN doluyor.
  *
- * Neden? Cunku favorileme "anlik" hissetmesi gereken bir eylem.
- * 200 ms bile beklemek dugmenin bozuk oldugu izlenimi verir ve
- * kullanici tekrar tiklar.
+ * Neden? Çünkü favorileme "anlik" hissetmesi gereken bir eylem.
+ * 200 ms bile beklemek dugmenin bozuk olduğu izlenimi verir ve
+ * kullanıcı tekrar tiklar.
  *
- * Risk: istek basarisiz olursa ekran YALAN soylemis olur. Bu yuzden
- * onError'da eski duruma GERI ALIYORUZ. Iyimser guncellemenin
- * vazgecilmez parcasi budur -- geri alma olmadan yapilirsa arayuz
+ * Risk: istek başarısız olursa ekran YALAN soylemis olur. Bu yüzden
+ * onError'da eski duruma GERİ ALIYORUZ. Iyimser guncellemenin
+ * vazgecilmez parcasi budur -- geri alma olmadan yapilirsa arayüz
  * ile sunucu sessizce ayrisir.
  * ------------------------------------------------------------------
  */
@@ -31,7 +31,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     queryKey: ['favorites'],
     queryFn: bookingApi.getMyFavorites,
 
-    // Favoriler kullaniciya ozel ve nadiren degisiyor.
+    // Favoriler kullanıcıya ozel ve nadiren değişiyor.
     // 5 dakika, her sayfa gecisinde yeniden istek atmayi onluyor.
     staleTime: 5 * 60 * 1000,
   })
@@ -43,10 +43,10 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
       favoriMi ? bookingApi.removeFavorite(eventId) : bookingApi.addFavorite(eventId),
 
     onMutate: async () => {
-      // Devam eden bir cekim varsa IPTAL ET.
+      // Devam eden bir çekim varsa İPTAL ET.
       //
-      // Etmeseydik, o cekim bizim iyimser guncellememizden SONRA
-      // tamamlanip ESKI veriyi geri yazabilirdi -- kalp bir dolup
+      // Etmeseydik, o çekim bizim iyimser guncellememizden SONRA
+      // tamamlanip ESKİ veriyi geri yazabilirdi -- kalp bir dolup
       // bir bosalirdi.
       await queryClient.cancelQueries({ queryKey: ['favorites'] })
 
@@ -60,11 +60,11 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
         return favoriMi
           ? eski.filter((e) => e.id !== eventId)
           : // Ekleme durumunda TAM etkinlik nesnesi elimizde yok --
-            // yalnizca Id var. Gecici bir kayit koyuyorum; dugmenin
-            // dolu gorunmesi icin bu yeterli.
+            // yalnızca Id var. Gecici bir kayıt koyuyorum; dugmenin
+            // dolu görünmesi için bu yeterli.
             //
-            // onSettled'daki invalidate, sunucudan gercek veriyi
-            // getirip bu gecici kaydin uzerine yazacak.
+            // onSettled'daki invalidate, sunucudan gerçek veriyi
+            // getirip bu geçici kaydin uzerine yazacak.
             [...eski, { id: eventId }]
       })
 
@@ -72,13 +72,13 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     },
 
     onError: (_hata, _degisken, baglam) => {
-      // GERI ALMA: sunucu reddetti, ekrani eski haline dondur.
+      // GERİ ALMA: sunucu reddetti, ekrani eski haline dondur.
       if (baglam?.onceki !== undefined) {
         queryClient.setQueryData(['favorites'], baglam.onceki)
       }
     },
 
-    // Basarili da olsa basarisiz da olsa sunucudan gercek durumu al.
+    // Başarılı da olsa başarısız da olsa sunucudan gerçek durumu al.
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['favorites'] })
     },
@@ -88,11 +88,11 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     <button
       type="button"
       onClick={() => degistir.mutate()}
-      // aria-pressed: ekran okuyucuya dugmenin ACIK/KAPALI oldugunu
-      // soyler. Yalnizca ikonu degistirseydik gormeyen kullanici
+      // aria-pressed: ekran okuyucuya dugmenin ACIK/KAPALI olduğunu
+      // söyler. Yalnızca ikonu degistirseydik görmeyen kullanıcı
       // favoride olup olmadigini anlayamazdi.
       aria-pressed={favoriMi}
-      aria-label={favoriMi ? 'Favorilerden cikar' : 'Favorilere ekle'}
+      aria-label={favoriMi ? 'Favorilerden çıkar' : 'Favorilere ekle'}
       className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
         favoriMi
           ? 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'

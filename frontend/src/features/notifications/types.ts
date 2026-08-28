@@ -4,21 +4,21 @@
  * ==================================================================
  * NEDEN AYRI DOSYA?
  * ==================================================================
- * Once bunlar NotificationBell.tsx icindeydi. Lint uyardi:
+ * Önce bunlar NotificationBell.tsx icindeydi. Lint uyardi:
  *
  *   react(only-export-components): Fast refresh only works when a
  *   file only exports components.
  *
- * Kural hakli: Vite'in hizli yenileme (HMR) mekanizmasi, bir dosya
- * hem bilesen hem baska sey disa aktardiginda o dosyayi guvenle
+ * Kural haklı: Vite'in hizli yenileme (HMR) mekanizmasi, bir dosya
+ * hem bileşen hem başka sey disa aktardiginda o dosyayı guvenle
  * degistiremiyor ve TAM SAYFA yenilemesi yapiyor.
  *
- * Gelistirme sirasinda fark edilir bir yavaslama -- ve cozumu bir
+ * Gelistirme sırasında fark edilir bir yavaslama -- ve cozumu bir
  * dosya ayirmak kadar basit.
  * ==================================================================
  */
 
-/** Backend'deki NotificationType ile birebir ayni. */
+/** Backend'deki NotificationType ile birebir aynı. */
 export const NotificationType = {
   Welcome: 1,
   ReservationCreated: 2,

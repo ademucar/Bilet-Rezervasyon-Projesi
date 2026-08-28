@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useCountdown } from './useCountdown'
 
 /**
- * PDF Sprint 17 frontend testi: "Rezervasyon sayacı".
+ * PDF Sprint 17 frontend testi: "Rezervasyon sayaçı".
  *
  * ==================================================================
  * BU HOOK NEDEN AYRICA TEST EDİLİYOR?

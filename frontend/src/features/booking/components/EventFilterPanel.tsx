@@ -6,31 +6,31 @@ interface EventFilterPanelProps {
   filters: EventFilters
   onChange: (degisiklik: Partial<EventFilters>) => void
   onReset: () => void
-  /** Aktif filtre sayisi. Rozet olarak gosteriliyor. */
+  /** Aktif filtre sayısı. Rozet olarak gösteriliyor. */
   activeCount: number
 }
 
 /**
  * ==================================================================
- * ETKINLIK FILTRE PANELI -- PDF Sprint 11
+ * ETKİNLİK FILTRE PANELİ -- PDF Sprint 11
  * ==================================================================
- * PDF'in saydigi sekiz filtre:
- *   Sehir, Kategori, Tarih, Fiyat araligi, Mekan, Organizator,
- *   Yas siniri, Satis durumu
+ * PDF'in saydığı sekiz filtre:
+ *   Şehir, Kategori, Tarih, Fiyat aralığı, Mekan, Organizatör,
+ *   Yaş sınırı, Satış durumu
  *
- * Bu panelde ALTISI var. Mekan ve organizator BILEREK yok:
+ * Bu panelde ALTISI var. Mekan ve organizatör BILEREK yok:
  *
- *   MEKAN: kullanici mekan adini genelde bilmez ("Demo Sahne" mi
- *   "Zorlu PSM" mi?). Etkinlik secince zaten goruyor. Uc TARAFINDA
- *   destekleniyor (venueId) -- organizator paneli ve admin ekranlari
+ *   MEKAN: kullanıcı mekan adını genelde bilmez ("Demo Sahne" mi
+ *   "Zorlu PSM" mi?). Etkinlik secince zaten görüyor. Uc TARAFINDA
+ *   destekleniyor (venueId) -- organizatör paneli ve admin ekranlari
  *   kullanacak.
  *
- *   ORGANIZATOR: ayni gerekce. Ustelik organizatorun KENDI
- *   etkinliklerini gormesi icin zaten kullaniliyor (Sprint 5).
+ *   ORGANİZATÖR: aynı gerekce. Ustelik organizatorun KENDİ
+ *   etkinliklerini gormesi için zaten kullanılıyor (Sprint 5).
  *
- * Yani sekiz filtre de API'de VAR; panelde son kullanicinin gercekten
- * kullanacagi altisi gosteriliyor. Her filtreyi ekrana koymak
- * "eksiksiz" degil, "kullanilamaz" bir arayuz uretirdi.
+ * Yani sekiz filtre de API'de VAR; panelde son kullanıcının gerçekten
+ * kullanacagi altisi gösteriliyor. Her filtreyi ekrana koymak
+ * "eksiksiz" değil, "kullanilamaz" bir arayüz üretirdi.
  * ==================================================================
  */
 export function EventFilterPanel({
@@ -42,15 +42,15 @@ export function EventFilterPanel({
   // ================================================================
   // SEHIR VE KATEGORI: SUNUCUDA REDIS'TE, ISTEMCIDE TANSTACK'TE
   // ================================================================
-  // Iki katmanli onbellek gibi gorunuyor ve oyle -- ikisi de gerekli:
+  // Iki katmanli önbellek gibi görünüyor ve oyle -- ikisi de gerekli:
   //
-  //   Redis (sunucu)     -> tum kullanicilar icin veritabani yukunu
+  //   Redis (sunucu)     -> tüm kullanıcılar için veritabani yukunu
   //                         kaldiriyor
-  //   TanStack (istemci) -> bu kullanicinin sayfa gecislerinde AG
+  //   TanStack (istemci) -> bu kullanıcının sayfa gecislerinde AG
   //                         istegini bile ortadan kaldiriyor
   //
-  // staleTime 1 saat: sehir ve kategori listesi neredeyse hic
-  // degismiyor. Varsayilan 60 saniye burada gereksiz istek uretirdi.
+  // staleTime 1 saat: şehir ve kategori listesi neredeyse hiç
+  // degismiyor. Varsayılan 60 saniye burada gereksiz istek üretirdi.
   // ================================================================
   const citiesQuery = useQuery({
     queryKey: ['cities'],
@@ -86,7 +86,7 @@ export function EventFilterPanel({
         {/* ---- 1) SEHIR ---- */}
         <div className="space-y-1.5">
           <label htmlFor="filtre-sehir" className={labelClass}>
-            Sehir
+            Şehir
           </label>
           <select
             id="filtre-sehir"
@@ -94,9 +94,9 @@ export function EventFilterPanel({
             value={filters.cityId ?? ''}
             onChange={(e) => onChange({ cityId: e.target.value || undefined })}
           >
-            {/* Bos deger "Tumu" anlaminda. bookingApi bos metinleri
-                temizledigi icin backend'e hic gitmiyor. */}
-            <option value="">Tumu</option>
+            {/* Boş deger "Tümü" anlaminda. bookingApi boş metinleri
+                temizledigi için backend'e hiç gitmiyor. */}
+            <option value="">Tümü</option>
             {citiesQuery.data?.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -116,7 +116,7 @@ export function EventFilterPanel({
             value={filters.categoryId ?? ''}
             onChange={(e) => onChange({ categoryId: e.target.value || undefined })}
           >
-            <option value="">Tumu</option>
+            <option value="">Tümü</option>
             {categoriesQuery.data?.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -127,18 +127,18 @@ export function EventFilterPanel({
 
         {/* ---- 3) TARIH ARALIGI ---- */}
         <div className="space-y-1.5">
-          <span className={labelClass}>Tarih araligi</span>
+          <span className={labelClass}>Tarih aralığı</span>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="date"
-              aria-label="Baslangic tarihi"
+              aria-label="Başlangıç tarihi"
               className={selectClass}
               value={filters.dateFrom?.slice(0, 10) ?? ''}
               // Tarihi ISO 8601'e cevirip UTC olarak gonderiyorum.
               //
               // Ham "2026-12-05" gonderseydik backend bunu yerel saat
-              // sanabilir ve zaman dilimi farki yuzunden bir gunluk
-              // kayma olusabilirdi -- kullanici 5 Aralik secip
+              // sanabilir ve zaman dilimi farki yuzunden bir günlük
+              // kayma olusabilirdi -- kullanıcı 5 Aralik seçip
               // 4 Aralik'taki etkinligi gormezdi.
               onChange={(e) =>
                 onChange({
@@ -148,15 +148,15 @@ export function EventFilterPanel({
             />
             <input
               type="date"
-              aria-label="Bitis tarihi"
+              aria-label="Bitiş tarihi"
               className={selectClass}
               value={filters.dateTo?.slice(0, 10) ?? ''}
-              // Bitis gununun SONU (23:59:59).
+              // Bitiş gununun SONU (23:59:59).
               //
-              // T00:00:00 gonderseydik, kullanicinin sectigi son gunde
-              // olan etkinlikler haric kalirdi. "5-10 Aralik" diyen
-              // kullanici 10 Aralik'taki konseri gormezdi -- sessiz
-              // ve can sikici bir hata.
+              // T00:00:00 gonderseydik, kullanıcının sectigi son günde
+              // olan etkinlikler haric kalırdı. "5-10 Aralik" diyen
+              // kullanıcı 10 Aralik'taki konseri gormezdi -- sessiz
+              // ve can sıkıcı bir hata.
               onChange={(e) =>
                 onChange({
                   dateTo: e.target.value ? `${e.target.value}T23:59:59Z` : undefined,
@@ -168,21 +168,21 @@ export function EventFilterPanel({
 
         {/* ---- 4) FIYAT ARALIGI ---- */}
         <div className="space-y-1.5">
-          <span className={labelClass}>Fiyat araligi (TL)</span>
+          <span className={labelClass}>Fiyat aralığı (TL)</span>
           <div className="grid grid-cols-2 gap-2">
             <input
               type="number"
               min={0}
               placeholder="En az"
-              aria-label="En dusuk fiyat"
+              aria-label="En düşük fiyat"
               className={selectClass}
               value={filters.minPrice ?? ''}
               // Number('') === 0 tuzagi.
               //
-              // Dogrudan Number(e.target.value) yazsaydik, kullanici
-              // alani TEMIZLEDIGINDE filtre "minPrice=0" olurdu --
-              // yani filtre kalkmis gorunur ama aslinda hala aktif
-              // kalirdi. Bos kontrolu SART.
+              // Dogrudan Number(e.target.value) yazsaydık, kullanıcı
+              // alanı TEMIZLEDIGINDE filtre "minPrice=0" olurdu --
+              // yani filtre kalkmis görünür ama aslında hâlâ aktif
+              // kalırdı. Boş kontrolü ŞART.
               onChange={(e) =>
                 onChange({ minPrice: e.target.value ? Number(e.target.value) : undefined })
               }
@@ -190,8 +190,8 @@ export function EventFilterPanel({
             <input
               type="number"
               min={0}
-              placeholder="En cok"
-              aria-label="En yuksek fiyat"
+              placeholder="En çok"
+              aria-label="En yüksek fiyat"
               className={selectClass}
               value={filters.maxPrice ?? ''}
               onChange={(e) =>
@@ -204,7 +204,7 @@ export function EventFilterPanel({
         {/* ---- 5) YAS SINIRI ---- */}
         <div className="space-y-1.5">
           <label htmlFor="filtre-yas" className={labelClass}>
-            Yas durumum
+            Yaş durumum
           </label>
           <select
             id="filtre-yas"
@@ -214,12 +214,12 @@ export function EventFilterPanel({
               onChange({ maxMinimumAge: e.target.value ? Number(e.target.value) : undefined })
             }
           >
-            {/* Kullaniciya "yas siniri" degil "yasim" soruyorum.
-                "Yas siniri 18" secenegi belirsiz olurdu: 18 sinirli
+            {/* Kullanıcıya "yaş sınırı" değil "yasim" soruyorum.
+                "Yaş sınırı 18" secenegi belirsiz olurdu: 18 sinirli
                 etkinlikleri mi, 18 yasindakinin girebileceklerini mi?
-                "18 yasindayim" hicbir yoruma yer birakmiyor. */}
+                "18 yasindayim" hiçbir yoruma yer birakmiyor. */}
             <option value="">Farketmez</option>
-            <option value="0">Her yas (sinirsiz)</option>
+            <option value="0">Her yaş (sınırsız)</option>
             <option value="15">15 yasindayim</option>
             <option value="18">18 yasindayim</option>
             <option value="21">21 yasindayim</option>
@@ -229,7 +229,7 @@ export function EventFilterPanel({
         {/* ---- 6) SATIS DURUMU ---- */}
         <div className="space-y-1.5">
           <label htmlFor="filtre-durum" className={labelClass}>
-            Satis durumu
+            Satış durumu
           </label>
           <select
             id="filtre-durum"
@@ -239,32 +239,32 @@ export function EventFilterPanel({
               onChange({ status: e.target.value ? Number(e.target.value) : undefined })
             }
           >
-            <option value="">Tumu</option>
-            {/* Yalnizca HERKESE ACIK durumlar listeleniyor.
-                Taslak/onay bekleyen secenegini koysaydik kullanici
-                secer, sonuc bos doner ve arayuzun bozuk oldugunu
+            <option value="">Tümü</option>
+            {/* Yalnızca HERKESE ACIK durumlar listeleniyor.
+                Taslak/onay bekleyen secenegini koysaydık kullanıcı
+                secer, sonuç boş döner ve arayuzun bozuk olduğunu
                 dusunurdu. (Backend zaten gormesine izin vermiyor.) */}
-            <option value="4">Satista</option>
-            <option value="3">Yayinda</option>
-            <option value="5">Satis kapandi</option>
+            <option value="4">Satışta</option>
+            <option value="3">Yayında</option>
+            <option value="5">Satış kapandı</option>
           </select>
         </div>
 
         {/* ---- SIRALAMA ---- */}
         <div className="space-y-1.5 border-t border-slate-100 pt-4">
           <label htmlFor="filtre-sirala" className={labelClass}>
-            Siralama
+            Sıralama
           </label>
           <select
             id="filtre-sirala"
             className={selectClass}
             value={`${filters.sortBy ?? 'date'}:${filters.sortDirection ?? 'asc'}`}
-            // Iki alani TEK acilir listede birlestiriyorum.
+            // Iki alanı TEK açılır listede birlestiriyorum.
             //
-            // Ayri "alan" ve "yon" kutulari daha esnek olurdu ama
-            // kullanici icin iki karar demek. Birlesik liste, gercek
-            // sorunun "listeyi nasil gormek istiyorum" oldugunu
-            // dogrudan cevapliyor.
+            // Ayrı "alan" ve "yon" kutulari daha esnek olurdu ama
+            // kullanıcı için iki karar demek. Birlesik liste, gerçek
+            // sorunun "listeyi nasil gormek istiyorum" olduğunu
+            // doğrudan cevapliyor.
             onChange={(e) => {
               const [sortBy, sortDirection] = e.target.value.split(':')
 
@@ -274,10 +274,10 @@ export function EventFilterPanel({
               })
             }}
           >
-            <option value="date:asc">Tarihe gore (yakin once)</option>
-            <option value="date:desc">Tarihe gore (uzak once)</option>
-            <option value="title:asc">Isme gore (A-Z)</option>
-            <option value="title:desc">Isme gore (Z-A)</option>
+            <option value="date:asc">Tarihe göre (yakın önce)</option>
+            <option value="date:desc">Tarihe göre (uzak önce)</option>
+            <option value="title:asc">İsme göre (A-Z)</option>
+            <option value="title:desc">İsme göre (Z-A)</option>
             <option value="created:desc">Yeni eklenenler</option>
           </select>
         </div>

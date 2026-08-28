@@ -5,17 +5,17 @@ import type { AuthResponse, ProblemDetails } from '../../types/auth'
 /**
  * Ortak API istemcisi.
  *
- * PDF Sprint 18: "API istekleri component icinde dagink sekilde
+ * PDF Sprint 18: "API istekleri component içinde dagink şekilde
  * yazilmamalidir. Ortak API client olusturulmalidir."
  */
 export const api: AxiosInstance = axios.create({
-  // Vite proxy sayesinde gorece yol yeterli. Ortam bazli adres yok.
+  // Vite proxy sayesinde gorece yol yeterli. Ortam bazlı adres yok.
   baseURL: '/api/v1',
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 })
 
-/** Her istek icin ayri bir izleme kimligi. Backend loglarinda eslesiyor. */
+/** Her istek için ayrı bir izleme kimliği. Backend loglarinda eslesiyor. */
 function newCorrelationId(): string {
   return crypto.randomUUID().replace(/-/g, '')
 }
@@ -30,38 +30,38 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
 
-  // PDF Sprint 16: Correlation ID. Frontend uretip gonderiyor;
-  // backend ayni degeri kullanip loglara isliyor. Boylece bir
-  // kullanici sikayetini uctan uca izleyebiliyoruz.
+  // PDF Sprint 16: Correlation ID. Frontend uretip gönderiyor;
+  // backend aynı değeri kullanip loglara isliyor. Boylece bir
+  // kullanıcı sikayetini uctan uca izleyebiliyoruz.
   config.headers['X-Correlation-Id'] = newCorrelationId()
 
   return config
 })
 
 // ===================================================================
-// YANIT INTERCEPTOR'I -- 401 alinca sessizce token yenile
+// YANIT INTERCEPTOR'I -- 401 alınca sessizce token yenile
 // ===================================================================
 //
 // ==================================================================
 // EN ONEMLI PROBLEM: ES ZAMANLI ISTEKLER
 // ==================================================================
-// Sayfa acilirken 4 istek ayni anda gidiyor ve access token'in suresi
-// yeni dolmus. Dordu de 401 aliyor.
+// Sayfa acilirken 4 istek aynı anda gidiyor ve access token'in süresi
+// yeni dolmuş. Dordu de 401 aliyor.
 //
-// Naif bir cozum her 401'de yenileme yapardi -> DORT yenileme istegi.
+// Naif bir çözüm her 401'de yenileme yapardi -> DORT yenileme isteği.
 //
-// Bu bizim backend'imizde FELAKET olurdu, cunku refresh token
+// Bu bizim backend'imizde FELAKET olurdu, çünkü refresh token
 // ROTATION uyguluyoruz:
-//   1. istek token'i yeniler -> eski token IPTAL olur
-//   2. istek AYNI eski token'i gonderir -> "iptal edilmis token
-//      tekrar kullanildi!" -> backend CALINMA SALDIRISI sanip
-//      kullanicinin TUM oturumlarini kapatir
+//   1. istek token'i yeniler -> eski token İPTAL olur
+//   2. istek AYNI eski token'i gönderir -> "iptal edilmiş token
+//      tekrar kullanıldı!" -> backend CALINMA SALDIRISI sanip
+//      kullanıcının TÜM oturumlarini kapatır
 //
-// Yani kullanici hicbir sey yapmadan sistemden atilirdi. Ve bu hata
-// yalnizca "birden fazla istek ayni anda giderse" olusacagi icin
-// tespit edilmesi cok zor olurdu.
+// Yani kullanıcı hiçbir sey yapmadan sistemden atilirdi. Ve bu hata
+// yalnızca "birden fazla istek aynı anda giderse" olusacagi için
+// tespit edilmesi çok zor olurdu.
 //
-// COZUM: Ayni anda YALNIZCA BIR yenileme calisir. Digerleri o
+// COZUM: Aynı anda YALNIZCA BIR yenileme çalışır. Digerleri o
 // yenilemenin Promise'ini bekler ve sonucunu paylasir.
 // ==================================================================
 
@@ -74,7 +74,7 @@ async function refreshAccessToken(): Promise<AuthResponse> {
     throw new Error('Refresh token yok')
   }
 
-  // DIKKAT: Burada `api` DEGIL, ham axios kullaniyorum.
+  // DIKKAT: Burada `api` DEĞİL, ham axios kullanıyorum.
   //
   // `api` ile cagirsaydim ve bu istek de 401 alsaydi, interceptor
   // tekrar devreye girip yine yenileme denerdi -> SONSUZ DONGU.
@@ -88,14 +88,14 @@ async function refreshAccessToken(): Promise<AuthResponse> {
   return data
 }
 
-/** Oturum sonlandi; kullaniciyi giris ekranina yolla. */
+/** Oturum sonlandi; kullanıcıyı giriş ekranına yolla. */
 function endSession(reason: 'expired' | 'revoked') {
   useAuthStore.getState().clearSession()
 
-  // window.location kullaniyorum, react-router'in navigate'ini degil.
+  // window.location kullanıyorum, react-router'in navigate'ini değil.
   //
-  // Sebep: bu kod bir React bileseninin DISINDA calisiyor; hook
-  // cagiramam. Ayrica tam sayfa yenilemesi, bellekte kalmis olabilecek
+  // Sebep: bu kod bir React bileseninin DISINDA çalışıyor; hook
+  // cagiramam. Ayrıca tam sayfa yenilemesi, bellekte kalmis olabilecek
   // eski durumu (onbellege alinmis sorgular, form verileri) da
   // temizliyor -- oturum sonlandiginda istedigimiz tam olarak bu.
   const target = reason === 'revoked' ? '/giris?sebep=guvenlik' : '/giris?sebep=sure-doldu'
@@ -111,16 +111,16 @@ api.interceptors.response.use(
   async (error: AxiosError<ProblemDetails>) => {
     const original = error.config as InternalAxiosRequestConfig & { _retried?: boolean }
 
-    // 401 degilse veya zaten bir kez denendiyse: hatayi oldugu gibi ilet.
+    // 401 degilse veya zaten bir kez denendiyse: hatayi olduğu gibi ilet.
     //
-    // `_retried` bayragi SART: olmasaydi, yenileme sonrasi tekrarlanan
-    // istek de 401 alirsa (ornegin kullanici gercekten yetkisiz)
+    // `_retried` bayragi ŞART: olmasaydı, yenileme sonrası tekrarlanan
+    // istek de 401 alirsa (örneğin kullanıcı gerçekten yetkisiz)
     // sonsuz dongu olusurdu.
     if (error.response?.status !== 401 || original?._retried) {
       return Promise.reject(error)
     }
 
-    // Giris/kayit endpointlerinde 401 NORMALDIR ("sifre yanlis").
+    // Giriş/kayıt endpointlerinde 401 NORMALDIR ("şifre yanlış").
     // Bunlari yenilemeye calismak anlamsiz olur.
     const url = original?.url ?? ''
     if (
@@ -131,19 +131,19 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // ---- Kilitleme: yalnizca ilk istek yenilemeyi baslatir ----
+    // ---- Kilitleme: yalnızca ilk istek yenilemeyi baslatir ----
     if (!refreshPromise) {
       refreshPromise = refreshAccessToken().finally(() => {
-        // Basarili da olsa basarisiz da olsa kilidi birak.
-        // finally kullanmasaydim, basarisiz bir yenilemeden sonra
-        // refreshPromise dolu kalir ve bir daha HIC yenileme
+        // Başarılı da olsa başarısız da olsa kilidi birak.
+        // finally kullanmasaydim, başarısız bir yenilemeden sonra
+        // refreshPromise dolu kalır ve bir daha HİÇ yenileme
         // yapilamazdi.
         refreshPromise = null
       })
     }
 
     try {
-      // Es zamanli tum istekler AYNI Promise'i bekliyor.
+      // Es zamanlı tüm istekler AYNI Promise'i bekliyor.
       const auth = await refreshPromise
 
       useAuthStore.getState().updateTokens(auth)
@@ -151,14 +151,14 @@ api.interceptors.response.use(
       original._retried = true
       original.headers.Authorization = `Bearer ${auth.accessToken}`
 
-      // Basarisiz olan istegi yeni token'la tekrar dene.
-      // Kullanici hicbir sey fark etmez.
+      // Başarısız olan isteği yeni token'la tekrar dene.
+      // Kullanıcı hiçbir sey fark etmez.
       return api(original)
     } catch {
-      // Yenileme basarisiz: refresh token da gecersiz.
+      // Yenileme başarısız: refresh token da geçersiz.
       //
-      // Backend "refresh_token_reused" dondurduyse bu bir GUVENLIK
-      // olayidir -- kullaniciya farkli bir mesaj gosteriyoruz.
+      // Backend "refresh_token_reused" dondurduyse bu bir GÜVENLİK
+      // olayidir -- kullanıcıya farklı bir mesaj gosteriyoruz.
       const code = error.response?.data?.errorCode
       endSession(code === 'auth.refresh_token_reused' ? 'revoked' : 'expired')
 
@@ -170,10 +170,10 @@ api.interceptors.response.use(
 /**
  * Axios hatasindan Problem Details cikarir.
  *
- * Bunu tek yerde yapmamin sebebi: her bilesende
- * `error.response?.data?.detail ?? 'Bir hata olustu'` yazmak
- * hem tekrar hem de hataya acik. Ag hatasinda (sunucu kapali)
- * `response` hic olmaz ve o zincir undefined doner.
+ * Bunu tek yerde yapmamin sebebi: her bileşende
+ * `error.response?.data?.detail ?? 'Bir hata oluştu'` yazmak
+ * hem tekrar hem de hataya açık. Ag hatasinda (sunucu kapalı)
+ * `response` hiç olmaz ve o zincir undefined döner.
  */
 export function toProblem(error: unknown): ProblemDetails {
   if (axios.isAxiosError<ProblemDetails>(error)) {
@@ -181,12 +181,12 @@ export function toProblem(error: unknown): ProblemDetails {
       return error.response.data
     }
 
-    // Sunucuya hic ulasilamadi (ag hatasi, sunucu kapali, timeout).
-    // Kullaniciya "500 hatasi" demek yanlis olur; sunucu cevap bile vermedi.
+    // Sunucuya hiç ulasilamadi (ag hatası, sunucu kapalı, timeout).
+    // Kullanıcıya "500 hatası" demek yanlış olur; sunucu cevap bile vermedi.
     return {
       status: 0,
-      title: 'Baglanti hatasi',
-      detail: 'Sunucuya ulasilamiyor. Internet baglantinizi kontrol edin.',
+      title: 'Bağlantı hatası',
+      detail: 'Sunucuya ulaşılamıyor. Internet bağlantınızı kontrol edin.',
       errorCode: 'network.unreachable',
     }
   }
@@ -194,7 +194,7 @@ export function toProblem(error: unknown): ProblemDetails {
   return {
     status: 500,
     title: 'Beklenmeyen hata',
-    detail: 'Beklenmeyen bir hata olustu.',
+    detail: 'Beklenmeyen bir hata oluştu.',
     errorCode: 'client.unexpected',
   }
 }
@@ -207,13 +207,13 @@ export function toProblem(error: unknown): ProblemDetails {
 // Ne ise yariyor? Tarayici konsolundan
 //     await window.__api.get('/auth/me')
 // yazip interceptor'in davranisini (token yenileme, hata isleme)
-// dogrudan deneyebiliyoruz. Ozellikle "es zamanli 401" senaryosunu
+// doğrudan deneyebiliyoruz. Ozellikle "es zamanlı 401" senaryosunu
 // test etmenin en pratik yolu bu.
 //
-// import.meta.env.DEV, Vite tarafindan uretim derlemesinde false'a
+// import.meta.env.DEV, Vite tarafından üretim derlemesinde false'a
 // sabitlenir ve bu blok paketten TAMAMEN silinir (tree shaking).
 // Yani uretimde window.__api diye bir sey OLMAZ -- boyle bir kapiyi
-// acik birakmak istemeyiz.
+// açık birakmak istemeyiz.
 // ===================================================================
 if (import.meta.env.DEV) {
   ;(window as unknown as { __api: AxiosInstance }).__api = api

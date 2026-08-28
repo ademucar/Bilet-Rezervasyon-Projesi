@@ -26,16 +26,16 @@ const notificationsApi = {
 }
 
 /**
- * Bildirim turune gore ikon ve renk.
+ * Bildirim turune göre ikon ve renk.
  *
  * ==================================================================
- * NEDEN RENK + IKON, SADECE RENK DEGIL?
+ * NEDEN RENK + IKON, SADECE RENK DEĞİL?
  * ==================================================================
- * Renk korlugu olan kullanici "kirmizi = kotu haber" ayrimini
+ * Renk korlugu olan kullanıcı "kırmızı = kötü haber" ayrimini
  * yapamaz. Ikon ikinci bir isaret veriyor.
  *
- * Ayni ilkeyi Sprint 7'de koltuk haritasinda da uygulamistik:
- * durumu yalnizca renkle degil, metinle de anlatmak.
+ * Aynı ilkeyi Sprint 7'de koltuk haritasında da uygulamıştık:
+ * durumu yalnızca renkle değil, metinle de anlatmak.
  * ==================================================================
  */
 function gorunum(type: number): { ikon: string; renk: string } {
@@ -69,7 +69,7 @@ function gorunum(type: number): { ikon: string; renk: string } {
  * ==================================================================
  * BILDIRIM ZILI -- PDF Sprint 14
  * ==================================================================
- * Ust cubukta duruyor; rozet okunmamis sayisini gosteriyor.
+ * Ust cubukta duruyor; rozet okunmamış sayisini gosteriyor.
  * ==================================================================
  */
 export function NotificationBell() {
@@ -81,16 +81,16 @@ export function NotificationBell() {
   // ================================================================
   // SAYAC: DUZENLI YENILEME
   // ================================================================
-  // Bildirimler arka plan islerinden geliyor (sure uyarisi, rapor
-  // hazir, etkinlik hatirlatmasi). Kullanici hicbir sey yapmadan
+  // Bildirimler arka plan islerinden geliyor (süre uyarısı, rapor
+  // hazır, etkinlik hatirlatmasi). Kullanıcı hiçbir sey yapmadan
   // yeni bildirim olusabiliyor.
   //
   // 60 saniye: yeterince taze ama sunucuyu yormuyor. Sayac ucu
-  // yalnizca bir COUNT calistiriyor.
+  // yalnızca bir COUNT calistiriyor.
   //
-  // Sprint 10'da koltuk haritasi icin SignalR kurmustuk; bildirimler
-  // icin de kurulabilirdi. Kurmadim: koltuk durumu SANIYELER icinde
-  // degisiyor ve gecikme dogrudan 409'a yol aciyordu. Bildirimde
+  // Sprint 10'da koltuk haritası için SignalR kurmustuk; bildirimler
+  // için de kurulabilirdi. Kurmadim: koltuk durumu SANIYELER içinde
+  // değişiyor ve gecikme doğrudan 409'a yol aciyordu. Bildirimde
   // bir dakikalik gecikmenin somut bir zarari yok.
   // ================================================================
   const countQuery = useQuery({
@@ -99,10 +99,10 @@ export function NotificationBell() {
     refetchInterval: 60_000,
   })
 
-  // Liste YALNIZCA panel acikken cekiliyor.
+  // Liste YALNIZCA panel acikken çekiliyor.
   //
-  // enabled: open -- kapaliyken 15 bildirimin tum metnini bosuna
-  // tasimanin anlami yok. Sayac zaten ayri ve ucuz bir uctan geliyor.
+  // enabled: open -- kapaliyken 15 bildirimin tüm metnini boşuna
+  // tasimanin anlami yok. Sayac zaten ayrı ve ucuz bir uctan geliyor.
   const listQuery = useQuery({
     queryKey: ['notifications', 'list'],
     queryFn: notificationsApi.getNotifications,
@@ -126,9 +126,9 @@ export function NotificationBell() {
   // ================================================================
   // DISARI TIKLAYINCA KAPAT
   // ================================================================
-  // Olmasaydi panel acik kalir ve kullanici sayfayla etkilesemezdi.
+  // Olmasaydı panel açık kalır ve kullanıcı sayfayla etkilesemezdi.
   //
-  // Temizlik SART: bilesen kaldirildiginda dinleyici kalirsa her
+  // Temizlik ŞART: bileşen kaldirildiginda dinleyici kalirsa her
   // tiklamada calismaya devam eder (bellek sizintisi).
   // ================================================================
   useEffect(() => {
@@ -142,7 +142,7 @@ export function NotificationBell() {
       }
     }
 
-    // Escape ile de kapansin: klavye kullanicilari icin standart.
+    // Escape ile de kapansin: klavye kullanicilari için standart.
     const escBasimi = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setOpen(false)
@@ -167,8 +167,8 @@ export function NotificationBell() {
 
     if (n.actionPath) {
       // Rapor indirme adresleri API'ye gidiyor (/api/v1/...).
-      // Bunlari SPA yonlendirmesiyle acamayiz -- tarayicida
-      // dogrudan acmak gerekiyor.
+      // Bunlari SPA yonlendirmesiyle acamayiz -- tarayıcıda
+      // doğrudan acmak gerekiyor.
       if (n.actionPath.startsWith('/api/')) {
         window.open(n.actionPath, '_blank', 'noopener,noreferrer')
       } else {
@@ -185,7 +185,7 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        aria-label={count > 0 ? `Bildirimler, ${count} okunmamis` : 'Bildirimler'}
+        aria-label={count > 0 ? `Bildirimler, ${count} okunmamış` : 'Bildirimler'}
         className="relative rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100"
       >
         <span aria-hidden="true" className="text-lg leading-none">
@@ -197,7 +197,7 @@ export function NotificationBell() {
             className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white"
             aria-hidden="true"
           >
-            {/* 99'dan fazlasi rozete sigmaz ve okunmaz. */}
+            {/* 99'dan fazlası rozete sigmaz ve okunmaz. */}
             {count > 99 ? '99+' : count}
           </span>
         )}
@@ -214,7 +214,7 @@ export function NotificationBell() {
                 onClick={() => markAllRead.mutate()}
                 className="text-xs font-medium text-brand-600 hover:underline"
               >
-                Tumunu okundu isaretle
+                Tümünü okundu işaretle
               </button>
             )}
           </div>
@@ -229,7 +229,7 @@ export function NotificationBell() {
             )}
 
             {listQuery.data?.items.length === 0 && (
-              <p className="p-6 text-center text-sm text-slate-500">Henuz bildiriminiz yok.</p>
+              <p className="p-6 text-center text-sm text-slate-500">Henüz bildiriminiz yok.</p>
             )}
 
             <ul className="divide-y divide-slate-100">
@@ -263,9 +263,9 @@ export function NotificationBell() {
                           </span>
 
                           {/* Okunmamis isareti: kalin yazi TEK BASINA
-                              yeterli degil -- ekran okuyucu kalinligi
+                              yeterli değil -- ekran okuyucu kalinligi
                               okumaz. Nokta da aria-hidden ama metin
-                              alternatifini asagida veriyoruz. */}
+                              alternatifini aşağıda veriyoruz. */}
                           {!n.isRead && (
                             <>
                               <span

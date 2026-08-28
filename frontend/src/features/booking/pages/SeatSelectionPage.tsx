@@ -21,18 +21,18 @@ import {
 // KOLTUK DURUM RENKLERI
 // ===================================================================
 // Renkleri tek bir yerde topluyorum: hem harita hem de gosterge
-// (legend) ayni degeri kullansin. Ayri ayri yazsaydik birini
+// (legend) aynı değeri kullansin. Ayrı ayrı yazsaydık birini
 // degistirip digerini unutmak kacinilmazdi.
 //
-// Renk secimi keyfi degil:
-//   - Bos: notr gri-mavi. "Tiklanabilir" hissi verir.
-//   - Secili: yesil. Olumlu, kullanicinin kendi eylemi.
-//   - Kilitli: amber. "Simdilik degil" -- 10 dakika sonra bosalabilir.
-//   - Satildi: koyu gri. Kalici, umut yok.
+// Renk seçimi keyfi değil:
+//   - Boş: notr gri-mavi. "Tıklanabilir" hissi verir.
+//   - Seçili: yesil. Olumlu, kullanıcının kendi eylemi.
+//   - Kilitli: amber. "Şimdilik değil" -- 10 dakika sonra bosalabilir.
+//   - Satıldı: koyu gri. Kalici, umut yok.
 //
-// ERISILEBILIRLIK NOTU: Yalnizca RENGE guvenmiyoruz. Her koltugun
-// <title> etiketinde durumu METIN olarak da yaziyor; renk korlugu
-// olan kullanici fareyle uzerine gelince veya ekran okuyucuyla
+// ERİŞİLEBİLİRLİK NOTU: Yalnızca RENGE guvenmiyoruz. Her koltuğun
+// <title> etiketinde durumu METİN olarak da yazıyor; renk korlugu
+// olan kullanıcı fareyle uzerine gelince veya ekran okuyucuyla
 // durumu ogrenebiliyor.
 // ===================================================================
 const SEAT_COLORS = {
@@ -61,10 +61,10 @@ function seatStatusLabel(status: number): string {
  * GORSEL KOLTUK SECIMI -- PDF Sprint 7
  * ==================================================================
  * PDF'in bu sprintten bekledikleri:
- *   - Gorsel koltuk secimi                    -> SeatMap
+ *   - Görsel koltuk seçimi                    -> SeatMap
  *   - Koltuk kilitleme (10 dk)                -> POST /reservations
- *   - Cakisma bildirimi                       -> 409 yakalama + otomatik yenileme
- *   - Rezervasyon ozeti                       -> sag sutun
+ *   - Çakışma bildirimi                       -> 409 yakalama + otomatik yenileme
+ *   - Rezervasyon özeti                       -> sag sutun
  * ==================================================================
  */
 export function SeatSelectionPage() {
@@ -72,43 +72,43 @@ export function SeatSelectionPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  // Secili koltuklar. Set kullaniyorum, dizi degil.
+  // Seçili koltuklar. Set kullanıyorum, dizi değil.
   //
-  // Sebep: "bu koltuk secili mi?" sorusu her koltuk icin, her
+  // Sebep: "bu koltuk seçili mi?" sorusu her koltuk için, her
   // render'da soruluyor. Dizide includes() O(n); 2000 koltukluk bir
   // salonda 2000 x 2000 = 4 milyon karsilastirma demek. Set.has()
   // O(1).
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set())
 
-  /** Etkinlik canli olarak iptal edildiyse gosterilecek uyari. */
+  /** Etkinlik canlı olarak iptal edildiyse gösterilecek uyarı. */
   const [cancelledTitle, setCancelledTitle] = useState<string | null>(null)
 
   // ================================================================
-  // GELEN OLAYI ONBELLEGE ISLE -- PDF: "Gercek zamanli koltuk
-  // guncelleme"
+  // GELEN OLAYI ONBELLEGE ISLE -- PDF: "Gerçek zamanlı koltuk
+  // güncelleme"
   // ================================================================
-  // Olay geldiginde sunucudan listeyi TEKRAR CEKMIYORUZ, elimizdeki
-  // onbellegi YAMALIYORUZ.
+  // Olay geldiğinde sunucudan listeyi TEKRAR CEKMIYORUZ, elimizdeki
+  // önbelleği YAMALIYORUZ.
   //
-  // Neden? Populer bir konserde saniyede birkac olay gelir. Her
+  // Neden? Popüler bir konserde saniyede birkaç olay gelir. Her
   // olayda tam listeyi cekseydik (2000 koltuk, ~200 KB) sunucuyu
   // yoklamadan bile beter yorardik -- SignalR'in butun kazanci
   // giderdi.
   //
-  // Yamalama ile tek bir koltugun durumu degisiyor ve React
-  // yalnizca o <rect>'i yeniden ciziyor.
+  // Yamalama ile tek bir koltuğun durumu değişiyor ve React
+  // yalnızca o <rect>'i yeniden ciziyor.
   //
   // setQueryData ile YENI nesneler uretiyorum (yayma operatoru),
   // mevcut diziyi degistirmiyorum. Yerinde degistirseydim React
-  // referansin ayni oldugunu gorup EKRANI HIC GUNCELLEMEZDI --
-  // sessizce calismayan bir arayuz olurdu.
+  // referansin aynı olduğunu gorup EKRANI HİÇ GUNCELLEMEZDI --
+  // sessizce çalışmayan bir arayüz olurdu.
   // ================================================================
   const patchSeatStatus = useCallback(
     (eventSeatIds: string[], newStatus: number) => {
       queryClient.setQueryData<SeatAvailability>(['seat-availability', sessionId], (previous) => {
         if (!previous) {
-          // Liste henuz yuklenmemis. Olayi atlamak guvenli:
-          // birazdan gelecek ilk cekimde zaten guncel durum var.
+          // Liste henüz yuklenmemis. Olayi atlamak güvenli:
+          // birazdan gelecek ilk cekimde zaten güncel durum var.
           return previous
         }
 
@@ -125,11 +125,11 @@ export function SeatSelectionPage() {
           return { ...seat, status: newStatus }
         })
 
-        // Hicbir sey degismediyse ESKI nesneyi aynen donuyorum.
+        // Hicbir sey degismediyse ESKİ nesneyi aynen donuyorum.
         //
-        // Yeni nesne donseydik React "veri degisti" deyip tum
+        // Yeni nesne donseydik React "veri değişti" deyip tüm
         // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
-        // icin bosuna bir is.
+        // için boşuna bir is.
         if (!degisti) {
           return previous
         }
@@ -138,11 +138,11 @@ export function SeatSelectionPage() {
           ...previous,
           seats,
 
-          // Bos koltuk sayacini da guncelliyorum.
+          // Boş koltuk sayacini da guncelliyorum.
           //
-          // Unutsaydik baslikta "65 / 68 koltuk bos" yazarken
-          // haritada 60 bos koltuk gorunurdu. Kucuk ama
-          // kullanicinin sisteme guvenini sarsan turden bir
+          // Unutsaydik baslikta "65 / 68 koltuk boş" yazarken
+          // haritada 60 boş koltuk görünürdü. Küçük ama
+          // kullanıcının sisteme guvenini sarsan turden bir
           // tutarsizlik.
           availableSeats: seats.filter((x) => x.status === EventSeatStatus.Available).length,
         }
@@ -158,27 +158,27 @@ export function SeatSelectionPage() {
 
     // ReservationExpired bu ekranda haritayi ETKILEMIYOR.
     //
-    // Cunku sunucu ayni anda SeatReleased de gonderiyor ve koltuklari
-    // asil bosaltan o. Burada ikinci kez islem yapmak gereksiz olurdu.
+    // Çünkü sunucu aynı anda SeatReleased de gönderiyor ve koltukları
+    // asil bosaltan o. Burada ikinci kez işlem yapmak gereksiz olurdu.
     //
-    // Peki neden dinliyoruz? Cunku olay, rezervasyon SAHIBI icin
-    // anlamli: kendi rezervasyonunun bittigini ogreniyor. O ekran
-    // (ReservationPage) sunucunun verdigi saniyeden geri sayiyor ve
-    // sifirlaninca sunucuya soruyor -- ayni sonuca oradan variyor.
+    // Peki neden dinliyoruz? Çünkü olay, rezervasyon SAHIBI için
+    // anlamlı: kendi rezervasyonunun bittigini ogreniyor. O ekran
+    // (ReservationPage) sunucunun verdiği saniyeden geri sayiyor ve
+    // sifirlaninca sunucuya soruyor -- aynı sonuca oradan variyor.
     onReservationExpired: () => {},
 
     // PDF olayi: EventCancelled.
     //
-    // Kullanici tam koltuk secerken etkinlik iptal edilirse, secime
-    // devam etmesinin anlami yok. Uyariyi ANINDA gostermek, bosuna
-    // koltuk secip rezervasyonda hata almasindan iyi.
+    // Kullanıcı tam koltuk seçerken etkinlik iptal edilirse, secime
+    // devam etmesinin anlami yok. Uyariyi ANINDA göstermek, boşuna
+    // koltuk seçip rezervasyonda hata almasindan iyi.
     onEventCancelled: (title) => setCancelledTitle(title),
 
-    // PDF: "Guncel koltuk listesini yeniden cekme"
+    // PDF: "Güncel koltuk listesini yeniden çekme"
     //
-    // Baglanti kopukken gecen surede kacirdigimiz olaylar var ve
+    // Bağlantı kopukken gecen surede kaçırdığımız olaylar var ve
     // SignalR onlari biriktirmiyor. Yamalama ile telafi edemeyiz --
-    // neyi kacirdigimizi bilmiyoruz. Tek dogru yol tam listeyi
+    // neyi kacirdigimizi bilmiyoruz. Tek doğru yol tam listeyi
     // bastan cekmek.
     onReconnected: () => {
       void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
@@ -191,68 +191,68 @@ export function SeatSelectionPage() {
     enabled: sessionId.length > 0,
 
     // ==============================================================
-    // YOKLAMA ARTIK ASIL YOL DEGIL, YEDEK -- PDF Sprint 10
+    // YOKLAMA ARTIK ASIL YOL DEĞİL, YEDEK -- PDF Sprint 10
     // ==============================================================
     // Sprint 7'de buraya sabit 10 saniyelik bir yoklama koymus ve
     // su notu birakmistim:
     //
-    //   "Bu bir GECICI cozum. Sprint 10'da SignalR gelecek ve
-    //    o zaman bu satir KALDIRILACAK."
+    //   "Bu bir GECICI çözüm. Sprint 10'da SignalR gelecek ve
+    //    o zaman bu satır KALDIRILACAK."
     //
     // Sprint 10 geldi ve satiri TAMAMEN KALDIRMADIM. Fikrimi
-    // degistiren sey su: SignalR baglantisi HER ZAMAN kurulamiyor.
+    // degistiren sey su: SignalR bağlantısı HER ZAMAN kurulamiyor.
     // Kurumsal aglar WebSocket'i engelleyebiliyor, vekil sunucular
-    // uzun baglantilari kesebiliyor, kullanicinin interneti
+    // uzun baglantilari kesebiliyor, kullanıcının interneti
     // gidebiliyor.
     //
-    // Yoklamayi tamamen silseydik, bu durumlarda koltuk haritasi
-    // TAMAMEN DONARDI -- Sprint 7'deki halinden bile kotu olurdu.
+    // Yoklamayi tamamen silseydik, bu durumlarda koltuk haritası
+    // TAMAMEN DONARDI -- Sprint 7'deki halinden bile kötü olurdu.
     //
     // Cozum: yoklama SignalR calisirken KAPALI, calismazken ACIK.
     //
-    //   canli baglanti var  -> false (yoklama yok, olaylar geliyor)
-    //   canli baglanti yok  -> 10 saniye (Sprint 7 davranisi)
+    //   canlı bağlantı var  -> false (yoklama yok, olaylar geliyor)
+    //   canlı bağlantı yok  -> 10 saniye (Sprint 7 davranisi)
     //
-    // Yani en iyi durumda gercek zamanli, en kotu durumda eskisi
+    // Yani en iyi durumda gerçek zamanlı, en kötü durumda eskisi
     // kadar iyi. "Zarif bozulma" (graceful degradation) denen sey.
     // ==============================================================
     refetchInterval: hubStatus === 'connected' ? false : 10_000,
 
-    // staleTime'i 0'a cekiyorum. App.tsx'te varsayilan 60 saniye ve
-    // o deger burada YANLIS olurdu: yenileme istegi gitse bile
-    // "veri hala taze" denip sonuc yok sayilabilirdi.
+    // staleTime'i 0'a cekiyorum. App.tsx'te varsayılan 60 saniye ve
+    // o deger burada YANLIS olurdu: yenileme isteği gitse bile
+    // "veri hâlâ taze" denip sonuç yok sayilabilirdi.
     staleTime: 0,
   })
 
   const seats = useMemo(() => availabilityQuery.data?.seats ?? [], [availabilityQuery.data])
 
   // ================================================================
-  // CAKISMA TESPITI -- PDF Sprint 7: "Cakisma bildirimi"
+  // CAKISMA TESPITI -- PDF Sprint 7: "Çakışma bildirimi"
   // ================================================================
   // Her yenilemeden sonra soruyoruz: sectigim koltuklardan biri
-  // artik bos degil mi?
+  // artık boş değil mi?
   //
-  // Bu, kullanicinin kaybettigi koltugu SESSIZCE secili gostermeyi
-  // engelliyor. Aksi halde kullanici "Koltuklari ayirt"a basar,
-  // 409 alir ve neden oldugunu anlamaz. Kotu haberi erken vermek,
-  // gec vermekten iyidir.
+  // Bu, kullanıcının kaybettigi koltuğu SESSIZCE seçili gostermeyi
+  // engelliyor. Aksi halde kullanıcı "Koltukları ayırt"a basar,
+  // 409 alır ve neden olduğunu anlamaz. Kotu haberi erken vermek,
+  // geç vermekten iyidir.
   //
   // ----------------------------------------------------------------
-  // NEDEN useEffect DEGIL?
+  // NEDEN useEffect DEĞİL?
   // ----------------------------------------------------------------
-  // Ilk yazimimda bunu bir effect icinde yapip kaybedilen koltuklari
-  // setSelected ile state'ten siliyordum. Calisiyordu ama yanlis
-  // yontemdi: kullanici hicbir sey YAPMADIGI halde state
-  // degistiriyordu ve React fazladan bir render turu doneyordu.
+  // İlk yazimimda bunu bir effect içinde yapip kaybedilen koltukları
+  // setSelected ile state'ten siliyordum. Calisiyordu ama yanlış
+  // yontemdi: kullanıcı hiçbir sey YAPMADIGI halde state
+  // degistiriyordu ve React fazladan bir render türü doneyordu.
   //
   // Kaybedilen koltuk, `selected` ile `seats`in bir SONUCU --
-  // bagimsiz bir bilgi degil. Sonuc olan seyi state'te tutmak,
-  // ayni gercegi iki yerde saklamak demek; ikisi kacinilmaz olarak
+  // bağımsız bir bilgi değil. Sonuç olan seyi state'te tutmak,
+  // aynı gercegi iki yerde saklamak demek; ikisi kacinilmaz olarak
   // birbirinden ayrilir.
   //
-  // Bu yuzden render sirasinda HESAPLIYORUM. `selected` icinde eski
-  // kimlikler kalabilir ama hicbir yerde dogrudan kullanilmiyor;
-  // her tuketici asagidaki `activeSelected`i okuyor.
+  // Bu yüzden render sırasında HESAPLIYORUM. `selected` içinde eski
+  // kimlikler kalabilir ama hiçbir yerde doğrudan kullanılmıyor;
+  // her tuketici aşağıdaki `activeSelected`i okuyor.
   // ================================================================
   const lostSeats = useMemo(
     () =>
@@ -271,16 +271,16 @@ export function SeatSelectionPage() {
    * ----------------------------------------------------------------
    * IDEMPOTENCY ANAHTARININ OMRU
    * ----------------------------------------------------------------
-   * Anahtar, SECIME bagli. Kullanici ayni koltuklarla ikinci kez
+   * Anahtar, SECIME bağlı. Kullanıcı aynı koltuklarla ikinci kez
    * gonderirse (butona iki kez basti, ag koptu ve tekrar denedi)
    * AYNI anahtar gider ve backend ikinci rezervasyonu olusturmaz.
    *
-   * Ama kullanici secimi DEGISTIRIRSE bu artik bambaska bir istek --
-   * eski anahtarla gonderirsek backend "bunu zaten yaptim" deyip
-   * ESKI rezervasyonu dondururdu ve kullanici yanlis koltuklari
-   * satin alirdi. Bu yuzden secim degisince anahtari sifirliyorum.
+   * Ama kullanıcı seçimi DEGISTIRIRSE bu artık bambaska bir istek --
+   * eski anahtarla gonderirsek backend "bunu zaten yaptım" deyip
+   * ESKİ rezervasyonu dondururdu ve kullanıcı yanlış koltukları
+   * satin alırdı. Bu yüzden seçim değişince anahtari sifirliyorum.
    *
-   * useRef kullaniyorum, useState degil: bu deger ekranda
+   * useRef kullanıyorum, useState değil: bu deger ekranda
    * gorunmuyor, degismesi yeniden cizim gerektirmiyor.
    * ----------------------------------------------------------------
    */
@@ -292,26 +292,26 @@ export function SeatSelectionPage() {
     // ==============================================================
     // NEDEN FONKSIYONEL GUNCELLEME? -- TARAYICIDA YAKALADIGIM HATA
     // ==============================================================
-    // Ilk yazimim soyleydi:
+    // İlk yazimim soyleydi:
     //
     //     const next = new Set(activeSelected)   // <-- HATALI
     //     ...
     //     setSelected(next)
     //
-    // Tek tek tiklamada calisiyordu. Ama tarayicida ucunu ARKA ARKAYA
-    // tiklayinca yalnizca SONUNCUSU secili kaldi.
+    // Tek tek tiklamada calisiyordu. Ama tarayıcıda ucunu ARKA ARKAYA
+    // tıklayınca yalnızca SONUNCUSU seçili kaldı.
     //
-    // Sebep: React ayni tur icindeki state guncellemelerini TOPLUYOR.
-    // Uc cagri da ayni render'in `activeSelected` degerini goruyor --
-    // yani ucu de BOS kumeden turetiliyor ve birbirini eziyor.
+    // Sebep: React aynı tur icindeki state guncellemelerini TOPLUYOR.
+    // Uc cagri da aynı render'in `activeSelected` degerini görüyor --
+    // yani ucu de BOŞ kumeden turetiliyor ve birbirini eziyor.
     //
-    // `setSelected(prev => ...)` ile React bize O ANKI degeri veriyor;
-    // ikinci cagri birincinin sonucunu goruyor. Hizli tiklamada da
-    // dogru calisiyor.
+    // `setSelected(prev => ...)` ile React bize O ANKI değeri veriyor;
+    // ikinci cagri birincinin sonucunu görüyor. Hizli tiklamada da
+    // doğru çalışıyor.
     //
-    // Kaybedilen koltuklari `lostIds` ile burada temizliyorum:
-    // `prev` guncel olmali ama `lostIds` sunucu verisinden geliyor ve
-    // tiklama anindaki degeri dogru -- ikisini karistirmamak onemli.
+    // Kaybedilen koltukları `lostIds` ile burada temizliyorum:
+    // `prev` güncel olmalı ama `lostIds` sunucu verisinden geliyor ve
+    // tiklama anindaki değeri doğru -- ikisini karistirmamak önemli.
     // ==============================================================
     setSelected((prev) => {
       const next = new Set([...prev].filter((id) => !lostIds.has(id)))
@@ -326,7 +326,7 @@ export function SeatSelectionPage() {
     })
   }
 
-  /** Cakisma uyarisini kapatir: kaybedilen koltuklari secimden duser. */
+  /** Çakışma uyarisini kapatır: kaybedilen koltukları seçimden duser. */
   const dismissConflict = () =>
     setSelected((prev) => new Set([...prev].filter((id) => !lostIds.has(id))))
 
@@ -341,14 +341,14 @@ export function SeatSelectionPage() {
     },
 
     onSuccess: (reservation) => {
-      // Rezervasyon detayini onbellege ELIMIZLE koyuyorum.
+      // Rezervasyon detayını onbellege ELIMIZLE koyuyorum.
       //
-      // Yonlendirdigimiz sayfa ayni veriyi isteyecek. Onbellege
-      // koymasaydik o sayfa acilir acilmaz bos bir iskelet gosterip
+      // Yonlendirdigimiz sayfa aynı veriyi isteyecek. Onbellege
+      // koymasaydik o sayfa açılır acilmaz boş bir iskelet gosterip
       // yeni bir istek atardi -- oysa veri elimizde.
       //
-      // Bu ozellikle onemli cunku GERI SAYIM o sayfada basliyor;
-      // fazladan bir gidis-donus, sayacin gec baslamasi demekti.
+      // Bu ozellikle önemli çünkü GERİ SAYIM o sayfada başlıyor;
+      // fazladan bir gidis-donus, sayacin geç baslamasi demekti.
       queryClient.setQueryData(['reservation', reservation.id], reservation)
 
       navigate(`/rezervasyonlar/${reservation.id}`)
@@ -357,8 +357,8 @@ export function SeatSelectionPage() {
     onError: () => {
       // Hata ne olursa olsun haritayi tazele.
       //
-      // 409 aldiysak koltugu baskasi kapmis demektir; kullaniciya
-      // guncel durumu gostermeliyiz. Yenilemeseydik kullanici ayni
+      // 409 aldiysak koltuğu başkası kapmis demektir; kullanıcıya
+      // güncel durumu gostermeliyiz. Yenilemeseydik kullanıcı aynı
       // dolu koltukla tekrar tekrar denerdi.
       void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
     },
@@ -367,13 +367,13 @@ export function SeatSelectionPage() {
   // ================================================================
   // HARITA VERISINI HAZIRLA
   // ================================================================
-  // Backend koltuklari DUZ bir liste olarak donuyor; harita ise
-  // bolumlere gruplanmis istiyor. Ceviriyi burada yapiyorum.
+  // Backend koltukları DUZ bir liste olarak dönüyor; harita ise
+  // bolumlere gruplanmis istiyor. Ceviriyi burada yapıyorum.
   //
-  // useMemo SART: bu hesap 2000 koltuk icin yeni nesneler uretiyor.
-  // Sarmasaydik, her saniye (geri sayim, fare hareketi, herhangi bir
-  // state degisikligi) yeniden calisir ve SeatMap'in kendi useMemo'su
-  // da bosa cikardi -- cunku ona her seferinde YENI bir dizi
+  // useMemo ŞART: bu hesap 2000 koltuk için yeni nesneler uretiyor.
+  // Sarmasaydik, her saniye (geri sayım, fare hareketi, herhangi bir
+  // state degisikligi) yeniden çalışır ve SeatMap'in kendi useMemo'su
+  // da bosa çıkardı -- çünkü ona her seferinde YENI bir dizi
   // gonderirdik.
   // ================================================================
   const mapSections = useMemo<SeatMapSection[]>(() => {
@@ -392,9 +392,9 @@ export function SeatSelectionPage() {
     return [...bySection.entries()].map(([sectionId, section], index) => ({
       id: sectionId,
       name: section.name,
-      // Backend bolum sirasini bu uc noktada dondurmuyor; listedeki
-      // gorulme sirasini kullaniyorum. Backend koltuklari bolum ve
-      // sira etiketine gore sirali donduruyor, bu yuzden sonuc
+      // Backend bölüm sırasını bu uc noktada dondurmuyor; listedeki
+      // gorulme sırasını kullanıyorum. Backend koltukları bölüm ve
+      // sıra etiketine göre sıralı döndürüyor, bu yüzden sonuç
       // tutarli.
       displayOrder: index,
       seats: section.seats.map((seat) => ({
@@ -412,10 +412,10 @@ export function SeatSelectionPage() {
                 ? SEAT_COLORS.sold
                 : SEAT_COLORS.blocked,
 
-        // Yalnizca BOS koltuk tiklanabilir.
+        // Yalnızca BOŞ koltuk tıklanabilir.
         //
-        // Kilitli koltugu tiklatmamak bilincli: kullanici "10 dakika
-        // sonra bosalir" diye bekleyemez, o sirada baskasi odemeyi
+        // Kilitli koltuğu tiklatmamak bilinçli: kullanıcı "10 dakika
+        // sonra bosalir" diye bekleyemez, o sırada başkası ödemeyi
         // tamamlamis olabilir. Umut vermek yerine net olmak daha iyi.
         selectable: seat.status === EventSeatStatus.Available,
         description: `${seat.ticketTypeName}, ${formatMoney(seat.price, seat.currency)} - ${seatStatusLabel(seat.status)}`,
@@ -423,7 +423,7 @@ export function SeatSelectionPage() {
     }))
   }, [seats, activeSelected])
 
-  // Secili koltuklarin detaylari -- ozet paneli icin.
+  // Seçili koltuklarin detaylari -- özet paneli için.
   const selectedSeats = useMemo(
     () => seats.filter((s) => activeSelected.has(s.eventSeatId)),
     [seats, activeSelected],
@@ -440,9 +440,9 @@ export function SeatSelectionPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-bold text-slate-900">Koltuk secimi</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Koltuk seçimi</h1>
 
-          {/* PDF Sprint 10: "Baglanti durumu gostergesi" */}
+          {/* PDF Sprint 10: "Bağlantı durumu göstergesi" */}
           <ConnectionIndicator status={hubStatus} />
         </div>
 
@@ -454,7 +454,7 @@ export function SeatSelectionPage() {
         )}
 
         {/* PDF Sprint 10 olayi: EventCancelled.
-            Kullanici koltuk secerken etkinlik iptal edilirse aninda
+            Kullanıcı koltuk seçerken etkinlik iptal edilirse anında
             haber veriyoruz -- rezervasyonda hata almasini beklemeden. */}
         {cancelledTitle && (
           <div className="mt-4">
@@ -466,7 +466,7 @@ export function SeatSelectionPage() {
                 onClick={() => navigate('/etkinlikler')}
                 className="font-medium underline"
               >
-                Etkinliklere don
+                Etkinliklere dön
               </button>
             </Alert>
           </div>
@@ -486,7 +486,7 @@ export function SeatSelectionPage() {
                   onClick={dismissConflict}
                   className="shrink-0 rounded-lg border border-red-300 px-3 py-1 text-xs font-medium hover:bg-red-100"
                 >
-                  Anladim
+                  Anladım
                 </button>
               </div>
             </Alert>
@@ -496,12 +496,12 @@ export function SeatSelectionPage() {
         {problem && (
           <div className="mt-4">
             <Alert variant="error">
-              {/* Kullaniciya errorCode DEGIL, backend'in yazdigi
-                  aciklamayi gosteriyorum. Ama 409 icin ozel bir
-                  metin veriyorum: "cakisma" teknik bir kelime,
-                  kullanici ne yapmasi gerektigini bilmeli. */}
+              {/* Kullanıcıya errorCode DEĞİL, backend'in yazdigi
+                  aciklamayi gösteriyorum. Ama 409 için ozel bir
+                  metin veriyorum: "çakışma" teknik bir kelime,
+                  kullanıcı ne yapmasi gerektigini bilmeli. */}
               {problem.errorCode === 'reservation.seat_conflict'
-                ? 'Sectiginiz koltuklardan biri siz secerken baskasi tarafindan alindi. Harita guncellendi, lutfen tekrar secin.'
+                ? 'Seçtiğiniz koltuklardan biri siz seçerken başkası tarafından alındı. Harita güncellendi, lütfen tekrar seçin.'
                 : problem.detail}
             </Alert>
           </div>
@@ -518,26 +518,26 @@ export function SeatSelectionPage() {
                 sections={mapSections}
                 onSeatClick={toggleSeat}
                 selectedSeatIds={activeSelected}
-                emptyMessage="Bu oturum icin koltuk uretilmemis."
+                emptyMessage="Bu oturum için koltuk üretilmemiş."
                 legend={[
-                  { label: 'Bos', color: SEAT_COLORS.available },
-                  { label: 'Seciminiz', color: SEAT_COLORS.selected },
+                  { label: 'Boş', color: SEAT_COLORS.available },
+                  { label: 'Seçiminiz', color: SEAT_COLORS.selected },
                   { label: 'Tutuluyor', color: SEAT_COLORS.locked },
-                  { label: 'Satildi', color: SEAT_COLORS.sold },
-                  { label: 'Satisa kapali', color: SEAT_COLORS.blocked },
+                  { label: 'Satıldı', color: SEAT_COLORS.sold },
+                  { label: 'Satışa kapalı', color: SEAT_COLORS.blocked },
                 ]}
               />
             )}
           </div>
 
-          {/* ---- OZET PANELI ---- */}
+          {/* ---- OZET PANELİ ---- */}
           <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-6">
-            <h2 className="font-semibold text-slate-900">Seciminiz</h2>
+            <h2 className="font-semibold text-slate-900">Seçiminiz</h2>
 
             {selectedSeats.length === 0 ? (
               <p className="mt-3 text-sm text-slate-500">
-                Haritadan koltuk secin. Sectiginiz koltuklar rezervasyon olusturana kadar kimseye
-                kapatilmaz.
+                Haritadan koltuk seçin. Seçtiğiniz koltuklar rezervasyon oluşturana kadar kimseye
+                kapatılmaz.
               </p>
             ) : (
               <>
@@ -563,7 +563,7 @@ export function SeatSelectionPage() {
                           type="button"
                           onClick={() => toggleSeat(seat.eventSeatId)}
                           className="rounded px-1 text-slate-400 transition-colors hover:text-red-600"
-                          aria-label={`${seat.displayLabel} koltugunu secimden cikar`}
+                          aria-label={`${seat.displayLabel} koltuğunu seçimden çıkar`}
                         >
                           &times;
                         </button>
@@ -579,11 +579,11 @@ export function SeatSelectionPage() {
                   </span>
                 </div>
 
-                {/* Toplami EKRANDA hesapliyorum ama bu yalnizca
+                {/* Toplami EKRANDA hesapliyorum ama bu yalnızca
                     gosterim. Rezervasyon isteginde tutar GONDERMIYORUZ;
                     backend fiyati kendi veritabanindan okuyor.
                     (PDF Sprint 6: "Frontend'in gonderdigi tutara
-                    guvenilmemelidir.") */}
+                    güvenilmemelidir.") */}
               </>
             )}
 
@@ -593,12 +593,12 @@ export function SeatSelectionPage() {
               isLoading={createReservation.isPending}
               onClick={() => createReservation.mutate()}
             >
-              Koltuklari ayirt
+              Koltukları ayırt
             </Button>
 
             <p className="mt-3 text-xs text-slate-500">
-              Rezervasyon olusturunca koltuklar <strong>10 dakika</strong> size kilitlenir. Bu sure
-              icinde odemeyi tamamlamazsaniz koltuklar otomatik olarak serbest birakilir.
+              Rezervasyon oluşturunca koltuklar <strong>10 dakika</strong> size kilitlenir. Bu süre
+              içinde ödemeyi tamamlamazsanız koltuklar otomatik olarak serbest bırakılır.
             </p>
           </aside>
         </div>

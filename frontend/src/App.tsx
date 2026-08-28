@@ -10,18 +10,18 @@ import { Roles } from './types/auth'
 // ===================================================================
 // ROUTE BAZLI KOD BOLME (code splitting)
 // ===================================================================
-// PDF Sprint 18: "Route bazli code splitting uygulanmalidir."
+// PDF Sprint 18: "Route bazlı code splitting uygulanmalıdır."
 //
-// lazy() ile her sayfa AYRI bir JS parcasina derleniyor ve yalnizca
+// lazy() ile her sayfa AYRI bir JS parcasina derleniyor ve yalnızca
 // o sayfaya gidildiginde indiriliyor.
 //
-// Neden onemli? Su an 6 sayfa var, fark kucuk. Ama Sprint 5-13'te
-// organizator paneli, admin paneli, koltuk secim ekrani, raporlama
-// grafikleri eklenecek. Hepsi tek pakette olsaydi, sadece giris
-// yapmak isteyen kullanici Recharts kutuphanesini de indirmek
-// zorunda kalirdi.
+// Neden önemli? Su an 6 sayfa var, fark küçük. Ama Sprint 5-13'te
+// organizatör paneli, admin paneli, koltuk seçim ekrani, raporlama
+// grafikleri eklenecek. Hepsi tek pakette olsaydı, sadece giriş
+// yapmak isteyen kullanıcı Recharts kutuphanesini de indirmek
+// zorunda kalırdı.
 //
-// Simdiden kurmak, sonradan eklemekten kolay: yapiyi bastan dogru
+// Simdiden kurmak, sonradan eklemekten kolay: yapiyi bastan doğru
 // kurunca yeni sayfa eklerken dusunmeye bile gerek kalmiyor.
 // ===================================================================
 const LoginPage = lazy(() =>
@@ -48,8 +48,8 @@ const NotFoundPage = lazy(() =>
   import('./features/misc/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 )
 
-// --- Bilet alma akisi (Sprint 7-8) ---
-// Bu bes sayfa ayri parcalar ama AYNI akisin adimlari. Vite,
+// --- Bilet alma akışı (Sprint 7-8) ---
+// Bu bes sayfa ayrı parcalar ama AYNI akışın adimlari. Vite,
 // paylastiklari kodu (bookingApi, SeatMap, format) ortak bir parcaya
 // koyup her ikisine de bagliyor -- yani tekrar indirilmiyor.
 const EventsPage = lazy(() =>
@@ -79,16 +79,16 @@ const MyFavoritesPage = lazy(() =>
 )
 
 // --- Raporlama paneli (Sprint 13) ---
-// Recharts agir bir kutuphane (~100 KB). Ayri parcada tutmak SART:
-// bilet alan normal kullanici bu kodu HIC indirmiyor.
+// Recharts agir bir kutuphane (~100 KB). Ayrı parcada tutmak ŞART:
+// bilet alan normal kullanıcı bu kodu HİÇ indirmiyor.
 const DashboardPage = lazy(() =>
   import('./features/reports/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
 )
 
 // --- Admin paneli ---
-// Ayri parcalara boluyorum: normal kullanici bu ekranlari HIC
-// indirmeyecek. Koltuk haritasi ve form kutuphaneleri bu sayfalarda
-// yogun; hepsini ana pakete koysaydik giris yapan herkes bedelini oderdi.
+// Ayrı parcalara boluyorum: normal kullanıcı bu ekranlari HİÇ
+// indirmeyecek. Koltuk haritası ve form kutuphaneleri bu sayfalarda
+// yogun; hepsini ana pakete koysaydık giriş yapan herkes bedelini oderdi.
 const VenuesPage = lazy(() =>
   import('./features/admin/pages/VenuesPage').then((m) => ({ default: m.VenuesPage })),
 )
@@ -106,18 +106,18 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // 1 dakika boyunca veriyi "taze" say, tekrar isteme.
-      // Varsayilan 0'dir; yani her bilesen bagladiginda yeni istek gider.
+      // Varsayılan 0'dir; yani her bileşen bagladiginda yeni istek gider.
       staleTime: 60_000,
 
       // ==============================================================
       // 401 ve 403'te YENIDEN DENEME
       // ==============================================================
-      // Varsayilan davranis basarisiz istegi 3 kez tekrarlar.
+      // Varsayılan davranis başarısız isteği 3 kez tekrarlar.
       //
-      // Bu bizim icin ZARARLI olurdu: 401 alan bir istek zaten
-      // interceptor tarafindan token yenilenip tekrarlaniyor.
-      // TanStack Query bir de kendi basina 3 kez denerse, tek bir
-      // basarisizlik 4 gereksiz istege donusur.
+      // Bu bizim için ZARARLI olurdu: 401 alan bir istek zaten
+      // interceptor tarafından token yenilenip tekrarlaniyor.
+      // TanStack Query bir de kendi başına 3 kez denerse, tek bir
+      // basarisizlik 4 gereksiz isteğe donusur.
       //
       // 403'te tekrar denemek ise tamamen anlamsiz: yetki yoksa
       // 100 kez de denesen yine yok.
@@ -131,16 +131,16 @@ const queryClient = new QueryClient({
         return failureCount < 2
       },
 
-      // Sekme degistirip geri geldiginde otomatik yenileme.
-      // Koltuk uygunlugu gibi hizli degisen veriler icin degerli.
+      // Sekme degistirip geri geldiğinde otomatik yenileme.
+      // Koltuk uygunlugu gibi hizli degisen veriler için degerli.
       refetchOnWindowFocus: true,
     },
 
     mutations: {
       // Mutation'lar (POST/PUT/DELETE) ASLA otomatik tekrarlanmamali.
       //
-      // "Rezervasyon olustur" istegi basarisiz gorunup aslinda
-      // basarili olduysa, tekrar gondermek IKINCI bir rezervasyon
+      // "Rezervasyon oluştur" isteği başarısız gorunup aslında
+      // başarılı olduysa, tekrar gondermek IKINCI bir rezervasyon
       // olusturabilir. Backend'de idempotency var ama ona guvenip
       // gereksiz istek gondermenin anlami yok.
       retry: false,
@@ -165,11 +165,11 @@ export default function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          {/* Suspense: lazy() ile yuklenen sayfa hazir olana kadar
-              fallback gosterilir. Olmasaydi React hata firlatirdi. */}
+          {/* Suspense: lazy() ile yuklenen sayfa hazır olana kadar
+              fallback gosterilir. Olmasaydı React hata firlatirdi. */}
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              {/* ---- Yalnizca giris YAPMAMIS kullanicilar ---- */}
+              {/* ---- Yalnızca giriş YAPMAMIS kullanıcılar ---- */}
               <Route element={<PublicOnlyRoute />}>
                 <Route path="/giris" element={<LoginPage />} />
                 <Route path="/kayit" element={<RegisterPage />} />
@@ -177,22 +177,22 @@ export default function App() {
                 <Route path="/sifre-sifirla" element={<ResetPasswordPage />} />
               </Route>
 
-              {/* ---- Giris gerektiren sayfalar ---- */}
+              {/* ---- Giriş gerektiren sayfalar ---- */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<HomePage />} />
 
-                {/* ---- Bilet alma akisi ----
-                    Etkinlik listesi ve detayi backend'de ANONIM erisime
-                    acik. Yine de ProtectedRoute icine koyuyorum: bu
-                    akisin sonu rezervasyon ve odeme, ikisi de giris
+                {/* ---- Bilet alma akışı ----
+                    Etkinlik listesi ve detayı backend'de ANONIM erisime
+                    açık. Yine de ProtectedRoute icine koyuyorum: bu
+                    akışın sonu rezervasyon ve ödeme, ikisi de giriş
                     gerektiriyor.
 
-                    Kullaniciyi 4 sayfa gezdirip koltugu sectirdikten
-                    SONRA "once giris yapin" demek, en can sikici
-                    deneyimlerden biridir. Kapiyi bastan gosteriyorum.
+                    Kullaniciyi 4 sayfa gezdirip koltuğu sectirdikten
+                    SONRA "önce giriş yapın" demek, en can sıkıcı
+                    deneyimlerden biridir. Kapiyi bastan gösteriyorum.
 
                     Sprint 11'de arama ve listeleme herkese acilacak
-                    (SEO icin de gerekli); o zaman bu iki rota
+                    (SEO için de gerekli); o zaman bu iki rota
                     disari alinacak. */}
                 <Route path="/etkinlikler" element={<EventsPage />} />
                 <Route path="/etkinlikler/:eventId" element={<EventDetailPage />} />
@@ -205,9 +205,9 @@ export default function App() {
               </Route>
 
               {/* ---- Admin paneli ----
-                  ProtectedRoute roles={['Admin']} -> yalnizca admin gorur.
-                  UNUTMA: bu bir GUVENLIK onlemi degil, kullanici deneyimi.
-                  Gercek kontrol backend'de AdminOnly policy'sinde. */}
+                  ProtectedRoute roles={['Admin']} -> yalnızca admin görür.
+                  UNUTMA: bu bir GÜVENLİK önlemi değil, kullanıcı deneyimi.
+                  Gerçek kontrol backend'de AdminOnly policy'sinde. */}
               <Route element={<ProtectedRoute roles={[Roles.Admin]} />}>
                 <Route path="/admin/mekanlar" element={<VenuesPage />} />
                 <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
@@ -217,8 +217,8 @@ export default function App() {
 
               <Route path="/yetkisiz" element={<UnauthorizedPage />} />
 
-              {/* Turkce yollari kullaniyorum ama Ingilizce deneyenler
-                  icin de yonlendirme koyuyorum -- kirik link olmasin. */}
+              {/* Turkce yollari kullanıyorum ama Ingilizce deneyenler
+                  için de yönlendirme koyuyorum -- kırık link olmasın. */}
               <Route path="/login" element={<Navigate to="/giris" replace />} />
               <Route path="/register" element={<Navigate to="/kayit" replace />} />
 
@@ -227,8 +227,8 @@ export default function App() {
           </Suspense>
         </BrowserRouter>
 
-        {/* Devtools yalnizca gelistirmede paketlenir.
-            import.meta.env.DEV, Vite tarafindan uretim derlemesinde
+        {/* Devtools yalnızca gelistirmede paketlenir.
+            import.meta.env.DEV, Vite tarafından üretim derlemesinde
             false'a sabitlenir ve bu blok tamamen silinir (tree shaking). */}
         {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>

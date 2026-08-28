@@ -9,8 +9,8 @@ import { Roles } from '../../types/auth'
 /**
  * Uygulamanin ust cubugu.
  *
- * Sprint 7'ye kadar her sayfa kendi basligini ciziyordu. Artik
- * bilet alma akisinda 5 sayfa var ve kullanicinin "biletlerim"e
+ * Sprint 7'ye kadar her sayfa kendi basligini ciziyordu. Artık
+ * bilet alma akisinda 5 sayfa var ve kullanıcının "biletlerim"e
  * her yerden ulasabilmesi gerekiyor -- ortak bir cubuk sart oldu.
  */
 export function SiteHeader() {
@@ -22,9 +22,9 @@ export function SiteHeader() {
   const logout = useMutation({
     mutationFn: () => authApi.logout(refreshToken),
 
-    // onSettled: basarili da olsa basarisiz da olsa calisir.
-    // Sunucuya ulasilamasa bile kullaniciyi cikarmaliyiz;
-    // "cikis yapamadiniz" demek sacma olurdu.
+    // onSettled: başarılı da olsa başarısız da olsa çalışır.
+    // Sunucuya ulasilamasa bile kullanıcıyı cikarmaliyiz;
+    // "çıkış yapamadiniz" demek sacma olurdu.
     onSettled: () => {
       clearSession()
       navigate('/giris', { replace: true })
@@ -32,7 +32,7 @@ export function SiteHeader() {
   })
 
   // NavLink, aktif rotada `isActive` veriyor. Bunu kullanmak
-  // kullaniciya "hangi sayfadayim" bilgisini veriyor -- basit ama
+  // kullanıcıya "hangi sayfadayim" bilgisini veriyor -- basit ama
   // olmadiginda kaybolmus hissettiren bir detay.
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -60,16 +60,16 @@ export function SiteHeader() {
             Favorilerim
           </NavLink>
 
-          {/* Admin baglantisini yalnizca admin GORUR.
-              UNUTMA: bu bir guvenlik onlemi DEGIL, kullanici deneyimi.
+          {/* Admin baglantisini yalnızca admin GORUR.
+              UNUTMA: bu bir güvenlik önlemi DEĞİL, kullanıcı deneyimi.
               Baglantiyi gizlemek adresi elle yazmayi engellemez --
-              gercek kontrol backend'deki AdminOnly policy'sinde.
+              gerçek kontrol backend'deki AdminOnly policy'sinde.
 
-              Rolu `user` uzerinden okuyorum, store.getState() ile
-              DEGIL: getState() abonelik kurmaz, kullanici degisince
-              bu satir yeniden hesaplanmazdi. */}
-          {/* Panel: organizator VEYA admin gorebilir.
-              Normal kullanici gorse de backend 403 doner. */}
+              Rolu `user` üzerinden okuyorum, store.getState() ile
+              DEĞİL: getState() abonelik kurmaz, kullanıcı değişince
+              bu satır yeniden hesaplanmazdi. */}
+          {/* Panel: organizatör VEYA admin görebilir.
+              Normal kullanıcı gorse de backend 403 döner. */}
           {(user?.roles.includes(Roles.Admin) || user?.roles.includes(Roles.Organizer)) && (
             <NavLink to="/panel" className={linkClass}>
               Panel
@@ -78,12 +78,12 @@ export function SiteHeader() {
 
           {user?.roles.includes(Roles.Admin) && (
             <NavLink to="/admin/mekanlar" className={linkClass}>
-              Yonetim
+              Yönetim
             </NavLink>
           )}
         </nav>
 
-        {/* PDF Sprint 14: bildirim zili. Her sayfada erisilebilir. */}
+        {/* PDF Sprint 14: bildirim zili. Her sayfada erişilebilir. */}
         <NotificationBell />
 
         {user && (
@@ -93,7 +93,7 @@ export function SiteHeader() {
         )}
 
         <Button variant="secondary" onClick={() => logout.mutate()} isLoading={logout.isPending}>
-          Cikis
+          Çıkış
         </Button>
       </div>
     </header>

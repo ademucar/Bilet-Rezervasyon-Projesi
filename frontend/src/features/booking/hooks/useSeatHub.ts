@@ -13,21 +13,21 @@ import {
  * Sprint 7'de koltuk haritasini 10 saniyede bir yokluyorduk
  * (refetchInterval). O zaman koda su notu birakmistim:
  *
- *   "Bu bir GECICI cozum. PDF Sprint 10'da SignalR gelecek ve
- *    sunucu degisiklikleri ANINDA itecek."
+ *   "Bu bir GECICI çözüm. PDF Sprint 10'da SignalR gelecek ve
+ *    sunucu değişiklikleri ANINDA itecek."
  *
- * Bu kanca o notun karsiligi.
+ * Bu kanca o notun karşılığı.
  * ==================================================================
  */
 
-/** Sunucudan gelen olaylar. Adlar backend'deki sabitlerle birebir ayni. */
+/** Sunucudan gelen olaylar. Adlar backend'deki sabitlerle birebir aynı. */
 export interface SeatHubHandlers {
   onSeatsLocked: (eventSeatIds: string[]) => void
   onSeatsReleased: (eventSeatIds: string[]) => void
   onSeatsSold: (eventSeatIds: string[]) => void
   onReservationExpired: (reservationId: string) => void
   onEventCancelled: (eventTitle: string) => void
-  /** Yeniden baglandiktan sonra: kacirdigimiz olaylar icin listeyi tazele. */
+  /** Yeniden baglandiktan sonra: kaçırdığımız olaylar için listeyi tazele. */
   onReconnected: () => void
 }
 
@@ -48,31 +48,31 @@ export function useSeatHub(
    * ----------------------------------------------------------------
    * HANDLER'LARI REF'TE TUTMANIN SEBEBI
    * ----------------------------------------------------------------
-   * Bu kancayi cagiran bilesen her render'da YENI bir handlers
-   * nesnesi olusturuyor (nesne literali). Eger handlers'i asagidaki
-   * useEffect'in bagimlilik dizisine koysaydik, effect HER RENDER'DA
+   * Bu kancayi cagiran bileşen her render'da YENI bir handlers
+   * nesnesi olusturuyor (nesne literali). Eger handlers'i aşağıdaki
+   * useEffect'in bagimlilik dizisine koysaydık, effect HER RENDER'DA
    * yeniden calisirdi.
    *
-   * Sonuc: saniyede birkac kez baglanti kurulup kapatilirdi. Sunucu
-   * her seferinde yeni bir baglanti kaydeder, gruba ekler, sonra
-   * siler. Uygulama calisiyor gibi gorunur ama sunucu bosuna yanar
+   * Sonuç: saniyede birkaç kez bağlantı kurulup kapatilirdi. Sunucu
+   * her seferinde yeni bir bağlantı kaydeder, gruba ekler, sonra
+   * siler. Uygulama çalışıyor gibi görünür ama sunucu boşuna yanar
    * ve olaylar kacirilir.
    *
-   * Ref ile: effect YALNIZCA eventSessionId degisince calisiyor,
-   * ama olay geldiginde her zaman EN GUNCEL handler'lar cagriliyor.
+   * Ref ile: effect YALNIZCA eventSessionId değişince çalışıyor,
+   * ama olay geldiğinde her zaman EN GUNCEL handler'lar cagriliyor.
    * ----------------------------------------------------------------
    */
   const handlersRef = useRef(handlers)
 
-  // Atamayi RENDER SIRASINDA degil, render'dan SONRA yapiyorum.
+  // Atamayi RENDER SIRASINDA değil, render'dan SONRA yapıyorum.
   //
-  // Ilk yazimim `handlersRef.current = handlers` seklinde, dogrudan
-  // govdedeydi. Lint (react/refs) hakli olarak uyardi: render
-  // sirasinda ref'e yazmak, React'in saf render sozunu bozar.
+  // İlk yazimim `handlersRef.current = handlers` seklinde, doğrudan
+  // govdedeydi. Lint (react/refs) haklı olarak uyardi: render
+  // sırasında ref'e yazmak, React'in saf render sozunu bozar.
   //
-  // Bagimlilik dizisi YOK -- yani her render'dan sonra calisiyor.
+  // Bagimlilik dizisi YOK -- yani her render'dan sonra çalışıyor.
   // Bu tam olarak istedigimiz sey: ref her zaman en son
-  // handler'lari tutuyor ama baglanti effect'i tetiklenmiyor.
+  // handler'lari tutuyor ama bağlantı effect'i tetiklenmiyor.
   useEffect(() => {
     handlersRef.current = handlers
   })
@@ -86,29 +86,29 @@ export function useSeatHub(
 
     const connection = new HubConnectionBuilder()
       // Gorece adres: Vite proxy'si /hubs'i backend'e yonlendiriyor.
-      // Mutlak adres yazsaydik uretimde ortam bazli yapilandirma
-      // gerekirdi -- API istemcisinde de ayni yaklasimi kullaniyoruz.
+      // Mutlak adres yazsaydık uretimde ortam bazlı yapilandirma
+      // gerekirdi -- API istemcisinde de aynı yaklasimi kullanıyoruz.
       .withUrl('/hubs/seats')
 
       // ==========================================================
-      // OTOMATIK YENIDEN BAGLANMA -- PDF: "SignalR baglantisi
+      // OTOMATIK YENIDEN BAGLANMA -- PDF: "SignalR bağlantısı
       // kesildiginde frontend yeniden baglanmalidir."
       // ==========================================================
-      // Varsayilan withAutomaticReconnect() yalnizca DORT kez dener
+      // Varsayılan withAutomaticReconnect() yalnızca DORT kez dener
       // (0, 2, 10, 30 sn) ve sonra PES EDER.
       //
-      // Bizim icin bu yetersiz: kullanici koltuk secim ekraninda
-      // 10 dakika kalabilir. Wi-Fi'si iki dakika kesilse baglanti
-      // kalici olarak olurdu ve kullanici bunu FARK ETMEDEN eski
+      // Bizim için bu yetersiz: kullanıcı koltuk seçim ekraninda
+      // 10 dakika kalabilir. Wi-Fi'si iki dakika kesilse bağlantı
+      // kalici olarak olurdu ve kullanıcı bunu FARK ETMEDEN eski
       // bir haritaya bakmaya devam ederdi.
       //
       // Kendi stratejimi veriyorum: artan araliklarla ama SONSUZA
       // KADAR deniyor.
       //
       // Neden artan? Sunucu tamamen kapaliysa her saniye denemek
-      // hem istemciyi hem sunucuyu bosuna yorar. Neden 30 saniyede
-      // duruyor? Daha uzun beklemek, sunucu geri geldiginde
-      // kullanicinin yarim dakikadan fazla eski veri gormesi
+      // hem istemciyi hem sunucuyu boşuna yorar. Neden 30 saniyede
+      // duruyor? Daha uzun beklemek, sunucu geri geldiğinde
+      // kullanıcının yarim dakikadan fazla eski veri gormesi
       // demek olurdu.
       // ==========================================================
       .withAutomaticReconnect({
@@ -119,9 +119,9 @@ export function useSeatHub(
         },
       })
 
-      // Uretimde yalnizca hatalar. Gelistirmede Information:
-      // baglanti kurulumu ve grup islemleri konsolda gorunuyor,
-      // sorun teshisi cok kolaylasiyor.
+      // Uretimde yalnızca hatalar. Gelistirmede Information:
+      // bağlantı kurulumu ve grup islemleri konsolda görünüyor,
+      // sorun teshisi çok kolaylasiyor.
       .configureLogging(import.meta.env.DEV ? LogLevel.Information : LogLevel.Error)
       .build()
 
@@ -130,11 +130,11 @@ export function useSeatHub(
     // ==============================================================
     // OLAY DINLEYICILERI -- adlar backend ile BIREBIR
     // ==============================================================
-    // SignalR eslesmeyen bir olay adini HATA SAYMAZ; mesaj sessizce
-    // hicbir yere gitmez. Yani "SeatLocked" yerine "seatLocked"
-    // yazsaydik hicbir uyari almadan calismaz olurdu.
+    // SignalR eslesmeyen bir olay adını HATA SAYMAZ; mesaj sessizce
+    // hiçbir yere gitmez. Yani "SeatLocked" yerine "seatLocked"
+    // yazsaydık hiçbir uyarı almadan calismaz olurdu.
     //
-    // Bu yuzden adlari kopyala-yapistir ile aliyorum, elle
+    // Bu yüzden adları kopyala-yapistir ile alıyorum, elle
     // yazmiyorum.
     // ==============================================================
     connection.on('SeatLocked', (payload: SeatEventPayload) => {
@@ -157,7 +157,7 @@ export function useSeatHub(
       handlersRef.current.onEventCancelled(payload.eventTitle)
     })
 
-    // ---- Baglanti durumu ----
+    // ---- Bağlantı durumu ----
     connection.onreconnecting(() => setStatus('reconnecting'))
 
     connection.onreconnected(() => {
@@ -165,25 +165,25 @@ export function useSeatHub(
 
       // ==========================================================
       // YENIDEN BAGLANINCA LISTEYI BASTAN CEK
-      // PDF Frontend gorevi: "Guncel koltuk listesini yeniden cekme"
+      // PDF Frontend gorevi: "Güncel koltuk listesini yeniden çekme"
       // ==========================================================
-      // Bu satir, kancanin en kritik yeri.
+      // Bu satır, kancanin en kritik yeri.
       //
-      // Baglanti kopukken gecen surede sunucu onlarca olay
+      // Bağlantı kopukken gecen surede sunucu onlarca olay
       // gondermis olabilir ve HICBIRI bize ulasmadi. SignalR
       // kacirilan mesajlari BIRIKTIRMEZ.
       //
-      // Yani yeniden baglanti tek basina yetmez: elimizdeki
-      // harita hala eski. Tam listeyi cekmek, kacirdigimiz her
+      // Yani yeniden bağlantı tek başına yetmez: elimizdeki
+      // harita hâlâ eski. Tam listeyi cekmek, kaçırdığımız her
       // seyi tek hamlede telafi ediyor.
       //
-      // Bu ayni zamanda SignalR'a neden "kaybolursa olur"
+      // Bu aynı zamanda SignalR'a neden "kaybolursa olur"
       // diyebildigimizin sebebi: her zaman guvenilir bir
       // toparlanma yolumuz var.
       // ==========================================================
       void connection.invoke('JoinSession', eventSessionId).catch(() => {
-        // Gruba yeniden katilma basarisiz olursa da liste
-        // cekiliyor; kullanici en azindan guncel veriyi goruyor.
+        // Gruba yeniden katilma başarısız olursa da liste
+        // çekiliyor; kullanıcı en azindan güncel veriyi görüyor.
       })
 
       handlersRef.current.onReconnected()
@@ -196,23 +196,23 @@ export function useSeatHub(
     // ==============================================================
     // LINT: react/set-state-in-effect -- GEREKCEYLE SUSTURULDU
     // ==============================================================
-    // Kural, effect icinde senkron setState cagirmaya karsi uyariyor
-    // ve cogu durumda hakli. Ama kuralin KENDI aciklamasi istisnayi
-    // soyluyor: "Use an effect only when synchronizing with an
+    // Kural, effect içinde senkron setState cagirmaya karsi uyariyor
+    // ve çoğu durumda haklı. Ama kuralin KENDİ açıklaması istisnayi
+    // söylüyor: "Use an effect only when synchronizing with an
     // external system."
     //
     // Burada tam olarak o durum var: React'i bir WEBSOCKET
-    // BAGLANTISINA bagliyoruz. Baglanti kurulmaya baslarken durumu
+    // BAGLANTISINA bagliyoruz. Bağlantı kurulmaya baslarken durumu
     // "connecting" yapmak, dis sistemin durumunu ekrana yansitmak
     // demek.
     //
-    // Bu satiri silmeyi denedim: oturum degistirildiginde (kullanici
-    // baska bir oturuma gecince) eski baglanti kapanip "disconnected"
-    // yaziyor ve gosterge bir an KIRMIZI yaniyordu. Kullaniciya
-    // olmayan bir sorunu bildirmek, kucuk bir lint uyarisindan
-    // daha kotu.
+    // Bu satiri silmeyi denedim: oturum degistirildiginde (kullanıcı
+    // başka bir oturuma gecince) eski bağlantı kapanip "disconnected"
+    // yazıyor ve gosterge bir an KIRMIZI yaniyordu. Kullanıcıya
+    // olmayan bir sorunu bildirmek, küçük bir lint uyarisindan
+    // daha kötü.
     //
-    // Projede benimsedigim kural: susturmak serbest degil, yalnizca
+    // Projede benimsedigim kural: susturmak serbest değil, yalnızca
     // "neden" yazildiginda serbest.
     // oxlint-disable-next-line react/set-state-in-effect
     setStatus('connecting')
@@ -222,29 +222,29 @@ export function useSeatHub(
       .then(() => {
         setStatus('connected')
 
-        // PDF is kurali: "Kullanici yalnizca goruntuledigi etkinlik
+        // PDF is kuralı: "Kullanıcı yalnızca goruntuledigi etkinlik
         // oturumunun grubuna katilmalidir."
         return connection.invoke('JoinSession', eventSessionId)
       })
       .catch(() => {
-        // Baglanti kurulamadi.
+        // Bağlantı kurulamadi.
         //
-        // Bu bir FELAKET DEGIL: koltuk haritasi yine calisiyor,
+        // Bu bir FELAKET DEĞİL: koltuk haritası yine çalışıyor,
         // sadece yoklama (polling) ile guncelleniyor. Durum
-        // gostergesi kullaniciya bunu soyluyor.
+        // göstergesi kullanıcıya bunu söylüyor.
         setStatus('disconnected')
       })
 
     // ==============================================================
-    // TEMIZLIK -- SART
+    // TEMIZLIK -- ŞART
     // ==============================================================
-    // Kullanici sayfadan ayrilinca baglantiyi kapatmazsak:
-    //   - Sunucu tarafinda acik baglanti birikir
-    //   - Gruptan cikilmadigi icin mesaj gonderilmeye devam eder
-    //   - Kaldirilmis bilesende setState cagrilir (React uyarisi)
+    // Kullanıcı sayfadan ayrilinca baglantiyi kapatmazsak:
+    //   - Sunucu tarafında açık bağlantı birikir
+    //   - Gruptan cikilmadigi için mesaj gonderilmeye devam eder
+    //   - Kaldirilmis bileşende setState cagrilir (React uyarısı)
     //
     // stop() zaten gruptan da cikariyor; yine de LeaveSession
-    // cagiriyorum ki sunucu tarafinda niyet acik olsun.
+    // cagiriyorum ki sunucu tarafında niyet açık olsun.
     // ==============================================================
     return () => {
       if (connection.state === HubConnectionState.Connected) {

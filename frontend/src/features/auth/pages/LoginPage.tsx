@@ -19,9 +19,9 @@ export function LoginPage() {
   const setSession = useAuthStore((s) => s.setSession)
   const [serverError, setServerError] = useState<string | null>(null)
 
-  // Interceptor oturumu sonlandirirken sebebi URL'e yaziyor.
-  // Kullaniciya "neden cikis yaptim?" sorusunun cevabini veriyoruz --
-  // sessizce giris ekranina atmak cok kotu bir deneyimdir.
+  // Interceptor oturumu sonlandirirken sebebi URL'e yazıyor.
+  // Kullanıcıya "neden çıkış yaptım?" sorusunun cevabini veriyoruz --
+  // sessizce giriş ekranına atmak çok kötü bir deneyimdir.
   const sessionReason = searchParams.get('sebep')
 
   const {
@@ -38,25 +38,25 @@ export function LoginPage() {
     onSuccess: (auth) => {
       setSession(auth)
 
-      // Kullanici korumali bir sayfaya gitmeye calistiysa ProtectedRoute
-      // onu buraya yonlendirirken hedefi state icinde tasidi.
+      // Kullanıcı korumali bir sayfaya gitmeye calistiysa ProtectedRoute
+      // önü buraya yonlendirirken hedefi state içinde tasidi.
       // Giristen sonra oraya donuyoruz -- basa donmek yerine.
       const from = (location.state as { from?: string } | null)?.from ?? '/'
 
-      // replace: true -> tarayici gecmisinde giris sayfasini BIRAKMA.
-      // Yoksa kullanici geri tusuna bastiginda giris ekranina doner
-      // ki zaten giris yapmis durumda. Kafa karistirici olur.
+      // replace: true -> tarayıcı gecmisinde giriş sayfasini BIRAKMA.
+      // Yoksa kullanıcı geri tusuna bastiginda giriş ekranına döner
+      // ki zaten giriş yapmış durumda. Kafa karistirici olur.
       navigate(from, { replace: true })
     },
     onError: (error) => {
       const problem = toProblem(error)
 
-      // Hata kontrolunu METNE gore degil KODA gore yapiyorum.
+      // Hata kontrolunu METNE göre değil KODA göre yapıyorum.
       // Backend mesaji degistirdiginde bu kod bozulmasin.
       const message =
         problem.errorCode === 'auth.account_locked'
-          ? 'Cok fazla basarisiz deneme yapildi. Lutfen 15 dakika sonra tekrar deneyin.'
-          : (problem.detail ?? 'Giris yapilamadi.')
+          ? 'Çok fazla başarısız deneme yapıldı. Lütfen 15 dakika sonra tekrar deneyin.'
+          : (problem.detail ?? 'Giriş yapılamadı.')
 
       setServerError(message)
     },
@@ -64,27 +64,27 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Giris yap"
-      subtitle="Hesabiniza erisin"
+      title="Giriş yap"
+      subtitle="Hesabınıza erişin"
       footer={
         <>
           Hesabiniz yok mu?{' '}
           <Link to="/kayit" className="font-medium text-brand-600 hover:underline">
-            Kayit olun
+            Kayıt olun
           </Link>
         </>
       }
     >
       {sessionReason === 'sure-doldu' && (
         <div className="mb-4">
-          <Alert variant="info">Oturum sureniz doldu. Lutfen tekrar giris yapin.</Alert>
+          <Alert variant="info">Oturum süreniz doldu. Lütfen tekrar giriş yapın.</Alert>
         </div>
       )}
 
       {sessionReason === 'guvenlik' && (
         <div className="mb-4">
           <Alert variant="error">
-            Guvenlik nedeniyle tum oturumlariniz sonlandirildi. Lutfen tekrar giris yapin.
+            Güvenlik nedeniyle tüm oturumlarınız sonlandırıldı. Lütfen tekrar giriş yapın.
           </Alert>
         </div>
       )}
@@ -101,24 +101,24 @@ export function LoginPage() {
           mutation.mutate(data)
         })}
         className="space-y-4"
-        // noValidate: tarayicinin kendi dogrulama balonlarini kapat.
-        // Zod ile tutarli, Turkce ve erisilebilir hatalar gosteriyoruz;
-        // tarayicinin Ingilizce balonlari bunu bozardi.
+        // noValidate: tarayıcının kendi doğrulama balonlarini kapat.
+        // Zod ile tutarli, Turkce ve erişilebilir hatalar gosteriyoruz;
+        // tarayıcının Ingilizce balonlari bunu bozardi.
         noValidate
       >
         <Input
           label="E-posta"
           type="email"
-          // autoComplete: sifre yoneticilerinin alani tanimasini saglar.
-          // Yazmazsak kullanicilar kayitli sifrelerini kullanamaz.
+          // autoComplete: şifre yoneticilerinin alanı tanimasini saglar.
+          // Yazmazsak kullanıcılar kayıtlı sifrelerini kullanamaz.
           autoComplete="email"
-          placeholder="ornek@eposta.com"
+          placeholder="örnek@eposta.com"
           error={errors.email?.message}
           {...register('email')}
         />
 
         <Input
-          label="Sifre"
+          label="Şifre"
           type="password"
           autoComplete="current-password"
           placeholder="••••••••"
@@ -128,12 +128,12 @@ export function LoginPage() {
 
         <div className="flex justify-end">
           <Link to="/sifremi-unuttum" className="text-sm text-brand-600 hover:underline">
-            Sifremi unuttum
+            Şifremi unuttum
           </Link>
         </div>
 
         <Button type="submit" isLoading={isSubmitting || mutation.isPending} className="w-full">
-          Giris yap
+          Giriş yap
         </Button>
       </form>
     </AuthLayout>

@@ -9,22 +9,22 @@ import { formatDateTime, formatMoney } from '../../../lib/format'
 import { bookingApi, TicketStatus, type TicketDto } from '../api/bookingApi'
 
 const STATUS_LABELS: Record<number, { text: string; className: string }> = {
-  [TicketStatus.Active]: { text: 'Gecerli', className: 'bg-emerald-50 text-emerald-700' },
-  [TicketStatus.Used]: { text: 'Kullanildi', className: 'bg-slate-100 text-slate-600' },
-  [TicketStatus.Cancelled]: { text: 'Iptal', className: 'bg-red-50 text-red-700' },
-  [TicketStatus.Refunded]: { text: 'Iade edildi', className: 'bg-amber-50 text-amber-700' },
-  [TicketStatus.Expired]: { text: 'Suresi doldu', className: 'bg-slate-100 text-slate-600' },
+  [TicketStatus.Active]: { text: 'Geçerli', className: 'bg-emerald-50 text-emerald-700' },
+  [TicketStatus.Used]: { text: 'Kullanıldı', className: 'bg-slate-100 text-slate-600' },
+  [TicketStatus.Cancelled]: { text: 'İptal', className: 'bg-red-50 text-red-700' },
+  [TicketStatus.Refunded]: { text: 'İade edildi', className: 'bg-amber-50 text-amber-700' },
+  [TicketStatus.Expired]: { text: 'Süresi doldu', className: 'bg-slate-100 text-slate-600' },
 }
 
 /**
- * Biletlerim -- PDF sayfa 4: "Kullanici kendi biletlerini gorebilmelidir."
+ * Biletlerim -- PDF sayfa 4: "Kullanıcı kendi biletlerini görebilmelidir."
  */
 export function MyTicketsPage() {
   const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<number | undefined>(undefined)
 
-  // Odeme sonrasi buraya "?yeni=1" ile geliyoruz.
-  // Kullanicinin "odemem gecti mi?" tereddudunu ortadan kaldiriyor.
+  // Ödeme sonrası buraya "?yeni=1" ile geliyoruz.
+  // Kullanıcının "odemem gecti mi?" tereddudunu ortadan kaldiriyor.
   const isFreshPurchase = searchParams.get('yeni') === '1'
 
   const ticketsQuery = useQuery({
@@ -42,25 +42,25 @@ export function MyTicketsPage() {
         {isFreshPurchase && (
           <div className="mt-4">
             <Alert variant="success">
-              Odemeniz alindi. Biletleriniz asagida; girise QR kodunuzu okutmaniz yeterli.
+              Ödemeniz alındı. Biletleriniz aşağıda; girişe QR kodunuzu okutmanız yeterli.
             </Alert>
           </div>
         )}
 
         <div className="mt-6 flex flex-wrap gap-2">
           {[
-            { label: 'Tumu', value: undefined },
-            { label: 'Gecerli', value: TicketStatus.Active as number },
-            { label: 'Kullanilmis', value: TicketStatus.Used as number },
-            { label: 'Iade', value: TicketStatus.Refunded as number },
+            { label: 'Tümü', value: undefined },
+            { label: 'Geçerli', value: TicketStatus.Active as number },
+            { label: 'Kullanılmış', value: TicketStatus.Used as number },
+            { label: 'İade', value: TicketStatus.Refunded as number },
           ].map((tab) => (
             <button
               key={tab.label}
               type="button"
               onClick={() => setFilter(tab.value)}
-              // aria-pressed: ekran okuyucuya hangi filtrenin acik
-              // oldugunu soyler. Yalnizca renk degistirseydik
-              // gormeyen kullanici hangi sekmede oldugunu bilemezdi.
+              // aria-pressed: ekran okuyucuya hangi filtrenin açık
+              // olduğunu söyler. Yalnızca renk degistirseydik
+              // görmeyen kullanıcı hangi sekmede olduğunu bilemezdi.
               aria-pressed={filter === tab.value}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 filter === tab.value
@@ -94,7 +94,7 @@ export function MyTicketsPage() {
               to="/etkinlikler"
               className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline"
             >
-              Etkinliklere goz at
+              Etkinliklere göz at
             </Link>
           </div>
         )}
@@ -141,7 +141,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Bilet turu</dt>
+            <dt className="text-slate-500">Bilet türü</dt>
             <dd className="font-medium text-slate-900">{ticket.ticketTypeName}</dd>
           </div>
           <div>
@@ -166,18 +166,18 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
       {/* ============================================================
           QR KODU
           ============================================================
-          Backend qrValue'yu YALNIZCA aktif biletlerde donuyor
-          (GetMyTicketsQueryHandler). Iptal edilmis biletin QR'ini
-          gondermenin faydasi yok ve hassas bir degeri gereksiz yere
+          Backend qrValue'yu YALNIZCA aktif biletlerde dönüyor
+          (GetMyTicketsQueryHandler). İptal edilmiş biletin QR'ini
+          gondermenin faydasi yok ve hassas bir değeri gereksiz yere
           yaymak olurdu.
 
-          Bu yuzden burada `qrValue` null olabilir ve bunu bir HATA
-          gibi degil, beklenen bir durum gibi ele aliyorum.
+          Bu yüzden burada `qrValue` null olabilir ve bunu bir HATA
+          gibi değil, beklenen bir durum gibi ele alıyorum.
 
-          QRCodeSVG kullaniyorum, QRCodeCanvas degil:
+          QRCodeSVG kullanıyorum, QRCodeCanvas değil:
             - SVG vektorel; yakinlastirinca veya yazdirinca bulanmaz.
               Turnikedeki okuyucunun keskin kenarlara ihtiyaci var.
-            - Canvas ise sabit piksel; buyuk ekranda kareli gorunur.
+            - Canvas ise sabit piksel; büyük ekranda kareli görünür.
 
           level="M": hata duzeltme seviyesi. Karekodun bir kismi
           zarar gorse bile (ekran cizigi, parmak izi) okunabilir.
@@ -190,12 +190,12 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
             <div className="rounded-xl border border-slate-200 bg-white p-3">
               <QRCodeSVG value={ticket.qrValue} size={132} level="M" />
             </div>
-            <p className="mt-2 text-xs text-slate-500">Giriste okutun</p>
+            <p className="mt-2 text-xs text-slate-500">Girişte okutun</p>
           </>
         ) : (
           <div className="flex h-[156px] w-[156px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center">
             <p className="text-xs text-slate-500">
-              Bu bilet artik gecerli olmadigi icin QR kodu gosterilmiyor.
+              Bu bilet artık geçerli olmadığı için QR kodu gösterilmiyor.
             </p>
           </div>
         )}

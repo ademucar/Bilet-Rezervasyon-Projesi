@@ -9,7 +9,7 @@ import { Input } from '../../../components/ui/Input'
 import { Alert } from '../../../components/ui/Alert'
 import { AdminLayout } from '../components/AdminLayout'
 
-/** Salonun oturma planlari. PDF Sprint 4: "Oturma plani tasarlama ekrani". */
+/** Salonun oturma planları. PDF Sprint 4: "Oturma planı tasarlama ekrani". */
 export function HallDetailPage() {
   const { hallId } = useParams<{ hallId: string }>()
   const queryClient = useQueryClient()
@@ -38,13 +38,13 @@ export function HallDetailPage() {
       reset()
       setFormError(null)
     },
-    onError: (error) => setFormError(toProblem(error).detail ?? 'Plan olusturulamadi.'),
+    onError: (error) => setFormError(toProblem(error).detail ?? 'Plan oluşturulamadı.'),
   })
 
   return (
     <AdminLayout
-      title="Oturma planlari"
-      subtitle="Bir salonun birden fazla duzeni olabilir (konser, tiyatro...)"
+      title="Oturma planları"
+      subtitle="Bir salonun birden fazla düzeni olabilir (konser, tiyatro...)"
       backTo={{ label: 'Mekanlar', to: '/admin/mekanlar' }}
     >
       <form
@@ -55,25 +55,25 @@ export function HallDetailPage() {
         className="mb-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6"
         noValidate
       >
-        <h2 className="text-sm font-semibold text-slate-900">Yeni oturma plani</h2>
+        <h2 className="text-sm font-semibold text-slate-900">Yeni oturma planı</h2>
 
         {formError && <Alert variant="error">{formError}</Alert>}
 
         <Input
-          label="Plan adi"
-          placeholder="Konser Duzeni"
+          label="Plan adı"
+          placeholder="Konser Düzeni"
           error={errors.name?.message}
-          {...register('name', { required: 'Plan adi zorunludur.' })}
+          {...register('name', { required: 'Plan adı zorunludur.' })}
         />
 
         <Input
-          label="Aciklama (istege bagli)"
-          placeholder="Sahne onu ayakta, arkasi koltuklu"
+          label="Açıklama (isteğe bağlı)"
+          placeholder="Sahne önü ayakta, arkası koltuklu"
           {...register('description')}
         />
 
         <Button type="submit" isLoading={createLayout.isPending}>
-          Olustur
+          Oluştur
         </Button>
       </form>
 
@@ -83,7 +83,7 @@ export function HallDetailPage() {
 
       {layoutsQuery.data?.length === 0 && (
         <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
-          <p className="text-sm text-slate-500">Bu salonda henuz oturma plani yok.</p>
+          <p className="text-sm text-slate-500">Bu salonda henüz oturma planı yok.</p>
         </div>
       )}
 
@@ -103,12 +103,12 @@ export function HallDetailPage() {
                 </div>
 
                 {/* isInUse bilgisi KULLANICIYA GOSTERILIYOR.
-                    Backend kullanilan plani degistirmeye izin vermiyor;
-                    kullanici bunu ancak hata alinca ogrenecek olsaydi
+                    Backend kullanilan planı değiştirmeye izin vermiyor;
+                    kullanıcı bunu ancak hata alınca öğrenecek olsaydı
                     sinirlenirdi. Onceden bildirmek daha iyi. */}
                 {l.isInUse && (
                   <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-                    Kullanimda &middot; degistirilemez
+                    Kullanımda &middot; degistirilemez
                   </span>
                 )}
               </Link>

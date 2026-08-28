@@ -12,15 +12,15 @@ import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '
 
 /**
  * ==================================================================
- * ETKINLIK LISTESI -- PDF Sprint 11
+ * ETKİNLİK LISTESI -- PDF Sprint 11
  * ==================================================================
- * Sprint 7'de bu sayfa yalnizca metin aramasi ve sayfalama
+ * Sprint 7'de bu sayfa yalnızca metin aramasi ve sayfalama
  * yapiyordu ve su notu birakmistim:
  *
  *   "PDF Sprint 11 gelismis arama ve filtreleri getirecek.
  *    Ekrani simdiden asiri tasarlamiyorum."
  *
- * Sprint 11 geldi: sekiz filtre, siralama ve populer etkinlikler.
+ * Sprint 11 geldi: sekiz filtre, sıralama ve popüler etkinlikler.
  * ==================================================================
  */
 export function EventsPage() {
@@ -30,16 +30,16 @@ export function EventsPage() {
    * ----------------------------------------------------------------
    * NEDEN TEK BIR `filters` NESNESI?
    * ----------------------------------------------------------------
-   * Her filtre icin ayri useState acabilirdim: cityId, categoryId,
+   * Her filtre için ayrı useState acabilirdim: cityId, categoryId,
    * minPrice, maxPrice, dateFrom, dateTo, sortBy... on tane state.
    *
-   * Sorun sayfalama ile ortaya cikardi: filtre DEGISTIGINDE sayfayi
-   * 1'e dondurmek zorundayiz. Ayri state'lerde bunu ON AYRI onChange
-   * icinde tekrarlamak gerekirdi ve birinde unutmak kacinilmazdi --
-   * kullanici 5. sayfadayken filtre degistirir, bos sonuc gorur ve
+   * Sorun sayfalama ile ortaya çıkardı: filtre DEGISTIGINDE sayfayı
+   * 1'e dondurmek zorundayız. Ayrı state'lerde bunu ON AYRI onChange
+   * içinde tekrarlamak gerekirdi ve birinde unutmak kacinilmazdi --
+   * kullanıcı 5. sayfadayken filtre değiştirir, boş sonuç görür ve
    * "arama bozuk" der.
    *
-   * Tek nesne + tek guncelleme fonksiyonu ile bu kurali TEK YERDE
+   * Tek nesne + tek güncelleme fonksiyonu ile bu kuralı TEK YERDE
    * uyguluyorum (bkz. updateFilters).
    * ----------------------------------------------------------------
    */
@@ -55,10 +55,10 @@ export function EventsPage() {
       ...onceki,
       ...degisiklik,
 
-      // Filtre degisince HER ZAMAN 1. sayfaya don.
+      // Filtre değişince HER ZAMAN 1. sayfaya dön.
       //
-      // Tek istisna: degisiklik zaten sayfa numarasi ise (kullanici
-      // "Sonraki"ye basmis). O zaman gelen degeri koruyoruz.
+      // Tek istisna: degisiklik zaten sayfa numarasi ise (kullanıcı
+      // "Sonraki"ye basmis). O zaman gelen değeri koruyoruz.
       pageNumber: degisiklik.pageNumber ?? 1,
     }))
   }, [])
@@ -71,8 +71,8 @@ export function EventsPage() {
   /**
    * Kac filtre aktif?
    *
-   * Sayfalama ve siralama alanlarini SAYMIYORUM: onlar her zaman
-   * dolu. Saysaydik rozet hicbir filtre secilmemisken bile
+   * Sayfalama ve sıralama alanlarini SAYMIYORUM: onlar her zaman
+   * dolu. Saysaydik rozet hiçbir filtre secilmemisken bile
    * "4 aktif" yazardi ve anlamsizlasirdi.
    */
   const activeCount = useMemo(() => {
@@ -84,27 +84,27 @@ export function EventsPage() {
   }, [filters])
 
   const eventsQuery = useQuery({
-    // queryKey'e TUM filtreler dahil.
+    // queryKey'e TÜM filtreler dahil.
     //
-    // Bu sadece bir isim degil, ONBELLEK ANAHTARI: filtre degisince
-    // yeni veri cekiliyor, ayni filtreye geri donuldugunde onbellekten
-    // aninda gosteriliyor.
+    // Bu sadece bir isim değil, ONBELLEK ANAHTARI: filtre değişince
+    // yeni veri çekiliyor, aynı filtreye geri donuldugunde onbellekten
+    // anında gösteriliyor.
     queryKey: ['events', filters],
     queryFn: () => bookingApi.getEvents(filters),
 
     // Sayfa/filtre degisirken eski veriyi ekranda TUT.
-    // Olmasaydi her degisiklikte liste bosalip iskelete donerdi.
+    // Olmasaydı her degisiklikte liste bosalip iskelete donerdi.
     placeholderData: keepPreviousData,
   })
 
   // ================================================================
   // POPULER ETKINLIKLER -- PDF Sprint 11 (Redis'te 10 dakika)
   // ================================================================
-  // YALNIZCA filtresiz gorunumde gosteriliyor.
+  // YALNIZCA filtresiz gorunumde gösteriliyor.
   //
-  // Kullanici filtre uyguladiginda ne aradigini biliyor; ustune
-  // alakasiz "populer" onerileri koymak ekrani kalabaliklastirir ve
-  // gercek sonuclari asagi iter.
+  // Kullanıcı filtre uyguladiginda ne aradigini biliyor; ustune
+  // alakasiz "popüler" onerileri koymak ekrani kalabaliklastirir ve
+  // gerçek sonuclari asagi iter.
   // ================================================================
   const filtresizMi = activeCount === 0 && !search
 
@@ -113,7 +113,7 @@ export function EventsPage() {
     queryFn: () => bookingApi.getPopularEvents(4),
     enabled: filtresizMi,
 
-    // 5 dakika: sunucudaki Redis suresi (10 dk) ile uyumlu.
+    // 5 dakika: sunucudaki Redis süresi (10 dk) ile uyumlu.
     // Daha kisa vermek, sunucunun zaten onbellekledigi veriyi
     // gereksiz yere tekrar istemek olurdu.
     staleTime: 5 * 60 * 1000,
@@ -133,14 +133,14 @@ export function EventsPage() {
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="text-2xl font-bold text-slate-900">Etkinlikler</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Bir etkinlik secin, oturumunu belirleyin ve koltugunuzu ayirtin.
+          Bir etkinlik seçin, oturumunu belirleyin ve koltuğunuzu ayırtın.
         </p>
 
         <form onSubmit={onSearch} className="mt-6 flex flex-wrap gap-3">
           <div className="min-w-64 flex-1">
             <Input
               label="Ara"
-              placeholder="Etkinlik adi veya aciklamasi"
+              placeholder="Etkinlik adı veya açıklaması"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -154,8 +154,8 @@ export function EventsPage() {
         {/* ---- POPULER ETKINLIKLER ---- */}
         {filtresizMi && popularQuery.data && popularQuery.data.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-lg font-semibold text-slate-900">Populer etkinlikler</h2>
-            <p className="mt-0.5 text-xs text-slate-500">En cok bilet satilanlar</p>
+            <h2 className="text-lg font-semibold text-slate-900">Popüler etkinlikler</h2>
+            <p className="mt-0.5 text-xs text-slate-500">En çok bilet satılanlar</p>
 
             <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {popularQuery.data.map((ev, sira) => (
@@ -183,7 +183,7 @@ export function EventsPage() {
         )}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[260px_1fr]">
-          {/* ---- FILTRE PANELI ---- */}
+          {/* ---- FILTRE PANELİ ---- */}
           <div className="lg:sticky lg:top-6 lg:self-start">
             <EventFilterPanel
               filters={filters}
@@ -210,11 +210,11 @@ export function EventsPage() {
 
             {data && data.items.length === 0 && (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-                <p className="text-sm text-slate-500">Bu kriterlere uyan etkinlik bulunamadi.</p>
+                <p className="text-sm text-slate-500">Bu kriterlere uyan etkinlik bulunamadı.</p>
 
-                {/* Bos sonucta CIKIS YOLU gosteriyorum.
-                    Yoksa kullanici hangi filtrenin sonucu bosalttigini
-                    aramak zorunda kalir. */}
+                {/* Boş sonucta CIKIS YOLU gösteriyorum.
+                    Yoksa kullanıcı hangi filtrenin sonucu bosalttigini
+                    aramak zorunda kalır. */}
                 {(activeCount > 0 || search) && (
                   <button
                     type="button"
@@ -245,7 +245,7 @@ export function EventsPage() {
                     disabled={!data.hasPreviousPage}
                     onClick={() => updateFilters({ pageNumber: data.pageNumber - 1 })}
                   >
-                    Onceki
+                    Önceki
                   </Button>
 
                   <span className="text-sm text-slate-500">
@@ -280,7 +280,7 @@ function EventCard({ event }: { event: EventListItem }) {
 
         {event.status === EventStatus.SalesOpen && (
           <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-            Satista
+            Satışta
           </span>
         )}
       </div>

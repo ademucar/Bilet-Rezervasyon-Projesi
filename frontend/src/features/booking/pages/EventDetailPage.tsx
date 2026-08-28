@@ -9,11 +9,11 @@ import { formatDateTime } from '../../../lib/format'
 import { bookingApi, EventStatus } from '../api/bookingApi'
 
 /**
- * Etkinlik detayi ve OTURUM secimi.
+ * Etkinlik detayı ve OTURUM seçimi.
  *
- * Bir etkinligin birden fazla oturumu olabilir (ayni tiyatro oyunu
- * Cuma 20:00 ve Cumartesi 15:00). Koltuk her OTURUM icin ayri
- * uretildiginden, kullanicinin once oturumu secmesi gerekiyor.
+ * Bir etkinliğin birden fazla oturumu olabilir (aynı tiyatro oyunu
+ * Cuma 20:00 ve Cumartesi 15:00). Koltuk her OTURUM için ayrı
+ * uretildiginden, kullanıcının önce oturumu secmesi gerekiyor.
  */
 export function EventDetailPage() {
   const { eventId = '' } = useParams()
@@ -21,7 +21,7 @@ export function EventDetailPage() {
   const eventQuery = useQuery({
     queryKey: ['event', eventId],
     queryFn: () => bookingApi.getEvent(eventId),
-    // eventId bos gelirse (bozuk adres) istegi hic gonderme.
+    // eventId boş gelirse (bozuk adres) isteği hiç gonderme.
     enabled: eventId.length > 0,
   })
 
@@ -52,15 +52,15 @@ export function EventDetailPage() {
   // ==================================================================
   // SATIS ACIK MI?
   // ==================================================================
-  // Bu kontrol yalnizca KULLANICI DENEYIMI icin.
+  // Bu kontrol yalnızca KULLANICI DENEYİMİ için.
   //
-  // Satis kapaliyken koltuk secim baglantisini gizlemek, kullanicinin
-  // 10 koltuk secip en sonda "satis kapali" hatasi almasini onluyor.
+  // Satış kapaliyken koltuk seçim baglantisini gizlemek, kullanıcının
+  // 10 koltuk seçip en sonda "satış kapalı" hatası almasini onluyor.
   //
-  // GUVENLIK degil: adresi elle yazan biri yine koltuk secim
-  // sayfasina girebilir. Gercek kontrol backend'de
-  // CreateReservationCommand icinde -- oradaki kontrol kaldirilirsa
-  // sistem acik olur, buradaki kaldirilirsa yalnizca deneyim bozulur.
+  // GÜVENLİK değil: adresi elle yazan biri yine koltuk seçim
+  // sayfasına girebilir. Gerçek kontrol backend'de
+  // CreateReservationCommand içinde -- oradaki kontrol kaldirilirsa
+  // sistem açık olur, buradaki kaldirilirsa yalnızca deneyim bozulur.
   // ==================================================================
   const isOnSale = ev.status === EventStatus.SalesOpen
   const isCancelled = ev.status === EventStatus.Cancelled
@@ -115,25 +115,25 @@ export function EventDetailPage() {
               <dd className="font-medium text-slate-900">{ev.categoryName}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Organizator</dt>
+              <dt className="text-slate-500">Organizatör</dt>
               <dd className="font-medium text-slate-900">{ev.organizerName}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Sure</dt>
+              <dt className="text-slate-500">Süre</dt>
               <dd className="font-medium text-slate-900">{ev.durationMinutes} dakika</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Yas siniri</dt>
+              <dt className="text-slate-500">Yaş sınırı</dt>
               <dd className="font-medium text-slate-900">
-                {ev.minimumAge > 0 ? `${ev.minimumAge} yas ve uzeri` : 'Yok'}
+                {ev.minimumAge > 0 ? `${ev.minimumAge} yaş ve üzeri` : 'Yok'}
               </dd>
             </div>
             <div>
-              <dt className="text-slate-500">Kisi basi bilet limiti</dt>
+              <dt className="text-slate-500">Kişi başı bilet limiti</dt>
               <dd className="font-medium text-slate-900">{ev.maxTicketsPerUser} bilet</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Satis bitis</dt>
+              <dt className="text-slate-500">Satış bitiş</dt>
               <dd className="font-medium text-slate-900">{formatDateTime(ev.salesEndDate)}</dd>
             </div>
           </dl>
@@ -144,15 +144,15 @@ export function EventDetailPage() {
 
           {ev.sessions.length === 0 ? (
             <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
-              Bu etkinlik icin henuz oturum tanimlanmamis.
+              Bu etkinlik için henüz oturum tanımlanmamış.
             </div>
           ) : (
             <ul className="mt-3 space-y-3">
               {ev.sessions.map((session) => {
                 // Koltuklar URETILMEMISSE rezervasyon imkansizdir:
-                // secilecek EventSeat kaydi yok. Organizatorun
-                // "koltuklari uret" adimini atlamis olmasi
-                // kullanicinin karsisina bos bir harita olarak
+                // secilecek EventSeat kaydı yok. Organizatorun
+                // "koltukları üret" adimini atlamis olmasını
+                // kullanıcının karsisina boş bir harita olarak
                 // cikmasin diye burada aciklikla soyluyorum.
                 const canBook = isOnSale && session.areSeatsGenerated
 
@@ -173,11 +173,11 @@ export function EventDetailPage() {
                         to={`/oturumlar/${session.id}/koltuklar`}
                         className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-700"
                       >
-                        Koltuk sec
+                        Koltuk seç
                       </Link>
                     ) : (
                       <span className="text-sm text-slate-400">
-                        {session.areSeatsGenerated ? 'Satis kapali' : 'Koltuklar hazirlanmadi'}
+                        {session.areSeatsGenerated ? 'Satış kapalı' : 'Koltuklar hazırlanmadı'}
                       </span>
                     )}
                   </li>

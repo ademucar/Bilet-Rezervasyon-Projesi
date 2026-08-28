@@ -39,14 +39,14 @@ export function MyFavoritesPage() {
         {favoritesQuery.data?.length === 0 && (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
             <p className="text-sm text-slate-500">
-              Henuz favori etkinliginiz yok. Etkinlik sayfasindaki kalp ikonuna dokunarak
+              Henüz favori etkinliğiniz yok. Etkinlik sayfasındaki kalp ikonuna dokunarak
               ekleyebilirsiniz.
             </p>
             <Link
               to="/etkinlikler"
               className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline"
             >
-              Etkinliklere goz at
+              Etkinliklere göz at
             </Link>
           </div>
         )}
@@ -54,13 +54,13 @@ export function MyFavoritesPage() {
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {favoritesQuery.data?.map((ev) => {
             // ==========================================================
-            // IPTAL EDILMIS ETKINLIK LISTEDEN CIKARILMIYOR
+            // İPTAL EDILMIS ETKİNLİK LISTEDEN CIKARILMIYOR
             // ==========================================================
-            // Backend bunlari da donduruyor (bilincli). Kullanici
-            // favoriledigi etkinligin iptal edildigini GORMELI.
+            // Backend bunlari da döndürüyor (bilinçli). Kullanıcı
+            // favoriledigi etkinliğin iptal edildigini GORMELI.
             //
             // Sessizce kaldirsaydik "favorim nereye gitti?" derdi ve
-            // cevabini hicbir yerde bulamazdi.
+            // cevabini hiçbir yerde bulamazdi.
             // ==========================================================
             const iptalEdildi = ev.status === EventStatus.Cancelled
             const tamamlandi = ev.status === EventStatus.Completed
@@ -78,19 +78,19 @@ export function MyFavoritesPage() {
 
                     {iptalEdildi && (
                       <span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">
-                        Iptal edildi
+                        İptal edildi
                       </span>
                     )}
 
                     {tamamlandi && (
                       <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                        Tamamlandi
+                        Tamamlandı
                       </span>
                     )}
 
                     {ev.status === EventStatus.SalesOpen && (
                       <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                        Satista
+                        Satışta
                       </span>
                     )}
                   </div>

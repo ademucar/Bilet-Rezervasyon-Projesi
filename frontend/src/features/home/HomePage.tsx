@@ -6,10 +6,10 @@ import { SiteHeader } from '../../components/layout/SiteHeader'
  * Ana sayfa.
  *
  * Sprint 11'de one cikan etkinlikler, kategoriler ve arama ile
- * degistirilecek. Su an akisa giris kapisi ve hesap ozeti.
+ * degistirilecek. Su an akisa giriş kapisi ve hesap özeti.
  *
- * Cikis butonu artik burada DEGIL, SiteHeader'da: her sayfada
- * ulasilabilir olmasi gerekiyordu.
+ * Çıkış butonu artık burada DEĞİL, SiteHeader'da: her sayfada
+ * ulasilabilir olması gerekiyordu.
  */
 export function HomePage() {
   const user = useAuthStore((s) => s.user)
@@ -18,17 +18,17 @@ export function HomePage() {
     {
       to: '/etkinlikler',
       title: 'Etkinlikler',
-      description: 'Konser, tiyatro ve daha fazlasi. Koltugunu sec, ayirt.',
+      description: 'Konser, tiyatro ve daha fazlası. Koltuğunu seç, ayırt.',
     },
     {
       to: '/rezervasyonlarim',
       title: 'Rezervasyonlarim',
-      description: 'Odemesi tamamlanmamis rezervasyonlarina buradan devam et.',
+      description: 'Ödemesi tamamlanmamış rezervasyonlarına buradan devam et.',
     },
     {
       to: '/biletlerim',
       title: 'Biletlerim',
-      description: 'Gecerli biletlerin ve giriste okutacagin QR kodlarin.',
+      description: 'Geçerli biletlerin ve girişte okutacağın QR kodların.',
     },
   ]
 
@@ -57,7 +57,7 @@ export function HomePage() {
 
         {user && (
           <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">Hesabim</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Hesabım</h2>
 
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex gap-2">
@@ -75,9 +75,9 @@ export function HomePage() {
                 <dd className="font-medium text-slate-900">{user.roles.join(', ')}</dd>
               </div>
               <div className="flex gap-2">
-                <dt className="w-32 text-slate-500">E-posta onayi</dt>
+                <dt className="w-32 text-slate-500">E-posta onayı</dt>
                 <dd className="font-medium text-slate-900">
-                  {user.isEmailConfirmed ? 'Onaylandi' : 'Bekliyor'}
+                  {user.isEmailConfirmed ? 'Onaylandı' : 'Bekliyor'}
                 </dd>
               </div>
             </dl>

@@ -3,30 +3,30 @@ import { useAuthStore } from '../stores/authStore'
 
 interface ProtectedRouteProps {
   /**
-   * Erisim icin gereken roller. Bos ise yalnizca giris yapmis olmak yeterli.
-   * Kullanicinin bunlardan EN AZ BIRINE sahip olmasi gerekir.
+   * Erişim için gereken roller. Boş ise yalnızca giriş yapmış olmak yeterli.
+   * Kullanıcının bunlardan EN AZ BIRINE sahip olması gerekir.
    */
   roles?: string[]
 }
 
 /**
- * Korumali route sarmalayicisi.
+ * Korumalı route sarmalayicisi.
  *
  * ==================================================================
- * BU BIR GUVENLIK ONLEMI DEGILDIR -- KULLANICI DENEYIMIDIR
+ * BU BIR GÜVENLİK ONLEMI DEĞİLDİR -- KULLANICI DENEYIMIDIR
  * ==================================================================
- * Kullanici tarayici konsolunu acip localStorage'daki rolu "Admin"
- * yapabilir ve bu bilesen onu admin paneline sokar.
+ * Kullanıcı tarayıcı konsolunu acip localStorage'daki rolü "Admin"
+ * yapabilir ve bu bileşen önü admin paneline sokar.
  *
- * PEKI SORUN OLMAZ MI? Hayir. Cunku o panelde gosterilecek her veri
+ * PEKI SORUN OLMAZ MI? Hayir. Çünkü o panelde gösterilecek her veri
  * API'den geliyor ve API, JWT'nin ICINDEKI rollere bakiyor. Token
- * imzali oldugu icin rol degistirilemez -- degistirilirse imza bozulur.
+ * imzali olduğu için rol degistirilemez -- degistirilirse imza bozulur.
  *
- * Yani sahte Admin, bos bir panel gorur; tum istekleri 403 doner.
+ * Yani sahte Admin, boş bir panel görür; tüm istekleri 403 döner.
  *
  * Bu bilesenin isi, MESRU kullanicilari erisemeyecekleri sayfalara
- * gitmekten alikoymak ve onlara anlamli bir mesaj gostermek.
- * Gercek kapi her zaman sunucudadir.
+ * gitmekten alikoymak ve onlara anlamlı bir mesaj göstermek.
+ * Gerçek kapi her zaman sunucudadır.
  * ==================================================================
  */
 export function ProtectedRoute({ roles }: ProtectedRouteProps) {
@@ -39,10 +39,10 @@ export function ProtectedRoute({ roles }: ProtectedRouteProps) {
       <Navigate
         to="/giris"
         replace
-        // Kullanicinin gitmek istedigi adresi tasiyorum.
-        // Giristen sonra LoginPage onu buraya geri gonderiyor.
+        // Kullanıcının gitmek istedigi adresi tasiyorum.
+        // Giristen sonra LoginPage önü buraya geri gönderiyor.
         //
-        // Bu olmasaydi kullanici derin bir linke tiklar, giris yapar
+        // Bu olmasaydı kullanıcı derin bir linke tiklar, giriş yapar
         // ve ana sayfada bulurdu kendini -- nereye gitmek istedigini
         // hatirlayip tekrar bulmasi gerekirdi.
         state={{ from: location.pathname + location.search }}

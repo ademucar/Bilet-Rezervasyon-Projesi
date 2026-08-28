@@ -6,39 +6,39 @@ import type { AuthResponse, UserSummary } from '../types/auth'
  * ==================================================================
  * TOKEN NEREDE SAKLANMALI? -- DURUSTCE ANLATIYORUM
  * ==================================================================
- * Uc secenek var ve HICBIRI kusursuz degil:
+ * Uc seçenek var ve HICBIRI kusursuz değil:
  *
- * 1) httpOnly cerez  -- EN GUVENLI
+ * 1) httpOnly çerez  -- EN GUVENLI
  *    JavaScript okuyamaz, yani XSS ile calinamaz.
- *    AMA: backend'in token'i cerez olarak yazmasi gerekir, CSRF
- *    korumasi eklenmesi gerekir ve mobil istemciler icin ayri bir
+ *    AMA: backend'in token'i çerez olarak yazmasi gerekir, CSRF
+ *    korumasi eklenmesi gerekir ve mobil istemciler için ayrı bir
  *    akis lazim olur.
  *
- * 2) Yalnizca BELLEK (React state)
- *    XSS'e karsi en dayanikli ikinci secenek.
- *    AMA: sayfa yenilenince oturum kapanir. Kullanici F5'e basinca
- *    her seferinde giris yapmak zorunda kalir.
+ * 2) Yalnızca BELLEK (React state)
+ *    XSS'e karsi en dayanikli ikinci seçenek.
+ *    AMA: sayfa yenilenince oturum kapanir. Kullanıcı F5'e basinca
+ *    her seferinde giriş yapmak zorunda kalır.
  *
  * 3) localStorage  <-- SECILEN
  *    Sayfa yenilenmesinde oturum korunur, uygulanmasi basittir.
  *    RISK: XSS acigi olan bir sayfada saldirgan token'i okuyabilir.
  *
  * NEDEN 3'U SECTIM?
- * Backend'imiz token'i YANIT GOVDESINDE donuyor, cerez olarak degil
- * (PDF'in ongordugu klasik JWT akisi). Cerez yaklasimina gecmek
+ * Backend'imiz token'i YANIT GOVDESINDE dönüyor, çerez olarak değil
+ * (PDF'in ongordugu klasik JWT akışı). Cerez yaklasimina gecmek
  * backend'i degistirmeyi gerektirirdi.
  *
  * RISKI NASIL AZALTIYORUZ?
- *   - Access token yalnizca 15 DAKIKA gecerli -> calinsa bile pencere dar
- *   - Refresh token rotation var -> calinma tespit edilince tum
+ *   - Access token yalnızca 15 DAKIKA geçerli -> calinsa bile pencere dar
+ *   - Refresh token rotation var -> calinma tespit edilince tüm
  *     oturumlar kapaniyor (backend'de dogrulandi)
- *   - React JSX'i varsayilan olarak kacisla yazar (XSS'in en yaygin
- *     kaynagini kapatir)
+ *   - React JSX'i varsayılan olarak kacisla yazar (XSS'in en yaygin
+ *     kaynagini kapatır)
  *   - dangerouslySetInnerHTML KULLANMIYORUZ
  *   - Sprint 15'te Content-Security-Policy eklenecek
  *
  * Yani riski kabul edip AZALTIYORUZ, gormezden gelmiyoruz.
- * Uretime cikan gercek bir urunde httpOnly cerez tercih edilmeliydi.
+ * Uretime cikan gerçek bir urunde httpOnly çerez tercih edilmeliydi.
  * ==================================================================
  */
 
@@ -47,13 +47,13 @@ interface AuthState {
   refreshToken: string | null
   user: UserSummary | null
 
-  /** Kayit/giris sonrasi cagrilir. */
+  /** Kayıt/giriş sonrası cagrilir. */
   setSession: (auth: AuthResponse) => void
 
-  /** Token yenileme sonrasi cagrilir; kullanici bilgisi de guncellenir. */
+  /** Token yenileme sonrası cagrilir; kullanıcı bilgisi de guncellenir. */
   updateTokens: (auth: AuthResponse) => void
 
-  /** Cikis veya oturum sonlanmasi. */
+  /** Çıkış veya oturum sonlanmasi. */
   clearSession: () => void
 
   isAuthenticated: () => boolean
@@ -78,9 +78,9 @@ export const useAuthStore = create<AuthState>()(
         set({
           accessToken: auth.accessToken,
           refreshToken: auth.refreshToken,
-          // Kullanici bilgisini de guncelliyorum: backend her yenilemede
-          // GUNCEL rolleri donuyor. Admin bu arada rol vermisse
-          // kullanici sayfayi yenilemeden fark edebiliyor.
+          // Kullanıcı bilgisini de guncelliyorum: backend her yenilemede
+          // GUNCEL rolleri dönüyor. Admin bu arada rol vermisse
+          // kullanıcı sayfayı yenilemeden fark edebiliyor.
           user: auth.user,
         }),
 
@@ -89,17 +89,17 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => Boolean(get().accessToken),
 
       /**
-       * Kullanicinin verilen rollerden EN AZ BIRINE sahip olup olmadigi.
+       * Kullanıcının verilen rollerden EN AZ BIRINE sahip olup olmadığı.
        *
-       * NOT: Bu YALNIZCA arayuz icindir -- menuyu gizlemek, butonu
-       * pasiflestirmek gibi. GUVENLIK DEGILDIR.
+       * NOT: Bu YALNIZCA arayüz icindir -- menuyu gizlemek, butonu
+       * pasiflestirmek gibi. GÜVENLİK DEĞİLDİR.
        *
-       * Kullanici tarayici konsolundan bu store'u degistirip kendini
+       * Kullanıcı tarayıcı konsolundan bu store'u degistirip kendini
        * Admin yapabilir. Ama backend token'daki ROLLERE bakar ve token
        * imzalidir; sahte rol ise yaramaz.
        *
-       * Kural: frontend yetkilendirmesi KULLANICI DENEYIMI icindir,
-       * gercek kontrol her zaman sunucudadir.
+       * Kural: frontend yetkilendirmesi KULLANICI DENEYİMİ icindir,
+       * gerçek kontrol her zaman sunucudadır.
        */
       hasRole: (...roles) => {
         const userRoles = get().user?.roles ?? []
@@ -115,7 +115,7 @@ export const useAuthStore = create<AuthState>()(
        * Metotlari (setSession, hasRole...) DISARIDA birakiyorum.
        * Fonksiyonlar JSON'a serilestirilemez; yazmaya calisirsak
        * sessizce kaybolur ve sayfa yenilendiginde "hasRole is not a
-       * function" hatasi alirdik.
+       * function" hatası alırdık.
        */
       partialize: (state) => ({
         accessToken: state.accessToken,

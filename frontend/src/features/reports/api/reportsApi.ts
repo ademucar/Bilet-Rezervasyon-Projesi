@@ -29,7 +29,7 @@ export interface SectionOccupancy {
   occupancyRate: number
 }
 
-/** PDF Sprint 13'un saydigi 10 organizator metrigi. */
+/** PDF Sprint 13'un saydığı 10 organizatör metriği. */
 export interface OrganizerDashboard {
   totalEvents: number
   publishedEvents: number
@@ -45,7 +45,7 @@ export interface OrganizerDashboard {
   currency: string
 }
 
-/** PDF Sprint 13'un saydigi 10 admin metrigi. */
+/** PDF Sprint 13'un saydığı 10 admin metriği. */
 export interface AdminDashboard {
   totalUsers: number
   totalOrganizers: number
@@ -99,10 +99,10 @@ export interface PaymentStatusRow {
 }
 
 /**
- * Rapor turleri. Backend'deki ReportType enum'u ile BIREBIR.
+ * Rapor türleri. Backend'deki ReportType enum'u ile BIREBIR.
  *
- * Sayilar backend'de acikca 1'den basliyor (asla 0 degil) -- Sprint 2'de
- * benimsedigimiz kural. Burada da ayni degerleri yaziyorum.
+ * Sayilar backend'de acikca 1'den başlıyor (asla 0 değil) -- Sprint 2'de
+ * benimsedigimiz kural. Burada da aynı değerleri yazıyorum.
  */
 export const ReportType = {
   SalesSummary: 1,
@@ -163,15 +163,15 @@ export const reportsApi = {
    * ==============================================================
    * BU CAGRI DOSYAYI DONDURMEZ
    * ==============================================================
-   * PDF: "Rapor uretimi background job olarak calistirilmali ve
-   * tamamlandiginda kullaniciya bildirim gonderilmelidir."
+   * PDF: "Rapor üretimi background job olarak calistirilmali ve
+   * tamamlandiginda kullanıcıya bildirim gonderilmelidir."
    *
-   * Sunucu 202 Accepted ve bir exportId donuyor. Dosya hazir
-   * olunca kullaniciya bildirim gidiyor.
+   * Sunucu 202 Accepted ve bir exportId dönüyor. Dosya hazır
+   * olunca kullanıcıya bildirim gidiyor.
    *
-   * Arayuzde bunu ACIKCA soylemek zorundayiz: kullanici "indir"
-   * dedikten sonra dosya inmezse ve hicbir aciklama gormezse
-   * dugmenin bozuk oldugunu dusunur.
+   * Arayuzde bunu ACIKCA söylemek zorundayız: kullanıcı "indir"
+   * dedikten sonra dosya inmezse ve hiçbir açıklama gormezse
+   * dugmenin bozuk olduğunu dusunur.
    * ==============================================================
    */
   requestExport: async (type: number, format: number): Promise<string> => {

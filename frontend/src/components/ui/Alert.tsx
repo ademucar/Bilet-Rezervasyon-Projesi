@@ -14,9 +14,9 @@ export function Alert({ variant, children }: AlertProps) {
 
   return (
     <div
-      // Hata mesajlari icin "alert", digerleri icin "status".
+      // Hata mesajlari için "alert", digerleri için "status".
       // Fark: alert ekran okuyucuyu ANINDA boler, status ise
-      // kullanici mola verdiginde okunur. Hata acil, bilgi degil.
+      // kullanıcı mola verdiginde okunur. Hata acil, bilgi değil.
       role={variant === 'error' ? 'alert' : 'status'}
       className={`rounded-lg border px-4 py-3 text-sm ${styles[variant]}`}
     >

@@ -12,11 +12,11 @@ import { renderWithProviders } from '../test/testUtils'
 function rotalariCiz(baslangic: string, roller?: string[]) {
   return renderWithProviders(
     <Routes>
-      <Route path="/giris" element={<div>Giris Sayfasi</div>} />
-      <Route path="/yetkisiz" element={<div>Yetkisiz Sayfasi</div>} />
+      <Route path="/giris" element={<div>Giriş Sayfası</div>} />
+      <Route path="/yetkisiz" element={<div>Yetkisiz Sayfası</div>} />
 
       <Route element={<ProtectedRoute roles={roller} />}>
-        <Route path="/panel" element={<div>Korumali Panel</div>} />
+        <Route path="/panel" element={<div>Korumalı Panel</div>} />
       </Route>
     </Routes>,
     { route: baslangic },
@@ -31,7 +31,7 @@ function oturumAc(roller: string[]) {
       id: 'kullanici-1',
       email: 'test@ornek.com',
       firstName: 'Test',
-      lastName: 'Kullanici',
+      lastName: 'Kullanıcı',
       isEmailConfirmed: true,
       roles: roller,
     },
@@ -57,8 +57,8 @@ describe('ProtectedRoute', () => {
   it('giriş yapmamış kullanıcıyı giriş sayfasına yönlendirir', () => {
     rotalariCiz('/panel')
 
-    expect(screen.getByText('Giris Sayfasi')).toBeInTheDocument()
-    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument()
+    expect(screen.getByText('Giriş Sayfası')).toBeInTheDocument()
+    expect(screen.queryByText('Korumalı Panel')).not.toBeInTheDocument()
   })
 
   it('giriş yapmış kullanıcıyı içeri alır', () => {
@@ -66,7 +66,7 @@ describe('ProtectedRoute', () => {
 
     rotalariCiz('/panel')
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+    expect(screen.getByText('Korumalı Panel')).toBeInTheDocument()
   })
 
   /**
@@ -77,10 +77,10 @@ describe('ProtectedRoute', () => {
    * yetkin yok" demek (Sprint 17 entegrasyon testinde doğrulandı).
    *
    * Arayüzde karşılığı:
-   *   giriş yok      -> /giris        (giriş yap, sonra dön)
+   *   giriş yok      -> /giriş        (giriş yap, sonra dön)
    *   rol yetersiz   -> /yetkisiz     (giriş yapmak işe yaramaz)
    *
-   * İkisini de /giris'e yönlendirseydik, yetkisiz bir kullanıcı
+   * İkisini de /giriş'e yönlendirseydik, yetkisiz bir kullanıcı
    * giriş sayfasına atılır, zaten girişli olduğu için tekrar panele
    * yönlendirilir ve sonsuz bir döngüye girerdi.
    * ================================================================
@@ -90,8 +90,8 @@ describe('ProtectedRoute', () => {
 
     rotalariCiz('/panel', ['Admin'])
 
-    expect(screen.getByText('Yetkisiz Sayfasi')).toBeInTheDocument()
-    expect(screen.queryByText('Korumali Panel')).not.toBeInTheDocument()
+    expect(screen.getByText('Yetkisiz Sayfası')).toBeInTheDocument()
+    expect(screen.queryByText('Korumalı Panel')).not.toBeInTheDocument()
   })
 
   it('doğru role sahip kullanıcıyı içeri alır', () => {
@@ -99,7 +99,7 @@ describe('ProtectedRoute', () => {
 
     rotalariCiz('/panel', ['Admin'])
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+    expect(screen.getByText('Korumalı Panel')).toBeInTheDocument()
   })
 
   /**
@@ -112,6 +112,6 @@ describe('ProtectedRoute', () => {
 
     rotalariCiz('/panel', ['Admin', 'Organizer'])
 
-    expect(screen.getByText('Korumali Panel')).toBeInTheDocument()
+    expect(screen.getByText('Korumalı Panel')).toBeInTheDocument()
   })
 })

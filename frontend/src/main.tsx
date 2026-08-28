@@ -6,16 +6,16 @@ import App from './App'
 const rootElement = document.getElementById('root')
 
 if (!rootElement) {
-  // Bu asla olmamali ama olursa bembeyaz ekran yerine anlamli bir
-  // hata gormek isterim. "root bulunamadi" mesaji, index.html'de bir
-  // sorun oldugunu aninda soyler.
+  // Bu asla olmamali ama olursa bembeyaz ekran yerine anlamlı bir
+  // hata gormek isterim. "root bulunamadı" mesaji, index.html'de bir
+  // sorun olduğunu anında söyler.
   throw new Error('#root elemani bulunamadi. index.html kontrol edin.')
 }
 
 createRoot(rootElement).render(
   // StrictMode gelistirmede bilesenleri IKI KEZ render eder.
   // Bu kasitlidir: yan etkisi olan (idempotent olmayan) kodu
-  // ortaya cikarir. Uretim derlemesinde devre disi kalir.
+  // ortaya cikarir. Üretim derlemesinde devre dışı kalır.
   <StrictMode>
     <App />
   </StrictMode>,

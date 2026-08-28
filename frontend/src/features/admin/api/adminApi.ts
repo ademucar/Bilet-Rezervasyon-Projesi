@@ -3,8 +3,8 @@ import { api } from '../../../lib/api/client'
 /**
  * Admin paneli API cagrilari.
  *
- * Backend'in DTO'lariyla birebir esleyen tipler. Sprint 18'de bunlar
- * Swagger'dan otomatik uretilecek (Orval); su an elle yaziyoruz.
+ * Backend'in DTO'lariyla birebir eşleyen tipler. Sprint 18'de bunlar
+ * Swagger'dan otomatik uretilecek (Orval); su an elle yazıyoruz.
  */
 
 export interface City {
@@ -79,7 +79,7 @@ export interface SeatLayoutDetail {
   sections: SectionDetail[]
 }
 
-/** Backend'in PagedResult<T> karsiligi. */
+/** Backend'in PagedResult<T> karşılığı. */
 export interface Paged<T> {
   items: T[]
   pageNumber: number

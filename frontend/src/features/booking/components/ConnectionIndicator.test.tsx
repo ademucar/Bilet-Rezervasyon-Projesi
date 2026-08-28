@@ -40,7 +40,7 @@ describe('ConnectionIndicator', () => {
   it('bağlıyken canlı olduğunu bildirir', () => {
     render(<ConnectionIndicator status="connected" />)
 
-    expect(screen.getByRole('status')).toHaveTextContent(/canli/i)
+    expect(screen.getByRole('status')).toHaveTextContent(/canlı/i)
   })
 
   /**
