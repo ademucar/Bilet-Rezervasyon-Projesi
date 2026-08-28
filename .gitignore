@@ -53,3 +53,21 @@ frontend/.vite/
 # Sprint 13: uretilen rapor dosyalari.
 # Gecici ciktilar -- depoya girmemeli.
 report-exports/
+
+# ==================================================================
+# URETILEN API ISTEMCISI (PDF Sprint 18)
+# ==================================================================
+# frontend/src/lib/api/generated/ Orval tarafindan OpenAPI
+# belgesinden uretiliyor: `npm run api:generate`
+#
+# Neden depoya KOYMUYORUZ?
+#   - 6400+ satir ve HICBIR yerden import edilmiyor (su an yalnizca
+#     karsilastirma/dogrulama amacli). Kullanilmayan uretilmis kodu
+#     depoda tutmak, incelemelerde gurultu yaratir.
+#   - Uretmek icin API'nin ayakta olmasi gerekiyor; depodaki kopya
+#     kolayca bayatlar ve "gercek" sanilir.
+#
+# Sprint 19'da CI'a bir SAPMA KONTROLU eklenecek: belge yeniden
+# uretilip elle yazilan tiplerle karsilastirilacak.
+# ==================================================================
+frontend/src/lib/api/generated/
