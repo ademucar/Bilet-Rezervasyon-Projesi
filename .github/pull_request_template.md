@@ -1,29 +1,34 @@
 ## Ne yapildi?
 
-<!-- Kisa ve net. Ornek: EventSeat entity'si ve koltuk kilitleme kurallari eklendi. -->
+<!-- Degisikligi bir paragrafta anlat. "Neden" kismi "ne" kismindan
+     daha onemli: kodun kendisi "ne" oldugunu zaten soyluyor. -->
 
-## Neden?
+## Neden bu sekilde?
 
-<!-- Hangi PDF maddesi / sprint gereksinimi karsilaniyor? Neden bu yaklasim secildi? -->
+<!-- Degerlendirdigin alternatifler ve neden bunu sectigin.
+     Bir odun (trade-off) verdiysen acikca yaz. -->
 
-## Ilgili sprint
+## Nasil dogrulandi?
 
-Sprint N — <konu>
+<!-- "Test yazdim" yetmez: NE dogruladigini yaz.
+     Ornek: "Postgres'i durdurup /health/live'in 200, /health/ready'nin
+     503 dondugunu gordum." -->
+
+- [ ] Birim testleri
+- [ ] Entegrasyon testleri
+- [ ] Elle denendi (nasil: ...)
 
 ## Kontrol listesi
 
-- [ ] `dotnet build` — 0 uyari, 0 hata
-- [ ] `dotnet test` — tum testler yesil
-- [ ] Yeni is kurallari icin test yazildi
-- [ ] Yeni test bir kez bilerek kirilip calistigi dogrulandi
-- [ ] Hassas bilgi (sifre, token, connection string) commit'lenmedi
-- [ ] Commit mesajlari Conventional Commits kuralina uygun
-
-## Nasil test edilir?
-
-<!-- Degerlendiren kisi bunu nasil dogrulayabilir? Ornek:
-     cd backend && dotnet test tests/Ticketing.UnitTests -->
+- [ ] `dotnet build` -- 0 uyari, 0 hata (Debug **ve** Release)
+- [ ] `dotnet test` -- tum testler yesil
+- [ ] `npm run lint` ve `npm run format:check` temiz
+- [ ] `npx tsc --noEmit` temiz
+- [ ] Hassas deger (baglanti dizesi, token, sifre) EKLENMEDI
+- [ ] Migration eklendiyse Git'e dahil edildi
+- [ ] Davranis degistiyse ilgili dokuman guncellendi
 
 ## Notlar
 
-<!-- Bilinen eksikler, sonraki sprinte birakilanlar, dikkat edilmesi gerekenler -->
+<!-- Bilincli olarak ERTELENEN seyler, bilinen sinirlamalar,
+     inceleyenin ozellikle bakmasini istedigin yerler. -->
