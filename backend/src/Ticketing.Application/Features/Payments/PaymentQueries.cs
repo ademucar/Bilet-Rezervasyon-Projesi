@@ -131,8 +131,17 @@ internal sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, 
 /// Kismi iade destegi var cunku bir rezervasyondaki 4 biletten
 /// yalnizca 2'si iade edilebilir.
 /// </param>
-public sealed record RefundPaymentCommand(Guid PaymentId, decimal? Amount, string? Reason)
-    : IRequest<Result<PaymentDto>>;
+/// <param name="IdempotencyKey">
+/// PDF Sprint 15: "Iade baslatma" idempotency listesinde.
+///
+/// Ayni anahtarla gelen ikinci istek YENI iade yapmaz, mevcut
+/// odemenin durumunu doner.
+/// </param>
+public sealed record RefundPaymentCommand(
+    Guid PaymentId,
+    decimal? Amount,
+    string? Reason,
+    string? IdempotencyKey = null) : IRequest<Result<PaymentDto>>;
 
 internal sealed class RefundPaymentCommandHandler
     : IRequestHandler<RefundPaymentCommand, Result<PaymentDto>>
@@ -175,6 +184,36 @@ internal sealed class RefundPaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.NotRefundable);
         }
 
+        // ==============================================================
+        // IDEMPOTENCY -- PDF Sprint 15
+        // ==============================================================
+        // Iade, cift calistirilmasi EN TEHLIKELI islem: ayni parayi
+        // iki kez geri gondermek dogrudan mali kayip.
+        //
+        // Anahtari islem kayitlarinda (PaymentTransaction) ariyoruz.
+        // Ayri bir tablo acmadim: bilgi zaten orada durmali, cunku
+        // "bu iade yapildi mi?" sorusunun dogal yeri islem gecmisi.
+        //
+        // Bu kontrol yarisa acik (iki istek ayni anda gelirse ikisi de
+        // "yok" gorebilir). Kabul edilebilir cunku ASIL koruma
+        // Payment.Refund() icinde: toplam iade odenen tutari asamaz.
+        // Buradaki kontrol YAYGIN durumu (ag kopmasi sonrasi tekrar)
+        // temiz bir sekilde cozuyor.
+        // ==============================================================
+        if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            var zatenIslendi = payment.Transactions.Any(
+                t => t.Type == PaymentTransactionType.Refund
+                  && t.ProviderReference == request.IdempotencyKey);
+
+            if (zatenIslendi)
+            {
+                // Ayni istek daha once islenmis: HATA DEGIL, mevcut
+                // durumu donuyoruz. Cagiran taraf icin sonuc ayni.
+                return await LoadDtoAsync(payment.Id, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         var refundable = payment.GetRefundableAmount();
         var amount = request.Amount ?? refundable.Amount;
 
@@ -210,8 +249,14 @@ internal sealed class RefundPaymentCommandHandler
                 providerResult.ErrorMessage ?? "Iade saglayici tarafindan reddedildi."));
         }
 
-        payment.Refund(new Domain.ValueObjects.Money(amount, payment.Amount.Currency),
-                       providerResult.ProviderReference);
+        // Idempotency anahtarini islem kaydina yaziyoruz.
+        //
+        // Anahtar verilmediyse saglayicinin referansi kullaniliyor --
+        // yani davranis eskisi gibi kaliyor ve mevcut cagiranlar
+        // etkilenmiyor.
+        payment.Refund(
+            new Domain.ValueObjects.Money(amount, payment.Amount.Currency),
+            request.IdempotencyKey ?? providerResult.ProviderReference);
 
         var now = _clock.UtcNow;
         var reservation = payment.Reservation;
@@ -274,8 +319,15 @@ internal sealed class RefundPaymentCommandHandler
                 cancellationToken).ConfigureAwait(false);
         }
 
+        return await LoadDtoAsync(payment.Id, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<Result<PaymentDto>> LoadDtoAsync(
+        Guid paymentId,
+        CancellationToken cancellationToken)
+    {
         var dto = await _context.Payments
-            .Where(p => p.Id == payment.Id)
+            .Where(p => p.Id == paymentId)
             .ToDto()
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);

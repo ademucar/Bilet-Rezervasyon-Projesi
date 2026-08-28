@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
+using Ticketing.WebApi.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Features.Auth;
@@ -32,6 +34,18 @@ namespace Ticketing.WebApi.Controllers;
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
+// ===================================================================
+// HIZ SINIRI -- PDF Sprint 15: "Login, Register, Sifre sifirlama"
+// ===================================================================
+// Politika SINIF duzeyinde: bu controller'daki TUM uclar korunuyor.
+//
+// Uc uc tek tek isaretleseydik, ilerde eklenen bir uc (ornegin
+// "e-posta dogrulama kodu tekrar gonder") korumasiz kalirdi -- ve
+// bu tam olarak brute force'a acik bir uc olurdu.
+//
+// Sinif duzeyi "varsayilan olarak guvenli" davraniyor.
+// ===================================================================
+[EnableRateLimiting(RateLimitingSetup.Policies.Authentication)]
 public sealed class AuthController : ApiControllerBase
 {
     /// <summary>Yeni kullanici kaydi olusturur.</summary>

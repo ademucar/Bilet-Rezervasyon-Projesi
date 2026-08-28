@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Common.Pagination;
@@ -21,6 +22,11 @@ public sealed class EventsController : ApiControllerBase
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
+    // PDF Sprint 15: "Search endpointi" hiz siniri.
+    //
+    // Bu uc ANONIM erisime acik ve pahali (LIKE sorgusu + JOIN'ler).
+    // Kimlik dogrulamasi olmadigi icin kota IP bazli calisiyor.
+    [EnableRateLimiting(RateLimitingSetup.Policies.Search)]
     [ProducesResponseType<PagedResult<EventListItem>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetEvents(
         [FromQuery] GetEventsQuery query,

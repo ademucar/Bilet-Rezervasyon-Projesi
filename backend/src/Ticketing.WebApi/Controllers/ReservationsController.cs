@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Features.Reservations;
@@ -31,6 +32,9 @@ public sealed class ReservationsController : ApiControllerBase
     /// <response code="422">Satis kapali veya bilet limiti asildi.</response>
     [HttpPost]
     [Authorize]
+    // PDF Sprint 15: "Rezervasyon olusturma endpointi" hiz siniri.
+    // Bot ile koltuk kapatmayi (scalping) zorlastiriyor.
+    [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
     [ProducesResponseType<ReservationDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]

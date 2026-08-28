@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Features.Payments;
@@ -12,6 +13,9 @@ namespace Ticketing.WebApi.Controllers;
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/payments")]
+// PDF Sprint 15: "Odeme endpointi" hiz siniri.
+// Sinif duzeyinde -- odeme ile ilgili her uc korunuyor.
+[EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
 public sealed class PaymentsController : ApiControllerBase
 {
     /// <summary>
@@ -84,6 +88,26 @@ public sealed class PaymentsController : ApiControllerBase
         Guid id,
         [FromBody] CompletePaymentRequest? request,
         CancellationToken cancellationToken)
+        // ==============================================================
+        // PDF Sprint 15 idempotency listesi: "Odeme callback"
+        // ==============================================================
+        // Bu uc icin AYRI bir Idempotency-Key GEREKMIYOR ve bilincli
+        // olarak eklemedim.
+        //
+        // Sebep: idempotency zaten SAGLANIYOR ama farkli bir yoldan.
+        // Payment.Complete(), odeme zaten Successful ise false donuyor
+        // ve handler bilet URETMIYOR. Yani ayni callback yuz kez gelse
+        // de sonuc ayni: iki bilet, iki QR.
+        //
+        // Anahtar bazli idempotency burada YANLIS olurdu: anahtari
+        // SAGLAYICI uretecekti ve saglayicilar her denemede ayni
+        // anahtari gonderecegini GARANTI ETMIYOR. Anahtar degisirse
+        // "yeni istek" sanip ikinci kez bilet uretirdik.
+        //
+        // Odemenin KENDI DURUMU en guvenilir idempotency anahtaridir.
+        // Sprint 8'de bunu ucten uca dogrulamistim: callback 3 kez
+        // cagrildi, bilet sayisi 2'de kaldi.
+        // ==============================================================
         => HandleResult(await Sender
             .Send(new CompletePaymentCommand(id, request?.ProviderReference), cancellationToken)
             .ConfigureAwait(false));
@@ -120,9 +144,30 @@ public sealed class PaymentsController : ApiControllerBase
     public async Task<IActionResult> Refund(
         Guid id,
         [FromBody] RefundPaymentRequest? request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         CancellationToken cancellationToken)
+        // ==============================================================
+        // PDF Sprint 15 idempotency listesi: "Iade baslatma"
+        // ==============================================================
+        // Iade, cift calistirilmasi EN TEHLIKELI islem: ayni parayi iki
+        // kez geri gondermek dogrudan mali kayip.
+        //
+        // Domain katmani zaten koruyor: Payment.Refund(), toplam iadenin
+        // odenen tutari asmasini reddediyor (payment.refund_exceeds_amount).
+        // Yani ikinci tam iade denemesi HATA veriyor.
+        //
+        // Ama bu, ag kopmasi yuzunden TEKRARLANAN bir istegi de hata
+        // yapiyor -- oysa admin tek bir iade yapmak istemisti ve
+        // istegin ulasip ulasmadigini bilmiyor.
+        //
+        // Idempotency anahtari bu ikisini AYIRIYOR:
+        //   ayni anahtar  -> "bu istegi zaten isledim", basari doner
+        //   farkli anahtar -> gercekten ikinci iade, kurallar isler
+        // ==============================================================
         => HandleResult(await Sender
-            .Send(new RefundPaymentCommand(id, request?.Amount, request?.Reason), cancellationToken)
+            .Send(
+                new RefundPaymentCommand(id, request?.Amount, request?.Reason, idempotencyKey),
+                cancellationToken)
             .ConfigureAwait(false));
 }
 
