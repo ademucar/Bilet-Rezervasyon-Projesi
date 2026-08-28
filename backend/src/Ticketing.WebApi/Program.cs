@@ -1,3 +1,7 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Serilog;
+using Ticketing.WebApi.Observability;
 using Microsoft.AspNetCore.HttpOverrides;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.WebApi.Hubs;
@@ -14,6 +18,21 @@ using Ticketing.WebApi.Middleware;
 using Ticketing.WebApi.Security;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ===================================================================
+// LOGLAMA -- PDF Sprint 16
+// ===================================================================
+// Serilog'u EN BASTA baglıyorum.
+//
+// Sebep: bundan sonraki her satir (servis kayitlari, yapilandirma
+// okuma, veritabani baglantisi) log uretebiliyor. Sonra baglasaydik
+// uygulamanin ACILIS asamasindaki loglar varsayilan saglayiciya
+// giderdi ve dosyaya HIC yazilmazdi.
+//
+// Acilista olusan hatalar ise tam olarak en cok ihtiyac duyulan
+// loglardir: uygulama ayaga kalkmadiginda elimizde baska hicbir sey
+// olmuyor.
+builder.AddSerilogLogging();
 
 // ===================================================================
 // SERVISLER
@@ -91,7 +110,13 @@ builder.Services.AddProblemDetails(options =>
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddHealthChecks();
+// ---- Saglik kontrolleri (PDF Sprint 16) ----
+builder.Services.AddApplicationHealthChecks(builder.Configuration);
+
+// ---- Izleme / tracing (PDF Sprint 16) ----
+builder.Services.AddObservability(
+    builder.Configuration,
+    builder.Environment.EnvironmentName);
 
 // ===================================================================
 // API GUVENLIGI -- PDF Sprint 15
@@ -298,6 +323,14 @@ app.UseExceptionHandler();
 // 2) Hata yanitina da correlation ID eklenebilsin diye hemen sonra.
 app.UseMiddleware<CorrelationIdMiddleware>();
 
+// 2b) Istek ozeti logu: correlation ID middleware'inden SONRA.
+//
+// Once olsaydi ozet satirinda CorrelationId alani BOS olurdu --
+// cunku deger henuz uretilmemis olurdu. Bu, PDF'in "correlation ID
+// application log icinde olmali" maddesini sessizce karsilanmamis
+// birakirdi: kod var, alan bos.
+app.UseRequestLogging();
+
 // ===================================================================
 // GUVENLIK KATMANLARI -- PDF Sprint 15
 // ===================================================================
@@ -353,7 +386,52 @@ app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHealthChecks("/health");
+// ===================================================================
+// SAGLIK UCLARI -- PDF Sprint 16
+// ===================================================================
+// Ucu de AllowAnonymous: yuk dengeleyici ve Kubernetes probe'lari
+// token tasiyamaz. Bu yuzden yanitlarda hicbir hassas bilgi yok
+// (baglanti dizesi, surum, ic hata mesaji donmuyor).
+
+// 1) Insan icin: her seyin ayrintili ozeti.
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+});
+
+// 2) "Trafik alabilir miyim?" -- TUM bagimliliklar kontrol ediliyor.
+//
+// Kubernetes readiness probe bunu cagirir. Basarisiz olursa
+// kapsayici OLDURULMEZ, yalnizca yuk dengeleyiciden cikarilir.
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains(HealthChecksSetup.ReadyTag),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+});
+
+// 3) "Process ayakta mi?" -- HICBIR bagimlilik kontrol edilmiyor.
+//
+// ==================================================================
+// Predicate = _ => false  SATIRI BU DOSYADAKI EN KRITIK SATIR
+// ==================================================================
+// Buraya veritabani kontrolu eklemek cok mantikli gorunur ve
+// FELAKETLE sonuclanir:
+//
+//   PostgreSQL 30 saniye yanit vermez -> tum kapsayicilarin live
+//   probe'u duser -> Kubernetes hepsini OLDURUR -> yeniden
+//   baslarlar, veritabani hala yok -> yine olurler...
+//
+// Gecici bir veritabani sorunu, kalici bir uygulama cokusune
+// donusur. Uygulama, kendi yeniden baslatmasiyla COZEMEYECEGI bir
+// sey icin surekli yeniden baslatilir.
+//
+// Live probe yalnizca "bu process kilitlendi mi?" sorusunu
+// cevaplamali. Cevabi bagimliliklara BAGLI OLMAMALI.
+// ==================================================================
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false,
+});
 
 // ===================================================================
 // KOLTUK HUB'I -- PDF Sprint 10
@@ -400,7 +478,31 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 BackgroundJobSetup.RegisterRecurringJobs(
     app.Services.GetRequiredService<IRecurringJobManager>());
 
-await app.RunAsync();
+// ===================================================================
+// CALISTIR
+// ===================================================================
+// try/finally icinde: Log.CloseAndFlush() cagrilmazsa dosya sink'i
+// tamponundaki son loglar DISKE YAZILMADAN process sonlanir.
+//
+// Yani uygulamanin cokme anindaki loglari -- en cok ihtiyac
+// duyacaklarimiz -- kaybolur. Tam olarak isimize yarayacak an.
+try
+{
+    Log.Information("Ticketing API baslatiliyor. Ortam: {Environment}",
+        app.Environment.EnvironmentName);
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Uygulama baslatilamadi.");
+
+    throw;
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}
 
 /// <summary>
 /// Integration testlerin WebApplicationFactory ile bu projeyi

@@ -101,6 +101,106 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.11" />
   </ItemGroup>
+  <!-- ============ GOZLEMLENEBILIRLIK (PDF Sprint 16) ============ -->
+  <ItemGroup>
+    <!--
+      SERILOG
+
+      Neden yerlesik ILogger yetmiyor?
+
+      Yetiyor - kod tarafinda. Biz zaten her yerde ILogger ve
+      [LoggerMessage] kullaniyoruz ve bu SATIRLARIN HICBIRI
+      degismeyecek. Serilog yalnizca o loglarin NEREYE ve HANGI
+      BICIMDE yazildigini degistiriyor.
+
+      Kazandigimiz sey YAPILANDIRILMIS (structured) log: log satiri
+      duz metin degil, alanlari olan bir JSON kaydi olarak dosyaya
+      yaziliyor. Boylece "CorrelationId = x olan tum kayitlar" diye
+      SORGU yazilabiliyor. Duz metinde bunu ancak grep ile ve
+      bicim degisirse kirilacak sekilde yapabilirdik.
+    -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <!--
+      OPENTELEMETRY
+
+      Loglar "ne oldu" sorusunu cevapliyor; izleme (tracing) ise
+      "nerede yavasladi" sorusunu.
+
+      Bizde bir istek su zinciri geciyor:
+        HTTP -> MediatR -> EF Core -> PostgreSQL
+                        -> Redis
+                        -> Outbox -> Hangfire -> SMTP
+      Bir istek 3 saniye surdugunde loglar bunu soyler ama HANGI
+      halkanin yavas oldugunu soylemez. Trace, her halkayi ayri
+      olcuyor.
+    -->
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
+    <!--
+      VERITABANI IZLEME: Npgsql.OpenTelemetry, EF instrumentation DEGIL
+
+      Iki secenek vardi:
+
+        a) OpenTelemetry.Instrumentation.EntityFrameworkCore
+           -> yalnizca 1.18.0-beta.1 olarak var (kararli surum YOK)
+
+        b) Npgsql.OpenTelemetry 9.0.5
+           -> KARARLI ve Npgsql surumumuzle (9.x) ayni hatta
+
+      (b)'yi sectim. Beta bir pakete gerek kalmadigi gibi, surucu
+      seviyesinde olctugu icin daha DOGRU: EF'in urettigi SQL'in
+      veritabaninda gercekte ne kadar surdugunu goruyoruz.
+
+      DIKKAT: surum 10.0.3 de var ama Npgsql 10'u hedefliyor. Bizim
+      Npgsql'imiz 9.x; 9.0.5 secmek zorundaydim. Bunu karistirmak
+      sessizce calisan ama yanlis surum yukleyen bir yapi uretirdi.
+    -->
+    <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.5" />
+    <!--
+      REDIS IZLEME: BURADA BETA KABUL ETMEK ZORUNDAYIM
+
+      OpenTelemetry.Instrumentation.StackExchangeRedis yalnizca
+      1.18.0-beta.1 olarak yayinlaniyor; kararli surumu YOK.
+
+      Sprint 9'da Newtonsoft.Json icin "yama var, zorla" demistim;
+      Sprint 14'te MailKit icin "yama yok, paketi reddet" demistim.
+      Buradaki karar farkli bir uc:
+
+        - Paket, OpenTelemetry'nin KENDI kurulusundan geliyor
+        - "beta" etiketi guvenilmezlikten degil, anlamsal
+          sozlesmelerin (semantic conventions) henuz sabitlenmemis
+          olmasindan - yani alan ADLARI degisebilir, kod calismaz
+          degil
+        - Etkisi izleme ile SINIRLI: bozulursa Redis calismaz hale
+          gelmez, yalnizca trace kaybederiz
+
+      Riski kabul edilebilir buldum ve GERKCESINI buraya yaziyorum
+      ki ilerde "neden beta paket var?" diye sorulunca cevap kodda
+      dursun.
+    -->
+    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.18.0-beta.1" />
+    <!--
+      HEALTH CHECK
+
+      Yerlesik AddHealthChecks() yalnizca "uygulama ayakta mi" der.
+      Bize "BAGIMLILIKLARIM ayakta mi" lazim: PostgreSQL, Redis,
+      Hangfire, disk.
+
+      Bu paketler o kontrolleri hazir getiriyor. Elle yazsaydik her
+      biri icin baglanti acma/kapama, zaman asimi ve hata yakalama
+      mantigini tekrar yazmam gerekirdi.
+    -->
+    <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Hangfire" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+  </ItemGroup>
   <!-- ===================== TEST ALTYAPISI ===================== -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
