@@ -1,6 +1,7 @@
 using Hangfire;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Observability;
 using Ticketing.Application.Features.Events;
 using Ticketing.Application.Features.Notifications;
 using Ticketing.Application.Features.Outbox;
@@ -86,6 +87,23 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task ExpireReservationsAsync(CancellationToken cancellationToken)
     {
+        // ==========================================================
+        // PDF Sprint 16: "Background job islemleri" izlenmelidir.
+        // ==========================================================
+        // Her is kendi izleme kapsamini aciyor. Boylece izleme
+        // arayuzunde is, HTTP isteklerinden ayri bir kok (root)
+        // olarak gorunuyor ve icindeki veritabani/Redis cagrilari
+        // ona baglaniyor.
+        //
+        // Kapsam olmadan: isin urettigi SQL sorgulari izlemede
+        // SAHIPSIZ gorunurdu -- "bu sorgu nereden geldi?"
+        // sorusunun cevabi olmazdi.
+        //
+        // activity null olabilir (dinleyici yoksa); using bunu
+        // sorunsuz karsiliyor.
+        // ==========================================================
+        using var activity = AppActivitySource.StartJob(nameof(ExpireReservationsAsync));
+
         var result = await _sender
             .Send(new ExpireReservationsCommand(), cancellationToken)
             .ConfigureAwait(false);
@@ -142,6 +160,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task ProcessOutboxAsync(CancellationToken cancellationToken)
     {
+        using var activity = AppActivitySource.StartJob(nameof(ProcessOutboxAsync));
+
         var result = await _sender
             .Send(new ProcessOutboxMessagesCommand(), cancellationToken)
             .ConfigureAwait(false);
@@ -174,6 +194,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task SendEventRemindersAsync(CancellationToken cancellationToken)
     {
+        using var activity = AppActivitySource.StartJob(nameof(SendEventRemindersAsync));
+
         var result = await _sender
             .Send(new SendEventRemindersCommand(), cancellationToken)
             .ConfigureAwait(false);
@@ -201,6 +223,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task NotifyExpiringReservationsAsync(CancellationToken cancellationToken)
     {
+        using var activity = AppActivitySource.StartJob(nameof(NotifyExpiringReservationsAsync));
+
         var result = await _sender
             .Send(new NotifyExpiringReservationsCommand(), cancellationToken)
             .ConfigureAwait(false);
@@ -234,6 +258,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task CompletePastEventsAsync(CancellationToken cancellationToken)
     {
+        using var activity = AppActivitySource.StartJob(nameof(CompletePastEventsAsync));
+
         var result = await _sender
             .Send(new CompletePastEventsCommand(), cancellationToken)
             .ConfigureAwait(false);
@@ -258,6 +284,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task GenerateDailySalesSummaryAsync(CancellationToken cancellationToken)
     {
+        using var activity = AppActivitySource.StartJob(nameof(GenerateDailySalesSummaryAsync));
+
         var result = await _sender
             .Send(new GenerateDailySalesSummaryCommand(), cancellationToken)
             .ConfigureAwait(false);
