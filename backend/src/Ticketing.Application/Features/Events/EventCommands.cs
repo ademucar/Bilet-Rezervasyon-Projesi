@@ -2,6 +2,7 @@ using System.Text.Json;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Ticketing.Application.Abstractions.Caching;
 using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
@@ -325,12 +326,57 @@ internal sealed class EventStatusCommandHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly ISeatNotifier _seatNotifier;
+    private readonly ICacheService _cache;
 
-    public EventStatusCommandHandler(IApplicationDbContext context, ISeatNotifier seatNotifier)
+    public EventStatusCommandHandler(
+        IApplicationDbContext context,
+        ISeatNotifier seatNotifier,
+        ICacheService cache)
     {
         _context = context;
         _seatNotifier = seatNotifier;
+        _cache = cache;
     }
+
+    /// <summary>
+    /// Etkinlik degistiginde ilgili onbellek kayitlarini temizler.
+    /// </summary>
+    /// <remarks>
+    /// ==============================================================
+    /// PDF KURALI: "Veri guncellendiginde ilgili cache temizlenmelidir."
+    /// ==============================================================
+    /// Neden ONEK ile siliyorum, tek anahtarla degil?
+    ///
+    /// Bir etkinligin durumu degistiginde BIRDEN FAZLA anahtar
+    /// bayatliyor:
+    ///
+    ///     event:detail:{id}     -> bu etkinligin detayi
+    ///     event:popular:10      -> populer listesi (artik yayinda degil)
+    ///     event:popular:20      -> ayni listenin baska boyutu
+    ///
+    /// "popular:{n}" anahtarlarinin hangi n degerleriyle uretildigini
+    /// onceden BILEMEYIZ -- istemci 10 da isteyebilir 25 de. Tek tek
+    /// silmek imkansiz.
+    ///
+    /// "event:" oneki hepsini birden yakaliyor.
+    ///
+    /// ------------------------------------------------------------
+    /// FAZLA SILMEK, EKSIK SILMEKTEN IYIDIR
+    /// ------------------------------------------------------------
+    /// Bu yaklasim BASKA etkinliklerin detay anahtarlarini da siliyor.
+    /// Israf gibi gorunuyor ama dogru tercih:
+    ///
+    ///   Fazla silmenin bedeli  -> birkac sorgu tekrar veritabanina
+    ///                             gider (milisaniyeler)
+    ///   Eksik silmenin bedeli  -> kullanici IPTAL EDILMIS etkinlige
+    ///                             bilet almaya calisir
+    ///
+    /// Ikisi kiyaslanamaz. Onbellekte "bayat veri" her zaman
+    /// "gereksiz sorgu"dan pahalidir.
+    /// ==============================================================
+    /// </remarks>
+    private Task ClearEventCacheAsync(CancellationToken cancellationToken)
+        => _cache.RemoveByPrefixAsync(CacheKeys.EventPrefix, cancellationToken);
 
     public async Task<Result> Handle(SubmitEventForApprovalCommand request, CancellationToken cancellationToken)
     {
@@ -353,6 +399,7 @@ internal sealed class EventStatusCommandHandler
         evt.SubmitForApproval();
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
 
         return Result.Success();
     }
@@ -371,6 +418,15 @@ internal sealed class EventStatusCommandHandler
         evt.Publish();
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // Yayinlanan etkinlik artik herkese gorunur olmali.
+        //
+        // Temizlemeseydik, daha once 404 alan bir istek yuzunden
+        // onbellekte "yok" kaydi olusmus olabilirdi... aslinda
+        // olmazdi: null degerleri bilerek onbelleklemiyoruz
+        // (bkz. RedisCacheService). Yine de populer listesi ve
+        // detay anahtarlari tazelenmeli.
+        await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
 
         return Result.Success();
     }
@@ -439,6 +495,14 @@ internal sealed class EventStatusCommandHandler
             evt.Id,
             evt.Title,
             cancellationToken).ConfigureAwait(false);
+
+        // Onbellek temizligi BURADA en kritik.
+        //
+        // Iptal edilen bir etkinlik onbellekte "SalesOpen" olarak
+        // kalirsa, kullanicilar 5 dakika boyunca satista goruntuler
+        // ve koltuk secmeye calisirdi. Rezervasyon sunucuda
+        // reddedilir -- ama kullanici neden reddedildigini anlamaz.
+        await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
 
         // NOT (Sprint 8): Iptal edilen etkinligin aktif rezervasyonlarinin
         // iptali ve biletlerin iadesi BURADA yapilmiyor.

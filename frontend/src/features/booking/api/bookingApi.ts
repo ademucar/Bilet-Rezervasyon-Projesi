@@ -236,9 +236,83 @@ export function newIdempotencyKey(): string {
   return crypto.randomUUID()
 }
 
+/**
+ * Etkinlik listeleme filtreleri. PDF Sprint 11.
+ *
+ * Backend'deki GetEventsQuery ile birebir esleyen alanlar. Alan adi
+ * uyusmazsa filtre SESSIZCE calismaz -- ASP.NET taninmayan sorgu
+ * parametresini yok sayar, hata dondurmez. Bu yuzden adlari
+ * kopyalayarak aliyorum.
+ */
+export interface EventFilters {
+  search?: string
+  cityId?: string
+  categoryId?: string
+  venueId?: string
+  organizerId?: string
+  dateFrom?: string
+  dateTo?: string
+  minPrice?: number
+  maxPrice?: number
+  maxMinimumAge?: number
+  status?: number
+  sortBy?: 'date' | 'title' | 'created'
+  sortDirection?: 'asc' | 'desc'
+  pageNumber?: number
+  pageSize?: number
+}
+
+export interface CategoryDto {
+  id: string
+  name: string
+  slug: string
+  iconName: string | null
+}
+
+export interface CityDto {
+  id: string
+  name: string
+  plateCode: number
+}
+
 export const bookingApi = {
-  getEvents: async (params: { search?: string; cityId?: string; pageNumber?: number }) => {
-    const { data } = await api.get<Paged<EventListItem>>('/events', { params })
+  getEvents: async (params: EventFilters) => {
+    // ==============================================================
+    // BOS ALANLARI TEMIZLE
+    // ==============================================================
+    // Axios, undefined degerleri zaten atliyor ama BOS METIN ('')
+    // gonderiyor: ?cityId=&categoryId=
+    //
+    // Backend tarafinda Guid? alanina bos metin baglanmaya calisilinca
+    // model binding hatasi olusur ve istek 400 doner. Yani kullanici
+    // filtreyi "Tumu"ne cevirdiginde liste tamamen bozulurdu.
+    //
+    // Temizligi TEK YERDE yapiyorum ki her cagirim yerinde
+    // tekrarlanmasin.
+    // ==============================================================
+    const temiz = Object.fromEntries(
+      Object.entries(params).filter(
+        ([, deger]) => deger !== undefined && deger !== '' && deger !== null,
+      ),
+    )
+
+    const { data } = await api.get<Paged<EventListItem>>('/events', { params: temiz })
+    return data
+  },
+
+  /** PDF Sprint 11: populer etkinlikler (Redis'te 10 dakika). */
+  getPopularEvents: async (count = 8): Promise<EventListItem[]> => {
+    const { data } = await api.get<EventListItem[]>('/events/popular', { params: { count } })
+    return data
+  },
+
+  getCategories: async (): Promise<CategoryDto[]> => {
+    const { data } = await api.get<CategoryDto[]>('/events/categories')
+    return data
+  },
+
+  getCities: async (): Promise<CityDto[]> => {
+    const { data } = await api.get<CityDto[]>('/cities')
     return data
   },
 

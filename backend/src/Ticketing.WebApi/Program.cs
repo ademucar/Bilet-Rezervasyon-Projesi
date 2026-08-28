@@ -2,6 +2,7 @@ using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.WebApi.Hubs;
 using Hangfire;
 using Ticketing.Infrastructure.BackgroundJobs;
+using Ticketing.Infrastructure.Caching;
 using Asp.Versioning;
 using Ticketing.Application;
 using Ticketing.Application.Abstractions.Security;
@@ -95,6 +96,14 @@ builder.Services.AddHealthChecks();
 // ARKA PLAN ISLERI -- PDF Sprint 9
 // ===================================================================
 builder.Services.AddBackgroundJobs(builder.Configuration);
+
+// ===================================================================
+// REDIS ONBELLEK -- PDF Sprint 11
+// ===================================================================
+// Baglanti dizesi yoksa veya Redis kapaliysa uygulama YINE ACILIR;
+// onbellek devre disi kalir ve sorgular veritabanindan karsilanir.
+// PDF: "Cache kapali oldugunda sistem calismaya devam edebilmelidir."
+builder.Services.AddCaching(builder.Configuration);
 
 // ===================================================================
 // GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10

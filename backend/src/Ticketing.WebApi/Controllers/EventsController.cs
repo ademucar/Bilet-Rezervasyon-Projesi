@@ -49,6 +49,46 @@ public sealed class EventsController : ApiControllerBase
         return HandleResult(await Sender.Send(effectiveQuery, cancellationToken).ConfigureAwait(false));
     }
 
+    /// <summary>
+    /// Etkinlik kategorileri. PDF Sprint 11.
+    /// </summary>
+    /// <remarks>
+    /// Redis te 24 saat onbellekleniyor. Filtre acilir listesi icin
+    /// her sayfa acilisinda cagriliyor; onbellek olmadan gereksiz
+    /// veritabani yuku olurdu.
+    /// </remarks>
+    [HttpGet("categories")]
+    [AllowAnonymous]
+    [ProducesResponseType<IReadOnlyList<CategoryDto>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new GetCategoriesQuery(), cancellationToken)
+            .ConfigureAwait(false));
+
+    /// <summary>
+    /// En populer etkinlikler. PDF Sprint 11.
+    /// </summary>
+    /// <remarks>
+    /// Redis te 10 dakika onbellekleniyor.
+    ///
+    /// Neden ayri bir uc? Ana sayfada gosterilecek ve listeleme
+    /// ucundan farkli bir siralama mantigi var (bilet satisi).
+    /// Listeye "sortBy=popular" olarak eklemek de mumkundu ama o
+    /// zaman filtrelerle birlesince onbellek anahtari patlardi:
+    /// sehir + kategori + tarih + populer = binlerce kombinasyon.
+    ///
+    /// Ayri uc, tek ve sabit bir anahtar demek.
+    /// </remarks>
+    [HttpGet("popular")]
+    [AllowAnonymous]
+    [ProducesResponseType<IReadOnlyList<EventListItem>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPopularEvents(
+        [FromQuery] int count = 10,
+        CancellationToken cancellationToken = default)
+        => HandleResult(await Sender
+            .Send(new GetPopularEventsQuery(count), cancellationToken)
+            .ConfigureAwait(false));
+
     /// <summary>Etkinlik detayini oturumlariyla birlikte dondurur.</summary>
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
