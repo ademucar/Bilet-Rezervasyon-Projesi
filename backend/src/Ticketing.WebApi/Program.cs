@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.WebApi.Hubs;
 using Hangfire;
@@ -93,6 +94,150 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks();
 
 // ===================================================================
+// API GUVENLIGI -- PDF Sprint 15
+// ===================================================================
+
+// ---- Istek hizi sinirlama ----
+builder.Services.AddRateLimiting();
+
+// ---- CORS ----
+//
+// ==================================================================
+// GELISTIRMEDE CORS'A NEDEN IHTIYAC YOK AMA YINE DE TANIMLIYORUZ?
+// ==================================================================
+// Gelistirmede Vite proxy'si sayesinde istekler tarayici acisindan
+// AYNI kaynaga (5173) gidiyor; CORS hic devreye girmiyor.
+//
+// Uretimde ise frontend ve API farkli alan adlarinda olabilir. O gun
+// yapilandirma yapmak yerine SIMDIDEN kuruyorum -- ama izin verilen
+// kaynaklari YAPILANDIRMADAN okuyorum, kodda sabitlemiyorum.
+// ==================================================================
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        if (allowedOrigins.Length == 0)
+        {
+            // Kaynak tanimlanmamissa HICBIR sey acmiyoruz.
+            //
+            // AllowAnyOrigin() yazmak cazip ama TEHLIKELI: herhangi
+            // bir site tarayicidan API'mize istek atabilirdi.
+            //
+            // "Yapilandirma eksikse en guvenli davranis" ilkesi --
+            // eksik ayar, acik kapi anlamina gelmemeli.
+            policy.WithOrigins();
+
+            return;
+        }
+
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+
+              // AllowCredentials + AllowAnyOrigin BIRLIKTE KULLANILAMAZ
+              // (tarayici reddeder). Kaynaklari acikca listeledigimiz
+              // icin kimlik bilgisi tasiyabiliyoruz.
+              .AllowCredentials()
+
+              // Istemcinin okuyabilecegi ozel basliklar.
+              // Varsayilan olarak yalnizca birkac standart baslik
+              // gorunur; Retry-After ve correlation id'yi acikca
+              // aciyoruz.
+              .WithExposedHeaders("Retry-After", "X-Correlation-Id");
+    });
+});
+
+// ---- Istek boyutu siniri ----
+//
+// ==================================================================
+// PDF: "Request size limit"
+// ==================================================================
+// Varsayilan Kestrel siniri ~30 MB. Bizim en buyuk istegimiz bir
+// JSON govdesi ve birkac kilobayt.
+//
+// Sinir olmasaydi saldirgan 30 MB'lik istekler gonderip bellegi ve
+// bant genisligini tuketebilirdi (basit bir DoS).
+//
+// 1 MB: en buyuk mesru istegimizin (cok koltuklu rezervasyon)
+// onlarca kati.
+//
+// NOT: Dosya yukleme ucu eklendiginde O UC ICIN ayri ve daha yuksek
+// bir sinir gerekecek -- [RequestSizeLimit] ozniteligi ile uc bazinda
+// verilebiliyor.
+// ==================================================================
+builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 1 * 1024 * 1024;
+
+    // ==============================================================
+    // "Server: Kestrel" BASLIGINI KALDIR -- YAKALADIGIM HATA
+    // ==============================================================
+    // Once bunu SecurityHeadersMiddleware icinde
+    // headers.Remove("Server") ile yapmaya calistim. CALISMADI.
+    //
+    // Sebep: Kestrel bu basligi OnStarting geri cagrimindan SONRA,
+    // yaniti tel uzerine yazarken ekliyor. Middleware'in sildigi sey
+    // henuz orada bile degildi.
+    //
+    // Basliklari gercekten kontrol ederek buldum:
+    //   curl -D - -> "Server: Kestrel" hala goruluyordu.
+    //
+    // Dogru yer sunucunun kendi ayari. Sprint 13'teki BOM hatasiyla
+    // ayni ders: kodun NIYETINI degil, URETTIGI CIKTIYI kontrol
+    // etmek gerekiyor.
+    //
+    // Tek basina bir acik degil ama saldirgana bilgi veriyor:
+    // hangi sunucu, hangi surum, hangi bilinen aciklar.
+    // ==============================================================
+    options.AddServerHeader = false;
+});
+
+// ---- Ters vekil sunucu basliklari ----
+//
+// ==================================================================
+// BU YAPILANDIRMA OLMADAN HIZ SINIRI URETIMDE YANLIS CALISIR
+// ==================================================================
+// Uretimde uygulama bir ters vekil sunucu (nginx, load balancer)
+// arkasinda calisiyor. O durumda RemoteIpAddress VEKILIN adresini
+// gosterir -- gercek istemciyi degil.
+//
+// Sonuc: TUM istekler tek bir IP'den gelmis gibi gorunur ve hiz
+// siniri butun kullanicilari BIRLIKTE etkiler. Bir kullanici siniri
+// doldurunca herkes 429 alir.
+//
+// ForwardedHeaders, X-Forwarded-For basligini okuyup gercek istemci
+// adresini geri koyuyor.
+// ==================================================================
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+    // ==============================================================
+    // KNOWN PROXIES TEMIZLENIYOR -- DIKKAT
+    // ==============================================================
+    // Varsayilan olarak yalnizca localhost'tan gelen X-Forwarded-For
+    // basliklarina guveniliyor. Docker/Kubernetes'te vekil sunucu
+    // farkli bir IP'de olur ve basliklar YOK SAYILIR.
+    //
+    // Listeleri bosaltmak "her vekile guven" demek. Bu, YALNIZCA
+    // uygulama dogrudan internete acik DEGILSE guvenlidir: aksi
+    // halde saldirgan X-Forwarded-For basligini uydurup hiz sinirini
+    // atlatabilir.
+    //
+    // Uretim dagitiminda vekil sunucunun gercek adresi buraya
+    // yazilmali. Bunu bir NOT olarak birakiyorum cunku degeri
+    // ortama bagli ve yanlis yapilandirmasi sessizce guvenlik
+    // acigi olusturuyor.
+    // ==============================================================
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// ===================================================================
 // ARKA PLAN ISLERI -- PDF Sprint 9
 // ===================================================================
 builder.Services.AddBackgroundJobs(builder.Configuration);
@@ -153,6 +298,37 @@ app.UseExceptionHandler();
 // 2) Hata yanitina da correlation ID eklenebilsin diye hemen sonra.
 app.UseMiddleware<CorrelationIdMiddleware>();
 
+// ===================================================================
+// GUVENLIK KATMANLARI -- PDF Sprint 15
+// ===================================================================
+
+// 3) Ters vekil basliklari: hiz sinirindan ONCE olmali.
+//
+// Sonra olsaydi hiz siniri hala vekilin IP'sini gorurdu ve butun
+// kullanicilari tek kotada toplardi.
+app.UseForwardedHeaders();
+
+// 4) Guvenlik basliklari: mumkun oldugunca ERKEN.
+//
+// Hata sayfalari ve statik dosyalar dahil TUM yanitlara eklensin
+// istiyoruz.
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
+// 5) CORS: kimlik dogrulamadan ONCE.
+//
+// Tarayicinin gonderdigi on kontrol (preflight OPTIONS) istegi
+// kimlik bilgisi TASIMAZ. Kimlik dogrulamadan sonra olsaydi
+// preflight 401 alir ve gercek istek hic gonderilmezdi.
+app.UseCors();
+
+// 6) Hiz siniri: kimlik dogrulamadan SONRA.
+//
+// Boylece giris yapmis kullanicilar icin kota KULLANICI bazli
+// olabiliyor (bkz. ClientKey). Once olsaydi herkes IP bazli
+// sayilirdi ve ayni agdaki kullanicilar birbirini engellerdi.
+//
+// Sira: Authentication -> RateLimiter -> Authorization
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -173,6 +349,7 @@ else
 // karistiricidir: token dogru, kod dogru ama calismiyor.
 // ==================================================================
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllers();
