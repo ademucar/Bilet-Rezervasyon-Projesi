@@ -416,6 +416,29 @@ else
 // ==================================================================
 app.UseAuthentication();
 app.UseRateLimiter();
+// ===================================================================
+// SAHIPLIK REDDINDE 404 -- PDF Sprint 19 denetiminde eklendi
+// ===================================================================
+// UseAuthorization'dan ONCE kaydediliyor. Ilk denememde SONRASINA
+// koymustum ve middleware HIC CALISMADI.
+//
+// Sebep: middleware zinciri ic ice halkalar gibi calisiyor. Bir
+// middleware "sonraki"ni cagirir, o doner, sonra kendi isini
+// bitirir.
+//
+// Yetkilendirme reddettiginde KISA DEVRE yapiyor: 403 yazip
+// donuyor ve sonraki halkayi HIC CAGIRMIYOR. Yani sonrasina
+// konan bir middleware o durumda calismaz.
+//
+// Once koydugumuzda ise: bizim _next() cagrimiz yetkilendirmeyi
+// KAPSIYOR. O reddedip donunce kontrol bize geri geliyor ve
+// yaniti duzeltebiliyoruz.
+//
+// Ders: "sonra calissin" istiyorsan middleware'i ONCE kaydet.
+// Sirala mantigi isteklerde ileri, YANITLARDA geri isliyor.
+// ===================================================================
+app.UseMiddleware<OwnershipNotFoundMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();

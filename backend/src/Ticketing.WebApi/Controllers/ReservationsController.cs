@@ -60,7 +60,18 @@ public sealed class ReservationsController : ApiControllerBase
 
     /// <summary>Rezervasyon detayi. Yalnizca sahibi gorebilir.</summary>
     [HttpGet("{id:guid}")]
-    [Authorize]
+    // ==============================================================
+    // ReservationOwner -- SPRINT 19'DA BAGLANDI
+    // ==============================================================
+    // Handler zaten sahiplik filtreliyordu (ve 404 donuyordu).
+    // Politika IKINCI bir katman: birinin unutulmasi digerini
+    // gecersiz kilmiyor.
+    //
+    // Politika reddi de 404 doner (ResourceOwnerResultHandler):
+    // 403 "bu rezervasyon VAR ama senin degil" bilgisini
+    // sizdirirdi.
+    // ==============================================================
+    [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
     [ProducesResponseType<ReservationDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
@@ -69,7 +80,7 @@ public sealed class ReservationsController : ApiControllerBase
 
     /// <summary>Rezervasyonu iptal eder ve koltuklari serbest birakir.</summary>
     [HttpPost("{id:guid}/cancel")]
-    [Authorize]
+    [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Cancel(
@@ -84,7 +95,7 @@ public sealed class ReservationsController : ApiControllerBase
     /// Rezervasyon suresini uzatir. Bir kez ve en fazla 5 dakika.
     /// </summary>
     [HttpPost("{id:guid}/extend")]
-    [Authorize]
+    [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
     [ProducesResponseType<ReservationDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Extend(Guid id, CancellationToken cancellationToken)

@@ -146,22 +146,45 @@ internal static class AuthenticationSetup
                 policy.RequireAuthenticatedUser();
                 policy.AddRequirements(new EventOwnerRequirement());
             })
-            // TicketOwner ve ReservationOwner henuz yalnizca "giris yapmis
-            // ol" istiyor. Sebep: bilet ve rezervasyon Sprint 7-8'de
-            // olusacak; gercek sahiplik kontrollerini o sprintlerde
-            // EventOwner ile ayni kalibi kullanarak yazacagiz.
+            // ==========================================================
+            // TicketOwner / ReservationOwner -- SPRINT 19'DA TAMAMLANDI
+            // ==========================================================
+            // Sprint 3'te iskelet olarak birakilmislardi: yalnizca
+            // RequireAuthenticatedUser() yapiyorlardi ve koddaki not
+            // "gercek kontrolleri Sprint 7-8'de yazacagiz" diyordu.
+            // Yazilmamislar.
             //
-            // Iskeleti simdiden birakiyorum ki controller'lar dogru
-            // policy adini bugunden kullansin ve o gun yalnizca
-            // requirement eklemek yeterli olsun.
-            .AddPolicy(Policies.TicketOwner, policy => policy.RequireAuthenticatedUser())
-            .AddPolicy(Policies.ReservationOwner, policy => policy.RequireAuthenticatedUser());
+            // Sprint 19 denetiminde OLCTUM: sistem acik DEGILDI --
+            // handler'lar sahiplik kontrolunu zaten yapiyor ve
+            // baskasinin rezervasyonuna erisim 404 donuyor.
+            //
+            // Yine de tamamlandi, cunku politika YANILTICIYDI:
+            // [Authorize(Policy = TicketOwner)] yazan biri kontrolun
+            // politikada oldugunu sanirdi. Simdi iki bagimsiz katman
+            // var; birinin unutulmasi digerini gecersiz kilmiyor.
+            // ==========================================================
+            .AddPolicy(Policies.TicketOwner, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new TicketOwnerRequirement());
+            })
+            .AddPolicy(Policies.ReservationOwner, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new ReservationOwnerRequirement());
+            });
 
         // Handler'i kaydediyorum. Bu satir olmasaydi policy sessizce
         // BASARISIZ olurdu -- requirement var ama onu degerlendirecek
         // kimse yok. Herkes 403 alirdi ve sebebi cok gec anlasilirdi.
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
                               EventOwnerAuthorizationHandler>();
+
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
+                              TicketOwnerAuthorizationHandler>();
+
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
+                              ReservationOwnerAuthorizationHandler>();
 
         return services;
     }
