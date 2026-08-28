@@ -82,6 +82,9 @@ public static class DependencyInjection
         // PDF: "Rapor uretimi background job olarak calistirilmali."
         services.AddScoped<IOutboxMessageHandler, Features.Reports.ReportExportOutboxHandler>();
 
+        // Sprint 14: rezervasyon olusturuldu e-postasi.
+        services.AddScoped<IOutboxMessageHandler, ReservationCreatedOutboxHandler>();
+
         return services;
     }
 }

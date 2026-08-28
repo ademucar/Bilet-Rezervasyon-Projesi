@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -99,16 +100,16 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly IEmailService _emailService;
-    private readonly IAppUrlProvider _urls;
+    private readonly IEmailTemplateRenderer _templates;
 
     public TicketsIssuedOutboxHandler(
         IApplicationDbContext context,
         IEmailService emailService,
-        IAppUrlProvider urls)
+        IEmailTemplateRenderer templates)
     {
         _context = context;
         _emailService = emailService;
-        _urls = urls;
+        _templates = templates;
     }
 
     public string MessageType => OutboxMessageTypes.TicketsIssued;
@@ -161,36 +162,47 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
                 $"Bilet e-postasi icin kullanici bulunamadi: {data.UserId}");
         }
 
-        var body = new StringBuilder(1024);
-        body.Append(CultureInfo.InvariantCulture, $"<p>Merhaba {user.FirstName},</p>");
-        body.Append("<p>Odemeniz alindi ve biletleriniz hazir.</p>");
-        body.Append(CultureInfo.InvariantCulture, $"<h3>{tickets[0].EventTitle}</h3>");
-        body.Append(CultureInfo.InvariantCulture,
-            $"<p>{tickets[0].StartDate:dd.MM.yyyy HH:mm} - {tickets[0].VenueName}</p>");
-        body.Append("<ul>");
+        // ==============================================================
+        // SPRINT 14: ELLE HTML YERINE SABLON
+        // ==============================================================
+        // Bu blok onceden StringBuilder ile HTML uretiyordu. Sprint
+        // 14'te sablon sistemine tasidim.
+        //
+        // Kazanc: e-postanin GORUNUMU artik burada degil, tek bir
+        // yerde (EmailTemplateRenderer). Alt bilgiye bir satir eklemek
+        // gerekseydi sekiz dosya yerine bir dosya degisecek.
+        //
+        // Burada kalan tek sey VERI hazirlamak -- handler'in isi bu.
+        // ==============================================================
+        var listeHtml = new StringBuilder(512);
+        listeHtml.Append("<ul style=\"margin:0;padding-left:20px;\">");
 
         foreach (var ticket in tickets)
         {
-            body.Append(CultureInfo.InvariantCulture,
-                $"<li>{ticket.SectionName} {ticket.SeatLabel} - {ticket.Price} {ticket.Currency} " +
-                $"(Bilet no: {ticket.TicketNumber})</li>");
+            // Bilet verilerini BURADA kaciriyorum: bu metin sablona
+            // HTML olarak giriyor ve orada tekrar kacirilmiyor.
+            listeHtml.Append(CultureInfo.InvariantCulture,
+                $"<li>{WebUtility.HtmlEncode(ticket.SectionName)} " +
+                $"{WebUtility.HtmlEncode(ticket.SeatLabel)} - " +
+                $"{ticket.Price} {WebUtility.HtmlEncode(ticket.Currency)} " +
+                $"(Bilet no: {WebUtility.HtmlEncode(ticket.TicketNumber)})</li>");
         }
 
-        body.Append("</ul>");
+        listeHtml.Append("</ul>");
 
-        // QR kodunu e-postaya GOMMUYORUZ, adres veriyoruz.
-        //
-        // Sebep: QR degeri bilet gecerliligini kaniltlayan hassas bir
-        // veri. E-posta kutusuna dusen bir goruntu, iletildiginde
-        // baskasinin biletle girmesine yol acabilir. Kullanicinin
-        // giris yapip kendi ekraninda gormesi daha guvenli.
-        body.Append(CultureInfo.InvariantCulture,
-            $"<p>QR kodlariniz icin: <a href=\"{_urls.FrontendUrl}/biletlerim\">Biletlerim</a></p>");
+        var mail = _templates.Render(EmailTemplate.TicketDetails, new Dictionary<string, string>
+        {
+            ["FirstName"] = user.FirstName,
+            ["EventTitle"] = tickets[0].EventTitle,
+            ["EventDate"] = tickets[0].StartDate.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture),
+            ["VenueName"] = tickets[0].VenueName,
+            ["TicketList"] = listeHtml.ToString(),
+        });
 
         await _emailService.SendAsync(
             user.Email,
-            $"Biletleriniz hazir - {tickets[0].EventTitle}",
-            body.ToString(),
+            mail.Subject,
+            mail.HtmlBody,
             cancellationToken).ConfigureAwait(false);
     }
 }
@@ -307,13 +319,22 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
         // Kullaniciyi rahatsiz etmemek, ikinci bir kanaldan haber
         // vermekten onemli.
         // ==============================================================
+        // Sure dolmasi icin PDF'te ayri bir sablon YOK.
+        //
+        // "Rezervasyon olusturuldu" sablonunu kullanmak yanlis olurdu
+        // (metni tam tersini soyluyor). Bu yuzden burada kisa ve
+        // dogrudan bir mesaj uretiyorum -- sablon sisteminin
+        // Layout'unu kullanmadan.
+        //
+        // Alternatif dokuzuncu bir sablon eklemekti; PDF'in listesine
+        // sadik kalmayi tercih ettim ve karari buraya yazdim.
         await _emailService.SendAsync(
             user.Email,
             "Rezervasyon sureniz doldu",
-            $"<p>Merhaba {user.FirstName},</p>" +
-            $"<p>{data.EventTitle} etkinligi icin olusturdugunuz " +
-            $"{data.ReservationCode} numarali rezervasyonun odeme suresi doldu " +
-            "ve koltuklariniz serbest birakildi.</p>" +
+            $"<p>Merhaba {WebUtility.HtmlEncode(user.FirstName)},</p>" +
+            $"<p>{WebUtility.HtmlEncode(data.EventTitle)} etkinligi icin olusturdugunuz " +
+            $"{WebUtility.HtmlEncode(data.ReservationCode)} numarali rezervasyonun odeme " +
+            "suresi doldu ve koltuklariniz serbest birakildi.</p>" +
             $"<p><a href=\"{_urls.FrontendUrl}/etkinlikler\">Tekrar koltuk secmek icin tiklayin</a></p>",
             cancellationToken).ConfigureAwait(false);
     }
@@ -527,5 +548,106 @@ internal sealed class DailySalesSummaryOutboxHandler : IOutboxMessageHandler
         BitConverter.TryWriteBytes(bytes, value);
 
         return new Guid(bytes);
+    }
+}
+
+// ===================================================================
+// 7) REZERVASYON OLUSTURULDU E-POSTASI
+//    PDF Sprint 14 sablonu: "Rezervasyon olusturuldu"
+// ===================================================================
+
+/// <summary>
+/// Rezervasyon olusturuldugunda bilgilendirme e-postasi gonderir.
+/// </summary>
+/// <remarks>
+/// ==================================================================
+/// UYGULAMA ICI BILDIRIM ILE E-POSTA AYRI YERLERDE -- BILINCLI
+/// ==================================================================
+/// Uygulama ici bildirim, rezervasyonla AYNI transaction'da yaziliyor
+/// (CreateReservationCommandHandler icinde). E-posta ise burada,
+/// Outbox uzerinden.
+///
+/// Sebep: bildirim kendi veritabanimiza yaziliyor -- atomik olabilir
+/// ve olmali. E-posta DIS bir servise cikiyor ve yavas olabilir;
+/// rezervasyon olusturmayi bekletmemeli.
+///
+/// Kullanici acisindan sonuc: koltuklar aninda ayriliyor, e-posta
+/// birkac saniye sonra geliyor. Dogru oncelik.
+/// ==================================================================
+/// </remarks>
+internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
+{
+    private readonly IApplicationDbContext _context;
+    private readonly IEmailService _emailService;
+    private readonly IEmailTemplateRenderer _templates;
+
+    public ReservationCreatedOutboxHandler(
+        IApplicationDbContext context,
+        IEmailService emailService,
+        IEmailTemplateRenderer templates)
+    {
+        _context = context;
+        _emailService = emailService;
+        _templates = templates;
+    }
+
+    public string MessageType => OutboxMessageTypes.ReservationCreated;
+
+    public async Task HandleAsync(string payload, CancellationToken cancellationToken)
+    {
+        var data = OutboxPayload.Parse<ReservationCreatedPayload>(payload);
+
+        // Rezervasyonu veritabanindan OKUYORUM, payload'a guvenmiyorum.
+        //
+        // Aradan gecen surede rezervasyon iptal edilmis veya odenmis
+        // olabilir. "Odemeyi tamamlayin" e-postasi gondermek, zaten
+        // odemis bir kullanici icin kafa karistirici olurdu.
+        var rezervasyon = await _context.Reservations
+            .AsNoTracking()
+            .Where(r => r.Id == data.ReservationId)
+            .Select(r => new
+            {
+                r.Status,
+                r.ReservationCode,
+                r.TotalAmount,
+                EventTitle = r.EventSession.Event.Title
+            })
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // Rezervasyon artik odeme beklemiyorsa e-posta GONDERMIYORUZ.
+        //
+        // Bu bir HATA DEGIL: istisna firlatirsak mesaj bes kez denenip
+        // dead letter olur ve operatoru bosuna mesgul eder.
+        if (rezervasyon is null || rezervasyon.Status != ReservationStatus.Locked)
+        {
+            return;
+        }
+
+        var user = await _context.Users
+            .AsNoTracking()
+            .Where(u => u.Id == data.UserId)
+            .Select(u => new { u.Email, u.FirstName })
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException(
+                $"Rezervasyon e-postasi icin kullanici bulunamadi: {data.UserId}");
+        }
+
+        var mail = _templates.Render(EmailTemplate.ReservationCreated, new Dictionary<string, string>
+        {
+            ["FirstName"] = user.FirstName,
+            ["EventTitle"] = rezervasyon.EventTitle,
+            ["ReservationCode"] = rezervasyon.ReservationCode,
+            ["SeatCount"] = data.SeatCount.ToString(CultureInfo.InvariantCulture),
+            ["TotalAmount"] = $"{rezervasyon.TotalAmount.Amount} {rezervasyon.TotalAmount.Currency}",
+            ["ExpiresInMinutes"] = data.ExpiresInMinutes.ToString(CultureInfo.InvariantCulture),
+        });
+
+        await _emailService.SendAsync(user.Email, mail.Subject, mail.HtmlBody, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

@@ -8,6 +8,7 @@ using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
 using Ticketing.Application.Common.Options;
 using Ticketing.Application.Common.Results;
+using Ticketing.Application.Features.Outbox;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
 
@@ -324,6 +325,40 @@ internal sealed class CreateReservationCommandHandler
 
             return Result.Failure<ReservationDto>(ReservationErrors.SeatConflict);
         }
+
+        // ==============================================================
+        // BILDIRIM -- PDF Sprint 14: "Rezervasyon olusturuldugunda"
+        // ==============================================================
+        // Uygulama ici bildirim BURADA, ayni transaction'da yaziliyor.
+        //
+        // Neden Outbox degil? Cunku bu bildirim DIS bir sisteme
+        // gitmiyor -- kendi veritabanimiza yaziliyor. Outbox'in varlik
+        // sebebi "iki sistem arasinda atomiklik saglamak"; burada tek
+        // sistem var.
+        //
+        // E-POSTA ise Outbox'a gidiyor (asagida): o gercekten dis bir
+        // servise cikiyor ve yavas olabilir.
+        // ==============================================================
+        _context.Notifications.Add(Notification.Create(
+            userId,
+            Domain.Enums.NotificationType.ReservationCreated,
+            "Rezervasyonunuz olusturuldu",
+            $"{reservation.ReservationCode} numarali rezervasyonunuz icin " +
+            $"{seats.Count} koltuk ayrildi. Odemeyi tamamlamak icin " +
+            $"{_options.LockDurationMinutes} dakikaniz var.",
+            reservation.Id,
+            "/rezervasyonlarim"));
+
+        _context.OutboxMessages.Add(OutboxMessage.Create(
+            OutboxMessageTypes.ReservationCreated,
+            System.Text.Json.JsonSerializer.Serialize(new ReservationCreatedPayload(
+                reservation.Id,
+                userId,
+                reservation.ReservationCode,
+                seats.Count,
+                _options.LockDurationMinutes))));
+
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         // ==============================================================
         // GERCEK ZAMANLI BILDIRIM -- PDF Sprint 10: "SeatLocked"

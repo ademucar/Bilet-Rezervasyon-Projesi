@@ -18,6 +18,7 @@ public static class BackgroundJobSetup
         public const string EventReminders = "event-reminders";
         public const string DailySalesSummary = "daily-sales-summary";
         public const string CompletePastEvents = "complete-past-events";
+        public const string ExpiringReservations = "expiring-reservations";
     }
 
     /// <summary>
@@ -183,5 +184,19 @@ public static class BackgroundJobSetup
             JobIds.CompletePastEvents,
             job => job.CompletePastEventsAsync(CancellationToken.None),
             Cron.Hourly());
+
+        // ---- 6) Sure uyarisi: DAKIKADA BIR ----
+        //
+        // PDF Sprint 14: "Rezervasyon suresi dolmak uzereyken" bildirim.
+        //
+        // Uyari penceresi 3 dakika. Bes dakikada bir calissaydi
+        // pencereyi tamamen kacirabilirdi -- yani bildirim HIC
+        // gitmezdi ve hata da vermezdi.
+        //
+        // Maliyeti dusuk: sorgu index'li ve genelde bos doner.
+        recurringJobs.AddOrUpdate<TicketingJobs>(
+            JobIds.ExpiringReservations,
+            job => job.NotifyExpiringReservationsAsync(CancellationToken.None),
+            Cron.Minutely());
     }
 }

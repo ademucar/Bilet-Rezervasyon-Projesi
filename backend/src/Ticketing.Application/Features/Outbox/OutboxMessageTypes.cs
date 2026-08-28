@@ -50,6 +50,9 @@ public static class OutboxMessageTypes
     /// gonderilmelidir."
     /// </summary>
     public const string ReportExport = "ReportExport";
+
+    /// <summary>PDF Sprint 14 e-posta sablonu: "Rezervasyon olusturuldu".</summary>
+    public const string ReservationCreated = "ReservationCreated";
 }
 
 // ===================================================================
@@ -103,6 +106,13 @@ public sealed record EventReminderPayload(
     string EventTitle,
     string VenueName,
     DateTimeOffset StartDate);
+
+public sealed record ReservationCreatedPayload(
+    Guid ReservationId,
+    Guid UserId,
+    string ReservationCode,
+    int SeatCount,
+    int ExpiresInMinutes);
 
 public sealed record DailySalesSummaryPayload(
     DateOnly Date,

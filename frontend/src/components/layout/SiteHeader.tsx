@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
 import { authApi } from '../../features/auth/api/authApi'
 import { Button } from '../ui/Button'
+import { NotificationBell } from '../../features/notifications/NotificationBell'
 import { Roles } from '../../types/auth'
 
 /**
@@ -81,6 +82,9 @@ export function SiteHeader() {
             </NavLink>
           )}
         </nav>
+
+        {/* PDF Sprint 14: bildirim zili. Her sayfada erisilebilir. */}
+        <NotificationBell />
 
         {user && (
           <span className="hidden text-sm text-slate-500 sm:inline">

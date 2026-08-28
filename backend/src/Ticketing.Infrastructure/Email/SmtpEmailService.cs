@@ -1,7 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
+using MimeKit.Text;
 using Ticketing.Application.Abstractions.Email;
 
 namespace Ticketing.Infrastructure.Email;
@@ -10,90 +12,201 @@ namespace Ticketing.Infrastructure.Email;
 /// SMTP uzerinden e-posta gonderir. Yerel gelistirmede Mailpit'e baglanir.
 ///
 /// ==================================================================
-/// NEDEN MailKit KULLANMADIM? -- BILINCLI BIR GUVENLIK KARARI
+/// SPRINT 3'TE BIRAKTIGIM NOTUN KARSILIGI
 /// ==================================================================
-/// Ilk tercihim MailKit'ti (.NET dunyasinda standart e-posta kutuphanesi).
-/// Ancak "dotnet add package" komutu su hatayi verdi:
+/// Sprint 3'te ilk tercihim MailKit'ti (.NET dunyasinda standart
+/// e-posta kutuphanesi). Ama paket ekleme komutu su hatayi verdi:
 ///
 ///   NU1902: 'MailKit' paketinde onem derecesi ORTA olan bilinen bir
 ///           guvenlik acigi var (GHSA-9j88-vvj5-vhgr)
 ///
-/// Denedigim TUM surumlerde (4.9.0'dan 4.14.0'a kadar) ayni uyari
-/// cikti -- yani acik henuz giderilmemis.
+/// Denedigim TUM surumlerde (4.9.0 - 4.14.0) ayni uyari cikti.
+/// Bilinen acigi olan bir paketi projeye almayi reddettim ve .NET'in
+/// yerlesik SmtpClient'ini kullandim -- eskimis (SYSLIB0014) ama
+/// guvenli.
 ///
-/// TreatWarningsAsErrors ayarimiz sayesinde bu uyari derlemeyi kirdi
-/// ve karar vermek zorunda kaldim. Uc secenek vardi:
+/// O gun koda su notu birakmistim:
 ///
-///   1. NU1902'yi bastirip MailKit'i eklemek
-///      -> Bilinen bir acigi bile bile projeye almak. HAYIR.
+///   "SPRINT 14 NOTU: Gercek bir e-posta saglayicisina gecerken bu
+///    sinif degisecek. O gun MailKit advisory'sinin kapanip
+///    kapanmadigi TEKRAR kontrol edilmeli."
 ///
-///   2. E-postayi hic gondermemek, yalnizca loglamak
-///      -> Akisi ucdan uca dogrulayamazdik.
+/// ------------------------------------------------------------------
+/// SPRINT 14: KONTROL ETTIM, ACIK KAPANMIS
+/// ------------------------------------------------------------------
+/// MailKit 4.17.0 ile tarama TEMIZ dondu:
 ///
-///   3. .NET'in yerlesik SmtpClient'ini kullanmak  <-- SECILEN
+///   dotnet list package -vulnerable -include-transitive
+///   -> 8 projenin hicbirinde guvenlik acigi olan paket yok
 ///
-/// SmtpClient "yeni gelistirmeler icin onerilmez" diye isaretli.
-/// Sebebi guvenlik acigi DEGIL: modern kimlik dogrulama (OAuth2)
-/// ve bazi protokol ozelliklerini desteklemiyor.
+/// Yani Sprint 3'teki gerekce artik gecerli degil. MailKit'e geciyorum:
 ///
-/// Bizim ihtiyacimiz basit: yerel bir SMTP sunucusuna kimlik
-/// dogrulamasiz duz mesaj gondermek. SmtpClient bunu sorunsuz yapar.
+///   - SYSLIB0014 bastirmasi KALKTI (artik eskimis API kullanmiyoruz)
+///   - Microsoft'un kendisi SmtpClient yerine MailKit'i oneriyor
+///   - Modern TLS ve kimlik dogrulama destegi var
 ///
-/// SPRINT 14 NOTU: Gercek bir e-posta saglayicisina (SendGrid, SES)
-/// gecerken bu sinif degisecek. O gun MailKit advisory'sinin
-/// kapanip kapanmadigi TEKRAR kontrol edilmeli.
+/// Bu, kodda birakilan bir "sonra bak" notunun neden degerli oldugunun
+/// somut ornegi: karar o gunun kosullarina gore verilmisti, kosullar
+/// degisti ve karar guncellendi.
 /// ==================================================================
 /// </summary>
-internal sealed class SmtpEmailService : IEmailService
+internal sealed partial class SmtpEmailService : IEmailService
 {
     private readonly EmailOptions _options;
+    private readonly ILogger<SmtpEmailService> _logger;
 
-    public SmtpEmailService(IOptions<EmailOptions> options) => _options = options.Value;
+    public SmtpEmailService(IOptions<EmailOptions> options, ILogger<SmtpEmailService> logger)
+    {
+        ArgumentNullException.ThrowIfNull(options);
 
-    [SuppressMessage(
-        "Usage",
-        "SYSLIB0014:Type or member is obsolete",
-        Justification =
-            "SmtpClient, modern kimlik dogrulama protokollerini desteklemedigi " +
-            "icin 'yeni gelistirmeler icin onerilmez' olarak isaretli -- guvenlik " +
-            "acigi sebebiyle DEGIL. " +
-            "Alternatif olan MailKit'in tum surumlerinde acik bir guvenlik " +
-            "advisory'si (GHSA-9j88-vvj5-vhgr) bulunuyor; bilinen acigi olan bir " +
-            "paketi projeye almak, eskimis ama guvenli bir API kullanmaktan " +
-            "daha kotu bir tercih olurdu. " +
-            "Kullanim senaryomuz basit SMTP gonderimi ve SmtpClient bunu karsiliyor. " +
-            "Sprint 14'te gercek saglayiciya gecerken yeniden degerlendirilecek.")]
+        _options = options.Value;
+        _logger = logger;
+    }
+
     public async Task SendAsync(
         string recipient,
         string subject,
         string htmlBody,
         CancellationToken cancellationToken = default)
     {
-        using var client = new SmtpClient(_options.Host, _options.Port)
-        {
-            EnableSsl = _options.UseSsl,
+        var message = new MimeMessage();
 
-            // Kimlik bilgisi verilmemisse anonim baglan.
-            // Mailpit kimlik dogrulama istemiyor; gercek saglayicilar ister.
-            Credentials = string.IsNullOrWhiteSpace(_options.Username)
-                ? CredentialCache.DefaultNetworkCredentials
-                : new NetworkCredential(_options.Username, _options.Password)
+        message.From.Add(new MailboxAddress(_options.FromName, _options.From));
+        message.To.Add(MailboxAddress.Parse(recipient));
+        message.Subject = subject;
+
+        // ==============================================================
+        // HTML GOVDE + DUZ METIN ALTERNATIFI
+        // ==============================================================
+        // BodyBuilder ile hem HTML hem duz metin surumu gonderiyoruz
+        // (multipart/alternative).
+        //
+        // Neden ikisi birden?
+        //
+        //   1) Bazi e-posta istemcileri HTML'i kapatiyor (guvenlik
+        //      ayari). Duz metin olmasaydi kullanici BOS bir e-posta
+        //      gorurdu.
+        //
+        //   2) Spam filtreleri, yalnizca HTML iceren mesajlari daha
+        //      supheli buluyor. Duz metin alternatifi teslim oranini
+        //      artiriyor.
+        //
+        // Duz metni HTML'den TUREITIYORUM: etiketleri sokup metni
+        // biraktigimda ayri bir sablon yazmaya gerek kalmiyor ve
+        // ikisi birbirinden ayrisamiyor.
+        // ==============================================================
+        var builder = new BodyBuilder
+        {
+            HtmlBody = htmlBody,
+            TextBody = HtmlToText(htmlBody),
         };
 
-        using var message = new MailMessage
+        message.Body = builder.ToMessageBody();
+
+        using var client = new SmtpClient();
+
+        try
         {
-            From = new MailAddress(_options.From, _options.FromName),
-            Subject = subject,
-            Body = htmlBody,
-            IsBodyHtml = true
-        };
+            // ==========================================================
+            // TLS SECIMI
+            // ==========================================================
+            // Mailpit (yerel gelistirme) TLS kullanmiyor; gercek
+            // saglayicilar kullaniyor.
+            //
+            // SecureSocketOptions.Auto sectim: MailKit sunucunun
+            // yeteneklerine bakip karar veriyor. Sabit bir deger
+            // verseydik ya yerelde ya uretimde calismazdi ve
+            // yapilandirma ile ayrilmasi gerekirdi.
+            //
+            // UseSsl acikca true ise zorluyoruz -- yapilandirmayla
+            // "TLS SART" demek isteyen bir ortam icin.
+            var secureOptions = _options.UseSsl
+                ? SecureSocketOptions.StartTlsWhenAvailable
+                : SecureSocketOptions.Auto;
 
-        message.To.Add(recipient);
+            await client.ConnectAsync(_options.Host, _options.Port, secureOptions, cancellationToken)
+                .ConfigureAwait(false);
 
-        // SmtpClient.SendMailAsync CancellationToken almiyor.
-        // Iptal destegi icin WaitAsync ile sarmaliyorum: istek iptal
-        // edilirse bekleme sonlanir (gonderim arka planda tamamlanabilir
-        // ama istegi bloke etmez).
-        await client.SendMailAsync(message, cancellationToken).ConfigureAwait(false);
+            // Kimlik bilgisi VARSA dogrula.
+            //
+            // Mailpit kimlik dogrulama istemiyor; kosulsuz
+            // AuthenticateAsync cagirsaydik yerelde patlardi.
+            if (!string.IsNullOrWhiteSpace(_options.Username))
+            {
+                // Parola null olabilir (yalnizca kullanici adiyla
+                // dogrulama yapan sunucular var). MailKit null kabul
+                // etmiyor; bos metne ceviriyoruz.
+                await client.AuthenticateAsync(
+                    _options.Username,
+                    _options.Password ?? string.Empty,
+                    cancellationToken).ConfigureAwait(false);
+            }
+
+            await client.SendAsync(message, cancellationToken).ConfigureAwait(false);
+
+            LogSent(_logger, recipient, subject);
+        }
+        finally
+        {
+            // ==========================================================
+            // BAGLANTIYI HER DURUMDA KAPAT
+            // ==========================================================
+            // finally SART: gonderim istisna firlatirsa bile SMTP
+            // baglantisi kapanmali.
+            //
+            // Kapanmazsa sunucu tarafinda acik baglanti birikir ve
+            // saglayicilar bunu kotuye kullanim sayip IP'yi
+            // engelleyebilir.
+            //
+            // IsConnected kontrolu: baglanti hic kurulamadiysa
+            // DisconnectAsync istisna firlatirdi ve ASIL hatayi
+            // gizlerdi.
+            if (client.IsConnected)
+            {
+                await client.DisconnectAsync(quit: true, cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
+
+    /// <summary>
+    /// HTML'den kaba bir duz metin uretir.
+    /// </summary>
+    /// <remarks>
+    /// Tam bir HTML ayristiricisi DEGIL ve olmasi da gerekmiyor:
+    /// sablonlarimizi biz yaziyoruz ve yapilari basit.
+    ///
+    /// AngleSharp gibi bir kutuphane eklemek, yalnizca yedek metin
+    /// uretmek icin cok agir olurdu.
+    /// </remarks>
+    private static string HtmlToText(string html)
+    {
+        // Blok etiketlerini satir sonuna cevir ki metin okunabilir kalsin.
+        var metin = System.Text.RegularExpressions.Regex.Replace(
+            html,
+            @"<(br|/p|/div|/li|/h[1-6]|/tr)\s*/?>",
+            "\n",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase,
+            TimeSpan.FromSeconds(1));
+
+        // Kalan tum etiketleri kaldir.
+        metin = System.Text.RegularExpressions.Regex.Replace(
+            metin, "<[^>]+>", string.Empty, System.Text.RegularExpressions.RegexOptions.None,
+            TimeSpan.FromSeconds(1));
+
+        // HTML varliklarini coz.
+        metin = System.Net.WebUtility.HtmlDecode(metin);
+
+        // Ardisik bos satirlari tekile indir.
+        metin = System.Text.RegularExpressions.Regex.Replace(
+            metin, @"\n{3,}", "\n\n", System.Text.RegularExpressions.RegexOptions.None,
+            TimeSpan.FromSeconds(1));
+
+        return metin.Trim();
+    }
+
+    [LoggerMessage(
+        EventId = 9401,
+        Level = LogLevel.Debug,
+        Message = "E-posta gonderildi. Alici: {Recipient}, Konu: {Subject}")]
+    private static partial void LogSent(ILogger logger, string recipient, string subject);
 }

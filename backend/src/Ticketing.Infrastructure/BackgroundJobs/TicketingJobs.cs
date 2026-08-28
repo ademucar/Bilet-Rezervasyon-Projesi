@@ -2,6 +2,7 @@ using Hangfire;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Ticketing.Application.Features.Events;
+using Ticketing.Application.Features.Notifications;
 using Ticketing.Application.Features.Outbox;
 using Ticketing.Application.Features.Reservations;
 
@@ -187,6 +188,36 @@ public sealed partial class TicketingJobs
     }
 
     // ==================================================================
+    // 5c) SURESI DOLMAK UZERE OLAN REZERVASYONLARI UYAR
+    // ==================================================================
+    // PDF Sprint 14: "Rezervasyon suresi dolmak uzereyken" bildirim.
+    //
+    // DAKIKADA BIR calisiyor -- uyarinin zamaninda gitmesi icin sart.
+    // Bes dakikada bir calissaydi, 3 dakikalik uyari penceresini
+    // tamamen KACIRABILIRDI.
+    // ==================================================================
+
+    [DisableConcurrentExecution(timeoutInSeconds: 30)]
+    [AutomaticRetry(Attempts = 0)]
+    public async Task NotifyExpiringReservationsAsync(CancellationToken cancellationToken)
+    {
+        var result = await _sender
+            .Send(new NotifyExpiringReservationsCommand(), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!result.IsSuccess)
+        {
+            throw new InvalidOperationException(
+                $"Sure uyarisi basarisiz: {result.Error.Code} - {result.Error.Message}");
+        }
+
+        if (result.Value > 0)
+        {
+            LogExpiringWarned(_logger, result.Value);
+        }
+    }
+
+    // ==================================================================
     // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 icin eklendi
     // ==================================================================
     // PDF Sprint 9 bu isi SAYMIYOR. Sprint 12'yi yazarken ortaya cikti:
@@ -276,6 +307,12 @@ public sealed partial class TicketingJobs
         Level = LogLevel.Information,
         Message = "{Count} etkinlik hatirlatmasi kuyruga alindi.")]
     private static partial void LogRemindersQueued(ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 9106,
+        Level = LogLevel.Information,
+        Message = "{Count} rezervasyon icin sure uyarisi gonderildi.")]
+    private static partial void LogExpiringWarned(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9105,

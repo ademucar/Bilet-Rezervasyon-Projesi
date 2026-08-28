@@ -418,6 +418,23 @@ internal sealed class CompletePaymentCommandHandler
         //
         // Job Sprint 9'da yazilacak; mesajlar o zamana kadar tabloda
         // birikecek ve islenecek.
+        // PDF Sprint 14: "Bilet olusturuldugunda" bildirimi.
+        //
+        // Odeme basarili bildirimi ZATEN var (yukarida) ama bu FARKLI
+        // bir sey: kullanici "param gitti mi?" ile "biletim hazir mi?"
+        // sorularinin ikisini de soruyor.
+        //
+        // Tek bildirimde birlestirseydik, biletlerini gormek isteyen
+        // kullanici odeme bildirimini aramak zorunda kalirdi.
+        _context.Notifications.Add(Notification.Create(
+            reservation.UserId,
+            NotificationType.TicketCreated,
+            "Biletleriniz hazir",
+            $"{tickets.Count} adet biletiniz olusturuldu. Girise QR " +
+            "kodunuzu okutmaniz yeterli.",
+            reservation.Id,
+            "/biletlerim"));
+
         // Sprint 9 notu: Bu iki mesaj AYRI cunku ayri seyler yapiyorlar
         // ve BIRBIRINDEN BAGIMSIZ basarisiz olabilmeliler.
         //

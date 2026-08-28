@@ -73,6 +73,10 @@ public static class DependencyInjection
 
         services.AddSingleton<IEmailService, SmtpEmailService>();
 
+        // Sprint 14: e-posta sablonlari.
+        // Singleton: durum tutmuyor, yalnizca IAppUrlProvider okuyor.
+        services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
+
         // ---- Uygulama adresleri ----
         services.AddOptions<AppUrlOptions>()
                 .Bind(configuration.GetSection(AppUrlOptions.SectionName))
