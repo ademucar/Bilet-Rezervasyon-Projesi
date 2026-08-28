@@ -1,6 +1,8 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
+using Scalar.AspNetCore;
+using Ticketing.WebApi.Documentation;
 using Ticketing.WebApi.Observability;
 using Microsoft.AspNetCore.HttpOverrides;
 using Ticketing.Application.Abstractions.RealTime;
@@ -39,7 +41,11 @@ builder.AddSerilogLogging();
 // ===================================================================
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+// ---- API dokumantasyonu (PDF Sprint 18) ----
+//
+// XML yorumlari + transformer'lar ile PDF'in on maddesi
+// karsilaniyor. Ayrintisi OpenApiSetup.cs icinde.
+builder.Services.AddApiDocumentation();
 
 // ---- API Versioning ----
 //
@@ -367,7 +373,31 @@ app.UseCors();
 
 if (app.Environment.IsDevelopment())
 {
+    // Ham OpenAPI belgesi: /openapi/v1.json
     app.MapOpenApi();
+
+    // ==============================================================
+    // SCALAR ARAYUZU -- /scalar
+    // ==============================================================
+    // Yalnizca GELISTIRMEDE aciliyor.
+    //
+    // Uretimde acik birakmak, tum uclarin, parametrelerin ve hata
+    // kodlarinin haritasini saldirgana hazir sunmak olurdu. API'nin
+    // kendisi zaten korumali ama "hangi uclar var?" sorusunu
+    // bedavaya cevaplamanin bir sebebi yok.
+    //
+    // Gercek bir uretimde bu arayuz ayri bir ic ag adresinde veya
+    // kimlik dogrulamali olarak sunulur.
+    // ==============================================================
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "Biletim API";
+
+        // Arayuzun urettigi ornek kod parcasi: varsayilan olarak
+        // birden fazla dil gosteriyor. Bizim istemcimiz TypeScript.
+        options.DefaultHttpClient =
+            new(ScalarTarget.JavaScript, ScalarClient.Fetch);
+    });
 }
 else
 {

@@ -57,6 +57,14 @@ public sealed class EventTicketTypesController : ApiControllerBase
 [Route("api/v{version:apiVersion}/ticket-types")]
 public sealed class TicketTypesController : ApiControllerBase
 {
+    /// <summary>Bilet turunun adini, fiyatini ve kotasini gunceller.</summary>
+    /// <remarks>
+    /// Satis BASLADIKTAN sonra fiyat degistirilemez: aksi halde ayni
+    /// koltugu farkli fiyata alan kullanicilar olurdu ve mutabakat
+    /// imkansizlasirdi. Domain bu kurali uyguluyor ve ihlalde 422 doner.
+    /// </remarks>
+    /// <response code="204">Guncellendi.</response>
+    /// <response code="422">Satis basladi; bu alan artik degistirilemez.</response>
     [HttpPut("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -103,6 +111,13 @@ public sealed class TicketTypesController : ApiControllerBase
             new AssignSectionCommand(id, request.SeatSectionId), cancellationToken)
             .ConfigureAwait(false));
 
+    /// <summary>Bilet turunu siler.</summary>
+    /// <remarks>
+    /// Yalnizca HIC BILET SATILMAMIS bir tur silinebilir. Satilmis
+    /// biletleri olan bir turu silmek, o biletleri sahipsiz birakirdi.
+    /// </remarks>
+    /// <response code="204">Silindi.</response>
+    /// <response code="422">Bu ture ait bilet satilmis; silinemez.</response>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

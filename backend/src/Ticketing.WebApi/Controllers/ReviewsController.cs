@@ -174,6 +174,10 @@ public sealed class EventFavoriteController : ApiControllerBase
 [Route("api/v{version:apiVersion}/users/me")]
 public sealed class MyFavoritesController : ApiControllerBase
 {
+    /// <summary>
+    /// Kullanicinin favori etkinlikleri.
+    /// </summary>
+    /// <response code="200">Favori etkinlik listesi.</response>
     [HttpGet("favorites")]
     [Authorize]
     [ProducesResponseType<IReadOnlyList<EventListItem>>(StatusCodes.Status200OK)]

@@ -52,6 +52,20 @@
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" />
+    <!--
+      SWAGGER ARAYUZU: Scalar, Swashbuckle DEGIL
+
+      .NET 9 ile OpenAPI BELGESI uretimi cerceve icine girdi
+      (Microsoft.AspNetCore.OpenApi). Eksik olan tek sey arayuz.
+
+      Swashbuckle da kullanilabilirdi ama o hem belge uretimini hem
+      arayuzu birlikte getiriyor - yerlesik ureticiyle CAKISIRDI ve
+      iki farkli OpenAPI belgesi uretilirdi.
+
+      Scalar yalnizca arayuz: yerlesik ureticinin urettigi belgeyi
+      okuyup gosteriyor. Sorumluluklar ayri kaliyor.
+    -->
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

@@ -146,6 +146,14 @@ public sealed record CreateHallRequest(string Name, int Capacity);
 [Route("api/v{version:apiVersion}/halls")]
 public sealed class HallsController : ApiControllerBase
 {
+    /// <summary>Salonun adini ve kapasitesini gunceller.</summary>
+    /// <remarks>
+    /// Kapasite, mevcut oturma planlarindaki koltuk sayisindan KUCUK
+    /// olamaz: aksi halde plani gecersiz kilardik ve o salonda
+    /// uretilmis koltuklar kapasiteyi asmis gorunurdu.
+    /// </remarks>
+    /// <response code="204">Guncellendi.</response>
+    /// <response code="422">Kapasite mevcut oturma planiyla uyumsuz.</response>
     [HttpPut("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -157,6 +165,14 @@ public sealed class HallsController : ApiControllerBase
             .Send(new UpdateHallCommand(id, request.Name, request.Capacity), cancellationToken)
             .ConfigureAwait(false));
 
+    /// <summary>Salonu siler.</summary>
+    /// <remarks>
+    /// Salona bagli bir ETKINLIK varsa silinemez. Silinseydi o
+    /// etkinligin mekan bilgisi kopar ve bilet almis kullanicilar
+    /// nereye gideceklerini goremezdi.
+    /// </remarks>
+    /// <response code="204">Silindi.</response>
+    /// <response code="422">Bu salona bagli etkinlik var; silinemez.</response>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

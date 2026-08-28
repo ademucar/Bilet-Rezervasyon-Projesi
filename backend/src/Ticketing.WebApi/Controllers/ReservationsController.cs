@@ -109,6 +109,18 @@ public sealed class ReservationsController : ApiControllerBase
 [Route("api/v{version:apiVersion}/users/me")]
 public sealed class MyReservationsController : ApiControllerBase
 {
+    /// <summary>
+    /// Kullanicinin kendi rezervasyonlari.
+    /// </summary>
+    /// <remarks>
+    /// Yalnizca istegi yapan kullanicinin rezervasyonlari doner;
+    /// kullanici kimligi TOKEN'DAN okunuyor, istekten degil.
+    ///
+    /// Adreste bir kullanici kimligi tasisaydik, birinin baskasinin
+    /// kimligini yazip onun rezervasyonlarini gormesini engellemek
+    /// icin ayrica kontrol yazmak gerekirdi.
+    /// </remarks>
+    /// <response code="200">Rezervasyon listesi (en yeniden eskiye).</response>
     [HttpGet("reservations")]
     [Authorize]
     [ProducesResponseType<IReadOnlyList<ReservationDto>>(StatusCodes.Status200OK)]
