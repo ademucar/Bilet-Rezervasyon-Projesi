@@ -21,7 +21,7 @@ namespace Ticketing.IntegrationTests;
 /// EF Core'un InMemory saglayicisi bir veritabani DEGIL, bir sozluk.
 /// Su ozelliklerin HICBIRI orada yok:
 ///
-///   - xmin tabanli iyimser eszamanlilik  <- projemizin KALBI
+///   - xmin tabanli iyimser eszamanlilik  &lt;- projemizin KALBI
 ///   - Gercek transaction ve izolasyon seviyeleri
 ///   - UNIQUE / FOREIGN KEY kisitlari
 ///   - LOWER(), ILIKE gibi PostgreSQL fonksiyonlari

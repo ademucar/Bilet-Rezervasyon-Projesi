@@ -14,7 +14,7 @@ namespace Ticketing.Application.Abstractions.Persistence;
 ///
 /// Bunu YAPMADIM. Sebeplerim:
 ///
-/// 1) DbSet<T> ZATEN bir repository'dir ve IQueryable ZATEN bir
+/// 1) DbSet&lt;T&gt; ZATEN bir repository'dir ve IQueryable ZATEN bir
 ///    sorgu soyutlamasidir. Ustune bir katman daha koymak, ayni isi
 ///    iki kez yapmaktir.
 ///

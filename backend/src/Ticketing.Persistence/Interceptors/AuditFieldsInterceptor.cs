@@ -37,7 +37,7 @@ namespace Ticketing.Persistence.Interceptors;
 /// Sprint 11'de gunluk satis ozeti isini test ederken rapor "0 bilet,
 /// 0 rezervasyon" dondu. O sorgu tam olarak su filtreyi kullaniyor:
 ///
-///     .Where(t => t.CreatedAt >= start && t.CreatedAt < end)
+///     .Where(t =&gt; t.CreatedAt &gt;= start &amp;&amp; t.CreatedAt &lt; end)
 ///
 /// Ben bunu "dun hic satis olmamis, normal" diye yorumladim ve
 /// gectim. Oysa rapor CreatedAt bos oldugu icin HICBIR ZAMAN veri

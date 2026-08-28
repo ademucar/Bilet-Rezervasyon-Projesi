@@ -17,19 +17,13 @@ namespace Ticketing.Application.Features.Payments;
 // DTO'lar
 // ===================================================================
 
+/// <param name="ProviderReference">Saglayici islem referansi. Bu alani kullaniciya DONUYORUZ cunku destek talebinde "islem numaram su" diyebilmeli. Hassas bir bilgi degil -- tek basina hicbir islem yapilamaz.</param>
 public sealed record PaymentDto(
     Guid Id,
     Guid ReservationId,
     string ReservationCode,
     PaymentStatus Status,
     string ProviderName,
-    /// <summary>
-    /// Saglayici islem referansi.
-    ///
-    /// Bu alani kullaniciya DONUYORUZ cunku destek talebinde
-    /// "islem numaram su" diyebilmeli. Hassas bir bilgi degil --
-    /// tek basina hicbir islem yapilamaz.
-    /// </summary>
     string? ProviderReference,
     decimal Amount,
     decimal RefundedAmount,

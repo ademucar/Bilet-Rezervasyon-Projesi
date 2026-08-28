@@ -49,8 +49,50 @@
     -->
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
-    <!-- Tum projelerde ayni root namespace mantigini korumak icin -->
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!--
+      XML DOKUMANTASYON DOSYASI (PDF Sprint 18)
+
+      Sprint 18'e kadar kapaliydi. Simdi ACIYORUZ cunku Swagger,
+      "endpoint aciklamalari" ve "response ornekleri" maddelerini
+      bu dosyadan okuyor.
+
+      Yani kodun icindeki /// yorumlari, uretilen OpenAPI belgesine
+      ve Swagger arayuzune dogrudan gecmis oluyor. Aciklamalari ayri
+      bir yerde tutsaydik ikisi zamanla ayrisirdi: kod degisir,
+      dokumantasyon eski kalirdi.
+    -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!--
+      CS1591 SUSTURULUYOR: "eksik XML yorumu"
+
+      TreatWarningsAsErrors acik oldugu icin bu uyari derlemeyi
+      DURDURUR. Susturmasaydik her public tipe ve uyeye /// yorum
+      yazmamiz gerekirdi - yuzlerce DTO alani dahil.
+
+      Bu, faydali dokumantasyon URETMEZ; "Gets or sets the Id."
+      turu anlamsiz satirlar uretirdi ve gercek aciklamalari
+      icinde kaybederdi.
+
+      Yaklasimimiz: aciklamayi ANLAMLI oldugu yere yaziyoruz
+      (endpoint'ler, is kurallari, tuzaklar) ve derleyiciden
+      zorunluluk beklemiyoruz.
+    -->
+    <!--
+      CS1573 de susturuluyor: "bazi parametrelerin param etiketi yok"
+
+      Bu kural, bir metodun BIR parametresini belgelediginde
+      HEPSINI belgelemeni zorunlu kiliyor.
+
+      Bizim yazim tarzimizla celisiyor: yalnizca ACIKLAMA GEREKTIREN
+      parametreyi belgeliyoruz. Ornegin Reservation.Create'te
+      lockDuration'in neden disaridan geldigini anlatiyoruz ama
+      userId icin "kullanicinin kimligi" yazmanin bir degeri yok.
+
+      Kural yuzunden ya anlamsiz satirlar eklerdik ya da anlamli
+      olani SILERDIK. Ikisi de dokumantasyonu kotulestirirdi.
+    -->
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
 
 </Project>

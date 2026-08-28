@@ -26,7 +26,7 @@ namespace Ticketing.WebApi.Observability;
 /// Trace "nerede ne kadar surdu" sorusunu:
 ///     POST /reservations                        820 ms
 ///       +- MediatR CreateReservationCommand     815 ms
-///          +- SELECT EventSeats (FOR UPDATE)    640 ms   <-- suclu
+///          +- SELECT EventSeats (FOR UPDATE)    640 ms   &lt;-- suclu
 ///          +- INSERT Reservations                18 ms
 ///          +- Redis DEL event:123                 2 ms
 ///

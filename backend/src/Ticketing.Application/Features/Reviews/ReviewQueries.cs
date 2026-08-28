@@ -7,6 +7,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Reviews;
 
+/// <param name="IsMine">Bu yorum istegi yapan kullaniciya mi ait? Duzenle/Sil dugmeleri icin.</param>
 public sealed record ReviewDto(
     Guid Id,
     Guid UserId,
@@ -15,7 +16,6 @@ public sealed record ReviewDto(
     string Comment,
     DateTimeOffset CreatedAt,
     DateTimeOffset? UpdatedAt,
-    /// <summary>Bu yorum istegi yapan kullaniciya mi ait? Duzenle/Sil dugmeleri icin.</summary>
     bool IsMine);
 
 /// <summary>

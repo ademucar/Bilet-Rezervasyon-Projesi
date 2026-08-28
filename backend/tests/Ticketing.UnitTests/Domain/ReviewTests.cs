@@ -30,7 +30,7 @@ public class ReviewTests
     ///
     /// Sinirlari ayrica yazmamin sebebi: bu tur kontrollerdeki en
     /// yaygin hata "bir eksik/bir fazla" (off-by-one). Kod
-    /// "rating > 1 && rating < 5" diye yazilsaydi, 1 ve 5 puanlarin
+    /// "rating &gt; 1 &amp;&amp; rating &lt; 5" diye yazilsaydi, 1 ve 5 puanlarin
     /// ikisi de reddedilirdi -- ve yalnizca ortadaki degerlerle test
     /// edilseydi bu hata gorunmezdi.
     /// ==============================================================

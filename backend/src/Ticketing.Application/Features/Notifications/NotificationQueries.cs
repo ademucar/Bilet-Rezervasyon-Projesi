@@ -23,10 +23,10 @@ public sealed record NotificationDto(
 // 1) LISTE -- PDF: GET /api/v1/notifications
 // ===================================================================
 
-/// <param name="UnreadOnly">Yalnizca okunmamislar.</param>
 public sealed record GetNotificationsQuery : PaginationRequest,
     IRequest<Result<PagedResult<NotificationDto>>>
 {
+    /// <summary>Yalnizca okunmamislari getir.</summary>
     public bool UnreadOnly { get; init; }
 }
 

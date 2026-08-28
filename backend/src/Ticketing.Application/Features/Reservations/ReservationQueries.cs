@@ -21,6 +21,7 @@ public sealed record ReservationItemDto(
     decimal UnitPrice,
     string Currency);
 
+/// <param name="RemainingSeconds">Kalan sure (saniye). Neden SUNUCUDA hesapliyorum? Cunku istemcinin saati YANLIS olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati 5 dakika geri olan bir kullanici sureyi 15 dakika sanirdi ve odemeye gectiginde "sureniz doldu" hatasi alirdi. Saniye cinsinden gonderip frontend'in kendi icinde geri saymasi, saat farkindan bagimsiz calisir.</param>
 public sealed record ReservationDto(
     Guid Id,
     string ReservationCode,
@@ -32,17 +33,6 @@ public sealed record ReservationDto(
     decimal TotalAmount,
     string Currency,
     DateTimeOffset ExpiresAt,
-    /// <summary>
-    /// Kalan sure (saniye).
-    ///
-    /// Neden SUNUCUDA hesapliyorum? Cunku istemcinin saati YANLIS
-    /// olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati
-    /// 5 dakika geri olan bir kullanici sureyi 15 dakika sanirdi ve
-    /// odemeye gectiginde "sureniz doldu" hatasi alirdi.
-    ///
-    /// Saniye cinsinden gonderip frontend'in kendi icinde geri
-    /// saymasi, saat farkindan bagimsiz calisir.
-    /// </summary>
     int RemainingSeconds,
     int ExtensionCount,
     IReadOnlyList<ReservationItemDto> Items);

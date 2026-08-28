@@ -33,7 +33,7 @@ namespace Ticketing.Application.Features.Events;
 /// ------------------------------------------------------------------
 /// NEDEN "ETKINLIK TARIHI GECTI" YETMIYOR?
 /// ------------------------------------------------------------------
-/// Yorum kontrolunu "EventDate < simdi" diye de yazabilirdim ve is
+/// Yorum kontrolunu "EventDate &lt; simdi" diye de yazabilirdim ve is
 /// gereksiz olurdu.
 ///
 /// Yazmadim cunku DURUM, TARIHTEN daha fazla sey anlatiyor:
