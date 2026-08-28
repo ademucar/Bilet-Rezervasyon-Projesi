@@ -58,6 +58,34 @@ internal sealed class CurrentUser : ICurrentUser
                 return null;
             }
 
+            // ======================================================
+            // ONCE HttpContext.Items -- SONRA response header
+            // ======================================================
+            // Eskiden YALNIZCA response header'ina bakiyordu ve bu
+            // SESSIZ bir hataydi: header'i CorrelationIdMiddleware
+            // OnStarting icinde yaziyor, o da handler CALISTIKTAN
+            // SONRA tetikleniyor.
+            //
+            // Yani istek islenirken burasi her zaman null donuyordu
+            // ve Outbox / AuditLog kayitlarina hicbir zaman
+            // correlation ID yazilmadi. Hicbir hata olusmadi, hicbir
+            // test kirilmadi -- sadece sutunlar bos kaldi.
+            //
+            // Items middleware'in ilk satirinda dolduruluyor;
+            // handler onu goruyor.
+            //
+            // Header'a bakan dal FALLBACK olarak duruyor: yanit
+            // yazilmaya baslandiktan sonra cagrilan kodlar (ornegin
+            // istek ozeti logu) icin hala gecerli bir kaynak.
+            // ======================================================
+            if (context.Items.TryGetValue(
+                    CorrelationIdMiddleware.HeaderName, out var item)
+                && item is string fromItems
+                && !string.IsNullOrEmpty(fromItems))
+            {
+                return fromItems;
+            }
+
             return context.Response.Headers.TryGetValue(
                 CorrelationIdMiddleware.HeaderName, out var value)
                 ? value.ToString()

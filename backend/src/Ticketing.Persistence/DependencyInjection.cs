@@ -71,9 +71,15 @@ public static class DependencyInjection
         // ==============================================================
         services.AddScoped<AuditFieldsInterceptor>();
 
+        // Ayni gerekce (Scoped, cunku ICurrentUser'a bagli).
+        // PDF Sprint 16: correlation ID Outbox kaydinda olmali.
+        services.AddScoped<OutboxCorrelationInterceptor>();
+
         services.AddDbContext<TicketingDbContext>((sp, options) =>
         {
-            options.AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>());
+            options.AddInterceptors(
+                sp.GetRequiredService<AuditFieldsInterceptor>(),
+                sp.GetRequiredService<OutboxCorrelationInterceptor>());
 
             options.UseNpgsql(connectionString, npgsql =>
             {

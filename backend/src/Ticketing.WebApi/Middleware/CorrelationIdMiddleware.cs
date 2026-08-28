@@ -39,6 +39,33 @@ public sealed class CorrelationIdMiddleware
 
         var correlationId = GetOrCreateCorrelationId(context);
 
+        // ==============================================================
+        // DEGERI ONCE HttpContext.Items'A KOY -- SPRINT 16'DA BULUNAN HATA
+        // ==============================================================
+        // Bu satir olmadan sistemin yarisi correlation ID'yi GOREMIYORDU.
+        //
+        // Sebep: ICurrentUser.CorrelationId, degeri RESPONSE HEADER'INDAN
+        // okuyordu. Ama asagidaki OnStarting geri cagrimi, yanitin ilk
+        // bayti yazilmadan hemen once -- yani HANDLER CALISTIKTAN SONRA
+        // -- calisiyor.
+        //
+        // Yani istek islenirken response header HENUZ BOSTU ve
+        // ICurrentUser.CorrelationId her zaman null donuyordu:
+        //
+        //     Middleware  -> OnStarting KAYDEDILDI (henuz calismadi)
+        //     Handler     -> _currentUser.CorrelationId => null   <-- burada
+        //     SaveChanges -> Outbox.CorrelationId = null
+        //     OnStarting  -> header nihayet yaziliyor (cok gec)
+        //
+        // Sonucu veritabaninda olctum: 22 Outbox kaydinin 22'sinde,
+        // butun AuditLog kayitlarinda correlation ID BOSTU. Alan vardi,
+        // indeks vardi, hatta dogru cagri yerleri vardi -- deger yoktu.
+        //
+        // HttpContext.Items, istek boyunca yasayan ve HEMEN yazilabilen
+        // bir sozluk. Deger artik handler calismadan once hazir.
+        // ==============================================================
+        context.Items[HeaderName] = correlationId;
+
         // Response'a ekliyorum ki istemci de gorebilsin.
         //
         // OnStarting kullanmamin sebebi: response yazilmaya BASLADIKTAN

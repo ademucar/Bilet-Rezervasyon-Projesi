@@ -135,6 +135,33 @@ public class OutboxMessage : Entity
     /// <summary>
     /// Basariyla islendi.
     /// </summary>
+    /// <summary>
+    /// Correlation ID'yi, HENUZ ATANMAMISSA atar.
+    /// </summary>
+    /// <remarks>
+    /// ==============================================================
+    /// NEDEN "SADECE BOSSA" YAZIYOR?
+    /// ==============================================================
+    /// Bu metodu OutboxCorrelationInterceptor cagiriyor: kaydetme
+    /// aninda, degeri atanmamis her Outbox mesajini o anki HTTP
+    /// isteginin ID'siyle dolduruyor.
+    ///
+    /// Ama bazi cagri yerleri degeri ACIKCA veriyor (ornegin
+    /// TicketTypeCommands). Kosulsuz yazsaydik, interceptor o bilincli
+    /// secimi EZERDI.
+    ///
+    /// Ilke: otomatik doldurma, acik niyeti gecersiz kilmamali.
+    /// ==============================================================
+    /// </remarks>
+    public void SetCorrelationIdIfMissing(string? correlationId)
+    {
+        if (string.IsNullOrWhiteSpace(CorrelationId)
+            && !string.IsNullOrWhiteSpace(correlationId))
+        {
+            CorrelationId = correlationId;
+        }
+    }
+
     public void MarkAsProcessed(DateTimeOffset now)
     {
         if (ProcessedAt.HasValue)

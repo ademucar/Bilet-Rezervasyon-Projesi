@@ -118,6 +118,41 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 
         foreach (var message in messages)
         {
+            // ==============================================================
+            // CORRELATION ID'YI MESAJDAN DEVRAL -- PDF Sprint 16
+            // ==============================================================
+            // PDF: correlation ID "Background job log" icinde de
+            // kullanilmalidir.
+            //
+            // Arka plan isinin HTTP baglami yok, yani kendi correlation
+            // ID'sini uretemez. Ama ISLEDIGI mesaj, onu olusturan HTTP
+            // isteginin ID'sini tasiyor (OutboxCorrelationInterceptor
+            // yaziyor).
+            //
+            // Burada onu bir log kapsamina (scope) alarak zinciri
+            // TAMAMLIYORUZ:
+            //
+            //   HTTP istegi         CorrelationId = abc
+            //     -> Outbox kaydi   CorrelationId = abc
+            //        -> Bu is       CorrelationId = abc
+            //           -> E-posta  CorrelationId = abc
+            //
+            // Boylece "kullanicinin su istegi hangi e-postayi
+            // tetikledi?" sorusu tek bir sorguyla cevaplanabiliyor --
+            // adimlar farkli zamanlarda ve farkli process'lerde
+            // calismis olsa bile.
+            //
+            // Kapsam DONGUNUN ICINDE: her mesajin kendi ID'si var,
+            // disarida acsaydik hepsi ilk mesajin ID'siyle loglanirdi.
+            // ==============================================================
+            using var kapsam = string.IsNullOrWhiteSpace(message.CorrelationId)
+                ? null
+                : _logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["CorrelationId"] = message.CorrelationId,
+                    ["OutboxMessageId"] = message.Id,
+                });
+
             // ==========================================================
             // HER MESAJ KENDI BASINA -- BIRI DIGERINI DEVIRMESIN
             // ==========================================================
