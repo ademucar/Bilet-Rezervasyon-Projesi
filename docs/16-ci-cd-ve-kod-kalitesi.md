@@ -121,7 +121,7 @@ sürekli kırmızı bir CI, görmezden gelinen bir CI'dır.
 | Prettier | ✅ eklendi, 48 dosya biçimlendirildi |
 | .NET Analyzer | ✅ Sprint 1'den beri, `TreatWarningsAsErrors` |
 | StyleCop | ✅ eklendi — aşağıda |
-| SonarQube | ⚠️ yapılandırıldı, **çalıştırılmadı** |
+| SonarQube | ✅ yerelde çalıştırıldı — kalite kapısı OK, 1 bug bulundu ve düzeltildi |
 | Test coverage | ✅ coverlet + ReportGenerator |
 
 ### StyleCop: kararlı sürüm çalışmadı
@@ -202,27 +202,81 @@ düzelttiğimde daha çok bozuluyor" diye paniklenebilirdim.
 
 ---
 
-## ⚠️ SonarQube: dürüst durum
+## SonarQube
 
-Yapılandırma dosyasını (`sonar-project.properties`) hazırladım ve
-çalıştırmak için gereken adımları yazdım. Ama **çalıştırmadım.**
+Önce "yapılandırdım ama çalıştırmadım" diye yazmıştım — hesap ve token
+gerektirdiği için. Sonra fark ettim ki SonarCloud'a hiç gerek yok:
+sunucunun kendisi bir Docker imajı.
 
-SonarQube bir **sunucu** gerektiriyor: ya SonarCloud hesabı + token, ya
-da kendi sunucun (~2 GB RAM). İkisi de elimde yok ve olmadan
-yazacağım her şey tahmin olurdu.
+```bash
+docker run -d --name sonarqube-local -p 9000:9000 \
+  -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true sonarqube:community
+```
 
-### Onsuz ne kaybediyoruz?
+Sonrası standart: token üret, `dotnet sonarscanner begin`, çözümü
+derle, `end`.
 
-**Kaybetmiyoruz** (bunlar zaten var):
-statik analiz (CA + SA, zorunlu), güvenlik taraması (3 katman), test
-kapsamı, frontend lint.
+> Git Bash kullanıyorsanız komutun başına `MSYS_NO_PATHCONV=1` koyun.
+> Yoksa `/k:biletim` argümanını dosya yolu sanıp `C:/Program
+> Files/Git/k:biletim`'e çeviriyor ve scanner "proje anahtarı eksik"
+> diyor. Bunu anlamak on dakikamı aldı.
 
-**Kaybediyoruz:**
-kod tekrarı ölçümü, karmaşıklık metrikleri, teknik borç eğilim
-grafikleri ve **Quality Gate** — *"kapsam %X'in altına düşerse PR'ı
-engelle"*.
+### Sonuçlar
 
-Sonuncusu eksik olan tek gerçek şey.
+| Ölçüm | Değer |
+|---|---|
+| Kalite kapısı | **OK** |
+| Bug | 1 (düzeltildi, aşağıda) |
+| Güvenlik açığı | 0 |
+| Security hotspot | 0 |
+| Kod kokusu | 77 |
+| Kod tekrarı | %1.9 |
+| Teknik borç | 358 dakika (~6 saat) |
+| Analiz edilen satır | 16.792 |
+| Güvenlik / bakılabilirlik notu | A / A |
+| Güvenilirlik notu | C (tek bug yüzünden) |
+
+### Bulunan tek bug
+
+`OwnershipNotFoundMiddleware.cs`, 404 cevabını yazan satır:
+
+```csharp
+await context.Response.WriteAsJsonAsync(problem);
+```
+
+Sonar `CancellationToken` geçilmediğini söyledi ve haklıydı: istemci
+bağlantıyı kapattığında (sekmeyi kapattı, ağı gitti) yazma işlemi
+boşuna devam ediyordu. Yük altında bu, hiçbir yere gitmeyen cevapları
+yazmakla uğraşan thread'ler demek.
+
+`context.RequestAborted` eklendi.
+
+### Kapatmadığım bulgular
+
+**18 × S6964** — *"Value type property used as input in a controller
+action should be nullable"*. Sonar, `int Page { get; set; }` gibi bir
+alanın istekte hiç gönderilmediğinde sessizce `0` olacağını söylüyor.
+Bizde bu alanların hepsi FluentValidation'dan geçiyor ve varsayılanı
+kasıtlı; `int?` yapmak her handler'a bir null kontrolü daha eklerdi.
+
+**10 × S125** — *"Remove this commented out code"*. Hepsi **yanlış
+pozitif**: açıklama yorumlarının içinde örnek kod parçaları var, ör.
+
+```
+// Alternatif, her konfigürasyonu tek tek çağırmaktı:
+//     modelBuilder.ApplyConfiguration(new UserConfiguration());
+```
+
+Bu satır ölü kod değil, *"bunu neden yapmadım"*ın kanıtı. Silmek
+açıklamayı anlamsız bırakırdı.
+
+**4 × S3776** — bilinçli olarak duruyor. Karmaşıklığı yüksek çıkan
+metotlar rezervasyon ve ödeme akışları; parçalara bölmek okumayı
+kolaylaştırmıyor, akışı üç dosyaya dağıtıyor.
+
+> Sunucu yerelde çalıştı ve sonuçlar alındıktan sonra kapatıldı;
+> CI'da sürekli çalışan bir SonarQube yok. Bunun için ya bir sunucu ya
+> da SonarCloud hesabı gerekiyor.
 
 ---
 
@@ -319,7 +373,8 @@ sprinttir kırık olan bir şeyi ortaya çıkardı.
 
 ## Bilinçli olarak ertelenenler
 
-- **SonarQube çalıştırılması** — hesap/token gerektiriyor
+- **SonarQube'un CI'da sürekli çalışması** — yerelde çalıştırıldı;
+  CI'ya bağlamak için sunucu veya SonarCloud hesabı gerekiyor
 - **CD (deployment)** — PDF yalnızca CI istiyor; imaj derleniyor ama
   bir kayıt defterine gönderilmiyor
 - **E2E testleri CI'da** — ayrı bir test veritabanı ve API'nin ayağa

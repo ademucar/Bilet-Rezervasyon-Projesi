@@ -113,7 +113,14 @@ internal sealed class OwnershipNotFoundMiddleware
         context.Response.StatusCode = StatusCodes.Status404NotFound;
         context.Response.ContentType = "application/problem+json";
 
-        await context.Response.WriteAsJsonAsync(problem).ConfigureAwait(false);
+        // context.RequestAborted geciyorum. Sonar bunu BUG olarak
+        // isaretledi ve haklıydı: istemci baglantiyi kapattiginda
+        // (sekmeyi kapatti, agi gitti) yazma islemi bosuna devam
+        // ediyordu. Yuk altinda bu, hicbir yere gitmeyen cevaplari
+        // yazmakla ugrasan thread'ler demek.
+        await context.Response
+            .WriteAsJsonAsync(problem, context.RequestAborted)
+            .ConfigureAwait(false);
     }
 
     /// <summary>
