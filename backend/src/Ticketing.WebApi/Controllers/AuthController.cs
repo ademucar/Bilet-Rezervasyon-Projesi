@@ -27,7 +27,7 @@ namespace Ticketing.WebApi.Controllers;
 ///   2. MediatR'a gönder
 ///   3. Sonucu HTTP yanitina cevir
 ///
-/// Tek bir "if" veya veritabani sorgusu yok. Architecture testimiz
+/// Tek bir "if" veya veritabani sorgusu yok. Architecture testim
 /// DbContext kullanimini zaten engelliyor.
 /// </summary>
 [ApiVersion("1.0")]

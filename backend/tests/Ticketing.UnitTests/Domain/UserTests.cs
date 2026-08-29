@@ -25,7 +25,7 @@ public class UserTests
     public void Create_TurkceIHarfiIceren_TurkishIProblemineDusmemeli()
     {
         // "Turkish I problem": Turkce kulturde ToLower() 'I' harfini
-        // 'i' degil 'ı' (noktasiz) yapar. ToLowerInvariant kullandigimiz
+        // 'i' degil 'ı' (noktasiz) yapar. ToLowerInvariant kullandigim
         // icin bu tuzaga dusmuyoruz.
         var user = User.Create("ILKER@ORNEK.COM", "hash", "Ilker", "Demir");
 
@@ -158,7 +158,7 @@ public class UserTests
     public void ChangePasswordHash_BasarisizDenemeSayaciniSifirlamali()
     {
         // Mantik: kullanici sifresini degistirebildiyse kimligini kanitladi,
-        // cezayi kaldiralim.
+        // cezayi kaldirayim.
         var user = GecerliKullanici();
         user.RegisterFailedLogin(5, TimeSpan.FromMinutes(15));
 

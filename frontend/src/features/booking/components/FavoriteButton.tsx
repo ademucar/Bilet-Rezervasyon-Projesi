@@ -44,7 +44,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     onMutate: async () => {
       // Devam eden bir çekim varsa İPTAL ET.
       //
-      // Etmeseydik, o çekim benim iyimser guncellememizden SONRA
+      // Etmeseydim, o çekim benim iyimser guncellememizden SONRA
       // tamamlanip ESKİ veriyi geri yazabilirdi -- kalp bir dolup
       // bir bosalirdi.
       await queryClient.cancelQueries({ queryKey: ['favorites'] })

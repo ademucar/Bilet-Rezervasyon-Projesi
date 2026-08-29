@@ -19,7 +19,7 @@ namespace Ticketing.WebApi.Security;
 ///      doğrulama hatasina ceviriyor. Bizim GlobalExceptionHandler'a
 ///      hiç ulasmiyor.
 ///
-///   2) Yanit, yapilandirdigimiz sınırı AYNEN yaziyordu:
+///   2) Yanit, yapilandirdigim sınırı AYNEN yaziyordu:
 ///      "The max request body size is 5242880 bytes."
 ///      Bu, ic yapilandirmamizi disariya acan gereksiz bir bilgi ve
 ///      uygulamanin geri kalaniyla tutarsiz bir hata bicimi.
@@ -30,11 +30,11 @@ namespace Ticketing.WebApi.Security;
 /// coktan okunmus, hata coktan olusmus oluyor. Çok geç.
 ///
 /// Resource filter, model baglamadan ONCE calisan ilk noktadir.
-/// Content-Length başlığı o an zaten elimizde; govdeyi hiç
-/// okumadan karar verebiliyoruz.
+/// Content-Length başlığı o an zaten elimde; govdeyi hiç
+/// okumadan karar verebiliyorum.
 ///
 /// Yan fayda: 6 MB'lik bir isteği tel üzerinden okumak zorunda
-/// kalmiyoruz. Reddedecegimiz veriyi almak için bant genisligi ve
+/// kalmiyoruz. Reddedecegim veriyi almak için bant genisligi ve
 /// bellek harcamak, tam olarak saldirganin istedigi seydir.
 ///
 /// SINIRLAMA -- DURUSTCE
@@ -93,6 +93,6 @@ internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter
 
     public void OnResourceExecuted(ResourceExecutedContext context)
     {
-        // İstek tamamlandıktan sonra yapacak bir isimiz yok.
+        // İstek tamamlandıktan sonra yapacak bir isim yok.
     }
 }

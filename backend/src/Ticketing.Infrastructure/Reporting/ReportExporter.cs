@@ -172,7 +172,7 @@ internal sealed class ReportExporter : IReportExporter
         using var workbook = new XLWorkbook();
 
         // Sayfa adı en fazla 31 karakter olabilir (Excel sınırı).
-        // Uzun basliklarda kirpmasaydik ClosedXML istisna firlatirdi.
+        // Uzun basliklarda kirpmasaydim ClosedXML istisna firlatirdi.
         var sayfaAdi = table.Title.Length > 31 ? table.Title[..31] : table.Title;
 
         var sheet = workbook.Worksheets.Add(sayfaAdi);

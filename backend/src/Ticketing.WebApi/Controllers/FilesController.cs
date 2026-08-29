@@ -34,7 +34,7 @@ public sealed class FilesController : ApiControllerBase
     //
     // Anonim dosya yukleme, sunucumuzu herkese açık bir depolama
     // alanina cevirir. Saldirgan diski doldurabilir veya benim alan
-    // adimizi kullanarak zararli dosya dagitabilir -- ve iz surecek
+    // adimi kullanarak zararli dosya dagitabilir -- ve iz surecek
     // bir kimlik olmaz.
     //
     // Kimlik zorunlu olunca her dosyanin bir sahibi oluyor
@@ -93,7 +93,7 @@ public sealed class FilesController : ApiControllerBase
 
         // IFormFile burada BIRAKILIYOR: Application katmanina yalnızca
         // Stream ve birkaç string geciyor. Boylece is mantığı
-        // ASP.NET Core'a bagimli olmuyor (mimari testimizin sarti).
+        // ASP.NET Core'a bagimli olmuyor (mimari testimin sarti).
         await using var akis = file.OpenReadStream();
 
         var sonuc = await Sender.Send(
@@ -139,10 +139,10 @@ public sealed class FilesController : ApiControllerBase
         // Content-Disposition: attachment, tarayiciya "bu dosyayı
         // GOSTERME, INDIR" diyor.
         //
-        // "inline" olsaydı tarayıcı dosyayı benim alan adimizda
+        // "inline" olsaydı tarayıcı dosyayı benim alan adimda
         // acardi. Dogrulamayi gecmis ama içinde script barindiran bir
         // dosya (örneğin polyglot bir PDF) o zaman BENIM alan
-        // adimizda çalışır ve kullanicilarin oturum cerezlerine
+        // adimda çalışır ve kullanicilarin oturum cerezlerine
         // erisebilirdi.
         //
         // Indirme olarak sunmak bu riski ortadan kaldiriyor.

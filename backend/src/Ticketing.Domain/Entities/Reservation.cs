@@ -131,7 +131,7 @@ public class Reservation : ConcurrentEntity
     /// </param>
     /// <param name="now">
     /// Su anki zaman. Disaridan alıyorum ki "süre doldu" senaryolarini
-    /// sistem saatini degistirmeden test edebilelim.
+    /// sistem saatini degistirmeden test edebileyim.
     /// </param>
     public static Reservation Create(
         Guid userId,

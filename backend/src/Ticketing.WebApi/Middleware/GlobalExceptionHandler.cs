@@ -141,7 +141,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             //     "duplicate key value violates unique constraint
             //      ix_event_seats_session_seat"
             // Bu, saldirgana veritabani semasi hakkında bilgi verir.
-            // Kendi genel mesajimizi donup detayı yalnızca loga yazıyorum.
+            // Kendi genel mesajimi donup detayı yalnızca loga yazıyorum.
             DbUpdateException => CreateProblem(
                 statusCode: StatusCodes.Status409Conflict,
                 title: "Veri çakışması",
@@ -151,7 +151,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // 4. ISTEK İPTAL EDILDI -> 499 (istemci baglantisini kesti)
             //
             // Kullanıcı sayfayı kapatti veya yenilendi. Bu HİÇ hata değil.
-            // 500 olarak loglasaydim hata grafiklerimiz sahte artislarla
+            // 500 olarak loglasaydim hata grafiklerim sahte artislarla
             // dolardi.
             OperationCanceledException => CreateProblem(
                 statusCode: 499,
@@ -304,7 +304,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         // Makine tarafından okunabilir hata kodu.
         //
         // Frontend "detail" metnine bakarak karar VERMEMELI -- metni
-        // degistirdigimiz gün frontend bozulur. Bu kod sabit kalır.
+        // degistirdigim gün frontend bozulur. Bu kod sabit kalır.
         if (!string.IsNullOrWhiteSpace(errorCode))
         {
             problem.Extensions["errorCode"] = errorCode;
@@ -320,7 +320,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         // 4xx = istemci kaynakli, BEKLENEN durum   -> Warning
         // 5xx = sunucu kaynakli, GERCEK hata       -> Error
         //
-        // Bu ayrimi yapmasaydik ne olurdu? "Koltuk dolu" gibi günde
+        // Bu ayrimi yapmasaydim ne olurdu? "Koltuk dolu" gibi günde
         // binlerce kez olusan normal durumlar Error olarak loglanirdi.
         // Uyari sistemleri surekli alarm calar, ekip alarmlari gormezden
         // gelmeye başlar ve GERCEK bir cokme olduğunda kimse fark etmez.

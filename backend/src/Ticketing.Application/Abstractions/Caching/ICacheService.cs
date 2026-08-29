@@ -8,7 +8,7 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// Application katmanina StackExchange.Redis enjekte etseydim:
 ///
 ///   - Is mantığı bir ONBELLEK URUNUNE baglanirdi
-///   - Mimari testimiz kırmızı yanardi (ve haklı olarak)
+///   - Mimari testim kırmızı yanardi (ve haklı olarak)
 ///   - Birim testlerinde Redis sunucusu ayaga kaldirmak gerekirdi
 ///
 /// Bu arayüz sayesinde handler'lar yalnızca "bu veriyi onbellekten

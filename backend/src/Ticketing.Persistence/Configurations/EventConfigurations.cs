@@ -224,7 +224,7 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
         // PDF sayfa 8: "Aynı etkinlik oturumunda aynı koltuk yalnızca bir
         // kez bulunmalidir."
         //
-        // Uygulama kodumuz ne kadar hatalı olursa olsun, kac es zamanlı
+        // Uygulama kodum ne kadar hatalı olursa olsun, kac es zamanlı
         // istek gelirse gelsin, PostgreSQL aynı oturumda aynı koltuk için
         // IKINCI BIR SATIR OLUSTURMAZ.
         //

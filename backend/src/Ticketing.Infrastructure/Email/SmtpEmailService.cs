@@ -114,7 +114,7 @@ internal sealed partial class SmtpEmailService : IEmailService
             // verseydim ya yerelde ya uretimde calismazdi ve
             // yapilandirma ile ayrilmasi gerekirdi.
             //
-            // UseSsl acikca true ise zorluyoruz -- yapilandirmayla
+            // UseSsl acikca true ise zorluyorum -- yapilandirmayla
             // "TLS ŞART" demek isteyen bir ortam için.
             var secureOptions = _options.UseSsl
                 ? SecureSocketOptions.StartTlsWhenAvailable
@@ -201,7 +201,7 @@ internal sealed partial class SmtpEmailService : IEmailService
     /// </summary>
     /// <remarks>
     /// Tam bir HTML ayristiricisi DEĞİL ve olmasını da gerekmiyor:
-    /// sablonlarimizi biz yazıyorum ve yapilari basit.
+    /// sablonlarimi biz yazıyorum ve yapilari basit.
     ///
     /// AngleSharp gibi bir kutuphane eklemek, yalnızca yedek metin
     /// uretmek için çok agir olurdu.

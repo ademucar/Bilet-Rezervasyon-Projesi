@@ -83,7 +83,7 @@ internal sealed class ReservationItemConfiguration : IEntityTypeConfiguration<Re
                .OnDelete(DeleteBehavior.Restrict);   // rezerve koltuk silinemez
 
         // Bir koltuk aynı anda yalnızca BIR aktif rezervasyon kalemine
-        // ait olabilir. Bunu unique index ile garanti edemeyiz çünkü
+        // ait olabilir. Bunu unique index ile garanti edemem çünkü
         // gecmis (iptal olmuş) rezervasyonlarin kalemleri de aynı koltuga
         // isaret ediyor. Asil garanti EventSeat.Status uzerinde.
         //

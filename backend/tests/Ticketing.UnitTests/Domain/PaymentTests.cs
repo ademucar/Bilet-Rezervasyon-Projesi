@@ -200,7 +200,7 @@ public class PaymentTests
     {
         // PaymentTransactions bir DENETIM IZIDIR: "bu odemede ne oldu?"
         // sorusunun cevabi burada. Payment'ta tek Status alani var;
-        // bu dort adimi orada tutamayiz.
+        // bu dort adimi orada tutamam.
         var odeme = Odeme(500m);
 
         odeme.StartProcessing("REF-1");          // 1: Processing

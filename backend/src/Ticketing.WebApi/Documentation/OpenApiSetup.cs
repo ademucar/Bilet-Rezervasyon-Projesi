@@ -24,7 +24,7 @@ namespace Ticketing.WebApi.Documentation;
 ///
 /// NEDEN TRANSFORMER? Neden her uca oznitelik yazmiyorum?
 ///
-/// Yazabilirdik ama 60'tan fazla ucumuz var. Her birine
+/// Yazabilirdim ama 60'tan fazla ucum var. Her birine
 /// [ProducesResponseType(401)] eklemek:
 ///   - Yuzlerce satır tekrar
 ///   - Birini unutunca belgeyle gerçek arasında sessiz bir fark

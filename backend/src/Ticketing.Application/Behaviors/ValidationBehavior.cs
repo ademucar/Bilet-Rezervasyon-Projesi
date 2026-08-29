@@ -17,11 +17,11 @@ namespace Ticketing.Application.Behaviors;
 ///
 /// NEDEN HANDLER ICINDE DOGRULAMA YAPMIYORUM?
 ///
-/// Yapabilirdik ama 100 handler'in 100'unde de aynı uc satiri yazmak
+/// Yapabilirdim ama 100 handler'in 100'unde de aynı uc satiri yazmak
 /// gerekirdi. Bir gün birinde unutulur ve dogrulanmamis veri sisteme
 /// girer -- hem de sessizce.
 ///
-/// Burada merkezi olarak yaptigimizda UNUTMAK IMKANSIZ hale geliyor:
+/// Burada merkezi olarak yaptigimda UNUTMAK IMKANSIZ hale geliyor:
 /// validator varsa çalışır, yoksa istek gecer.
 /// </summary>
 public sealed class ValidationBehavior<TRequest, TResponse>

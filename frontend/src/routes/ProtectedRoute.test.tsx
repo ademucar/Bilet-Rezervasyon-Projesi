@@ -47,7 +47,7 @@ describe('ProtectedRoute', () => {
     // oturum sonrakine sızardı ve "giriş yapmamış kullanıcı
     // yönlendirilmeli" testi YANLIŞLIKLA geçerdi.
     //
-    // Yani en kritik güvenlik testimiz, hiçbir şey doğrulamayan bir
+    // Yani en kritik güvenlik testim, hiçbir şey doğrulamayan bir
     // teste dönüşürdü.
     useAuthStore.setState({ accessToken: null, refreshToken: null, user: null })
   })

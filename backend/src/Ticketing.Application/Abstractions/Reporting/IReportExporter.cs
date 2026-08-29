@@ -41,7 +41,7 @@ public sealed record ExportedReport(string FileName, string ContentType, byte[] 
 /// <remarks>
 /// Arayuz Application katmaninda, uygulamasi Infrastructure'da.
 /// Application, ClosedXML veya QuestPDF'i TANIMIYOR -- mimari
-/// testimiz bunu her derlemede dogruluyor.
+/// testim bunu her derlemede dogruluyor.
 /// </remarks>
 public interface IReportExporter
 {

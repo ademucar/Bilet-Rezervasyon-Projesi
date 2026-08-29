@@ -109,7 +109,7 @@ internal sealed partial class LoginCommandHandler
             // loglari saldiri sırasında BINLERCE satır uretiyor. Acik
             // yazsaydım, saldirganin denedigi tüm adresler log
             // dosyasinda toplu bir liste oluşturur -- yani saldirgan
-            // başarısız olsa bile benim loglarimiz onun ise yarardi.
+            // başarısız olsa bile benim loglarim onun ise yarardi.
             //
             // Sebebi de ayrı bir alan olarak veriyorum ("kullanıcı yok"
             // / "şifre yanlış"). Aynı mesaji kullansaydım, uretimde
@@ -238,7 +238,7 @@ internal sealed partial class LoginCommandHandler
     /// "son 5 dakikada 100 başarısız giriş" alarmi HİÇ tetiklenmezdi
     /// -- kural doğru olurdu ama besleyen veri hiç gelmezdi.
     ///
-    /// Bu, güvenlik acisindan en degerli log satirimiz.
+    /// Bu, güvenlik acisindan en degerli log satirim.
     /// </remarks>
     [LoggerMessage(
         EventId = LogEvents.LoginBasarisiz,

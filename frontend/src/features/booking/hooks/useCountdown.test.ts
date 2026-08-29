@@ -17,7 +17,7 @@ import { useCountdown } from './useCountdown'
  *     ödemeyi yarıda bırakır.
  *
  * Hook'un içindeki asıl zorluk, tarayıcının arka plan sekmelerde
- * zamanlayıcıları yavaşlatması. Onu doğrudan test edemiyoruz ama
+ * zamanlayıcıları yavaşlatması. Onu doğrudan test edemiyorum ama
  * hook'un buna karşı kullandığı tasarımı (bitiş anına göre yeniden
  * ölçme) test edebiliyorum.
  *

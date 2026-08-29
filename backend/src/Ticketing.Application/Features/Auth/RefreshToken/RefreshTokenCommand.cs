@@ -83,8 +83,8 @@ internal sealed class RefreshTokenCommandHandler
         // Gelen ham token'i hash'leyip veritabaninda ARIYORUZ.
         //
         // Veritabaninda token'in kendisi değil hash'i saklandigi için
-        // doğrudan arayamayiz. Hash fonksiyonu deterministik olduğu
-        // (aynı girdi -> aynı cikti) ve salt kullanmadigimiz için bu
+        // doğrudan arayamam. Hash fonksiyonu deterministik olduğu
+        // (aynı girdi -> aynı cikti) ve salt kullanmadigim için bu
         // arama çalışır ve TokenHash uzerindeki unique index'ten
         // faydalanir.
         var tokenHash = _tokenService.HashRefreshToken(request.RefreshToken);

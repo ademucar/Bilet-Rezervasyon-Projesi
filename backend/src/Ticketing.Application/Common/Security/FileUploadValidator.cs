@@ -51,7 +51,7 @@ public static class FileUploadValidator
     ///
     /// SVG BILINCLI OLARAK YOK: SVG bir XML belgesidir ve icine
     /// script etiketi gomulebilir. Tarayicida acildiginda o script
-    /// BENIM alan adimizda çalışır (saklanmis XSS). "Resim" gibi
+    /// BENIM alan adimda çalışır (saklanmis XSS). "Resim" gibi
     /// görünmesi aldaticidir.
     /// </remarks>
     private static readonly Dictionary<string, string[]> IzinliTurler =

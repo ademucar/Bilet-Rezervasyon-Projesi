@@ -184,9 +184,9 @@ export function SeatSelectionPage() {
 
     // PDF: "Güncel koltuk listesini yeniden çekme"
     //
-    // Bağlantı kopukken gecen surede kaçırdığımız olaylar var ve
-    // SignalR onlari biriktirmiyor. Yamalama ile telafi edemeyiz --
-    // neyi kacirdigimizi bilmiyoruz. Tek doğru yol tam listeyi
+    // Bağlantı kopukken gecen surede kaçırdığım olaylar var ve
+    // SignalR onlari biriktirmiyor. Yamalama ile telafi edemem --
+    // neyi kacirdigimi bilmiyoruz. Tek doğru yol tam listeyi
     // bastan cekmek.
     onReconnected: () => {
       void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
@@ -344,9 +344,9 @@ export function SeatSelectionPage() {
     onSuccess: (reservation) => {
       // Rezervasyon detayını onbellege ELIMIZLE koyuyorum.
       //
-      // Yonlendirdigimiz sayfa aynı veriyi isteyecek. Onbellege
+      // Yonlendirdigim sayfa aynı veriyi isteyecek. Onbellege
       // koymasaydim o sayfa açılır acilmaz boş bir iskelet gosterip
-      // yeni bir istek atardi -- oysa veri elimizde.
+      // yeni bir istek atardi -- oysa veri elimde.
       //
       // Bu ozellikle önemli çünkü GERİ SAYIM o sayfada başlıyor;
       // fazladan bir gidis-donus, sayacin geç baslamasi demekti.
@@ -359,7 +359,7 @@ export function SeatSelectionPage() {
       // Hata ne olursa olsun haritayi tazele.
       //
       // 409 aldiysak koltuğu başkası kapmis demektir; kullanıcıya
-      // güncel durumu gostermeliyim. Yenilemeseydik kullanıcı aynı
+      // güncel durumu gostermeliyim. Yenilemeseydim kullanıcı aynı
       // dolu koltukla tekrar tekrar denerdi.
       void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
     },
@@ -371,7 +371,7 @@ export function SeatSelectionPage() {
   // bolumlere gruplanmis istiyor. Ceviriyi burada yapıyorum.
   //
   // useMemo ŞART: bu hesap 2000 koltuk için yeni nesneler uretiyor.
-  // Sarmasaydik, her saniye (geri sayım, fare hareketi, herhangi bir
+  // Sarmasaydim, her saniye (geri sayım, fare hareketi, herhangi bir
   // state degisikligi) yeniden çalışır ve SeatMap'in kendi useMemo'su
   // da bosa çıkardı -- çünkü ona her seferinde YENI bir dizi
   // gonderirdim.

@@ -83,13 +83,13 @@ public static class CacheKeys
     ///   hangisi kilitli, hangisi satıldı. SANIYELER içinde degisir.
     ///
     /// Ikincisini onbelleklesevdik, iki kullanıcı aynı "boş" koltuğu
-    /// görür ve ikisi de secmeye calisirdi. Sprint 6-7'de kurdugumuz
+    /// görür ve ikisi de secmeye calisirdi. Sprint 6-7'de kurdugum
     /// tüm eszamanlilik savunmasi (xmin, partial unique index) yine
     /// koltuğun iki kez satilmasini engellerdi -- ama kullanıcı
     /// deneyimi berbat olurdu: herkes surekli 409 alırdı.
     ///
     /// Ustelik Sprint 10'da SignalR ile koltuk durumunu GERCEK ZAMANLI
-    /// yayinliyoruz. Aynı veriyi hem onbellekten (eski) hem SignalR'dan
+    /// yayinliyorum. Aynı veriyi hem onbellekten (eski) hem SignalR'dan
     /// (güncel) beslemek, birbiriyle celisen iki kaynak demek olurdu.
     /// </remarks>
     public static string SeatLayout(Guid seatLayoutId)

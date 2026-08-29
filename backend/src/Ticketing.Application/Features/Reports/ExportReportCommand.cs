@@ -46,7 +46,7 @@ public enum ReportType
 /// KUYRUGA ALMA YOLU: OUTBOX
 ///
 /// Hangfire'in BackgroundJob.Enqueue metodu da kullanilabilirdi. Ama
-/// Sprint 9'da kurdugumuz Outbox altyapisi zaten tam olarak bu isi
+/// Sprint 9'da kurdugum Outbox altyapisi zaten tam olarak bu isi
 /// yapiyor ve UC ONEMLI USTUNLUGU var:
 ///
 ///   1) Talep, VERITABANI TRANSACTION'I içinde kaydediliyor. Sunucu
@@ -204,7 +204,7 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
         // Kapsami PAYLOAD'daki kullanıcı kimliginden cozuyoruz.
         //
         // ICurrentUser burada boş -- arka planda HTTP baglami yok.
-        // Talep anında dogrulanmis kimliği tasidigimiz için yetki
+        // Talep anında dogrulanmis kimliği tasidigim için yetki
         // kurallari aynen uygulanabiliyor.
         var scope = await ReportScopeResolver
             .ResolveForUserAsync(_context, data.UserId, cancellationToken)

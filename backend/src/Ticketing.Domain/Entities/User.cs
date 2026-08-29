@@ -11,10 +11,10 @@ public class User : AuditableEntity
     /// EF Core için private parametresiz yapici.
     ///
     /// EF veritabanindan satır okurken nesneyi olusturmak zorunda ama
-    /// benim kurallarimizi (e-posta boş olamaz vb.) tekrar calistirmasina
+    /// benim kurallarimi (e-posta boş olamaz vb.) tekrar calistirmasina
     /// gerek yok -- o veriler zaten dogrulanmis halde kaydedilmisti.
     ///
-    /// private yaptım ki benim kodumuz yanlislikla boş bir User uretemesin.
+    /// private yaptım ki benim kodum yanlislikla boş bir User uretemesin.
     /// EF reflection kullandigi için private yapiciyi gorebiliyor.
     /// </summary>
     private User()
@@ -207,7 +207,7 @@ public class User : AuditableEntity
         PasswordHash = newPasswordHash;
 
         // Şifre degistiginde başarısız deneme sayacini sifirliyorum.
-        // Mantik: kullanıcı kimligini kanitlamis oldu, cezayi kaldiralim.
+        // Mantik: kullanıcı kimligini kanitlamis oldu, cezayi kaldirayim.
         ResetFailedLoginAttempts();
 
         // Kullanilmamis bir sıfırlama tokeni varsa GECERSIZ KIL.

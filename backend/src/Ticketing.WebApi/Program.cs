@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 // giderdi ve dosyaya HİÇ yazilmazdi.
 //
 // Acilista olusan hatalar ise tam olarak en çok ihtiyac duyulan
-// loglardir: uygulama ayaga kalkmadiginda elimizde başka hiçbir sey
+// loglardir: uygulama ayaga kalkmadiginda elimde başka hiçbir sey
 // olmuyor.
 builder.AddSerilogLogging();
 
@@ -167,8 +167,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
 
               // AllowCredentials + AllowAnyOrigin BIRLIKTE KULLANILAMAZ
-              // (tarayıcı reddeder). Kaynaklari acikca listeledigimiz
-              // için kimlik bilgisi tasiyabiliyoruz.
+              // (tarayıcı reddeder). Kaynaklari acikca listeledigim
+              // için kimlik bilgisi tasiyabiliyorum.
               .AllowCredentials()
 
               // Istemcinin okuyabilecegi ozel basliklar.
@@ -183,7 +183,7 @@ builder.Services.AddCors(options =>
 //
 // PDF: "Request size limit"
 //
-// Varsayılan Kestrel sınırı ~30 MB. Bizim en büyük istegimiz bir
+// Varsayılan Kestrel sınırı ~30 MB. Bizim en büyük istegim bir
 // JSON govdesi ve birkaç kilobayt.
 //
 // Sinir olmasaydı saldirgan 30 MB'lik istekler gonderip bellegi ve
@@ -439,7 +439,7 @@ if (app.Environment.IsDevelopment())
         options.Title = "Biletim API";
 
         // Arayuzun urettigi örnek kod parcasi: varsayılan olarak
-        // birden fazla dil gosteriyor. Bizim istemcimiz TypeScript.
+        // birden fazla dil gosteriyor. Bizim istemcim TypeScript.
         options.DefaultHttpClient =
             new(ScalarTarget.JavaScript, ScalarClient.Fetch);
     });
@@ -472,7 +472,7 @@ app.UseRateLimiter();
 // dönüyor ve sonraki halkayi HİÇ CAGIRMIYOR. Yani sonrasina
 // konan bir middleware o durumda calismaz.
 //
-// Önce koydugumuzda ise: benim _next() cagrimiz yetkilendirmeyi
+// Önce koydugumuzda ise: benim _next() cagrim yetkilendirmeyi
 // KAPSIYOR. O reddedip donunce kontrol bana geri geliyor ve
 // yaniti duzeltebiliyoruz.
 //
@@ -574,7 +574,7 @@ BackgroundJobSetup.RegisterRecurringJobs(
 // tamponundaki son loglar DISKE YAZILMADAN process sonlanir.
 //
 // Yani uygulamanin cokme anindaki loglari -- en çok ihtiyac
-// duyacaklarimiz -- kaybolur. Tam olarak isimize yarayacak an.
+// duyacaklarim -- kaybolur. Tam olarak isime yarayacak an.
 try
 {
     Log.Information(

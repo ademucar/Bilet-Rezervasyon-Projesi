@@ -14,7 +14,7 @@ namespace Ticketing.WebApi.Middleware;
 /// ait?
 ///
 /// Correlation ID olmadan bunu bulmak neredeyse imkansiz. Ozellikle
-/// benim sistemimizde zincir uzun:
+/// benim sistemimde zincir uzun:
 ///
 ///   HTTP isteği -> Handler -> Outbox kaydı -> Background job -> E-posta
 ///

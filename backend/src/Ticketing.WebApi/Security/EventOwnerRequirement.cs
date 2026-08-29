@@ -27,7 +27,7 @@ public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 /// yalnızca "bu kişi organizatör" der, "bu etkinlik onun" demez.
 ///
 /// NEDEN Application katmaninda değil de BURADA?
-/// Handler içinde de kontrol edebilirdik. Ama o zaman her handler'da
+/// Handler içinde de kontrol edebilirdim. Ama o zaman her handler'da
 /// tekrar yazmamiz gerekirdi ve birinde unutmak yeterdi. Burada,
 /// endpoint'e girmeden önce çalışıyor ve unutulmasi imkansiz --
 /// policy adını yazmayi unutursan endpoint zaten korumasiz kalır ve
@@ -116,7 +116,7 @@ internal sealed class EventOwnerAuthorizationHandler
         // Sahip degilse Succeed CAGIRMIYORUZ -> yetkilendirme başarısız
         // -> 403 Forbidden.
         //
-        // context.Fail() de cagirabilirdik ama o, DIGER handler'larin
+        // context.Fail() de cagirabilirdim ama o, DIGER handler'larin
         // başarılı olmasini da engeller. Sessizce başarısız olmak,
         // ileride bu policy'ye alternatif bir yol eklersek (örneğin
         // "etkinlige atanmis yardimci kullanıcı") onun calismasina

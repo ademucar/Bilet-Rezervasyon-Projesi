@@ -42,7 +42,7 @@ public static partial class CachingSetup
         // BAGLANTI KURULAMAZSA UYGULAMA COKMEMELI
         //
         // ConnectionMultiplexer.Connect(), Redis kapaliysa istisna
-        // firlatir. Burada yakalamasaydik uygulama HİÇ BASLAMAZDI.
+        // firlatir. Burada yakalamasaydim uygulama HİÇ BASLAMAZDI.
         //
         // Bu, JWT dogrulamasindaki "fail fast" yaklasiminin TERSI --
         // ve bilinçli. Orada eksik yapilandirma bir GÜVENLİK acigiydi,
@@ -57,7 +57,7 @@ public static partial class CachingSetup
             var options = ConfigurationOptions.Parse(connectionString);
             options.AbortOnConnectFail = false;
 
-            // Bağlantı kurulmasini sonsuza kadar beklemiyoruz.
+            // Bağlantı kurulmasini sonsuza kadar beklemiyorum.
             // Uygulama acilisini bir önbellek yuzunden geciktirmek
             // doğru olmaz.
             options.ConnectTimeout = 5000;

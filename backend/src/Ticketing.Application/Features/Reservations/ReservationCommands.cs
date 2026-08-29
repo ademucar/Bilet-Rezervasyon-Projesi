@@ -160,8 +160,8 @@ internal sealed class ExtendReservationCommandHandler
         // başkası alabilir.
         //
         // Rezervasyon ile koltuk sureleri HER ZAMAN aynı olmalı.
-        // Ikisini ayrı yerlerde tuttugumuz için bu senkronizasyon
-        // benim sorumlulugumuzda.
+        // Ikisini ayrı yerlerde tuttugum için bu senkronizasyon
+        // benim sorumlulugumda.
         foreach (var item in reservation.Items)
         {
             item.EventSeat.ExtendLock(reservation.ExpiresAt);
@@ -191,7 +191,7 @@ internal sealed class ExtendReservationCommandHandler
 /// PDF Sprint 9: "Süresi dolan rezervasyonları iptal etme" job'i.
 ///
 /// Şimdilik endpoint olarak da açık (admin tetikleyebilsin ve test
-/// edebilelim). Sprint 9'da Hangfire ile dakikada bir calisacak.
+/// edebileyim). Sprint 9'da Hangfire ile dakikada bir calisacak.
 /// </summary>
 public sealed record ExpireReservationsCommand(int BatchSize = 100) : IRequest<Result<int>>;
 

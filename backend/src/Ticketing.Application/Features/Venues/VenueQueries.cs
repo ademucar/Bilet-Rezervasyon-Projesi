@@ -74,17 +74,17 @@ internal sealed class GetVenuesQueryHandler
             // NEDEN EF.Functions.ILike KULLANMIYORUM?
             //
             // İlk yazisimda ILike kullanmistim -- PostgreSQL'in
-            // büyük/küçük harf duyarsiz LIKE'i ve tam ihtiyacimiz olan sey.
+            // büyük/küçük harf duyarsiz LIKE'i ve tam ihtiyacim olan sey.
             //
             // Ama derleme hatası verdi: ILike, Npgsql paketinde tanimli.
             // Kullanmak için Application katmanina Npgsql referansı
-            // eklemem gerekirdi -- yani is mantığı katmanimiz
+            // eklemem gerekirdi -- yani is mantığı katmanim
             // POSTGRESQL'E OZGU hale gelirdi.
             //
             // Bu, EF Core soyutlamasina bagimli olmaktan farklı bir sey.
             // DbSet ve IQueryable her saglayicida aynı çalışır; ILike
-            // yalnızca PostgreSQL'de var. Veritabanini degistirdigimizde
-            // (veya integration testlerde SQLite kullanmak istedigimizde)
+            // yalnızca PostgreSQL'de var. Veritabanini degistirdigimde
+            // (veya integration testlerde SQLite kullanmak istedigimde)
             // bu satır derlenmezdi.
             //
             // Bunun yerine saglayicidan bağımsız EF.Functions.Like'i

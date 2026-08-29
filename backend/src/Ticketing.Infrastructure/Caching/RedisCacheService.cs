@@ -18,7 +18,7 @@ internal sealed partial class RedisCacheService : ICacheService
     /// başka bir uygulamanin "ref:cities" anahtari bizimkiyle carpisirdi
     /// ve ikisi de yanlış veri okurdu.
     ///
-    /// Ayrıca "ticketing:*" ile benim tüm anahtarlarimizi tek seferde
+    /// Ayrıca "ticketing:*" ile benim tüm anahtarlarimi tek seferde
     /// gormek/temizlemek mumkun oluyor.
     /// </remarks>
     private const string AppPrefix = "ticketing:";
@@ -90,7 +90,7 @@ internal sealed partial class RedisCacheService : ICacheService
         // Burada beklenen istisnalari saymak mumkun değil:
         // RedisConnectionException, RedisTimeoutException,
         // JsonException, SocketException, ObjectDisposedException...
-        // Ve sayamadigimiz bir tanesi, önbellek yuzunden calisan bir
+        // Ve sayamadigim bir tanesi, önbellek yuzunden calisan bir
         // sorguyu hataya cevirirdi.
         //
         // Hatayi YUTMUYORUZ, logluyorum -- ama kullanıcıya
@@ -122,7 +122,7 @@ internal sealed partial class RedisCacheService : ICacheService
 
             // Fire-and-forget DEĞİL, bekliyoruz.
             //
-            // Beklemeseydik yazma hatasini hiç goremezdik ve önbellek
+            // Beklemeseydim yazma hatasini hiç goremezdik ve önbellek
             // sessizce hiç dolmayabilirdi -- sistem çalışır, sadece
             // hiçbir zaman hizlanmaz.
             await db.StringSetAsync(fullKey, json, expiration).ConfigureAwait(false);

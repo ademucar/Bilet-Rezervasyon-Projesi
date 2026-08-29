@@ -90,7 +90,7 @@ internal sealed partial class CreatePaymentCommandHandler
     // PDF Sprint 16: "Ödeme" loglanmalidir.
     //
     // TUTARI logluyorum ama KART BILGISI YOK -- zaten hiçbir yerde
-    // saklamiyoruz (simülasyon sağlayıcı kullanıyorum).
+    // saklamiyorum (simülasyon sağlayıcı kullanıyorum).
     //
     // Tutar hassas veri değil ama is acisindan kritik: uretimde
     // "bugun ne kadar ödeme alındı?" sorusunun ilk cevabi loglardan
@@ -195,7 +195,7 @@ internal sealed partial class CreatePaymentCommandHandler
 
         // SAGLAYICIYA GITMEDEN ONCE KAYDET
         //
-        // Neden? Sağlayıcı cagrisi sırasında uygulama cokerse, elimizde
+        // Neden? Sağlayıcı cagrisi sırasında uygulama cokerse, elimde
         // "Pending" durumda bir kayıt kalır ve ne olduğunu arastirabilir,
         // mutabakat yapabiliriz.
         //

@@ -113,7 +113,7 @@ public abstract class ApiControllerBase : ControllerBase
         };
 
         // Frontend "detail" METNINE bakarak karar vermemeli -- metni
-        // degistirdigimiz gün frontend bozulur. Bu kod sabit kalır.
+        // degistirdigim gün frontend bozulur. Bu kod sabit kalır.
         problem.Extensions["errorCode"] = error.Code;
 
         return StatusCode(statusCode, problem);

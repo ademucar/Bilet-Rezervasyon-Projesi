@@ -227,7 +227,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         // Once "TEST-REF-1" diye kendi uydurdugum bir referans
         // gonderdim ve 422 aldim.
         //
-        // Sebep Sprint 8'de yazdigimiz guvenlik kontrolu:
+        // Sebep Sprint 8'de yazdigim guvenlik kontrolu:
         // CompletePayment, referansi SAGLAYICIYA dogrulatiyor ve
         // MockPaymentProvider yalnizca KENDI urettigi referanslari
         // taniyor.

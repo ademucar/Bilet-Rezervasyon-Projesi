@@ -78,7 +78,7 @@ internal sealed class CreateVenueCommandHandler : IRequestHandler<CreateVenueCom
     {
         // Sehrin var olduğunu dogruluyorum.
         //
-        // Yapmasaydik ne olurdu? Foreign key ihlali -> DbUpdateException
+        // Yapmasaydim ne olurdu? Foreign key ihlali -> DbUpdateException
         // -> kullanıcı "Veri çakışması" gibi anlamsiz bir 409 alırdı.
         // Burada kontrol edip "Secilen şehir bulunamadı" demek çok daha
         // anlasilir.

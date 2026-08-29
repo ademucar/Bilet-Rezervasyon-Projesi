@@ -28,7 +28,7 @@ namespace Ticketing.IntegrationTests;
 /// Yani kisayol yalnizca hazirlikta, olculen seyde degil.
 ///
 /// Kurulumda da domain metotlari kullaniliyor (SQL degil): boylece
-/// kurdugumuz veri, uretimde olusabilecek bir veriyle ayni
+/// kurdugum veri, uretimde olusabilecek bir veriyle ayni
 /// kurallardan geciyor.
 /// </remarks>
 internal static class SenaryoKurucu

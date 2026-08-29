@@ -19,7 +19,7 @@ namespace Ticketing.Application.Abstractions.Time;
 /// katmaninda o parametreyi saglamak için.
 ///
 /// Not: .NET 8 ile gelen System.TimeProvider da aynı isi yapar.
-/// Kendi arayuzumu tercih ettim çünkü yalnızca ihtiyacimiz olan tek
+/// Kendi arayuzumu tercih ettim çünkü yalnızca ihtiyacim olan tek
 /// uyeyi açık ediyor; TimeProvider zamanlayici (timer) API'leri de
 /// içerir ve bunlari yanlislikla kullanma ihtimalini dogurur.
 /// </summary>

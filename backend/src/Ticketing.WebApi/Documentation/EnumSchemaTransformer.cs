@@ -33,7 +33,7 @@ namespace Ticketing.WebApi.Documentation;
 /// JsonStringEnumConverter ekleyip enum'lari metin olarak
 /// gonderebilirdim ("Confirmed" gibi). Daha okunakli olurdu.
 ///
-/// YAPMADIM çünkü bu KIRICI bir degisiklik: frontend'imiz sayilarla
+/// YAPMADIM çünkü bu KIRICI bir degisiklik: frontend'im sayilarla
 /// karsilastirma yapiyor (ReservationStatus.Confirmed === 4) ve
 /// Sprint 17'de yazdigim testler de oyle. Dokumantasyonu
 /// iyilestirmek için calisan bir sozlesmeyi bozmak yanlış takas.

@@ -17,7 +17,7 @@ namespace Ticketing.Infrastructure.Storage;
 /// sebebi tam olarak bu.
 ///
 /// Şimdilik yerel disk yeterli çünkü tek sunucuda calisiyorum --
-/// ihtiyac duymadigimiz altyapiyi simdiden kurmuyorum.
+/// ihtiyac duymadigim altyapiyi simdiden kurmuyorum.
 /// </remarks>
 internal sealed class LocalFileStorage : IFileStorage
 {

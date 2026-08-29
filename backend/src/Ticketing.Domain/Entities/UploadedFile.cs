@@ -32,7 +32,7 @@ public class UploadedFile : AuditableEntity
     public string FileName { get; private set; }
 
     /// <summary>
-    /// Diskte kullandigimiz GUVENLI dosya adı (Guid + uzanti).
+    /// Diskte kullandigim GUVENLI dosya adı (Guid + uzanti).
     ///
     /// Neden orijinal adı kullanmiyorum?
     /// Kullanıcı "../../appsettings.json" veya "afis.jpg.exe" gibi bir ad

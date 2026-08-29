@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Sprint 16'da bu hatalari sunucuya gonderecegim.
-    // Su an konsola yazıyorum ki gelistirme sırasında gorelim --
+    // Su an konsola yazıyorum ki gelistirme sırasında goreyim --
     // sessizce yutmak en kotusu olurdu.
     console.error('Yakalanmamış hata:', error, errorInfo)
   }

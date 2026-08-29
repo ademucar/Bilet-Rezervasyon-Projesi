@@ -28,7 +28,7 @@ public static class BackgroundJobSetup
     ///
     /// 1) IZLEME EKRANI HAZIR GELIYOR. /hangfire adresinde her isin
     ///    ne zaman calistigi, ne kadar surdugu, hangi hatayla
-    ///    başarısız olduğu görünüyor. Quartz'da bunu kendimiz
+    ///    başarısız olduğu görünüyor. Quartz'da bunu kendim
     ///    yazmamiz gerekirdi. Arka plan islerinde en büyük risk
     ///    "calismadigini fark etmemek" olduğu için bu ekran bir
     ///    konfor değil, ihtiyac.
@@ -40,7 +40,7 @@ public static class BackgroundJobSetup
     ///    bir altyapi (Redis, SQL Server) gerekmiyor.
     ///
     /// Quartz daha hafif ve daha esnek zamanlama sunuyor; benim
-    /// ihtiyacimiz olan zamanlama basit olduğu için bu avantaji
+    /// ihtiyacim olan zamanlama basit olduğu için bu avantaji
     /// kullanamazdim.
     /// </summary>
     public static IServiceCollection AddBackgroundJobs(
@@ -79,7 +79,7 @@ public static class BackgroundJobSetup
         // yalnızca veritabani bağlantı havuzunu tuketirdi -- HTTP
         // isteklerine bağlantı kalmayabilirdi.
         //
-        // 4 isci: dort isimiz var, her biri kendi kuyrugunda
+        // 4 isci: dort isim var, her biri kendi kuyrugunda
         // rahatca ilerler.
         services.AddHangfireServer(options =>
         {

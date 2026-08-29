@@ -367,7 +367,7 @@ internal sealed partial class EventStatusCommandHandler
     //
     // Bir etkinliğin iptali para iadesi zinciri baslatiyor ve
     // yuzlerce kullanıcıya bildirim gidiyor. Sprint 15'te iade için
-    // verdigimiz kararin aynisi: is etkisi büyük olan olaylar,
+    // verdigim kararin aynisi: is etkisi büyük olan olaylar,
     // normal trafigin arasında kaybolmamali.
     [LoggerMessage(
         EventId = LogEvents.EtkinlikIptalEdildi,
@@ -476,7 +476,7 @@ internal sealed partial class EventStatusCommandHandler
 
         // Yayinlanan etkinlik artık herkese görünür olmalı.
         //
-        // Temizlemeseydik, daha önce 404 alan bir istek yuzunden
+        // Temizlemeseydim, daha önce 404 alan bir istek yuzunden
         // onbellekte "yok" kaydı olusmus olabilirdi... aslında
         // olmazdi: null değerleri bilerek onbelleklemiyorum
         // (bkz. RedisCacheService). Yine de popüler listesi ve
@@ -489,7 +489,7 @@ internal sealed partial class EventStatusCommandHandler
     public async Task<Result> Handle(CancelEventCommand request, CancellationToken cancellationToken)
     {
         // Oturumlari da yukluyorum: iptal bildirimini oturum GRUPLARINA
-        // gonderecegim ve bunun için kimliklerine ihtiyacimiz var.
+        // gonderecegim ve bunun için kimliklerine ihtiyacim var.
         var evt = await _context.Events
             .Include(e => e.Sessions)
             .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)

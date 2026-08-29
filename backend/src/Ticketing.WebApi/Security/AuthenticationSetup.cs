@@ -70,8 +70,8 @@ internal static class AuthenticationSetup
                     // sapma yok.
                     //
                     // Sifira cekmeyi tercih ediyorum çünkü "15 dakika"
-                    // dedigimizde gerçekten 15 dakika olmalı. Aksi halde
-                    // güvenlik hesaplarimiz yanlış olur ve testlerde
+                    // dedigimde gerçekten 15 dakika olmalı. Aksi halde
+                    // güvenlik hesaplarim yanlış olur ve testlerde
                     // "süresi dolmuş token hâlâ çalışıyor" gibi kafa
                     // karistirici durumlarla ugrasırız.
                     ClockSkew = TimeSpan.Zero,

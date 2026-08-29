@@ -5,7 +5,7 @@ namespace Ticketing.Application.Abstractions.Security;
 ///
 /// Neden HttpContext'i doğrudan kullanmiyorum?
 /// Çünkü HttpContext ASP.NET Core'a aittir ve Application katmani
-/// web'i bilmemelidir -- architecture testimiz bunu zaten engelliyor.
+/// web'i bilmemelidir -- architecture testim bunu zaten engelliyor.
 ///
 /// Bu arayüz sayesinde handler'lar "su an kim istekte bulunuyor?"
 /// sorusunu HTTP'den bağımsız olarak sorabiliyor. Testte de sahte

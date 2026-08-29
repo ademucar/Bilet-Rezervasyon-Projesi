@@ -199,7 +199,7 @@ internal sealed class ChangeTicketTypePriceCommandHandler
 
         // Fiyat gerçekten degismediyse denetim kaydı oluşturma.
         // Kullanıcı formu acip hiçbir sey degistirmeden kaydettiginde
-        // audit log'u gereksiz kayitla sisirmeyelim.
+        // audit log'u gereksiz kayitla sisirmeyeyim.
         if (oldPrice == newPrice)
         {
             return Result.Success();

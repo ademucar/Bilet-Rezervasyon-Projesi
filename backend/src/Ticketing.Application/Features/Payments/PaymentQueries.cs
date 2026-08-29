@@ -459,7 +459,7 @@ internal sealed class GetMyTicketsQueryHandler
                 //
                 // İptal edilmiş veya kullanılmış biletin QR'ini
                 // gondermenin bir faydasi yok; hassas bir deger
-                // olduğu için gereksiz yere yaymiyoruz.
+                // olduğu için gereksiz yere yaymiyorum.
                 t.Status == TicketStatus.Active && t.QrCode != null && !t.QrCode.IsRevoked
                     ? t.QrCode.QrValue
                     : null,

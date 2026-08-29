@@ -349,7 +349,7 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
         // Etkilenen kullanıcılar: bu etkinlige AKTIF bileti olanlar.
         //
         // Distinct ŞART: bir kullanıcı 4 bilet almis olabilir ve
-        // 4 ayrı bildirim gondermek istemeyiz.
+        // 4 ayrı bildirim gondermek istemem.
         var userIds = await _context.Tickets
             .AsNoTracking()
             .Where(t => t.EventSeat.EventSession.EventId == data.EventId

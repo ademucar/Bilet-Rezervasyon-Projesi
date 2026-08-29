@@ -160,7 +160,7 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
         // ayrintili yazili: bu bir "en iyi caba" (best-effort)
         // bildirim kanali. Hangi istisnalarin gelebilecegini
         // onceden saymak mumkun değil (ag, seri hale getirme,
-        // istemci durumu) ve sayamadigimiz bir tanesi kullanıcının
+        // istemci durumu) ve sayamadigim bir tanesi kullanıcının
         // başarılı islemini hataya cevirirdi.
         catch (Exception ex)
 #pragma warning restore CA1031

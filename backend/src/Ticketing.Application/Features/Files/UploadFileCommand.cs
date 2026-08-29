@@ -28,7 +28,7 @@ public sealed record UploadedFileDto(
 ///
 /// IFormFile, Microsoft.AspNetCore.Http içinde tanimli. Application
 /// katmanina almak, is mantigini WEB e bagimli yapardi -- mimari
-/// testimiz bunu zaten reddediyor.
+/// testim bunu zaten reddediyor.
 ///
 /// Stream ise System.IO içinde. Aynı komut yarin bir arka plan
 /// isinden veya konsol aracindan da cagrilabilir.
@@ -90,7 +90,7 @@ internal sealed class UploadFileCommandHandler
 
         var guvenliAd = dogrulama.Value;
 
-        // Akisi basa sar: imza için okudugumuz baytlar da diske yazilmali.
+        // Akisi basa sar: imza için okudugum baytlar da diske yazilmali.
         if (request.Content.CanSeek)
         {
             request.Content.Position = 0;

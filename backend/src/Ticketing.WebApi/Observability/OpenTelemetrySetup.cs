@@ -33,7 +33,7 @@ namespace Ticketing.WebApi.Observability;
 /// soylemez. Trace, her halkayi ayrı olcuyor ve suclu halkayi
 /// doğrudan gosteriyor.
 ///
-/// Bizim zincirimiz uzun (HTTP -> MediatR -> EF -> PostgreSQL,
+/// Bizim zincirim uzun (HTTP -> MediatR -> EF -> PostgreSQL,
 /// -> Redis, -> Outbox -> Hangfire -> SMTP) ve halkalarin çoğu
 /// FARKLI process'lerde. Trace olmadan yavaslik teshisi tahmin
 /// yurutmekten ibaret olurdu.
@@ -71,7 +71,7 @@ internal static class OpenTelemetrySetup
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         // Saglik kontrolleri saniyede bir cagriliyor.
-                        // Izlemeseydik bile çalışır ama trace
+                        // Izlemeseydim bile çalışır ama trace
                         // deposunun %90'i bu gurultu olurdu -- hem
                         // maliyet hem de gerçek izleri bulmayi
                         // zorlastiran bir yigin.

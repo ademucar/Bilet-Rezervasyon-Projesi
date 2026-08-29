@@ -24,7 +24,7 @@ import type { AuthResponse, UserSummary } from '../types/auth'
  *    RISK: XSS acigi olan bir sayfada saldirgan token'i okuyabilir.
  *
  * NEDEN 3'U SECTIM?
- * Backend'imiz token'i YANIT GOVDESINDE dönüyor, çerez olarak değil
+ * Backend'im token'i YANIT GOVDESINDE dönüyor, çerez olarak değil
  * (PDF'in ongordugu klasik JWT akışı). Cerez yaklasimina gecmek
  * backend'i değiştirmeyi gerektirirdi.
  *

@@ -173,7 +173,7 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
         var date = request.Date ?? DateOnly.FromDateTime(_clock.UtcNow.UtcDateTime.AddDays(-1));
 
         // Gunun sınırları UTC olarak. Veritabaninda her sey UTC
-        // sakladigimiz için karsilastirma tutarli.
+        // sakladigim için karsilastirma tutarli.
         var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
         var end = start.AddDays(1);
 

@@ -105,7 +105,7 @@ internal sealed class GetNotificationsQueryHandler
 /// <remarks>
 /// NEDEN AYRI BIR UC? Listeden de sayilabilirdi.
 ///
-/// Sayiyi liste ucundan da alabilirdik (totalCount). Ama zil rozeti
+/// Sayiyi liste ucundan da alabilirdim (totalCount). Ama zil rozeti
 /// HER SAYFADA ve DUZENLI ARALIKLARLA yenileniyor.
 ///
 /// Liste ucunu cagirsaydim her yenilemede 20 bildirimin tüm metnini
@@ -188,7 +188,7 @@ internal sealed class MarkNotificationReadCommandHandler
         // Sahiplik kontrolü SORGUYA dahil.
         //
         // Önce kaydı cekip sonra "senin mi?" diye sorsaydik, iki
-        // adımda yaptigimiz seyi tek adımda yapiyorum ve yanlislikla
+        // adımda yaptigim seyi tek adımda yapiyorum ve yanlislikla
         // kontrolü atlamak imkansizlasiyor.
         var notification = await _context.Notifications
             .FirstOrDefaultAsync(

@@ -19,7 +19,7 @@ namespace Ticketing.WebApi.Middleware;
 ///   403 -> "bu rezervasyon VAR ama senin değil"
 ///   404 -> "boyle bir rezervasyon yok"   (hiçbir sey soylemiyor)
 ///
-/// Ilginc olan: handler'larimiz ZATEN 404 donuyordu. Bunu Sprint 19
+/// Ilginc olan: handler'larim ZATEN 404 donuyordu. Bunu Sprint 19
 /// güvenlik testinde olctum -- başka bir kullanıcının rezervasyonuna
 /// erişim denemesi 404 aliyordu.
 ///
@@ -34,7 +34,7 @@ namespace Ticketing.WebApi.Middleware;
 ///
 /// Middleware aynı sonucu veriyor ve daha az cerceve ic ayrintisina
 /// bağlı. Bedeli: yaniti DEĞİL, yalnızca durum kodunu ve govdeyi
-/// yeniden yazıyorum -- ki zaten istedigimiz tam olarak bu.
+/// yeniden yazıyorum -- ki zaten istedigim tam olarak bu.
 ///
 /// KAPSAM: YALNIZCA SAHIPLIK POLITIKALARI
 ///
@@ -66,7 +66,7 @@ internal sealed class OwnershipNotFoundMiddleware
         //
         // 401 "kim olduğunu bilmiyorum" demek; kullanıcı giriş
         // yapmamis. Ona "yok" demek yanlış olurdu: giriş yapmasi
-        // gerektigini soylemeliyiz.
+        // gerektigini soylemeliyim.
         if (context.Response.StatusCode != StatusCodes.Status403Forbidden)
         {
             return;

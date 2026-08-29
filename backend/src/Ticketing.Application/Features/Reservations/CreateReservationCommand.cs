@@ -129,7 +129,7 @@ internal sealed partial class CreateReservationCommandHandler
     /// Bu satır olmadan "koltuğu secmistim ama alamadim" sikayetini
     /// arastirmak imkansiz: kullanıcının ekraninda koltuk BOSTU,
     /// veritabaninda ise baskasina ait. Log olmadan hangi iki istegin
-    /// carpistigini goremeyiz.
+    /// carpistigini goremem.
     ///
     /// Warning çünkü bu bir HATA DEĞİL -- sistem tam olarak doğru
     /// calisti ve veri butunlugunu korudu. Ama SIKLIGI önemli:
@@ -137,7 +137,7 @@ internal sealed partial class CreateReservationCommandHandler
     /// etkinlik beklenenden popüler. Ikisi de mudahale gerektirir.
     ///
     /// Error yapsaydim izleme panosu surekli alarm calardi ve gerçek
-    /// hatalar bu gurultude kaybolurdu (Sprint 15'te konustugumuz
+    /// hatalar bu gurultude kaybolurdu (Sprint 15'te konustugum
     /// alarm yorgunlugu).
     /// </remarks>
     [LoggerMessage(
@@ -175,7 +175,7 @@ internal sealed partial class CreateReservationCommandHandler
         //
         // Bu kontrol yarisa açık (iki istek aynı anda gelirse ikisi de
         // "yok" görebilir) -- ama sorun değil: veritabanindaki partial
-        // unique index ikincisini reddedecek ve aşağıda yakalayacagiz.
+        // unique index ikincisini reddedecek ve aşağıda yakalayacagim.
         // Buradaki kontrol YAYGIN durumu (kullanıcı 2 saniye sonra
         // tekrar bastı) ucuz şekilde cozuyor.
         if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
@@ -274,7 +274,7 @@ internal sealed partial class CreateReservationCommandHandler
         //
         // Bulunamayan varsa ya başka oturuma ait ya da hiç yok.
         // Kismi rezervasyon YAPMIYORUM: kullanıcı 4 koltuk istedi,
-        // 3'unu alip "al bakalim" demek kötü bir deneyim olurdu.
+        // 3'unu alip "al bakayim" demek kötü bir deneyim olurdu.
         if (seats.Count != request.EventSeatIds.Distinct().Count())
         {
             return Result.Failure<ReservationDto>(ReservationErrors.SeatsNotFound);
@@ -344,7 +344,7 @@ internal sealed partial class CreateReservationCommandHandler
             //
             // xmin degistigi için 0 satır etkilendi -> exception.
             //
-            // KRITIK NOKTA: benim istegimiz KAYBETTI ama hiçbir veriyi
+            // KRITIK NOKTA: benim istegim KAYBETTI ama hiçbir veriyi
             // BOZMADI. Digerinin kilidinin uzerine YAZMADIK.
             //
             // Bu kontrol olmasaydı "son yazan kazanir" davranisi

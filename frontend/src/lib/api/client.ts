@@ -45,7 +45,7 @@ api.interceptors.request.use((config) => {
 //
 // Naif bir çözüm her 401'de yenileme yapardi -> DORT yenileme isteği.
 //
-// Bu benim backend'imizde FELAKET olurdu, çünkü refresh token
+// Bu benim backend'imde FELAKET olurdu, çünkü refresh token
 // ROTATION uyguluyorum:
 //   1. istek token'i yeniler -> eski token İPTAL olur
 //   2. istek AYNI eski token'i gönderir -> "iptal edilmiş token
@@ -91,7 +91,7 @@ function endSession(reason: 'expired' | 'revoked') {
   // Sebep: bu kod bir React bileseninin DISINDA çalışıyor; hook
   // cagiramam. Ayrıca tam sayfa yenilemesi, bellekte kalmis olabilecek
   // eski durumu (onbellege alinmis sorgular, form verileri) da
-  // temizliyor -- oturum sonlandiginda istedigimiz tam olarak bu.
+  // temizliyor -- oturum sonlandiginda istedigim tam olarak bu.
   const target = reason === 'revoked' ? '/giris?sebep=guvenlik' : '/giris?sebep=sure-doldu'
 
   if (window.location.pathname !== '/giris') {
@@ -206,7 +206,7 @@ export function toProblem(error: unknown): ProblemDetails {
 // import.meta.env.DEV, Vite tarafından üretim derlemesinde false'a
 // sabitlenir ve bu blok paketten TAMAMEN silinir (tree shaking).
 // Yani uretimde window.__api diye bir sey OLMAZ -- boyle bir kapiyi
-// açık birakmak istemeyiz.
+// açık birakmak istemem.
 if (import.meta.env.DEV) {
   ;(window as unknown as { __api: AxiosInstance }).__api = api
 }

@@ -331,7 +331,7 @@ public class Event : ConcurrentEntity
         // Rezervasyon iptali, iade, bildirim... hicbirini BURADA yapmiyorum.
         // Event sinifinin ödeme servisini veya e-posta servisini bilmesi
         // gerekseydi Domain katmani altyapiya bagimli olurdu ve
-        // architecture testimiz kırmızı yanardi.
+        // architecture testim kırmızı yanardi.
         //
         // Sadece "iptal edildim" diyorum; gerisini Application katmanindaki
         // handler halleder.

@@ -93,7 +93,7 @@ public class ReviewTests
     ///
     /// Uygunsuz bir yorum gizleniyor ama KAYIT duruyor.
     ///
-    /// Silseydim: kullanici "yorumum nerede?" diye sorunca elimizde
+    /// Silseydim: kullanici "yorumum nerede?" diye sorunca elimde
     /// hicbir sey olmazdi ve moderasyon karari denetlenemezdi.
     /// Ayrica ayni kullanici tekrar yorum yazabilir hale gelirdi --
     /// oysa "her kullanici bir etkinlige bir yorum" kurali var.

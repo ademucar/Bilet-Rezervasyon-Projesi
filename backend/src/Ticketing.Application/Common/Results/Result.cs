@@ -114,7 +114,7 @@ public class Result<TValue> : Result
     ///     return Result.Success(user);
     /// yerine sadece
     ///     return user;
-    /// yazabiliyoruz. Küçük bir kolaylik ama 100 handler'da fark ediyor.
+    /// yazabiliyorum. Küçük bir kolaylik ama 100 handler'da fark ediyor.
     /// </summary>
     public static implicit operator Result<TValue>(TValue value) => Success(value);
 

@@ -87,7 +87,7 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
     /// Ikisini de geçersiz kilmak ŞART. Yalnızca async surumu
     /// yazsaydım, senkron SaveChanges() cagiran herhangi bir kod yolu
     /// (seed islemi, migration, bir test) sessizce boş correlation ID
-    /// üretirdi -- ve bu, duzeltmeye calistigimiz hatanin ta kendisi.
+    /// üretirdi -- ve bu, duzeltmeye calistigim hatanin ta kendisi.
     /// </remarks>
     public override InterceptionResult<int> SavingChanges(
         DbContextEventData eventData,

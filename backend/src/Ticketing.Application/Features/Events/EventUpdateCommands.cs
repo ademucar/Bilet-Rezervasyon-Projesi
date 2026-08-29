@@ -175,7 +175,7 @@ internal sealed partial class UpdateEventCommandHandler
 /// AuditableEntity uzerindeki IsDeleted alanı isaretleniyor ve global
 /// sorgu filtresi kaydı gizliyor.
 ///
-/// Neden fiziksel silmiyoruz?
+/// Neden fiziksel silmiyorum?
 ///   - Etkinlige bağlı bilet, ödeme ve denetim kayitlari var. Fiziksel
 ///     silme ya bunlari da silerdi (mali kayıt kaybi) ya da yabanci
 ///     anahtar hatası verirdi.
@@ -273,7 +273,7 @@ internal sealed partial class DeleteEventCommandHandler
         // AuditFieldsInterceptor SILMEYI SOFT DELETE'E CEVIRIYOR
         //
         // Remove() cagiriyoruz ama kayıt FIZIKSEL olarak silinmiyor:
-        // Sprint 12'de yazdigimiz interceptor EntityState.Deleted'i
+        // Sprint 12'de yazdigim interceptor EntityState.Deleted'i
         // yakalayip IsDeleted = true yapiyor.
         //
         // Burada Remove() yazmak, "silme niyeti"ni normal EF diliyle

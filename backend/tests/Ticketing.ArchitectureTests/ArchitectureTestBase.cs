@@ -5,7 +5,7 @@ namespace Ticketing.ArchitectureTests;
 ///
 /// Katman isimlerini string sabit olarak topluyorum cunku NetArchTest
 /// namespace'leri metin olarak karsilastiriyor. Bu isimleri 20 ayri testte
-/// tekrar tekrar yazsaydim, bir gun proje adini degistirdigimizde
+/// tekrar tekrar yazsaydim, bir gun proje adini degistirdigimde
 /// testler sessizce "hicbir tip bulamadim, demek ki kural saglaniyor"
 /// diyerek YESIL kalirdi. En tehlikeli test, yanlis sebepten gecen testtir.
 ///

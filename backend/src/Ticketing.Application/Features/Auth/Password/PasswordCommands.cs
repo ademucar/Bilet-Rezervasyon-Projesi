@@ -183,7 +183,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
         }
 
         // Refresh token uretecini yeniden kullanıyorum: aynı kriptografik
-        // guvenceye ihtiyacimiz var (tahmin edilemez, yüksek entropili)
+        // guvenceye ihtiyacim var (tahmin edilemez, yüksek entropili)
         // ve ikinci bir uretec yazmak gereksiz tekrar olurdu.
         var resetToken = _tokenService.CreateRefreshToken();
 

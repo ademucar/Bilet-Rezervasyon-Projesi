@@ -14,7 +14,7 @@ namespace Ticketing.Application.Features.Auth.Register;
 ///   3. Kullaniciyi oluştur ve varsayılan "User" rolunu ata
 ///   4. Token üret
 ///
-/// sealed: architecture testimiz handler'larin sealed olmasini zorunlu
+/// sealed: architecture testim handler'larin sealed olmasini zorunlu
 /// kiliyor. Handler'dan miras almak için bir sebep yok; sealed hem niyeti
 /// belirtir hem de JIT'in metod cagrilarini devirtualize etmesine izin verir.
 /// </summary>
@@ -63,7 +63,7 @@ internal sealed class RegisterCommandHandler
             //
             // Bu, güvenlik ile kullanilabilirlik arasında BILINCLI bir
             // odundur ve sektor standardidir. Riski Sprint 15'te register
-            // endpoint'ine rate limit koyarak sinirlayacagiz: saldirgan
+            // endpoint'ine rate limit koyarak sinirlayacagim: saldirgan
             // e-posta listesi taramasini pratikte yapamayacak.
             return Result.Failure<AuthResponse>(AuthErrors.EmailAlreadyInUse);
         }

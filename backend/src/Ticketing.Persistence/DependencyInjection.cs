@@ -97,7 +97,7 @@ public static class DependencyInjection
 
         // Application katmani somut TicketingDbContext'i değil bu arayuzu
         // görüyor. Boylece Application, Persistence'a bagimli olmuyor --
-        // architecture testimiz bunu her derlemede dogruluyor.
+        // architecture testim bunu her derlemede dogruluyor.
         //
         // GetRequiredService ile AYNI ornegi cozumluyorum, yeni bir tane
         // olusturmuyorum. Aksi halde tek bir HTTP isteği içinde IKI ayrı

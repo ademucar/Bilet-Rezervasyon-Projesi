@@ -103,7 +103,7 @@ export function useCountdown(initialSeconds: number | undefined): number {
     // 250 ms'de bir olcuyorum, 1000 ms'de bir değil.
     //
     // Sebep: 1 saniyelik araliklarla olcersek, gerçek saniye gecisi
-    // ile benim olcumumuz arasında 999 ms'ye kadar fark olusabilir
+    // ile benim olcumum arasında 999 ms'ye kadar fark olusabilir
     // ve sayaç bazen bir saniyeyi ATLAR (7:00 -> 6:58 gibi görünür).
     // 250 ms hem bunu onluyor hem de gozle gorulur bir maliyeti yok:
     // yalnızca bir cikarma islemi yapiyorum.

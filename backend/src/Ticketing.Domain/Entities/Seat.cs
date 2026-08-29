@@ -100,7 +100,7 @@ public class Seat : AuditableEntity
     /// <summary>
     /// Kullanıcıya gösterilecek okunabilir etiket: "C-12".
     /// Bilet uzerinde ve koltuk haritasında bu kullanilacak.
-    /// Tek yerde tanimladim ki her ekranda aynı formati gorelim.
+    /// Tek yerde tanimladim ki her ekranda aynı formati goreyim.
     /// </summary>
     public string GetDisplayLabel()
         => string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{RowLabel}-{SeatNumber}");

@@ -42,7 +42,7 @@ namespace Ticketing.Application.Abstractions.Persistence;
 ///
 /// Bu arayüz yine de degerli: Application katmani somut
 /// TicketingDbContext'i değil bu soyutlamayi görüyor, yani Persistence
-/// katmanina bagimli olmuyor. Architecture testimiz bunu zorunlu kiliyor.
+/// katmanina bagimli olmuyor. Architecture testim bunu zorunlu kiliyor.
 /// </summary>
 public interface IApplicationDbContext
 {

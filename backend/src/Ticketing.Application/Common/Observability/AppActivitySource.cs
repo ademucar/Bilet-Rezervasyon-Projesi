@@ -12,7 +12,7 @@ namespace Ticketing.Application.Common.Observability;
 /// İlk yazdigimda bunu WebApi altina koymustum. Sonra arka plan
 /// isleri (Infrastructure) buna ihtiyac duyunca sorun cikti:
 /// Infrastructure, WebApi'ye referans VEREMEZ -- Onion mimarisinin
-/// temel kuralı ve mimari testimiz bunu zaten reddediyor.
+/// temel kuralı ve mimari testim bunu zaten reddediyor.
 ///
 /// Her iki katmanin da (WebApi ve Infrastructure) gorebildigi tek
 /// yer Application. Buraya tasidim.

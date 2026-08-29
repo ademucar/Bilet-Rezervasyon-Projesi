@@ -9,7 +9,7 @@ namespace Ticketing.Application.Abstractions.Storage;
 /// File.WriteAllBytes cagirmak bir satır. O zaman bu arayüz niye?
 ///
 /// 1) Application katmani File API'sini BILMEMELI. Onion mimarisinde
-///    is mantığı altyapiya bagimli olamaz -- mimari testimiz bunu
+///    is mantığı altyapiya bagimli olamaz -- mimari testim bunu
 ///    zaten zorluyor.
 ///
 /// 2) Uretimde diske yazmak CALISMAZ. Birden fazla sunucu olunca

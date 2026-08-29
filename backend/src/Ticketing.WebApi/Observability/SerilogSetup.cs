@@ -16,7 +16,7 @@ namespace Ticketing.WebApi.Observability;
 ///
 /// DEGISTIRDIGI: o loglarin nereye ve hangi bicimde yazildigi.
 ///
-/// Kazandigimiz sey YAPILANDIRILMIS (structured) log. Fark su:
+/// Kazandigim sey YAPILANDIRILMIS (structured) log. Fark su:
 ///
 ///   Duz metin:
 ///     "Rezervasyon oluşturuldu. Id: abc-123, Koltuk: 4"
@@ -52,9 +52,9 @@ internal static class SerilogSetup
                 // için 2-3 satır uretiyor ("Request starting",
                 // "Executing endpoint", "Request finished"). Bunlari
                 // zaten kendi istek logumuzla (aşağıda) tek satirda
-                // topluyoruz.
+                // topluyorum.
                 //
-                // Bastirmasaydik: günde milyonlarca gereksiz satır,
+                // Bastirmasaydim: günde milyonlarca gereksiz satır,
                 // hem maliyet hem de GERCEK loglarin gorunmez olmasını.
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
@@ -62,7 +62,7 @@ internal static class SerilogSetup
                 .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
 
                 // Hangfire her is için birden fazla Information satiri
-                // uretiyor. Bizim kendi is loglarimiz (9101-9106) zaten
+                // uretiyor. Bizim kendi is loglarim (9101-9106) zaten
                 // anlamlı olani söylüyor.
                 .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
 
@@ -104,8 +104,8 @@ internal static class SerilogSetup
                 //
                 // retainedFileCountLimit: 14 gün. Sinirsiz birakmak
                 // diski doldurur -- Sprint 15'te dosya yuklemede
-                // konustugumuz sorunun aynisi, ama bu kez KENDİ
-                // urettigimiz veriyle.
+                // konustugum sorunun aynisi, ama bu kez KENDİ
+                // urettigim veriyle.
                 .WriteTo.File(
                     formatter: new Serilog.Formatting.Compact.CompactJsonFormatter(),
                     path: Path.Combine(AppContext.BaseDirectory, "logs", "ticketing-.json"),
@@ -130,7 +130,7 @@ internal static class SerilogSetup
     /// Serilog'un UseSerilogRequestLogging'i ise tek satirda
     /// yol + durum kodu + süre veriyor.
     ///
-    /// Ustune kendi alanlarimizi ekliyorum: CorrelationId ve
+    /// Ustune kendi alanlarimi ekliyorum: CorrelationId ve
     /// kullanıcı kimliği. Boylece tek bir satirdan "kim, neyi, ne
     /// kadar surede" sorularinin hepsi cevaplaniyor.
     /// </remarks>
@@ -147,7 +147,7 @@ internal static class SerilogSetup
             //
             // Hepsini Information yapsaydim 500'ler normal isteklerin
             // arasında kaybolurdu. Sprint 15'te "alarm yorgunlugu"
-            // baglaminda konustugumuz ayrimin aynı si.
+            // baglaminda konustugum ayrimin aynı si.
             options.GetLevel = (httpContext, elapsed, ex) =>
             {
                 if (ex is not null || httpContext.Response.StatusCode >= 500)
@@ -185,7 +185,7 @@ internal static class SerilogSetup
 
                 // Kullanıcı KIMLIGI (Guid), e-postası DEĞİL.
                 //
-                // Sprint 15'te konustugumuz gerekce: e-posta kisisel
+                // Sprint 15'te konustugum gerekce: e-posta kisisel
                 // veri. Guid ise anlamsiz bir tanimlayici -- destek
                 // gerektiginde veritabanindan kullanıcıya cevrilebilir
                 // ama log dosyasi tek başına bir kullanıcı listesi

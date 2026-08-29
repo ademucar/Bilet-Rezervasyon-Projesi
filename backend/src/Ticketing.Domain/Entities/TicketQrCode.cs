@@ -12,7 +12,7 @@ namespace Ticketing.Domain.Entities;
 /// pratik gerekceleri var:
 ///
 /// 1) QR üretimi bir OUTBOX isidir (PDF Sprint 9: "QR bilet oluşturma
-///    islemi"). Ödeme transaction'i içinde QR gorseli uretmek istemeyiz;
+///    islemi"). Ödeme transaction'i içinde QR gorseli uretmek istemem;
 ///    bu is yavastir ve kullanıcıyı bekletir. Bilet hemen olusur,
 ///    QR arkadan gelir. Ayrı tablo bu gecikmeyi dogal kilar --
 ///    Ticket var ama QrCode henüz null olabilir.

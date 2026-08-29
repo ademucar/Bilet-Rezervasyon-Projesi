@@ -10,7 +10,7 @@ namespace Ticketing.Application.Abstractions.RealTime;
 /// IHubContext enjekte etseydim:
 ///
 ///   - Application, Microsoft.AspNetCore.SignalR paketine baglanirdi
-///   - Mimari testimiz (Application_AltyapiKatmanlariniReferansAlmamali)
+///   - Mimari testim (Application_AltyapiKatmanlariniReferansAlmamali)
 ///     kırmızı yanardi -- ve haklı olarak
 ///   - Birim testlerinde bir SignalR sunucusu ayaga kaldirmak
 ///     gerekirdi

@@ -13,8 +13,8 @@ namespace Ticketing.Domain.Common;
 ///      hatası vb. Bunlar GERCEK hatalardir. HTTP 500 donmeli, tam stack
 ///      trace loglanmali ve gelistiriciye bildirilmelidir.
 ///
-/// Sprint 2'de yazacagimiz global exception middleware bu ayrimi kullanacak.
-/// Ikisini ayirmasaydik ya kullanıcıya "Sunucu hatası" der ya da gerçek
+/// Sprint 2'de yazacagim global exception middleware bu ayrimi kullanacak.
+/// Ikisini ayirmasaydim ya kullanıcıya "Sunucu hatası" der ya da gerçek
 /// hatalari 400 olarak gizleyip fark etmezdik.
 /// </summary>
 public class DomainException : Exception
@@ -25,7 +25,7 @@ public class DomainException : Exception
     /// Neden sadece mesaj yetmiyor? Frontend'in hataya göre farklı davranmasi
     /// gerekiyor: süre dolduysa koltuk haritasini yenile, koltuk kapildiysa
     /// başka bir sey yap. Mesaj metnine bakarak karar vermek kirilgan olur --
-    /// metni degistirdigimiz gün frontend bozulur. Kod sabit kalır.
+    /// metni degistirdigim gün frontend bozulur. Kod sabit kalır.
     /// </summary>
     public string? ErrorCode { get; }
 

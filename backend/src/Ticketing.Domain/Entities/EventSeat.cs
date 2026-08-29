@@ -144,7 +144,7 @@ public class EventSeat : ConcurrentEntity
     ///     WHERE "Id" = @id AND xmin = @okunanDeger
     ///
     /// Araya başkası girip satiri degistirmisse 0 satır etkilenir ve
-    /// EF Core DbUpdateConcurrencyException firlatir. Bizim istegimiz
+    /// EF Core DbUpdateConcurrencyException firlatir. Bizim istegim
     /// kaybeder ama VERI BOZULMAZ -- ustune yazmayiz.
     /// </summary>
     /// <param name="reservationId">Kilidi alan rezervasyon.</param>

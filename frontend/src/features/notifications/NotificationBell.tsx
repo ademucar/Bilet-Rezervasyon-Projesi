@@ -162,7 +162,7 @@ export function NotificationBell() {
 
     if (n.actionPath) {
       // Rapor indirme adresleri API'ye gidiyor (/api/v1/...).
-      // Bunlari SPA yonlendirmesiyle acamayiz -- tarayıcıda
+      // Bunlari SPA yonlendirmesiyle acamam -- tarayıcıda
       // doğrudan acmak gerekiyor.
       if (n.actionPath.startsWith('/api/')) {
         window.open(n.actionPath, '_blank', 'noopener,noreferrer')

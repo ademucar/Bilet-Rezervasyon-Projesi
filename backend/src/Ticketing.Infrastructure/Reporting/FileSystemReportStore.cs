@@ -11,14 +11,14 @@ namespace Ticketing.Infrastructure.Reporting;
 /// <remarks>
 /// NEDEN VERITABANI DEĞİL, DISK?
 ///
-/// Dosyalari veritabaninda bytea olarak da tutabilirdik. Tutmadim:
+/// Dosyalari veritabaninda bytea olarak da tutabilirdim. Tutmadim:
 ///
 ///   - Rapor dosyalari megabaytlarca olabilir. Veritabaninin her
 ///     yedegi bu dosyalari da tasir ve yedek boyutu hizla buyur.
 ///   - PostgreSQL büyük ikili veriyi TOAST tablolarina tasiyor;
 ///     sorgular yavaslar.
 ///   - Rapor dosyasi GECICI bir cikti. Kaybolsa yeniden uretilebilir.
-///     Veritabani ise dogruluk kaynagimiz; oraya geçici veri koymak
+///     Veritabani ise dogruluk kaynagim; oraya geçici veri koymak
 ///     iki farklı sorumlulugu karistirmak olurdu.
 ///
 /// URETIMDE NE DEGISIR?

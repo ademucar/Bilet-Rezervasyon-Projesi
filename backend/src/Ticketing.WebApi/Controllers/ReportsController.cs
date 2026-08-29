@@ -144,7 +144,7 @@ public sealed class ReportsController : ApiControllerBase
 
         if (!sahiplikResult.IsSuccess || !sahiplikResult.Value)
         {
-            // 403 değil 404: raporun VARLIGINI dogrulamiyoruz.
+            // 403 değil 404: raporun VARLIGINI dogrulamiyorum.
             return NotFound();
         }
 

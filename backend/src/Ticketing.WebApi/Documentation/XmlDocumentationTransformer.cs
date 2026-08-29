@@ -228,7 +228,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     /// <remarks>
     /// YORUMLARIMIZ UZUN VE COK SATIRLI -- TEMIZLENMESI GEREKIYOR
     ///
-    /// Kodda yazdigimiz yorumlar "=====" cizgileri ve girintiler
+    /// Kodda yazdigim yorumlar "=====" cizgileri ve girintiler
     /// iceriyor. Ham haliyle Swagger'a koysaydım okunamaz olurdu.
     ///
     /// Yaptiklarim:

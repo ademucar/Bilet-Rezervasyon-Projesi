@@ -33,7 +33,7 @@ public class RefreshToken : Entity
     /// (SQL injection, yedek dosyasinin calinmasi, ic tehdit), saldirgan
     /// tüm token'lari ele gecirip herkesin hesabina girebilir.
     ///
-    /// Hash sakladigimizda saldirgan eline sadece geri cevrilemez ozetler
+    /// Hash sakladigimda saldirgan eline sadece geri cevrilemez ozetler
     /// gecer; onlarla giriş yapamaz.
     ///
     /// Sifreleri neden hash'liyorsak, refresh token'i da aynı sebeple

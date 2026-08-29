@@ -47,7 +47,7 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
         // etkinliğin BASLIGINI gosteriyor. Yani yayinlanmamis bir
         // etkinliğin adını sizdirmis olurdum.
         //
-        // Bu, Sprint 11'de etkinlik detayinda kapattigimiz IDOR
+        // Bu, Sprint 11'de etkinlik detayinda kapattigim IDOR
         // acigina giden BASKA bir kapi. Aynı kontrolü burada da
         // uygulamak sart.
         var eventExists = await _context.Events

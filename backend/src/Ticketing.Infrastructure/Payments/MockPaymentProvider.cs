@@ -27,7 +27,7 @@ internal sealed class MockPaymentProvider : IPaymentService
     /// test etmezdi -- uydurma bir referans bile gecerdi.
     ///
     /// Boylece gerçek davranisi taklit ediyorum: yalnızca BENIM
-    /// urettigimiz referanslar dogrulanabiliyor. Sahte callback
+    /// urettigim referanslar dogrulanabiliyor. Sahte callback
     /// senaryosunu test edebiliyorum.
     ///
     /// ConcurrentDictionary: bu servis SINGLETON ve es zamanlı
@@ -60,9 +60,9 @@ internal sealed class MockPaymentProvider : IPaymentService
         string providerReference,
         CancellationToken cancellationToken = default)
     {
-        // Bizim uretmedigimiz bir referans -> DOGRULAMA BASARISIZ.
+        // Bizim uretmedigim bir referans -> DOGRULAMA BASARISIZ.
         //
-        // Gerçek hayattaki karşılığı: saldirgan callback adresimize
+        // Gerçek hayattaki karşılığı: saldirgan callback adresime
         // uydurma bir referansla "ödeme başarılı" isteği gonderdi.
         // Saglayiciya sorunca "boyle bir işlem yok" cevabi geliyor.
         if (!_issuedReferences.ContainsKey(providerReference))
@@ -90,7 +90,7 @@ internal sealed class MockPaymentProvider : IPaymentService
         // Sağlayıcı da odenenden fazlasini iade etmeyi reddeder.
         //
         // Payment entity'sinde de aynı kural var. Iki yerde olmasını
-        // tekrar değil: biri BENIM tarafimizin butunlugunu korur,
+        // tekrar değil: biri BENIM tarafimin butunlugunu korur,
         // digeri sağlayıcının davranisini taklit eder. Gerçek
         // hayatta ikisi ayrı sistemlerdir ve ikisi de kontrol eder.
         if (amount > originalAmount)

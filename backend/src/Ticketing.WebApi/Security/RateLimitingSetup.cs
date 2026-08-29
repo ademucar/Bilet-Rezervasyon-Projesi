@@ -14,7 +14,7 @@ namespace Ticketing.WebApi.Security;
 /// Microsoft.AspNetCore.RateLimiting FRAMEWORK ICINDE geliyor.
 ///
 /// Ucuncu bir bagimlilik eklemek; güvenlik taramasi, surum takibi ve
-/// gecisli bagimlilik maliyeti getirir. Yerlesik olan ihtiyacimizi
+/// gecisli bagimlilik maliyeti getirir. Yerlesik olan ihtiyacimi
 /// karsiliyor.
 /// </remarks>
 public static class RateLimitingSetup
@@ -43,7 +43,7 @@ public static class RateLimitingSetup
     /// onlarca giriş yapiyor. Auth politikasi 5 dakikada 10 istek
     /// olduğu için 11. testten sonra HEPSI 429 alırdı.
     ///
-    /// Yani hiz sınırı, kendi testlerimizi engellerdi ve testler
+    /// Yani hiz sınırı, kendi testlerimi engellerdi ve testler
     /// SIRALARINA göre gecip kalırdı -- hata ayiklamasi en zor
     /// test türü.
     ///

@@ -12,7 +12,7 @@ namespace Ticketing.Domain.Events;
 /// Bu islerin HEPSINI Event.Cancel() metodunun içinde yapmak yanlış olurdu:
 /// Event sinifinin rezervasyonları, ödemeleri ve e-posta servisini bilmesi
 /// gerekirdi. O zaman Domain katmani altyapiya bagimli hale gelirdi ve
-/// architecture testimiz kırmızı yanardi.
+/// architecture testim kırmızı yanardi.
 ///
 /// Bunun yerine Event sadece "iptal edildim" diyor; ne yapilacagina
 /// Application katmanindaki handler'lar karar veriyor.

@@ -102,7 +102,7 @@ export interface PaymentStatusRow {
  * Rapor türleri. Backend'deki ReportType enum'u ile BIREBIR.
  *
  * Sayilar backend'de acikca 1'den başlıyor (asla 0 değil) -- Sprint 2'de
- * benimsedigimiz kural. Burada da aynı değerleri yazıyorum.
+ * benimsedigim kural. Burada da aynı değerleri yazıyorum.
  */
 export const ReportType = {
   SalesSummary: 1,

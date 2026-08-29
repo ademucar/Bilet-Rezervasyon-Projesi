@@ -37,7 +37,7 @@ const dateFormatter = new Intl.DateTimeFormat('tr-TR', {
  *
  * Para birimi degisken (TRY, USD, EUR) olduğu için tek bir nesne
  * yetmiyor. Gorulen her para birimi için bir kez olusturup
- * sakliyoruz -- Map, tekrar tekrar olusturmayi engelliyor.
+ * sakliyorum -- Map, tekrar tekrar olusturmayi engelliyor.
  */
 const currencyFormatters = new Map<string, Intl.NumberFormat>()
 
@@ -61,7 +61,7 @@ export function formatMoney(amount: number, currency: string): string {
  * ISO 8601 metnini okunabilir tarih-saate cevirir.
  *
  * Backend her zaman UTC ve ofsetli gönderiyor ("2026-09-14T20:00:00+00:00").
- * `new Date(...)` bunu KULLANICININ yerel saatine cevirir -- istedigimiz
+ * `new Date(...)` bunu KULLANICININ yerel saatine cevirir -- istedigim
  * tam olarak bu: İstanbul'daki kullanıcı 23:00 gorsun.
  */
 export function formatDateTime(isoString: string): string {

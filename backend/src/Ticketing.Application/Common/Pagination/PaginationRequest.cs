@@ -21,7 +21,7 @@ public abstract record PaginationRequest
     /// Bu, kod yazmayi bilen herkesin yapabilecegi en basit servis dışı
     /// birakma (DoS) saldirisidir ve sik atlanir. Ust sınırı sunucu
     /// tarafında ZORLAMAK sart -- frontend'in doğru deger gonderecegine
-    /// guvenemeyiz.
+    /// guvenemem.
     /// </summary>
     public const int MaxPageSize = 100;
 

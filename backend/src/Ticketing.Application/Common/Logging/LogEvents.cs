@@ -10,7 +10,7 @@ namespace Ticketing.Application.Common.Logging;
 /// EventId'leri her dosyada elle yazsaydım iki sey olurdu:
 ///
 ///   1) CAKISMA. Iki farklı olay aynı numarayi alır ve izleme
-///      sisteminde "9101 alarmi" dedigimizde hangisi olduğu belli
+///      sisteminde "9101 alarmi" dedigimde hangisi olduğu belli
 ///      olmaz. Bu, alarm kurallarini sessizce yanlış yapar.
 ///
 ///   2) BOSLUK. "Hangi numaralar boş?" sorusunu cevaplamak için tüm
@@ -18,7 +18,7 @@ namespace Ticketing.Application.Common.Logging;
 ///      rastgele secilir.
 ///
 /// Numara BLOKLARI kullanıyorum ki bir alarm kuralini aralık olarak
-/// yazabilelim: "1000-1999 arasi = kimlik olaylari".
+/// yazabileyim: "1000-1999 arasi = kimlik olaylari".
 ///
 /// BLOK HARITASI
 ///
@@ -50,7 +50,7 @@ public static class LogEvents
     /// Başarısız giriş.
     /// </summary>
     /// <remarks>
-    /// Bu, güvenlik acisindan EN DEGERLI log satirimiz: brute force
+    /// Bu, güvenlik acisindan EN DEGERLI log satirim: brute force
     /// ve credential stuffing saldirilari burada görünür.
     ///
     /// Warning seviyesinde logluyorum, Information değil. Sebep:
@@ -94,7 +94,7 @@ public static class LogEvents
     /// <remarks>
     /// Warning seviyesinde loglaniyor: silme geri alinmasi zor bir
     /// işlem ve denetimde gorulmesi gerekiyor. İade ve iptal için
-    /// verdigimiz kararin aynisi (Sprint 16).
+    /// verdigim kararin aynisi (Sprint 16).
     /// </remarks>
     public const int EtkinlikSilindi = 1105;
 
@@ -138,7 +138,7 @@ public static class LogEvents
     /// İade yapıldı.
     /// </summary>
     /// <remarks>
-    /// Para HAREKETI iceren tek islemimiz. Information değil,
+    /// Para HAREKETI iceren tek islemim. Information değil,
     /// Warning seviyesinde logluyorum -- hata olduğu için değil,
     /// GORULMESI gerektigi için: iade hacminde ani bir artis ya bir
     /// hata ya da bir kotuye kullanim isaretidir.

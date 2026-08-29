@@ -161,7 +161,7 @@ internal static class HealthChecksSetup
 /// </summary>
 internal sealed class StorageHealthCheck : IHealthCheck
 {
-    /// <summary>Bu esigin altinda disk alanı kaldiysa uyariyoruz.</summary>
+    /// <summary>Bu esigin altinda disk alanı kaldiysa uyariyorum.</summary>
     /// <remarks>
     /// 500 MB, "hemen mudahale et" esigi. Sifir beklemek anlamsiz:
     /// disk gerçekten dolduktan sonra uyarmak çok geç olur -- o anda
@@ -238,7 +238,7 @@ internal sealed class StorageHealthCheck : IHealthCheck
             //   "Access to the path 'C:\...\uploads\...' is denied."
             //
             // Sunucu dizin yapisini disariya acmak, Sprint 15'te
-            // stack trace için verdigimiz kararin aynisi -- burada da
+            // stack trace için verdigim kararin aynisi -- burada da
             // maskeliyorum.
             return Task.FromResult(HealthCheckResult.Unhealthy(
                 "Depolamaya yazılamıyor.",

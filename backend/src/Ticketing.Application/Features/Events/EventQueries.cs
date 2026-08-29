@@ -502,7 +502,7 @@ internal sealed class GetEventByIdQueryHandler
                 // Organizatör adını ALT SORGU ile alıyorum.
                 //
                 // Sebep: Event ile OrganizerProfile arasında navigation
-                // ozelligi tanimlamadik. Tanimlayabilirdik ama Event
+                // ozelligi tanimlamadim. Tanimlayabilirdim ama Event
                 // sinifi zaten kalabalik ve bu bilgi yalnızca detay
                 // ekraninda gerekiyor.
                 _context.OrganizerProfiles

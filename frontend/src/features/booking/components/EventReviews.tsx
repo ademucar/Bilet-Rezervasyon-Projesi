@@ -92,7 +92,7 @@ interface EventReviewsProps {
  *      -> form yalnızca Completed durumunda görünüyor
  *
  *   "Yalnızca geçerli bilet almis kullanıcı yorum yapabilir"
- *      -> bunu ISTEMCIDE bilemiyoruz (bilet bilgisi burada yok).
+ *      -> bunu ISTEMCIDE bilemiyorum (bilet bilgisi burada yok).
  *         Kullanıcı deneyip 403 aliyor ve NET bir mesaj görüyor.
  *
  *   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir"

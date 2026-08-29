@@ -18,7 +18,7 @@ afterEach(() => {
 
 // jsdom'DA OLMAYAN TARAYICI API'LERI
 //
-// jsdom tam bir tarayıcı değil; bazı API'ler eksik. Bileşenlerimiz
+// jsdom tam bir tarayıcı değil; bazı API'ler eksik. Bileşenlerim
 // bunları kullanıyor ve mock'lamazsak test "matchMedia is not a
 // function" diye patlar -- oysa bileşende hata yok.
 

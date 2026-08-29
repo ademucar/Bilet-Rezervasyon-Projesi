@@ -45,7 +45,7 @@ internal sealed class GetCurrentUserQueryHandler
         // GUNCEL veriyi gostermeli. Bayat veri göstermek, kullanıcının
         // "rolum verilmedi mi?" diye destek acmasina yol acar.
         //
-        // Projeksiyon (Select) kullanıyorum: EF yalnızca ihtiyacimiz olan
+        // Projeksiyon (Select) kullanıyorum: EF yalnızca ihtiyacim olan
         // sutunlari cekiyor. Entity'nin tamamini yukleyip sonra donusturmek
         // gereksiz veri transferi olurdu (PasswordHash dahil!).
         var user = await _context.Users

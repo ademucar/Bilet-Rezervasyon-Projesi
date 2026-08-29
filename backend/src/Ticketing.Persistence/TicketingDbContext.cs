@@ -10,7 +10,7 @@ namespace Ticketing.Persistence;
 ///
 /// DbContext'in tek isi veri erisimidir. Icine "rezervasyon oluştur"
 /// gibi metotlar yazsaydım, is mantığı Persistence katmanina sizardi
-/// ve architecture testimiz bunu yakalamasa bile tasarım bozulurdu.
+/// ve architecture testim bunu yakalamasa bile tasarım bozulurdu.
 ///
 /// Ayrıca: Controller'lar bu sinifi DOGRUDAN kullanmayacak
 /// (PDF: "Controller doğrudan DbContext kullanmamalidir"). Bunu
@@ -103,7 +103,7 @@ public partial class TicketingDbContext : DbContext
     /// Satir henüz var olmadığı için 0 satır etkilendi.
     ///
     /// SEBEP:
-    /// Entity taban sinifimizda Id'yi BIZ uretiyoruz:
+    /// Entity taban sinifimda Id'yi BIZ uretiyorum:
     ///     public Guid Id { get; protected set; } = Guid.CreateVersion7();
     ///
     /// EF Core ise Guid anahtarlari varsayılan olarak

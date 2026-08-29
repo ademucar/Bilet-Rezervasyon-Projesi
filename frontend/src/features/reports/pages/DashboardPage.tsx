@@ -86,7 +86,7 @@ const GRAFIK_RENKLERI = ['#2563eb', '#7c3aed', '#0891b2', '#ea580c', '#65a30d']
  * Iki panel TEK sayfada, sekmeli.
  *
  * Neden ayrı iki sayfa değil? Çünkü admin olan bir kullanıcı çoğu
- * zaman AYNI ZAMANDA organizatör (benim demo kullanicimiz gibi) ve
+ * zaman AYNI ZAMANDA organizatör (benim demo kullanicim gibi) ve
  * iki panel arasında gidip gelmek istiyor. Ayrı adresler olsaydı
  * her gecis tam sayfa yuklemesi olurdu.
  *

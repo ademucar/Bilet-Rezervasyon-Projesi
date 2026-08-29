@@ -27,7 +27,7 @@ export interface SeatHubHandlers {
   onSeatsSold: (eventSeatIds: string[]) => void
   onReservationExpired: (reservationId: string) => void
   onEventCancelled: (eventTitle: string) => void
-  /** Yeniden baglandiktan sonra: kaçırdığımız olaylar için listeyi tazele. */
+  /** Yeniden baglandiktan sonra: kaçırdığım olaylar için listeyi tazele. */
   onReconnected: () => void
 }
 
@@ -71,7 +71,7 @@ export function useSeatHub(
   // sırasında ref'e yazmak, React'in saf render sozunu bozar.
   //
   // Bagimlilik dizisi YOK -- yani her render'dan sonra çalışıyor.
-  // Bu tam olarak istedigimiz sey: ref her zaman en son
+  // Bu tam olarak istedigim sey: ref her zaman en son
   // handler'lari tutuyor ama bağlantı effect'i tetiklenmiyor.
   useEffect(() => {
     handlersRef.current = handlers
@@ -169,12 +169,12 @@ export function useSeatHub(
       // kacirilan mesajlari BIRIKTIRMEZ.
       //
       // Yani yeniden bağlantı tek başına yetmez: elimizdeki
-      // harita hâlâ eski. Tam listeyi cekmek, kaçırdığımız her
+      // harita hâlâ eski. Tam listeyi cekmek, kaçırdığım her
       // seyi tek hamlede telafi ediyor.
       //
       // Bu aynı zamanda SignalR'a neden "kaybolursa olur"
       // diyebildigimizin sebebi: her zaman guvenilir bir
-      // toparlanma yolumuz var.
+      // toparlanma yolum var.
       void connection.invoke('JoinSession', eventSessionId).catch(() => {
         // Gruba yeniden katilma başarısız olursa da liste
         // çekiliyor; kullanıcı en azindan güncel veriyi görüyor.

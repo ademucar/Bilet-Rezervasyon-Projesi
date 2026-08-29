@@ -12,7 +12,7 @@ namespace Ticketing.Domain.ValueObjects;
 /// NEDEN decimal, double DEĞİL?
 ///
 /// double ikili (binary) tabanda çalışır ve 0.1 sayisini TAM olarak temsil
-/// edemez -- tipki benim 1/3'u ondalik olarak tam yazamadigimiz gibi.
+/// edemez -- tipki benim 1/3'u ondalik olarak tam yazamadigim gibi.
 ///
 ///     double a = 0.1 + 0.2;   // 0.30000000000000004
 ///

@@ -4,7 +4,7 @@ namespace Ticketing.WebApi.Middleware;
 /// Güvenlik basliklarini ekler. PDF Sprint 15: "Security headers".
 /// </summary>
 /// <remarks>
-/// NEDEN MIDDLEWARE? Neden her yanitta elle eklemiyoruz?
+/// NEDEN MIDDLEWARE? Neden her yanitta elle eklemiyorum?
 ///
 /// Basliklari controller'larda eklemek, birini unutmak demektir --
 /// ve unutulan uc tam olarak korumasiz olandir.
@@ -74,7 +74,7 @@ internal sealed class SecurityHeadersMiddleware
             // gonderilecegini belirliyor.
             //
             // Varsayılan davranis TAM ADRESI gönderiyor. Bizim
-            // adreslerimizde hassas bilgi olabilir:
+            // adreslerimde hassas bilgi olabilir:
             //   /rezervasyonlar/{guid}
             //   /api/v1/reports/exports/{guid}
             //
@@ -87,7 +87,7 @@ internal sealed class SecurityHeadersMiddleware
             // Tarayici ozelliklerini kapatiyor. Bizim uygulamamiz
             // kamera, mikrofon veya konum kullanmiyor.
             //
-            // Kullanmadigimiz bir ozelligi kapatmak bedava güvenlik:
+            // Kullanmadigim bir ozelligi kapatmak bedava güvenlik:
             // ilerde bir XSS acigi olussa bile saldirgan bunlara
             // erisemez.
             headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";

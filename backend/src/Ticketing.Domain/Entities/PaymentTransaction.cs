@@ -16,7 +16,7 @@ namespace Ticketing.Domain.Entities;
 ///   4. Kalan iade
 ///
 /// Payment'ta tek bir "Status" ve tek bir "ProviderReference" var; bu
-/// dort adimi orada tutamayiz. Her adimin kendi zaman damgasi, kendi
+/// dort adimi orada tutamam. Her adimin kendi zaman damgasi, kendi
 /// sağlayıcı referansı ve kendi hata mesaji olmalı.
 ///
 /// Bu tablo bir DENETIM IZIDIR (audit trail): "bu odemede ne oldu?"

@@ -181,7 +181,7 @@ internal sealed class GetReservationQueryHandler
 
         // SAHIPLIK KONTROLU -- SORGUNUN ICINDE
         //
-        // "Önce cek, sonra sahibi mi diye bak" da yapabilirdik. Ama o
+        // "Önce cek, sonra sahibi mi diye bak" da yapabilirdim. Ama o
         // zaman baskasinin rezervasyonu bir an için bellege gelirdi ve
         // bir loglama veya hata mesajinda sizabilirdi.
         //

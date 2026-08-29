@@ -151,7 +151,7 @@ public class PaginationRequestTests
         //
         // Kod yazmayi bilen herkesin yapabilecegi en basit DoS saldirisi.
         // Siniri SUNUCU tarafinda zorlamak sart -- frontend'in dogru
-        // deger gonderecegine guvenemeyiz.
+        // deger gonderecegine guvenemem.
         var istek = new TestIstegi { PageSize = 999_999_999 };
 
         istek.PageSize.Should().Be(PaginationRequest.MaxPageSize);

@@ -17,7 +17,7 @@ namespace Ticketing.IntegrationTests;
 /// bosaltiyor.
 ///
 /// Neden sart? Testler paylasilan bir veritabanini kullaniyor.
-/// Temizlemeseydik bir testin olusturdugu kullanici, digerinin
+/// Temizlemeseydim bir testin olusturdugu kullanici, digerinin
 /// "kullanici sayisi 1 olmali" beklentisini bozardi -- ve bu
 /// yalnizca testler BELIRLI BIR SIRAYLA calistiginda olurdu.
 ///
@@ -46,7 +46,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         // Authorization başlığı sonraki teste sizardi ve
         // "yetkisiz erisim" testi yanlislikla GECERDI.
         //
-        // Yani en kritik guvenlik testimiz, bir yan etki yuzunden
+        // Yani en kritik guvenlik testim, bir yan etki yuzunden
         // hicbir sey dogrulamayan bir teste donusurdu.
         Client = Factory.CreateClient();
 

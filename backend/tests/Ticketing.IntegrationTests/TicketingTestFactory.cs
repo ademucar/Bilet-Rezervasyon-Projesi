@@ -52,7 +52,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
     // ciktigi gun hicbir kod degismeden kirilabilirdi. Testin ne
     // zaman ve neden kirildigini anlamak imkansiz olurdu.
     //
-    // 17, uretimde kullandigimiz surumle ayni (docker-compose.yml).
+    // 17, uretimde kullandigim surumle ayni (docker-compose.yml).
     // Farkli olsaydi testler "baska bir veritabaninda" gecerdi.
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17-alpine")
         .WithDatabase("ticketing_test")
@@ -168,7 +168,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         //   DataAnnotation validation failed for 'JwtOptions'
         //   members: 'Secret' with the error: 'The Secret field is required.'
         //
-        // Bu bir test hatasi degil, Sprint 1'de kurdugumuz
+        // Bu bir test hatasi degil, Sprint 1'de kurdugum
         // ValidateOnStart korumasinin CALISTIGININ kaniti: uygulama
         // eksik yapilandirmayla ayaga kalkmayi reddediyor.
         //
@@ -199,7 +199,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         // Testler ayni IP'den (bellek ici sunucu) onlarca giris
         // yapiyor ve 11. testten sonra hepsi 429 alirdi.
         //
-        // Yani hiz siniri, KENDI testlerimizi engellerdi. Ayri bir
+        // Yani hiz siniri, KENDI testlerimi engellerdi. Ayri bir
         // testte (RateLimitTests) acikca dogruluyorum; digerlerinde
         // kapatiyoruz.
         builder.UseSetting("RateLimiting:Enabled", "false");
