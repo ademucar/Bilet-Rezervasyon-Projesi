@@ -57,6 +57,39 @@ export default defineConfig({
     // gerekiyordu.
     // ==============================================================
     exclude: ['node_modules/**', 'dist/**', 'e2e/**'],
+
+    // ==============================================================
+    // COVERAGE -- PDF Sprint 19: "Test coverage raporu kullanilmalidir"
+    // ==============================================================
+    // Olcumun disinda biraktiklarim ve gerekceleri:
+    //
+    //   *.test.tsx      Testin kendisini olcmek anlamsiz; %100 cikar
+    //                   ve gercek orani yukari cekip yaniltir.
+    //   main.tsx        Uc satirlik onyukleme. Test etmek icin tum
+    //                   uygulamayi mount etmek gerekir, karsiliginda
+    //                   ogrendigimiz sey sifir.
+    //   api/generated   Orval'in urettigi dosya. Elle yazilmadigi
+    //                   icin test etmek de bize dusmez; degisirse
+    //                   `npm run api:check` yakaliyor.
+    //   test/           Yardimci kurulum dosyalari.
+    //
+    // Esik koymadim. Yapay bir "%80" koyup testleri kirmizi yapmak,
+    // insanlari anlamsiz test yazmaya iter. Rapor bir OLCU; hedef
+    // degil.
+    // ==============================================================
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/test/**',
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+        'src/lib/api/generated/**',
+      ],
+    },
   },
 
   server: {

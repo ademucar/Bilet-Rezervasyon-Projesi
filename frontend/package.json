@@ -15,7 +15,8 @@
     "api:generate": "orval",
     "api:check": "orval && git diff --exit-code src/lib/api/generated",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -42,6 +43,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "@vitest/ui": "^4.1.11",
     "jsdom": "^30.0.1",
     "orval": "^8.26.0",
