@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f1f5f9; }
+    a { color: #4f46e5; } a:hover { color: #4338ca; }
+    .lbl { font: 600 10px/1 Archivo, system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: #94a3b8; }
+    .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="padding: 40px; display: flex; flex-direction: column; gap: 26px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font: 700 26px/1.15 Archivo, sans-serif; color: #0f172a; letter-spacing: -.02em;">Bilet kocani</h1>
+    <p style="margin: 0; max-width: 700px; font-size: 14px; line-height: 1.6; color: #475569;">
+      Bilet bir kart degil, <strong>bilet</strong> gibi gorunmeli. Delik
+      sirasi ve koparma cizgisi tek basina o hissi veriyor &mdash; ne
+      gradyan ne golge gerekiyor. QR sag tarafta, kapida telefonu uzatinca
+      dogal duruyor.
+    </p>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+
+    <!-- ============ GECERLI BILET ============ -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span class="lbl" style="color: #047857;">Gecerli</span>
+
+      <div style="width: 420px; display: flex; border: 1px solid #cbd5e1; background: #fff;">
+
+        <!-- Sol govde -->
+        <div style="flex-grow: 1; padding: 16px;">
+          <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 11px;">
+            <span style="width: 6px; height: 6px; background: #059669; border-radius: 999px;"></span>
+            <span class="lbl" style="color: #047857;">Gecerli</span>
+          </div>
+
+          <h3 style="margin: 0 0 3px; font: 700 19px/1.2 Archivo, sans-serif; color: #0f172a; letter-spacing: -.01em;">Duman Konseri</h3>
+          <div class="num" style="font-size: 12px; color: #4f46e5; font-weight: 500;">27 EKI 2026 &middot; 20:00</div>
+
+          <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span class="lbl" style="font-size: 9px;">Koltuk</span>
+              <span class="num" style="font-size: 17px; font-weight: 600; color: #0f172a;">A-3</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span class="lbl" style="font-size: 9px;">Blok</span>
+              <span style="font: 600 14px/1.4 Inter, sans-serif; color: #0f172a;">Orta</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span class="lbl" style="font-size: 9px;">Tur</span>
+              <span style="font: 600 14px/1.4 Inter, sans-serif; color: #0f172a;">Tam</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; align-items: flex-end; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span class="lbl" style="font-size: 9px;">Mekan</span>
+              <span style="font-size: 13px; color: #334155;">Zorlu PSM, Istanbul</span>
+            </div>
+            <span class="num" style="font-size: 16px; font-weight: 600; color: #0f172a;">450 &#8378;</span>
+          </div>
+        </div>
+
+        <!-- Delik sirasi: bileti bilet yapan sey -->
+        <div style="width: 1px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 8px 0; border-left: 1px dashed #94a3b8;"></div>
+
+        <!-- Sag: QR kocani -->
+        <div style="flex-shrink: 0; width: 132px; background: #f8fafc; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <!-- QR yer tutucu: gercek kod runtime'da geliyor -->
+          <div style="width: 88px; height: 88px; background: #fff; border: 1px solid #cbd5e1; padding: 6px; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 2px;">
+            <span style="background:#0f172a"></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span>
+            <span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span>
+            <span style="background:#0f172a"></span><span style="background:#0f172a"></span><span></span><span></span><span></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span>
+            <span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span>
+            <span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span>
+            <span style="background:#0f172a"></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span style="background:#0f172a"></span>
+            <span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span><span></span><span style="background:#0f172a"></span>
+          </div>
+          <div style="text-align: center;">
+            <div class="lbl" style="font-size: 9px;">Bilet no</div>
+            <div class="num" style="font-size: 10px; color: #334155; margin-top: 3px; word-break: break-all;">TKT-20260828<br>A73B750E</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ DURUM VARYANTLARI ============ -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span class="lbl">Diger durumlar</span>
+
+      <!-- Kullanilmis -->
+      <div style="width: 300px; display: flex; border: 1px solid #e2e8f0; background: #f8fafc; opacity: .72;">
+        <div style="flex-grow: 1; padding: 13px;">
+          <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span class="lbl" style="color: #64748b;">Kullanildi &middot; 27 Eki 19:42</span>
+          </div>
+          <h3 style="margin: 0 0 2px; font: 600 15px/1.2 Archivo, sans-serif; color: #475569;">Duman Konseri</h3>
+          <div class="num" style="font-size: 12px; color: #64748b;">A-3 &middot; Orta Blok</div>
+        </div>
+        <div style="flex-shrink: 0; width: 52px; border-left: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 19h2v2h-2z"/></svg>
+        </div>
+      </div>
+
+      <!-- Iade edilmis -->
+      <div style="width: 300px; position: relative; display: flex; border: 1px solid #e2e8f0; background: #fff;">
+        <div style="flex-grow: 1; padding: 13px;">
+          <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;">
+            <span class="lbl" style="color: #b91c1c;">Iade edildi</span>
+          </div>
+          <h3 style="margin: 0 0 2px; font: 600 15px/1.2 Archivo, sans-serif; color: #94a3b8; text-decoration: line-through;">Alfa Tiyatro</h3>
+          <div class="num" style="font-size: 12px; color: #94a3b8;">B-7 &middot; Balkon</div>
+          <div class="num" style="margin-top: 7px; font-size: 12px; color: #047857;">+320,00 &#8378; iade edildi</div>
+        </div>
+        <div style="flex-shrink: 0; width: 52px; border-left: 1px dashed #e2e8f0; display: flex; align-items: center; justify-content: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+      </div>
+
+      <p style="margin: 4px 0 0; width: 300px; font-size: 12px; line-height: 1.7; color: #64748b;">
+        Kullanilmis bilet solgunlasiyor ama <strong>okunur kaliyor</strong>;
+        iade edilende baslik ustu cizili ve iade tutari gorunuyor.
+      </p>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

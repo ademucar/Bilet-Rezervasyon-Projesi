@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f1f5f9; }
+    a { color: #4f46e5; } a:hover { color: #4338ca; }
+    .lbl { font: 600 10px/1 Archivo, system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: #94a3b8; }
+    .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    th { font: 600 10px/1 Archivo, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #64748b; text-align: left; padding: 9px 12px; border-bottom: 1px solid #cbd5e1; white-space: nowrap; }
+    td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: middle; }
+    .st { display: inline-flex; align-items: center; gap: 5px; border: 1px solid; padding: 1px 6px; font: 600 10px/1.6 Archivo, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+  </style>
+</helmet>
+
+<div style="padding: 40px; display: flex; flex-direction: column; gap: 26px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font: 700 26px/1.15 Archivo, sans-serif; color: #0f172a; letter-spacing: -.02em;">Admin tablosu</h1>
+    <p style="margin: 0; max-width: 700px; font-size: 14px; line-height: 1.6; color: #475569;">
+      Yonetim ekranlari kart degil <strong>tablo</strong> ister: admin
+      satirlari karsilastirir, taramaz. Sayilar tabular ve saga dayali,
+      durum rozetleri tek satirda hizali.
+    </p>
+  </div>
+
+  <div style="border: 1px solid #cbd5e1; background: #fff;">
+
+    <!-- Ust cubuk: toplu islem + arama -->
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 12px; border-bottom: 1px solid #cbd5e1; background: #f8fafc;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font: 600 14px/1 Archivo, sans-serif; color: #0f172a;">Etkinlikler</span>
+        <span class="num" style="border: 1px solid #cbd5e1; background: #fff; padding: 1px 6px; font-size: 11px; color: #475569;">14</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 7px; border: 1px solid #cbd5e1; background: #fff; padding: 5px 9px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span style="font-size: 12px; color: #94a3b8;">Ara</span>
+        </div>
+        <button style="border: 0; background: #0f172a; color: #fff; padding: 7px 13px; font: 600 12px/1 Inter, sans-serif; cursor: pointer;">Yeni etkinlik</button>
+      </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="width: 30px;"></th>
+          <th>Etkinlik</th>
+          <th>Tarih</th>
+          <th>Mekan</th>
+          <th>Durum</th>
+          <th style="text-align: right;">Satis</th>
+          <th style="text-align: right;">Gelir</th>
+          <th style="width: 34px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr style="background: #eef2ff;">
+          <td style="text-align: center;">
+            <span style="display: inline-block; width: 13px; height: 13px; border: 1px solid #4f46e5; background: #4f46e5;"></span>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: #0f172a;">Duman Konseri</div>
+            <div style="font-size: 11px; color: #64748b;">Konser &middot; 1 oturum</div>
+          </td>
+          <td class="num" style="white-space: nowrap;">27.10.2026<br><span style="color: #64748b;">20:00</span></td>
+          <td>Zorlu PSM<br><span style="font-size: 11px; color: #64748b;">Istanbul</span></td>
+          <td><span class="st" style="border-color: #a7f3d0; background: #ecfdf5; color: #047857;"><span style="width:5px;height:5px;background:#059669;border-radius:999px"></span>Satista</span></td>
+          <td style="text-align: right;">
+            <div class="num" style="font-weight: 600; color: #0f172a;">50/64</div>
+            <div style="margin-top: 3px; margin-left: auto; width: 52px; height: 3px; background: #e2e8f0;"><div style="width: 78%; height: 100%; background: #b45309;"></div></div>
+          </td>
+          <td class="num" style="text-align: right; font-weight: 600; color: #0f172a;">22.500 &#8378;</td>
+          <td style="text-align: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;"><span style="display: inline-block; width: 13px; height: 13px; border: 1px solid #cbd5e1;"></span></td>
+          <td>
+            <div style="font-weight: 600; color: #0f172a;">Alfa Tiyatro</div>
+            <div style="font-size: 11px; color: #64748b;">Tiyatro &middot; 3 oturum</div>
+          </td>
+          <td class="num" style="white-space: nowrap;">04.01.2027<br><span style="color: #64748b;">19:30</span></td>
+          <td>Demo Sahne<br><span style="font-size: 11px; color: #64748b;">Ankara</span></td>
+          <td><span class="st" style="border-color: #c7d2fe; background: #eef2ff; color: #4338ca;">Yayinda</span></td>
+          <td style="text-align: right;">
+            <div class="num" style="color: #475569;">0/120</div>
+            <div style="margin-top: 3px; margin-left: auto; width: 52px; height: 3px; background: #e2e8f0;"></div>
+          </td>
+          <td class="num" style="text-align: right; color: #94a3b8;">&mdash;</td>
+          <td style="text-align: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;"><span style="display: inline-block; width: 13px; height: 13px; border: 1px solid #cbd5e1;"></span></td>
+          <td>
+            <div style="font-weight: 600; color: #0f172a;">Zeta Konser</div>
+            <div style="font-size: 11px; color: #64748b;">Konser &middot; 1 oturum</div>
+          </td>
+          <td class="num" style="white-space: nowrap;">03.02.2027<br><span style="color: #64748b;">21:00</span></td>
+          <td>Demo Sahne<br><span style="font-size: 11px; color: #64748b;">Izmir</span></td>
+          <td><span class="st" style="border-color: #e2e8f0; background: #f8fafc; color: #64748b;">Taslak</span></td>
+          <td style="text-align: right;">
+            <div class="num" style="color: #94a3b8;">&mdash;</div>
+          </td>
+          <td class="num" style="text-align: right; color: #94a3b8;">&mdash;</td>
+          <td style="text-align: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;"><span style="display: inline-block; width: 13px; height: 13px; border: 1px solid #cbd5e1;"></span></td>
+          <td>
+            <div style="font-weight: 600; color: #94a3b8; text-decoration: line-through;">Bahar Festivali</div>
+            <div style="font-size: 11px; color: #64748b;">Festival &middot; 2 oturum</div>
+          </td>
+          <td class="num" style="white-space: nowrap; color: #94a3b8;">18.05.2026<br><span style="color: #cbd5e1;">18:00</span></td>
+          <td style="color: #94a3b8;">Acik Hava<br><span style="font-size: 11px; color: #cbd5e1;">Bursa</span></td>
+          <td><span class="st" style="border-color: #fecaca; background: #fef2f2; color: #b91c1c;">Iptal</span></td>
+          <td style="text-align: right;">
+            <div class="num" style="color: #94a3b8;">34/200</div>
+          </td>
+          <td class="num" style="text-align: right; color: #b91c1c;">&minus;15.300 &#8378;</td>
+          <td style="text-align: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Secim cubugu: satir secilince beliriyor -->
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-top: 1px solid #cbd5e1; background: #0f172a;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="num" style="font-size: 12px; color: #fff;">1 secili</span>
+        <button style="border: 1px solid #334155; background: none; color: #cbd5e1; padding: 5px 10px; font: 500 12px/1 Inter, sans-serif; cursor: pointer;">Yayindan kaldir</button>
+        <button style="border: 1px solid #334155; background: none; color: #cbd5e1; padding: 5px 10px; font: 500 12px/1 Inter, sans-serif; cursor: pointer;">Disa aktar</button>
+      </div>
+      <span class="num" style="font-size: 12px; color: #64748b;">Sayfa 1 / 4</span>
+    </div>
+  </div>
+
+  <p style="margin: 0; max-width: 700px; font-size: 12px; line-height: 1.7; color: #64748b;">
+    Iptal edilen satir <strong>silinmiyor</strong>, solgunlasip ustu
+    ciziliyor ve iade tutari eksi olarak gorunuyor &mdash; admin ne oldugunu
+    gecmise donuk gorebilmeli.
+  </p>
+</div>
+</x-dc>
+</body>
+</html>

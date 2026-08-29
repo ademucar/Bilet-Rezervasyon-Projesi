@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f1f5f9; }
+    a { color: #4f46e5; } a:hover { color: #4338ca; }
+    .lbl { font: 600 10px/1 Archivo, system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: #94a3b8; }
+    .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="padding: 40px; display: flex; flex-direction: column; gap: 32px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <div class="lbl">Biletim &mdash; tasarim onerisi</div>
+    <h1 style="margin: 0; font: 700 30px/1.15 Archivo, system-ui, sans-serif; color: #0f172a; letter-spacing: -.02em;">
+      Etkinlik karti: 3 varyant
+    </h1>
+    <p style="margin: 0; max-width: 640px; font-size: 14px; line-height: 1.6; color: #475569;">
+      Soldaki mevcut kart. Sagdaki ikisi ayni veriyi tasiyor ama tarihi
+      okunur, fiyati gorunur ve durumu bir bakista anlasilir kiliyor.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start;">
+
+    <!-- ============ MEVCUT ============ -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="lbl" style="color: #b91c1c;">Su anki hali</span>
+      </div>
+
+      <div style="border-radius: 16px; border: 1px solid #e2e8f0; background: #fff; padding: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.06);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+          <h3 style="margin: 0; font: 600 16px/1.3 Inter, sans-serif; color: #0f172a;">Duman Konseri</h3>
+          <span style="flex-shrink: 0; border-radius: 999px; background: #ecfdf5; padding: 2px 8px; font: 500 12px/1.5 Inter, sans-serif; color: #047857;">Satista</span>
+        </div>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #64748b;">Zorlu PSM - Istanbul</p>
+        <p style="margin: 4px 0 0; font-size: 14px; color: #64748b;">27 Ekim 2026 20:00</p>
+        <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+          <span style="border-radius: 4px; background: #f1f5f9; padding: 2px 8px; font-size: 12px; color: #64748b;">Konser</span>
+          <span style="border-radius: 4px; background: #f1f5f9; padding: 2px 8px; font-size: 12px; color: #64748b;">1 oturum</span>
+        </div>
+      </div>
+
+      <ul style="margin: 4px 0 0; padding-left: 16px; font-size: 12px; line-height: 1.7; color: #64748b;">
+        <li>Fiyat yok &mdash; kullanicinin ilk sordugu sey</li>
+        <li>Tarih duz metin, taranamiyor</li>
+        <li>Gorsel yok, hepsi ayni gorunuyor</li>
+      </ul>
+    </div>
+
+    <!-- ============ A: TARIH BLOKLU LISTE ============ -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span class="lbl" style="color: #4f46e5;">A &mdash; tarih bloklu</span>
+
+      <div style="border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; overflow: hidden;">
+        <div style="display: flex;">
+          <!-- Takvim yirtmaci: tarih bir NESNE, cumle degil -->
+          <div style="flex-shrink: 0; width: 72px; border-right: 1px solid #e2e8f0; background: #0f172a; color: #fff; padding: 12px 0; text-align: center;">
+            <div class="lbl" style="color: #94a3b8;">Eki</div>
+            <div class="num" style="font-size: 28px; font-weight: 600; line-height: 1.1; margin-top: 2px;">27</div>
+            <div class="num" style="font-size: 11px; color: #cbd5e1; margin-top: 4px;">20:00</div>
+          </div>
+
+          <div style="flex-grow: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+              <h3 style="margin: 0; font: 600 16px/1.25 Archivo, sans-serif; color: #0f172a;">Duman Konseri</h3>
+              <span style="flex-shrink: 0; border: 1px solid #a7f3d0; background: #ecfdf5; padding: 1px 6px; font: 600 10px/1.6 Archivo, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #047857;">Satista</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #475569;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              Zorlu PSM, Istanbul
+            </div>
+
+            <div style="margin-top: 2px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+              <div style="display: flex; gap: 6px;">
+                <span style="border: 1px solid #e2e8f0; padding: 1px 6px; font-size: 11px; color: #64748b;">Konser</span>
+                <span style="border: 1px solid #fde68a; background: #fffbeb; padding: 1px 6px; font-size: 11px; color: #b45309;">18+</span>
+              </div>
+              <div style="text-align: right;">
+                <div class="lbl" style="font-size: 9px;">Baslangic</div>
+                <div class="num" style="font-size: 17px; font-weight: 600; color: #0f172a;">450 &#8378;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Doluluk cubugu: aciliyeti gosteriyor, kelimeyle degil -->
+        <div style="border-top: 1px solid #e2e8f0; padding: 7px 14px; display: flex; align-items: center; gap: 10px; background: #f8fafc;">
+          <div style="flex-grow: 1; height: 3px; background: #e2e8f0; overflow: hidden;">
+            <div style="width: 78%; height: 100%; background: #b45309;"></div>
+          </div>
+          <span class="num" style="font-size: 11px; color: #b45309; font-weight: 500;">%78 dolu</span>
+        </div>
+      </div>
+
+      <ul style="margin: 4px 0 0; padding-left: 16px; font-size: 12px; line-height: 1.7; color: #64748b;">
+        <li>Tarih blogu listede dikey ritim kuruyor</li>
+        <li>Fiyat sag altta, sabit yerde</li>
+        <li>Doluluk cubugu aciliyeti sezdiriyor</li>
+      </ul>
+    </div>
+
+    <!-- ============ B: AFISLI ============ -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span class="lbl" style="color: #4f46e5;">B &mdash; afisli</span>
+
+      <div style="border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; overflow: hidden;">
+        <!-- Afis alani: gercek gorsel gelene kadar tipografik yer tutucu -->
+        <div style="position: relative; height: 132px; background: #1e1b4b; display: flex; align-items: flex-end; padding: 12px;">
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+            <span class="lbl" style="color: #4338ca; font-size: 11px;">afis gorseli</span>
+          </div>
+          <div style="position: absolute; top: 10px; right: 10px; background: rgba(15,23,42,.82); border: 1px solid #334155; padding: 3px 7px;">
+            <span class="num" style="font-size: 11px; color: #fff; font-weight: 500;">450 &#8378;'den</span>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 6px;">
+            <span style="width: 6px; height: 6px; background: #34d399; border-radius: 999px;"></span>
+            <span style="font: 600 10px/1 Archivo, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #a7f3d0;">Satista</span>
+          </div>
+        </div>
+
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 5px;">
+          <h3 style="margin: 0; font: 600 17px/1.2 Archivo, sans-serif; color: #0f172a; letter-spacing: -.01em;">Duman Konseri</h3>
+          <div class="num" style="font-size: 12px; color: #4f46e5; font-weight: 500;">27 EKI 2026 &middot; 20:00</div>
+          <div style="font-size: 13px; color: #475569;">Zorlu PSM, Istanbul</div>
+        </div>
+      </div>
+
+      <ul style="margin: 4px 0 0; padding-left: 16px; font-size: 12px; line-height: 1.7; color: #64748b;">
+        <li>Kesfet ekrani icin: gorsel once</li>
+        <li>Fiyat afisin uzerinde, kesilmiyor</li>
+        <li>Afis yoksa koyu blok yine de calisiyor</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

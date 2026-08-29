@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f1f5f9; }
+    a { color: #4f46e5; } a:hover { color: #4338ca; }
+    .lbl { font: 600 10px/1 Archivo, system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: #94a3b8; }
+    .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="padding: 40px; display: flex; flex-direction: column; gap: 28px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font: 700 26px/1.15 Archivo, sans-serif; color: #0f172a; letter-spacing: -.02em;">Filtre cubugu</h1>
+    <p style="margin: 0; max-width: 680px; font-size: 14px; line-height: 1.6; color: #475569;">
+      Mevcut panel dikey ve sayfanin solunu kapliyor. Bu oneri filtreleri
+      yatay bir seride topluyor ve <strong>aktif olanlari cikarilabilir
+      rozet</strong> olarak gosteriyor &mdash; kullanici neyi filtrelediginı
+      unutmuyor.
+    </p>
+  </div>
+
+  <!-- ============ ARAMA + FILTRE SERISI ============ -->
+  <div style="border: 1px solid #cbd5e1; background: #fff;">
+
+    <div style="display: flex; align-items: stretch; border-bottom: 1px solid #e2e8f0;">
+      <div style="flex-grow: 1; display: flex; align-items: center; gap: 9px; padding: 0 14px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span style="font-size: 14px; color: #94a3b8;">Etkinlik, sanatci veya mekan ara</span>
+      </div>
+      <button style="border: 0; border-left: 1px solid #e2e8f0; background: #0f172a; color: #fff; padding: 11px 22px; font: 600 13px/1 Inter, sans-serif; cursor: pointer;">Ara</button>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 14px;">
+      <div style="display: flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #fff; padding: 6px 10px; font-size: 13px; color: #334155;">
+        Sehir
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #fff; padding: 6px 10px; font-size: 13px; color: #334155;">
+        Kategori
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #fff; padding: 6px 10px; font-size: 13px; color: #334155;">
+        Tarih
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; background: #fff; padding: 6px 10px; font-size: 13px; color: #334155;">
+        Fiyat
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+
+      <div style="width: 1px; align-self: stretch; background: #e2e8f0; margin: 0 2px;"></div>
+
+      <!-- Satista: bir acilir liste degil, tek tikla ac/kapa -->
+      <div style="display: flex; align-items: center; gap: 7px; border: 1px solid #0f172a; background: #0f172a; padding: 6px 11px; font-size: 13px; color: #fff;">
+        <span style="width: 6px; height: 6px; background: #34d399; border-radius: 999px;"></span>
+        Sadece satista
+      </div>
+    </div>
+
+    <!-- ============ AKTIF FILTRE ROZETLERI ============ -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-top: 1px solid #e2e8f0; background: #f8fafc; padding: 10px 14px;">
+      <span class="lbl">3 filtre aktif</span>
+
+      <div style="display: flex; align-items: center; gap: 7px; border: 1px solid #c7d2fe; background: #eef2ff; padding: 4px 8px; font-size: 12px; color: #4338ca;">
+        Sehir: Istanbul
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 7px; border: 1px solid #c7d2fe; background: #eef2ff; padding: 4px 8px; font-size: 12px; color: #4338ca;">
+        Kategori: Konser
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 7px; border: 1px solid #c7d2fe; background: #eef2ff; padding: 4px 8px; font-size: 12px; color: #4338ca;">
+        <span class="num">0&ndash;750 &#8378;</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+
+      <button style="border: 0; background: none; padding: 4px 2px; font: 500 12px/1 Inter, sans-serif; color: #64748b; text-decoration: underline; cursor: pointer;">Tumunu temizle</button>
+
+      <div style="flex-grow: 1;"></div>
+      <span class="num" style="font-size: 12px; color: #475569;">14 etkinlik</span>
+    </div>
+  </div>
+
+  <!-- ============ MOBIL ============ -->
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <span class="lbl">Mobilde (dar ekran)</span>
+
+    <div style="width: 340px; border: 1px solid #cbd5e1; background: #fff;">
+      <div style="display: flex; align-items: center; gap: 9px; padding: 11px 12px; border-bottom: 1px solid #e2e8f0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span style="font-size: 14px; color: #94a3b8;">Ara</span>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;">
+        <button style="display: flex; align-items: center; gap: 8px; border: 1px solid #0f172a; background: #fff; padding: 8px 12px; font: 600 13px/1 Inter, sans-serif; color: #0f172a; cursor: pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"><path d="M3 5h18M7 12h10M10 19h4"/></svg>
+          Filtrele
+          <span class="num" style="background: #4f46e5; color: #fff; padding: 1px 5px; font-size: 11px;">3</span>
+        </button>
+        <span class="num" style="font-size: 12px; color: #475569;">14 sonuc</span>
+      </div>
+    </div>
+
+    <p style="margin: 0; max-width: 420px; font-size: 12px; line-height: 1.7; color: #64748b;">
+      Mobilde filtreler tam ekran bir panelde aciliyor; cubukta yalnizca
+      aktif filtre sayisi duruyor. Dikey panel dar ekranda ekranin
+      tamamini yiyor.
+    </p>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f1f5f9; }
+    a { color: #4f46e5; } a:hover { color: #4338ca; }
+    .lbl { font: 600 10px/1 Archivo, system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: #94a3b8; }
+    .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="padding: 40px; display: flex; flex-direction: column; gap: 26px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font: 700 26px/1.15 Archivo, sans-serif; color: #0f172a; letter-spacing: -.02em;">Geri sayim &mdash; uc asama</h1>
+    <p style="margin: 0; max-width: 700px; font-size: 14px; line-height: 1.6; color: #475569;">
+      Sayac tek bir gorunume sahip olmamali. Kalan sure azaldikca
+      <strong>bicimi de degismeli</strong> &mdash; kullanici saati okumadan
+      aciliyeti sezmeli. Rakamlar tabular: basamak degisirken zipliyor gibi
+      gorunmuyor.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;">
+
+    <!-- Rahat -->
+    <div style="border: 1px solid #cbd5e1; background: #fff;">
+      <div style="border-bottom: 1px solid #e2e8f0; padding: 9px 13px;">
+        <span class="lbl">8&ndash;10 dk kaldi</span>
+      </div>
+      <div style="padding: 18px 13px; display: flex; flex-direction: column; align-items: center; gap: 7px;">
+        <span class="num" style="font-size: 38px; font-weight: 600; color: #0f172a; line-height: 1;">09:24</span>
+        <span style="font-size: 12px; color: #64748b;">Odeme icin kalan sure</span>
+      </div>
+      <div style="height: 3px; background: #e2e8f0;">
+        <div style="width: 94%; height: 100%; background: #475569;"></div>
+      </div>
+    </div>
+
+    <!-- Uyari -->
+    <div style="border: 1px solid #fcd34d; background: #fffbeb;">
+      <div style="border-bottom: 1px solid #fde68a; padding: 9px 13px; display: flex; align-items: center; gap: 7px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        <span class="lbl" style="color: #b45309;">3 dk kaldi</span>
+      </div>
+      <div style="padding: 18px 13px; display: flex; flex-direction: column; align-items: center; gap: 7px;">
+        <span class="num" style="font-size: 38px; font-weight: 700; color: #b45309; line-height: 1;">02:41</span>
+        <span style="font-size: 12px; color: #92400e;">Koltuklariniz birazdan serbest kalacak</span>
+      </div>
+      <div style="height: 3px; background: #fde68a;">
+        <div style="width: 27%; height: 100%; background: #b45309;"></div>
+      </div>
+    </div>
+
+    <!-- Kritik -->
+    <div style="border: 1px solid #fca5a5; background: #fef2f2;">
+      <div style="border-bottom: 1px solid #fecaca; padding: 9px 13px; display: flex; align-items: center; gap: 7px;">
+        <span style="width: 6px; height: 6px; background: #dc2626; border-radius: 999px;"></span>
+        <span class="lbl" style="color: #b91c1c;">Son 1 dakika</span>
+      </div>
+      <div style="padding: 18px 13px; display: flex; flex-direction: column; align-items: center; gap: 7px;">
+        <span class="num" style="font-size: 38px; font-weight: 700; color: #b91c1c; line-height: 1;">00:38</span>
+        <span style="font-size: 12px; color: #991b1b;">Odemeyi simdi tamamlayin</span>
+      </div>
+      <div style="height: 3px; background: #fecaca;">
+        <div style="width: 6%; height: 100%; background: #dc2626;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REZERVASYON OZETI ============ -->
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <span class="lbl">Rezervasyon ozeti (sayacin yanindaki panel)</span>
+
+    <div style="max-width: 460px; border: 1px solid #cbd5e1; background: #fff;">
+
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px; border-bottom: 1px solid #e2e8f0;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <h3 style="margin: 0; font: 600 16px/1.25 Archivo, sans-serif; color: #0f172a;">Duman Konseri</h3>
+          <span class="num" style="font-size: 12px; color: #4f46e5;">27 EKI 2026 &middot; 20:00</span>
+          <span style="font-size: 13px; color: #475569;">Zorlu PSM, Istanbul</span>
+        </div>
+        <div style="flex-shrink: 0; text-align: right;">
+          <div class="lbl" style="font-size: 9px;">Rezervasyon</div>
+          <div class="num" style="font-size: 13px; font-weight: 600; color: #0f172a; margin-top: 2px;">RSV-S36HCP</div>
+        </div>
+      </div>
+
+      <div style="padding: 4px 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #f1f5f9;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <span class="num" style="border: 1px solid #cbd5e1; padding: 2px 6px; font-size: 12px; color: #0f172a;">A-3</span>
+            <span style="font-size: 13px; color: #475569;">Orta Blok &middot; Tam</span>
+          </div>
+          <span class="num" style="font-size: 13px; color: #0f172a;">450,00 &#8378;</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <span class="num" style="border: 1px solid #cbd5e1; padding: 2px 6px; font-size: 12px; color: #0f172a;">A-4</span>
+            <span style="font-size: 13px; color: #475569;">Orta Blok &middot; Tam</span>
+          </div>
+          <span class="num" style="font-size: 13px; color: #0f172a;">450,00 &#8378;</span>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid #e2e8f0; background: #f8fafc; padding: 13px 14px; display: flex; align-items: baseline; justify-content: space-between;">
+        <span style="font: 600 13px/1 Inter, sans-serif; color: #0f172a;">Toplam</span>
+        <span class="num" style="font-size: 22px; font-weight: 600; color: #0f172a;">900,00 &#8378;</span>
+      </div>
+
+      <div style="display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid #e2e8f0;">
+        <button style="flex-grow: 1; border: 0; background: #0f172a; color: #fff; padding: 12px; font: 600 14px/1 Inter, sans-serif; cursor: pointer;">
+          900,00 &#8378; ode
+        </button>
+        <button style="border: 1px solid #cbd5e1; background: #fff; color: #334155; padding: 12px 15px; font: 500 13px/1 Inter, sans-serif; cursor: pointer;">
+          +5 dk
+        </button>
+        <button style="border: 1px solid #cbd5e1; background: #fff; color: #64748b; padding: 12px 15px; font: 500 13px/1 Inter, sans-serif; cursor: pointer;">
+          Vazgec
+        </button>
+      </div>
+    </div>
+
+    <p style="margin: 0; max-width: 560px; font-size: 12px; line-height: 1.7; color: #64748b;">
+      Odeme dugmesinde <strong>tutar yaziyor</strong> &mdash; kullanici ne
+      kadar odeyecegini butona basmadan gorur. &quot;Devam et&quot; yazan
+      bir dugme bu bilgiyi saklar.
+    </p>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

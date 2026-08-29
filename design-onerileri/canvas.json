@@ -1,0 +1,95 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1180,
+      "h": 700,
+      "title": "Etkinlik karti"
+    },
+    {
+      "file": "Filtre.dc.html",
+      "x": 1300,
+      "y": 0,
+      "w": 900,
+      "h": 780,
+      "title": "Filtre cubugu"
+    },
+    {
+      "file": "Koltuk.dc.html",
+      "x": 0,
+      "y": 840,
+      "w": 1060,
+      "h": 720,
+      "title": "Koltuk secimi"
+    },
+    {
+      "file": "Sayac.dc.html",
+      "x": 1180,
+      "y": 840,
+      "w": 900,
+      "h": 900,
+      "title": "Geri sayim"
+    },
+    {
+      "file": "Bilet.dc.html",
+      "x": 0,
+      "y": 1860,
+      "w": 1000,
+      "h": 640,
+      "title": "Bilet kocani"
+    },
+    {
+      "file": "Giris.dc.html",
+      "x": 1120,
+      "y": 1860,
+      "w": 880,
+      "h": 640,
+      "title": "Giris ekrani"
+    },
+    {
+      "file": "Tablo.dc.html",
+      "x": 0,
+      "y": 2640,
+      "w": 1120,
+      "h": 700,
+      "title": "Admin tablosu"
+    },
+    {
+      "file": "Panel.dc.html",
+      "x": 1240,
+      "y": 2640,
+      "w": 1000,
+      "h": 860,
+      "title": "Panel istatistikleri"
+    },
+    {
+      "file": "Durumlar.dc.html",
+      "x": 0,
+      "y": 3640,
+      "w": 1100,
+      "h": 620,
+      "title": "Ara durumlar"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "ozet",
+      "x": 0,
+      "y": -220,
+      "w": 560,
+      "text": "Ortak dil:\n\n• Kose yaricapi 16px -> 4px (kart degil, belge hissi)\n• Golge yerine 1px cizgi\n• Rakamlar tabular mono (fiyat, koltuk, saat hizali)\n• Basliklar Archivo, govde Inter (mevcut), rakam IBM Plex Mono\n• Renk yalnizca DURUM icin: yesil satista, kehribar aciliyor, kirmizi hata\n• Gradyan, emoji, cam efekti yok"
+    },
+    {
+      "id": "kapsam",
+      "x": 620,
+      "y": -220,
+      "w": 520,
+      "text": "Bunlar ONERI -- kod degistirilmedi.\n\nBegendigin artboard'lari soyle, gercek bilesenlere\nuygulayayim. Hepsini birden almak zorunda degilsin;\ntek tek de secebilirsin.\n\nMarka rengin (#4f46e5) korundu; yalnizca daha az\nyerde kullaniliyor."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

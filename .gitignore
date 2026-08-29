@@ -71,3 +71,7 @@ report-exports/
 # uretilip elle yazilan tiplerle karsilastirilacak.
 # ==================================================================
 frontend/src/lib/api/generated/
+
+# Tasarim onerileri: .dc.html artboard kaynaklari izleniyor,
+# uretilmis 2.5 MB'lik canvas paketi izlenmiyor.
+design-onerileri/biletim-widget-onerileri.html
