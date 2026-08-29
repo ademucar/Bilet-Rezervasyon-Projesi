@@ -5,6 +5,7 @@ using Scalar.AspNetCore;
 using Ticketing.WebApi.Documentation;
 using Ticketing.WebApi.Observability;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.WebApi.Hubs;
 using Hangfire;
@@ -304,19 +305,94 @@ builder.Services.AddSingleton<ISeatNotifier, SignalRSeatNotifier>();
 var app = builder.Build();
 
 // ===================================================================
-// BASLANGIC VERISI -- YALNIZCA GELISTIRMEDE
+// VERITABANI SEMASI -- HER ORTAMDA
 // ===================================================================
-// Uretimde ASLA otomatik seed calistirmiyoruz. Sebep: seed kodu
-// yanlislikla veri uzerine yazabilir veya beklenmedik kayitlar
-// olusturabilir. Uretimde veri, kontrollu migration'lar veya admin
-// arayuzu üzerinden girilir.
+// Bu blok YOKTU ve eksikligi ancak yayin yigini ilk kez temiz bir
+// birimle ayaga kaldirilinca ortaya cikti: butun uclar 500 donuyordu,
+// log'da tek satir vardi:
 //
-// CreateScope kullanıyorum çünkü DatabaseSeeder ve DbContext SCOPED
-// kayıtlı; uygulama koku (root) singleton bir kapsam ve oradan scoped
-// servis cozumlemek InvalidOperationException verir.
-if (app.Environment.IsDevelopment())
+//     42P01: relation "Cities" does not exist
+//
+// Uygulama migration'lari HIC uygulamiyordu. Gelistirmede sorun
+// gorunmuyordu cunku semayi bir kez elle
+// (dotnet ef database update) olusturmustum ve Docker birimi
+// duruyordu. Yani sema, kimsenin bir daha calistirmadigi tek
+// seferlik bir komutla var olmustu.
+//
+// -------------------------------------------------------------------
+// NEDEN UYGULAMA ICINDE? Neden ayri bir adim degil?
+// -------------------------------------------------------------------
+// "Dogrusu" CI/CD'de ayri bir migration adimidir. Bu proje tek
+// sunucuda ve TEK API container'i ile calisiyor
+// (docker-compose.prod.yml); orada ayri bir adim, unutuldugunda
+// sessizce bozulan bir el isi olurdu.
+//
+// DIKKAT: API birden fazla kopya olarak calistirilirsa bu satir
+// yaris olusturur (ayni migration'i ayni anda iki surec uygular).
+// O gun geldiginde buradan cikarilip dagitim hattina tasinmali --
+// bu yuzden not olarak birakiyorum.
+//
+// MigrateAsync bekleyen migration yoksa hicbir sey yapmiyor;
+// her aciliste calismasinin maliyeti tek bir sorgu.
+// ===================================================================
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
+
+    var bekleyen = (await db.Database.GetPendingMigrationsAsync().ConfigureAwait(false)).ToList();
+
+    if (bekleyen.Count > 0)
+    {
+        // Serilog'un statik Log'u: bu dosyanin geri kalani da boyle
+        // logluyor (asagida basari/hata satirlari). ILogger<Program>
+        // kullansaydim CA1848 LoggerMessage temsilcisi isterdi --
+        // uygulama omrunde bir kez calisan bu blok icin gereksiz.
+        Log.Information(
+            "Uygulanacak {Adet} migration var: {Migrationlar}",
+            bekleyen.Count,
+            string.Join(", ", bekleyen));
+
+        await db.Database.MigrateAsync().ConfigureAwait(false);
+
+        Log.Information("Migration'lar uygulandi.");
+    }
+}
+
+// ===================================================================
+// REFERANS VERISI -- HER ORTAMDA
+// ===================================================================
+// Burada onceden "Uretimde ASLA otomatik seed calistirmiyoruz"
+// yaziyordu ve seed yalnizca Development'ta kosuyordu. Yayin yigini
+// ilk kez temiz bir veritabaniyla ayaga kalkinca bunun tutmadigi
+// goruldu:
+//
+//   Cities: 0, EventCategories: 0
+//
+// Sifir sehirle mekan olusturulamiyor (sehir zorunlu alan),
+// kategori olmadan etkinlik acilamiyor ve filtre paneli bos
+// geliyor. Yani uygulama yayina cikar cikmaz KULLANILAMAZ
+// durumdaydi ve bunu ancak biri elle SQL yazarak duzeltebilirdi.
+//
+// -------------------------------------------------------------------
+// ESKI GEREKCE NEDEN GECERLI DEGIL?
+// -------------------------------------------------------------------
+// Eski not "seed kodu yanlislikla veri uzerine yazabilir" diyordu.
+// DatabaseSeeder IDEMPOTENT: tablo bossa ekliyor, doluysa hicbir
+// sey yapmiyor. Ustune yazma ihtimali yok.
+//
+// Ayrica seed edilen sey DEMO VERISI DEGIL: 81 il ve etkinlik
+// kategorileri. Bunlar uygulamanin calismasi icin gereken REFERANS
+// VERISI -- rol tablosu gibi. (Roller zaten migration icinde
+// HasData ile geliyor; sehir/kategori de ayni siniftan.)
+//
+// Demo etkinlik/kullanici gibi seyler seeder'da YOK; olsalardi
+// bu blok yine ortama bagli kalmaliydi.
+//
+// CreateScope kullaniyorum cunku DatabaseSeeder ve DbContext SCOPED
+// kayitli; uygulama koku (root) singleton bir kapsam ve oradan
+// scoped servis cozumlemek InvalidOperationException verir.
+using (var scope = app.Services.CreateScope())
+{
     var seeder = scope.ServiceProvider.GetRequiredService<Ticketing.Persistence.Seeding.DatabaseSeeder>();
 
     await seeder.SeedAsync().ConfigureAwait(false);
