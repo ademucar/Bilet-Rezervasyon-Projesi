@@ -71,3 +71,46 @@ export function formatDateTime(isoString: string): string {
 export function formatDate(isoString: string): string {
   return dateFormatter.format(new Date(isoString))
 }
+
+/**
+ * Tarihi PARCALARINA ayirir: takvim yirtmaci bileseni icin.
+ *
+ * ================================================================
+ * NEDEN AYRI BIR ISLEV?
+ * ================================================================
+ * formatDateTime "27 Ekim 2026 20:00" gibi TEK bir cumle donuyor.
+ * Kart tasariminda tarihi bir NESNE gibi gostermek istiyorum:
+ * ay ustte kucuk, gun ortada iri, saat altta.
+ *
+ * Bunu tek metni parcalayarak yapsaydim ("27 Ekim 2026 20:00"
+ * dizesini bosluktan bolerek) bicim degisince kirilirdi. Intl'e
+ * her parcayi ayri ayri sordurmak daha saglam.
+ *
+ * Ay adini KISALTIYORUM (Eki, Kas) cunku yirtmac 72px genis --
+ * "Aralik" oraya sigmiyor, "Ara" siğiyor.
+ * ================================================================
+ */
+const ayKisaFormatter = new Intl.DateTimeFormat('tr-TR', { month: 'short' })
+const gunFormatter = new Intl.DateTimeFormat('tr-TR', { day: 'numeric' })
+const saatFormatter = new Intl.DateTimeFormat('tr-TR', {
+  hour: '2-digit',
+  minute: '2-digit',
+})
+
+export interface TarihParcalari {
+  ay: string
+  gun: string
+  saat: string
+  yil: string
+}
+
+export function formatDateParts(isoString: string): TarihParcalari {
+  const tarih = new Date(isoString)
+
+  return {
+    ay: ayKisaFormatter.format(tarih).replace('.', ''),
+    gun: gunFormatter.format(tarih),
+    saat: saatFormatter.format(tarih),
+    yil: String(tarih.getFullYear()),
+  }
+}

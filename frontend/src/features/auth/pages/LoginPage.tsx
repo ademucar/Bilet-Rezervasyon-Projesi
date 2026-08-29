@@ -7,7 +7,7 @@ import { authApi } from '../api/authApi'
 import { loginSchema, type LoginForm } from '../api/schemas'
 import { useAuthStore } from '../../../stores/authStore'
 import { toProblem } from '../../../lib/api/client'
-import { AuthLayout } from '../components/AuthLayout'
+import { AuthAsideNote, AuthLayout } from '../components/AuthLayout'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Alert } from '../../../components/ui/Alert'
@@ -66,9 +66,41 @@ export function LoginPage() {
     <AuthLayout
       title="Giriş yap"
       subtitle="Hesabınıza erişin"
+      aside={
+        /* ==========================================================
+           HESAP KİLİDİ KURALINI ÖNCEDEN SÖYLÜYORUM
+           ==========================================================
+           Sprint 15'te "5 dakikada 10 deneme" hız sınırı ve hesap
+           kilidi eklemiştik. Kullanıcı bunu ancak KİLİTLENDİKTEN
+           sonra öğreniyordu -- yani öğrenmenin hiçbir işe
+           yaramadığı anda.
+
+           Kuralı önden yazmak, şifresini hatırlamaya çalışan
+           kullanıcıyı yavaşlatıyor ve altıncı denemeden önce
+           "şifremi unuttum"a yönlendiriyor.
+           ========================================================== */
+        <AuthAsideNote
+          icon={
+            <svg
+              className="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <rect x="4" y="10" width="16" height="10" rx="1" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+          }
+        >
+          Art arda beş hatalı denemeden sonra hesap bir süre kilitlenir. Emin değilseniz
+          &ldquo;Şifremi unuttum&rdquo; daha hızlıdır.
+        </AuthAsideNote>
+      }
       footer={
         <>
-          Hesabiniz yok mu?{' '}
+          Hesabınız yok mu?{' '}
           <Link to="/kayit" className="font-medium text-brand-600 hover:underline">
             Kayıt olun
           </Link>
