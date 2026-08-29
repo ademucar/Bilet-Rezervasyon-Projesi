@@ -3,10 +3,9 @@ namespace Ticketing.Domain.Enums;
 /// <summary>
 /// Etkinligin yasam dongusu. PDF sayfa 6.
 ///
-/// ---------------------------------------------------------------
 /// NEDEN DEGERLERI ELLE YAZIYORUM (= 1, = 2 ...)?
-/// ---------------------------------------------------------------
-/// Bu enum'lari veritabanina int olarak yazacagiz. Sayilari elle
+///
+/// Bu enum'lari veritabanina int olarak yazacagim. Sayilari elle
 /// vermezsem C# bunlari sirayla 0, 1, 2... diye atar.
 ///
 /// O zaman su olur: Alti ay sonra listenin ORTASINA yeni bir durum
@@ -22,9 +21,8 @@ namespace Ticketing.Domain.Enums;
 /// Sayilari sabitleyerek bu riski tamamen ortadan kaldiriyorum.
 /// Yeni durum eklerken SONA ekle ve yeni bir sayi ver.
 ///
-/// ---------------------------------------------------------------
 /// NEDEN 0'DAN DEĞİL 1'DEN BASLIYORUM?
-/// ---------------------------------------------------------------
+///
 /// C#'ta bir enum alaninin varsayılan değeri her zaman 0'dir.
 /// Eger Draft = 0 olsaydı, birisi Status alanini hiç set etmeden
 /// kayıt olusturdugunda o kayıt sessizce Draft olurdu ve hata

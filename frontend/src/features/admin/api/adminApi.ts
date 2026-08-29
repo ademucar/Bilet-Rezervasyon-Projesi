@@ -4,7 +4,7 @@ import { api } from '../../../lib/api/client'
  * Admin paneli API cagrilari.
  *
  * Backend'in DTO'lariyla birebir eşleyen tipler. Sprint 18'de bunlar
- * Swagger'dan otomatik uretilecek (Orval); su an elle yazıyoruz.
+ * Swagger'dan otomatik uretilecek (Orval); su an elle yazıyorum.
  */
 
 export interface City {

@@ -35,9 +35,8 @@ public abstract class ApiControllerBase : ControllerBase
     /// <summary>
     /// Result'i HTTP yanitina cevirir.
     ///
-    /// ==================================================================
     /// HTTP BILGISI NEDEN BURADA?
-    /// ==================================================================
+    ///
     /// Application katmani ErrorType.NotFound diyor, "404" demiyor.
     /// HTTP'ye cevirme isi Presentation katmaninin sorumlulugunda ve
     /// tam olarak burada yapiliyor.
@@ -47,10 +46,9 @@ public abstract class ApiControllerBase : ControllerBase
     /// hata kodlarina cevirir.
     ///
     /// Tek yerde toplamanin ikinci faydasi: 100 endpoint'te
-    /// "if (result.IsFailure) return BadRequest(...)" yazmiyoruz.
+    /// "if (result.IsFailure) return BadRequest(...)" yazmiyorum.
     /// Bir gün 422 yerine 409 donmeye karar verirsek tek satır
-    /// degistiriyoruz.
-    /// ==================================================================
+    /// degistiriyorum.
     /// </summary>
     protected IActionResult HandleResult(Result result)
     {

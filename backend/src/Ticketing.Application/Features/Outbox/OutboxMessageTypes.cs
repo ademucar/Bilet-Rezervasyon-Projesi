@@ -3,11 +3,10 @@ namespace Ticketing.Application.Features.Outbox;
 /// <summary>
 /// Outbox mesaj türleri. PDF Sprint 9'un saydığı senaryolar.
 ///
-/// ==================================================================
 /// NEDEN SABIT? Neden enum değil?
-/// ==================================================================
+///
 /// Bu deger veritabaninda METİN olarak saklaniyor ve yillarca orada
-/// duracak. Enum kullansaydık iki sorun çıkardı:
+/// duracak. Enum kullansaydım iki sorun çıkardı:
 ///
 /// 1) Enum'u sayi olarak saklarsak, birinin enum siralamasini
 ///    degistirmesi TABLODAKI ESKİ KAYITLARIN ANLAMINI degistirirdi.
@@ -22,7 +21,6 @@ namespace Ticketing.Application.Features.Outbox;
 /// Sabit metinler bu riskleri görünür kilar: değeri degistirmek
 /// bilinçli bir karar gerektirir ve gecis (migration) yazilmasi
 /// gerektigi bellidir.
-/// ==================================================================
 /// </summary>
 public static class OutboxMessageTypes
 {
@@ -55,9 +53,8 @@ public static class OutboxMessageTypes
     public const string ReservationCreated = "ReservationCreated";
 }
 
-// ===================================================================
 // PAYLOAD TIPLERI
-// ===================================================================
+//
 // Payload veritabaninda JSON metni olarak duruyor. Bu record'lar o
 // metnin SEMASI.
 //
@@ -65,14 +62,13 @@ public static class OutboxMessageTypes
 //   - Yazan taraf (komut) ile okuyan taraf (isleyici) AYNI tipi
 //     kullaniyor. Alan adını birinde degistirip digerinde unutmak
 //     derleyici hatası veriyor.
-//   - Anonim nesneyle yazip elle okusaydik, uyusmazlik ancak
+//   - Anonim nesneyle yazip elle okusaydim, uyusmazlik ancak
 //     CALISMA ZAMANINDA -- hem de arka planda, kimse bakmazken --
 //     ortaya çıkardı.
 //
 // DIKKAT: Bu tiplere alan EKLEMEK guvenlidir (eski kayitlarda alan
 // olmaz, varsayılan deger gelir). Alan SILMEK veya YENIDEN ADLANDIRMAK
 // tablodaki islenmemis eski mesajlari bozar.
-// ===================================================================
 
 /// <param name="TicketIds">Bilgi amacli; isleyici biletleri yine de veritabanindan okur.</param>
 public sealed record TicketsIssuedPayload(

@@ -3,9 +3,8 @@ import { z } from 'zod'
 /**
  * Form doğrulama semalari.
  *
- * ==================================================================
  * NEDEN HEM FRONTEND HEM BACKEND'DE DOGRULAMA VAR?
- * ==================================================================
+ *
  * Bu bir TEKRAR değil, iki FARKLI amaca hizmet ediyor:
  *
  *   Frontend -> KULLANICI DENEYİMİ. Kullanıcı yazarken anında geri
@@ -21,7 +20,7 @@ import { z } from 'zod'
  * Kurallari backend'deki FluentValidation ile AYNI tutuyorum. Farklı
  * olsalardi kullanıcı formu doldurur, "tamam" der, sonra sunucudan
  * hata alırdı -- en sinir bozucu deneyimlerden biri.
- * ==================================================================
+ *
  */
 
 /** Backend'deki RegisterCommandValidator ile birebir aynı kurallar. */
@@ -29,7 +28,7 @@ const passwordSchema = z
   .string()
   .min(8, 'Şifre en az 8 karakter olmalıdır.')
   // 72 sınırı BCrypt'ten geliyor: BCrypt yalnızca ilk 72 byte'i dikkate
-  // alır, gerisini sessizce yok sayar. Sinir koymasaydik kullanıcı
+  // alır, gerisini sessizce yok sayar. Sinir koymasaydim kullanıcı
   // 100 karakterlik şifre girip aslında 72 ile korunuyor olurdu.
   .max(72, 'Şifre en fazla 72 karakter olabilir.')
   .regex(/[A-Z]/, 'Şifre en az bir büyük harf içermelidir.')
@@ -41,7 +40,7 @@ export const loginSchema = z.object({
     .string()
     .min(1, 'E-posta adresi zorunludur.')
     .email('Geçerli bir e-posta adresi giriniz.'),
-  // Girise şifre KURALLARI uygulamiyorum -- backend'de de uygulamiyoruz.
+  // Girise şifre KURALLARI uygulamiyorum -- backend'de de uygulamiyorum.
   // Sebep: eski kullanicilarin sifresi yeni kurallara uymayabilir ve
   // kendi hesaplarina giremez hale gelirler.
   password: z.string().min(1, 'Şifre zorunludur.'),

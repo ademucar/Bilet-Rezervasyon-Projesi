@@ -7,9 +7,8 @@ namespace Ticketing.UnitTests.Application;
 /// PDF Sprint 15 dosya guvenligi kontrollerinin testleri.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU TESTLERIN COGU "OLUMSUZ" TEST -- BILINCLI
-/// ==================================================================
+///
 /// Guvenlik kodunda "dogru girdi kabul ediliyor mu?" sorusu kolay
 /// olandir. Asil deger "YANLIS girdi REDDEDILIYOR mu?" sorusunda.
 ///
@@ -20,7 +19,6 @@ namespace Ticketing.UnitTests.Application;
 /// Her saldiri senaryosu icin ayri bir test yaziyorum ki ilerde biri
 /// bir kontrolu kaldirdiginda HANGI korumanin kayboldugu test adindan
 /// dogrudan okunabilsin.
-/// ==================================================================
 /// </remarks>
 public class FileUploadValidatorTests
 {
@@ -56,9 +54,8 @@ public class FileUploadValidatorTests
         sonuc.IsSuccess.Should().BeTrue();
     }
 
-    // ==============================================================
     // SALDIRI 1: UZANTIYI DEGISTIRME
-    // ==============================================================
+    //
     // Saldirgan "zararli.exe" dosyasini "afis.jpg" yapip yukluyor ve
     // Content-Type basligini da image/jpeg olarak elle yaziyor.
     //
@@ -67,7 +64,6 @@ public class FileUploadValidatorTests
     //
     // Bu test, imza kontrolunun neden vazgecilmez oldugunun kanitidir:
     // ilk iki kontrolu de kullanici sagliyor.
-    // ==============================================================
     [Fact]
     public void Uzantisi_degistirilmis_exe_reddedilir()
     {
@@ -77,15 +73,13 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.content_mismatch");
     }
 
-    // ==============================================================
     // SALDIRI 2: CIFT UZANTI
-    // ==============================================================
+    //
     // "afis.jpg.exe" -- bazi sistemler ilk uzantiya bakar, isletim
     // sistemi ise SON uzantiyi calistirir.
     //
     // Path.GetExtension son uzantiyi doner (".exe"), o da beyaz
     // listede olmadigi icin reddediliyor.
-    // ==============================================================
     [Fact]
     public void Cift_uzantili_dosya_reddedilir()
     {
@@ -95,9 +89,8 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // ==============================================================
     // SALDIRI 3: DIZIN GECISI (path traversal)
-    // ==============================================================
+    //
     // "../../appsettings.json" gibi bir ad ile uygulama disina yazma
     // girisimi.
     //
@@ -107,7 +100,6 @@ public class FileUploadValidatorTests
     // yere yazilmiyor.
     //
     // Testin dogruladigi sey: donen adin icinde dizin ayirici YOK.
-    // ==============================================================
     [Theory]
     [InlineData("../../appsettings.json.jpg")]
     [InlineData("..\\..\\appsettings.json.jpg")]
@@ -123,16 +115,14 @@ public class FileUploadValidatorTests
         sonuc.Value.Should().EndWith(".jpg");
     }
 
-    // ==============================================================
     // SALDIRI 4: SVG ILE SAKLANMIS XSS
-    // ==============================================================
+    //
     // SVG bir XML belgesidir ve icine script gomulebilir. "Resim"
     // oldugu icin zararsiz sanilir; beyaz listemizde BILINCLI olarak
     // yok.
     //
     // Bu test, ilerde biri "SVG de resim, ekleyelim" derse kirilir ve
     // karari yeniden dusunmeye zorlar.
-    // ==============================================================
     [Fact]
     public void Svg_reddedilir()
     {
@@ -144,9 +134,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // ==============================================================
     // SALDIRI 5: MIME TURU ILE UZANTI UYUSMUYOR
-    // ==============================================================
     [Fact]
     public void Uyusmayan_mime_turu_reddedilir()
     {
@@ -157,14 +145,12 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.mime_mismatch");
     }
 
-    // ==============================================================
     // SALDIRI 6: PNG ADIYLA JPEG ICERIGI
-    // ==============================================================
+    //
     // Bu bir saldiri olmayabilir -- kullanici dosyayi elle yeniden
     // adlandirmis da olabilir. Yine de reddediyoruz cunku dosyayi
     // sundugumuzda Content-Type yanlis olacak ve tarayici davranisi
     // ongorulemez hale gelecek.
-    // ==============================================================
     [Fact]
     public void Icerigi_uzantisiyla_uyusmayan_dosya_reddedilir()
     {
@@ -202,13 +188,11 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // ==============================================================
     // KIRPILMIS DOSYA
-    // ==============================================================
+    //
     // Imzayi tamamlayacak kadar bayt yoksa dogrulayamayiz.
     // "Dogrulayamiyorum" durumunda GECIRMEK degil REDDETMEK dogru
     // olan -- guvenlik kontrollerinde belirsizlik, ret demektir.
-    // ==============================================================
     [Fact]
     public void Imza_icin_yetersiz_bayt_reddedilir()
     {
@@ -219,13 +203,11 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.content_mismatch");
     }
 
-    // ==============================================================
     // WEBP: "RIFF" TEK BASINA YETMEZ
-    // ==============================================================
+    //
     // WAV ve AVI de "RIFF" ile basliyor. Yalnizca ilk 4 bayta
     // bakan bir kontrol, .webp adiyla yuklenen bir WAV dosyasini
     // kabul ederdi.
-    // ==============================================================
     [Fact]
     public void Riff_ile_baslayan_ama_webp_olmayan_dosya_reddedilir()
     {
@@ -249,13 +231,11 @@ public class FileUploadValidatorTests
         sonuc.IsSuccess.Should().BeTrue();
     }
 
-    // ==============================================================
     // URETILEN AD HER SEFERINDE FARKLI OLMALI
-    // ==============================================================
+    //
     // Ayni ad uretilseydi ikinci yukleme birincinin uzerine yazardi
     // (veya LocalFileStorage'daki FileMode.CreateNew yuzunden
     // patlardi). Ikisi de kabul edilemez.
-    // ==============================================================
     [Fact]
     public void Uretilen_ad_benzersizdir()
     {

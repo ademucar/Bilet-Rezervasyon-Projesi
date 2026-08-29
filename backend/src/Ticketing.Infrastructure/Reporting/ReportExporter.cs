@@ -14,9 +14,8 @@ namespace Ticketing.Infrastructure.Reporting;
 internal sealed class ReportExporter : IReportExporter
 {
     /// <summary>
-    /// ==============================================================
     /// QUESTPDF LISANSI -- KODDA BELIRTILMEK ZORUNDA
-    /// ==============================================================
+    ///
     /// QuestPDF, "Community" lisansi altinda yillik geliri 1 milyon
     /// USD altindaki kuruluslar için UCRETSIZ. Bu proje için uygun.
     ///
@@ -30,7 +29,6 @@ internal sealed class ReportExporter : IReportExporter
     /// NOT: Bu proje ticari bir urune donuserse lisans yeniden
     /// degerlendirilmeli. Bunu buraya yazıyorum ki karar görünür
     /// kalsin.
-    /// ==============================================================
     /// </summary>
     static ReportExporter()
     {
@@ -76,17 +74,14 @@ internal sealed class ReportExporter : IReportExporter
         };
     }
 
-    // ==================================================================
     // CSV
-    // ==================================================================
 
     /// <summary>
     /// RFC 4180 uyumlu CSV üretir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN KUTUPHANE KULLANMIYORUM?
-    /// ==============================================================
+    ///
     /// CsvHelper gibi paketler var ama CSV yazma kurallari toplam
     /// uc satır:
     ///   - Alan içinde virgul, tirnak veya satır sonu varsa tirnak ic
@@ -99,18 +94,15 @@ internal sealed class ReportExporter : IReportExporter
     ///
     /// (OKUMA farklı olurdu: CSV ayristirmak çok daha zor ve orada
     /// kutuphane kullanirdim.)
-    /// ==============================================================
     ///
-    /// ==============================================================
     /// UTF-8 BOM -- EXCEL ICIN ŞART
-    /// ==============================================================
+    ///
     /// BOM olmadan Excel, CSV'yi sistem kod sayfasiyla acar ve
     /// Turkce karakterler bozulur: "İstanbul" yerine "Ä°stanbul".
     ///
     /// Kullanıcının gozunde bu "sizin raporunuz bozuk" demektir --
     /// oysa dosya teknik olarak doğru. Uc baytlik BOM bu sorunu
     /// tamamen cozuyor.
-    /// ==============================================================
     /// </remarks>
     private static byte[] CsvUret(ReportTable table)
     {
@@ -123,9 +115,8 @@ internal sealed class ReportExporter : IReportExporter
             sb.AppendLine(string.Join(',', row.Select(Kacir)));
         }
 
-        // ==============================================================
         // BOM'U ELLE EKLIYORUM -- YAKALADIGIM HATA
-        // ==============================================================
+        //
         // Önce soyle yazmistim:
         //
         //     return new UTF8Encoding(true).GetBytes(...)
@@ -140,10 +131,9 @@ internal sealed class ReportExporter : IReportExporter
         // Uretilen dosyayı inceleyerek buldum: ilk baytlar EF BB BF
         // yerine "Etki" (45 74 6B 69) idi.
         //
-        // Yani yorumda "BOM ekliyoruz" yaziyordu ama EKLENMIYORDU --
+        // Yani yorumda "BOM ekliyorum" yaziyordu ama EKLENMIYORDU --
         // ve Turkce karakterler Excel'de bozuk cikacakti. Kodun
         // NIYETINI değil, URETTIGI CIKTIYI kontrol etmek gerekiyor.
-        // ==============================================================
         var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
         var preamble = encoding.GetPreamble();
@@ -175,9 +165,7 @@ internal sealed class ReportExporter : IReportExporter
         return $"\"{s.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
     }
 
-    // ==================================================================
     // EXCEL
-    // ==================================================================
 
     private static byte[] ExcelUret(ReportTable table)
     {
@@ -226,9 +214,7 @@ internal sealed class ReportExporter : IReportExporter
         return stream.ToArray();
     }
 
-    // ==================================================================
     // PDF
-    // ==================================================================
 
     private static byte[] PdfUret(ReportTable table)
     {
@@ -236,15 +222,13 @@ internal sealed class ReportExporter : IReportExporter
         {
             container.Page(page =>
             {
-                // ==================================================
                 // YATAY (LANDSCAPE) SAYFA
-                // ==================================================
+                //
                 // Raporlarin çoğu 5-8 sutunlu. Dikey A4'te sutunlar
                 // sikisip okunamaz hale gelir.
                 //
                 // Yatay cevirmek, tablo raporlari için doğru
                 // varsayılan.
-                // ==================================================
                 page.Size(PageSizes.A4.Landscape());
                 page.Margin(1.5f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(9));

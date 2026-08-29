@@ -21,9 +21,7 @@ internal static class SessionErrors
         "Koltuk uretmeden önce tüm bolumleri bir bilet turune atayin.");
 }
 
-// ===================================================================
 // OTURUM KOLTUKLARINI URET
-// ===================================================================
 
 /// <summary>
 /// Bir oturum için EventSeat kayitlarini üretir.
@@ -73,9 +71,8 @@ internal sealed class GenerateSessionSeatsCommandHandler
                 "Secilen oturma planinda hiç koltuk yok."));
         }
 
-        // ==============================================================
         // BOLUM -> BİLET TURU ESLESTIRMESI
-        // ==============================================================
+        //
         // Her koltuğun fiyati, ait olduğu BOLUMUN bilet turunden gelir.
         // Bu eslestirme olmadan koltuğun fiyati belirsiz kalır.
         //
@@ -102,9 +99,8 @@ internal sealed class GenerateSessionSeatsCommandHandler
             return Result.Failure<int>(SessionErrors.NoTicketTypeForSection);
         }
 
-        // ==============================================================
         // KOLTUK URETIMI
-        // ==============================================================
+        //
         // Fiyatlandirmayi bir FONKSIYON olarak geciyorum. Boylece her
         // koltuk, ait olduğu bölümün bilet türü ve fiyatiyla DOGUYOR --
         // önce uretip sonra duzeltmek gerekmiyor.
@@ -123,10 +119,8 @@ internal sealed class GenerateSessionSeatsCommandHandler
     }
 }
 
-// ===================================================================
 // KOLTUK UYGUNLUGU
 // PDF: GET /api/v1/event-sessions/{id}/seat-availability
-// ===================================================================
 
 public sealed record SeatAvailabilityItem(
     Guid EventSeatId,
@@ -206,9 +200,8 @@ internal sealed class GetSeatAvailabilityQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // SURESI DOLMUS KILITLERI "MUSAIT" GOSTER
-        // ==============================================================
+        //
         // Temizlik job'i dakikada bir çalışıyor. Kilidi 10:10'da dolan
         // bir koltuk, job 10:11'de gelene kadar veritabaninda hâlâ
         // "Locked" görünür.
@@ -218,7 +211,7 @@ internal sealed class GetSeatAvailabilityQueryHandler
         // demektir.
         //
         // Bu donusumu SUNUCUDA yapıyorum, frontend'de değil. Frontend'e
-        // biraksaydik her istemcinin saati farklı olurdu ve bazi
+        // biraksaydim her istemcinin saati farklı olurdu ve bazi
         // kullanıcılar koltuğu musait, bazilari dolu gorurdu.
         var items = seats
             .Select(s => new SeatAvailabilityItem(

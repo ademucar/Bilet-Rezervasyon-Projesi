@@ -7,9 +7,8 @@ import { PublicOnlyRoute } from './routes/PublicOnlyRoute'
 import { ErrorBoundary } from './components/layout/ErrorBoundary'
 import { Roles } from './types/auth'
 
-// ===================================================================
 // ROUTE BAZLI KOD BOLME (code splitting)
-// ===================================================================
+//
 // PDF Sprint 18: "Route bazlı code splitting uygulanmalıdır."
 //
 // lazy() ile her sayfa AYRI bir JS parcasina derleniyor ve yalnızca
@@ -23,7 +22,6 @@ import { Roles } from './types/auth'
 //
 // Simdiden kurmak, sonradan eklemekten kolay: yapiyi bastan doğru
 // kurunca yeni sayfa eklerken dusunmeye bile gerek kalmiyor.
-// ===================================================================
 const LoginPage = lazy(() =>
   import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
 )
@@ -88,7 +86,7 @@ const DashboardPage = lazy(() =>
 // --- Admin paneli ---
 // Ayrı parcalara boluyorum: normal kullanıcı bu ekranlari HİÇ
 // indirmeyecek. Koltuk haritası ve form kutuphaneleri bu sayfalarda
-// yogun; hepsini ana pakete koysaydık giriş yapan herkes bedelini oderdi.
+// yogun; hepsini ana pakete koysaydım giriş yapan herkes bedelini oderdi.
 const VenuesPage = lazy(() =>
   import('./features/admin/pages/VenuesPage').then((m) => ({ default: m.VenuesPage })),
 )
@@ -109,12 +107,11 @@ const queryClient = new QueryClient({
       // Varsayılan 0'dir; yani her bileşen bagladiginda yeni istek gider.
       staleTime: 60_000,
 
-      // ==============================================================
       // 401 ve 403'te YENIDEN DENEME
-      // ==============================================================
+      //
       // Varsayılan davranis başarısız isteği 3 kez tekrarlar.
       //
-      // Bu bizim için ZARARLI olurdu: 401 alan bir istek zaten
+      // Bu benim için ZARARLI olurdu: 401 alan bir istek zaten
       // interceptor tarafından token yenilenip tekrarlaniyor.
       // TanStack Query bir de kendi başına 3 kez denerse, tek bir
       // basarisizlik 4 gereksiz isteğe donusur.
@@ -191,9 +188,17 @@ export default function App() {
                     SONRA "önce giriş yapın" demek, en can sıkıcı
                     deneyimlerden biridir. Kapiyi bastan gösteriyorum.
 
-                    Sprint 11'de arama ve listeleme herkese acilacak
-                    (SEO için de gerekli); o zaman bu iki rota
-                    disari alinacak. */}
+                    Listelemeyi herkese acmayi Sprint 11'de
+                    planlamistim ve ACMADIM. Sebep: SiteHeader
+                    oturum acmis kullaniciya gore yazilmis (Cikis
+                    dugmesi, Biletlerim baglantisi). Anonim ziyaretci
+                    icin ayri bir ust cubuk gerekiyor ve bu, listeleme
+                    ekraninin isi degil.
+
+                    Bedeli su: etkinlik sayfalari arama motoruna
+                    kapali. Gercek bir bilet sitesinde bu kabul
+                    edilemez; burada bilincli bir eksik olarak
+                    duruyor. */}
                 <Route path="/etkinlikler" element={<EventsPage />} />
                 <Route path="/etkinlikler/:eventId" element={<EventDetailPage />} />
                 <Route path="/oturumlar/:sessionId/koltuklar" element={<SeatSelectionPage />} />

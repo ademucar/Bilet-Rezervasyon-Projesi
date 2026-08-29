@@ -15,9 +15,7 @@ public class MoneyTests
 {
     private const string TRY = "TRY";
 
-    // ---------------------------------------------------------------
     // Olusturma kurallari
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Ctor_GecerliDegerlerle_TutariVeParaBirimiSaklamali()
@@ -62,9 +60,7 @@ public class MoneyTests
              .Which.ErrorCode.Should().Be("money.invalid_currency");
     }
 
-    // ---------------------------------------------------------------
     // Yuvarlama -- bu testler projenin para dogrulugunu koruyor
-    // ---------------------------------------------------------------
 
     [Theory]
     [InlineData(2.125, 2.12)]   // 2 cift -> asagi
@@ -95,9 +91,7 @@ public class MoneyTests
         toplam.Amount.Should().Be(1.00m);
     }
 
-    // ---------------------------------------------------------------
     // Aritmetik
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Toplama_AyniParaBirimi_DogruSonucVermeli()
@@ -140,9 +134,7 @@ public class MoneyTests
              .Which.ErrorCode.Should().Be("money.negative");
     }
 
-    // ---------------------------------------------------------------
-    // Deger esitligi -- record'un bize bedavaya verdigi davranis
-    // ---------------------------------------------------------------
+    // Deger esitligi -- record'un bana bedavaya verdigi davranis
 
     [Fact]
     public void Esitlik_AyniTutarVeParaBirimi_EsitSayilmali()

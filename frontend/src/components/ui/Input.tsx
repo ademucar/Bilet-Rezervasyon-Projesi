@@ -16,7 +16,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, id, className = '', ...props }, ref) => {
     // useId: sunucu ve istemcide aynı, benzersiz kimlik üretir.
-    // Math.random() kullansaydık her render'da degisir ve
+    // Math.random() kullansaydım her render'da degisir ve
     // label-input bağlantısı bozulurdu.
     const generatedId = useId()
     const inputId = id ?? generatedId
@@ -47,7 +47,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           // aria-invalid: ekran okuyucuya "bu alanda hata var" der.
-          // Yalnızca kırmızı kenarlik koysaydık görmeyen kullanıcı
+          // Yalnızca kırmızı kenarlik koysaydım görmeyen kullanıcı
           // hatanin varligini anlayamazdi.
           aria-invalid={error ? true : undefined}
           // aria-describedby: hata metnini alana BAGLAR. Ekran okuyucu

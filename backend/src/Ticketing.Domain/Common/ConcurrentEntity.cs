@@ -4,9 +4,8 @@ namespace Ticketing.Domain.Common;
 /// Es zamanlı güncelleme kontrolü gereken entity'ler bundan turer.
 /// Bundan turecekler: EventSeat (en kritigi), Reservation, Payment, Event.
 ///
-/// ------------------------------------------------------------------
 /// OPTIMISTIC CONCURRENCY NASIL CALISIR?
-/// ------------------------------------------------------------------
+///
 /// Senaryo: Ayse ve Mehmet aynı anda B-5-12 koltuğunu almak istiyor.
 ///
 ///   t0  Ayse   satiri okur   -> Status=Available, RowVersion=100
@@ -25,15 +24,14 @@ namespace Ticketing.Domain.Common;
 /// KILIT NOKTA: Mehmet'in isteği ASLA veri bozmadi. Kaybetti ama sessizce
 /// Ayse'nin uzerine yazmadi. "Last write wins" davranisinin tam tersi.
 ///
-/// ------------------------------------------------------------------
 /// PostgreSQL'de "xmin" NEDIR?
-/// ------------------------------------------------------------------
+///
 /// SQL Server'da "rowversion" diye bir veri tipi vardir. PostgreSQL'de yoktur.
 /// AMA PostgreSQL'de her tablonun gizli bir "xmin" sistem sutunu vardir:
 /// satiri en son degistiren transaction'in ID'sini tutar ve her UPDATE'te
-/// otomatik olarak degisir. Yani bize bedava bir surum numarasi veriyor.
+/// otomatik olarak degisir. Yani bana bedava bir surum numarasi veriyor.
 ///
-/// Persistence katmanindaki EF konfigurasyonunda soyle eslestirecegiz:
+/// Persistence katmanindaki EF konfigurasyonunda soyle eslestirecegim:
 ///
 ///     builder.Property(x =&gt; x.RowVersion)
 ///            .HasColumnName("xmin")

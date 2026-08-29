@@ -5,9 +5,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Outbox Pattern kaydı. PDF Sprint 9.
 ///
-/// ==================================================================
 /// OUTBOX PATTERN NEDIR VE NEDEN GEREKLI?
-/// ==================================================================
+///
 /// Problem: Ödeme başarılı olduğunda iki sey yapmamiz gerekiyor:
 ///   1. Veritabanina yaz (rezervasyon onayla, bilet üret)
 ///   2. E-posta gönder
@@ -42,7 +41,6 @@ namespace Ticketing.Domain.Entities;
 /// Bu, "en az bir kez teslim" (at-least-önce delivery) garantisidir.
 /// Mesaj iki kez islenebilir; bu yüzden isleyicilerin IDEMPOTENT olmasını
 /// sarttir (PDF: "Aynı Outbox kaydı iki kez islenmemelidir").
-/// ==================================================================
 /// </summary>
 public class OutboxMessage : Entity
 {
@@ -139,19 +137,17 @@ public class OutboxMessage : Entity
     /// Correlation ID'yi, HENUZ ATANMAMISSA atar.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN "SADECE BOSSA" YAZIYOR?
-    /// ==============================================================
+    ///
     /// Bu metodu OutboxCorrelationInterceptor cagiriyor: kaydetme
     /// anında, değeri atanmamis her Outbox mesajini o anki HTTP
     /// isteginin ID'siyle dolduruyor.
     ///
     /// Ama bazi cagri yerleri değeri ACIKCA veriyor (örneğin
-    /// TicketTypeCommands). Kosulsuz yazsaydık, interceptor o bilinçli
+    /// TicketTypeCommands). Kosulsuz yazsaydım, interceptor o bilinçli
     /// seçimi EZERDI.
     ///
     /// Ilke: otomatik doldurma, açık niyeti geçersiz kilmamali.
-    /// ==============================================================
     /// </remarks>
     public void SetCorrelationIdIfMissing(string? correlationId)
     {

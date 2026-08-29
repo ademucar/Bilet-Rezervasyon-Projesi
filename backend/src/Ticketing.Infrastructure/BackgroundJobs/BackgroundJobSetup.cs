@@ -22,9 +22,8 @@ public static class BackgroundJobSetup
     }
 
     /// <summary>
-    /// ==============================================================
     /// NEDEN HANGFIRE, NEDEN QUARTZ.NET DEĞİL?
-    /// ==============================================================
+    ///
     /// PDF ikisini de kabul ediyor. Hangfire'i sectim çünkü:
     ///
     /// 1) IZLEME EKRANI HAZIR GELIYOR. /hangfire adresinde her isin
@@ -37,13 +36,12 @@ public static class BackgroundJobSetup
     /// 2) IS DURUMU VERITABANINDA. Uygulama yeniden baslatildiginda
     ///    yarim kalan isler kaybolmuyor.
     ///
-    /// 3) ZATEN POSTGRESQL KULLANIYORUZ. Hangfire.PostgreSql ile ek
+    /// 3) ZATEN POSTGRESQL KULLANIYORUM. Hangfire.PostgreSql ile ek
     ///    bir altyapi (Redis, SQL Server) gerekmiyor.
     ///
-    /// Quartz daha hafif ve daha esnek zamanlama sunuyor; bizim
+    /// Quartz daha hafif ve daha esnek zamanlama sunuyor; benim
     /// ihtiyacimiz olan zamanlama basit olduğu için bu avantaji
-    /// kullanamazdik.
-    /// ==============================================================
+    /// kullanamazdim.
     /// </summary>
     public static IServiceCollection AddBackgroundJobs(
         this IServiceCollection services,
@@ -56,8 +54,8 @@ public static class BackgroundJobSetup
         // ile AYNI olmalı. İlk yazimda "Default" yazmistim; uygulama
         // ayaga bile kalkmazdi.
         //
-        // Aynı veritabanini kullanıyoruz: Hangfire kendi tablolarini
-        // "hangfire" semasi altinda olusturuyor, bizim tablolarimizla
+        // Aynı veritabanini kullanıyorum: Hangfire kendi tablolarini
+        // "hangfire" semasi altinda olusturuyor, benim tablolarimizla
         // karismiyor. Ayrı bir veritabani kurmak, is durumu ile is
         // verisinin farklı yedekleme/geri yukleme noktalarina
         // dusmesine yol acardi.
@@ -71,9 +69,8 @@ public static class BackgroundJobSetup
             .UseRecommendedSerializerSettings()
             .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
 
-        // ==============================================================
         // ISCI SAYISI
-        // ==============================================================
+        //
         // Varsayılan: CPU cekirdek sayısı x 5. 8 cekirdekli bir
         // makinede 40 esZamanli isci demek.
         //
@@ -84,7 +81,6 @@ public static class BackgroundJobSetup
         //
         // 4 isci: dort isimiz var, her biri kendi kuyrugunda
         // rahatca ilerler.
-        // ==============================================================
         services.AddHangfireServer(options =>
         {
             options.WorkerCount = 4;
@@ -106,7 +102,7 @@ public static class BackgroundJobSetup
     /// <remarks>
     /// AddOrUpdate kullanıyorum, Add değil: uygulama her yeniden
     /// baslatildiginda cagriliyor. Add olsaydı ikinci baslatmada
-    /// "bu is zaten var" hatası alırdık veya kopya isler olusurdu.
+    /// "bu is zaten var" hatası alırdım veya kopya isler olusurdu.
     ///
     /// Aynı JobId ile cagirmak, zamanlamayi guncelliyor. Yani cron
     /// ifadesini degistirip uygulamayi yeniden baslatmak yeterli.

@@ -11,10 +11,10 @@ public class User : AuditableEntity
     /// EF Core için private parametresiz yapici.
     ///
     /// EF veritabanindan satır okurken nesneyi olusturmak zorunda ama
-    /// bizim kurallarimizi (e-posta boş olamaz vb.) tekrar calistirmasina
+    /// benim kurallarimizi (e-posta boş olamaz vb.) tekrar calistirmasina
     /// gerek yok -- o veriler zaten dogrulanmis halde kaydedilmisti.
     ///
-    /// private yaptım ki bizim kodumuz yanlislikla boş bir User uretemesin.
+    /// private yaptım ki benim kodumuz yanlislikla boş bir User uretemesin.
     /// EF reflection kullandigi için private yapiciyi gorebiliyor.
     /// </summary>
     private User()
@@ -69,9 +69,7 @@ public class User : AuditableEntity
     /// </summary>
     public bool IsActive { get; private set; }
 
-    // ---------------------------------------------------------------
     // Brute force korumasi (PDF Sprint 15: "Brute force korumasi")
-    // ---------------------------------------------------------------
 
     /// <summary>Ust uste başarısız giriş denemesi sayısı.</summary>
     public int FailedLoginAttempts { get; private set; }
@@ -81,9 +79,7 @@ public class User : AuditableEntity
     /// </summary>
     public DateTimeOffset? LockoutEndAt { get; private set; }
 
-    // ---------------------------------------------------------------
     // Şifre sıfırlama (PDF Sprint 3)
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Şifre sıfırlama tokeninin HASH'i.
@@ -92,9 +88,8 @@ public class User : AuditableEntity
     /// hash'i saklaniyor. Sebep aynı: veritabani sizarsa saldirgan
     /// bu token'larla herkesin sifresini sifirlayabilirdi.
     ///
-    /// ------------------------------------------------------------------
     /// NEDEN AYRI TABLO DEĞİL DE User UZERINDE IKI ALAN?
-    /// ------------------------------------------------------------------
+    ///
     /// Bir kullanıcının aynı anda en fazla BIR aktif şifre sıfırlama
     /// talebi olmalı. Ayrı tablo olsaydı birden fazla kayıt olusabilir
     /// ve "hangisi geçerli?" sorusu ortaya çıkardı -- ayrıca eskilerini
@@ -133,9 +128,7 @@ public class User : AuditableEntity
 
     public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
-    // ---------------------------------------------------------------
     // Davranislar
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Yeni kullanıcı oluşturur.
@@ -226,9 +219,7 @@ public class User : AuditableEntity
         ClearPasswordResetToken();
     }
 
-    // ---------------------------------------------------------------
     // Şifre sıfırlama akışı
-    // ---------------------------------------------------------------
 
     public void SetPasswordResetToken(string tokenHash, DateTimeOffset expiresAt)
     {

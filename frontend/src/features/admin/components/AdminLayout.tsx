@@ -55,7 +55,7 @@ function AdminLink({ to, children }: { to: string; children: ReactNode }) {
     <NavLink
       to={to}
       // NavLink, aktif route'u kendisi tespit eder ve className'e
-      // isActive gönderir. Bunu elle useLocation ile yapsaydik her
+      // isActive gönderir. Bunu elle useLocation ile yapsaydim her
       // menu ogesinde tekrar yazmamiz gerekirdi.
       className={({ isActive }) =>
         `rounded-lg px-3 py-2 transition-colors ${

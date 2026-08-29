@@ -3,14 +3,13 @@ namespace Ticketing.Application.Features.Auth;
 /// <summary>
 /// Başarılı giriş/kayıt/yenileme sonucu.
 ///
-/// ==================================================================
-/// NEDEN ENTITY DEĞİL DE DTO DONUYORUZ?
-/// ==================================================================
+/// NEDEN ENTITY DEĞİL DE DTO DONUYORUM?
+///
 /// PDF zorunlu kural: "Endpointler doğrudan Entity dondurmemelidir."
 ///
-/// User entity'sini donseydik JSON'a PasswordHash, FailedLoginAttempts,
+/// User entity'sini donseydim JSON'a PasswordHash, FailedLoginAttempts,
 /// LockoutEndAt ve tüm RefreshTokens koleksiyonu dahil olurdu.
-/// Yani şifre hash'lerini ve token'lari tarayiciya gondermis olurduk.
+/// Yani şifre hash'lerini ve token'lari tarayiciya gondermis olurdum.
 ///
 /// Bu, [JsonIgnore] ile tek tek gizlenerek de "cozulebilir" ama o
 /// yaklasim kirilgandir: yarin entity'ye yeni bir hassas alan
@@ -18,7 +17,6 @@ namespace Ticketing.Application.Features.Auth;
 ///
 /// DTO ile varsayılan davranis GUVENLIDIR: acikca yazmadigin hiçbir
 /// alan disari cikmaz.
-/// ==================================================================
 /// </summary>
 public sealed record AuthResponse(
     string AccessToken,

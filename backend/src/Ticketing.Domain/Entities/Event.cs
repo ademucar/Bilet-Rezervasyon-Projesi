@@ -35,9 +35,7 @@ public class Event : ConcurrentEntity
         CancellationPolicy = CancellationPolicy.Default;
     }
 
-    // ---------------------------------------------------------------
     // DURUM MAKINESI
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Izin verilen durum gecislerinin TEK kaynagi.
@@ -95,9 +93,7 @@ public class Event : ConcurrentEntity
         // Bunlar son durumlar; hiçbir yere gecemezler.
     };
 
-    // ---------------------------------------------------------------
     // Alanlar (PDF sayfa 12 "Etkinlik Alanlari")
-    // ---------------------------------------------------------------
 
     public string Title { get; private set; }
 
@@ -170,9 +166,7 @@ public class Event : ConcurrentEntity
 
     public IReadOnlyCollection<TicketType> TicketTypes => _ticketTypes.AsReadOnly();
 
-    // ---------------------------------------------------------------
     // Olusturma
-    // ---------------------------------------------------------------
 
     public static Event Create(
         string title,
@@ -262,9 +256,7 @@ public class Event : ConcurrentEntity
         }
     }
 
-    // ---------------------------------------------------------------
     // Durum gecisleri
-    // ---------------------------------------------------------------
 
     private void TransitionTo(EventStatus target)
     {
@@ -308,7 +300,7 @@ public class Event : ConcurrentEntity
 
         // Domain event'i durum degistikten SONRA firlatiyorum.
         // Önce firlatsaydim, TransitionTo hata verdiginde "yayinlandi"
-        // diye bir olay duyurmus olurduk -- oysa yayinlanmadi.
+        // diye bir olay duyurmus olurdum -- oysa yayinlanmadi.
         Raise(new EventPublishedDomainEvent(Id, OrganizerId, Title, DateTimeOffset.UtcNow));
     }
 
@@ -346,9 +338,7 @@ public class Event : ConcurrentEntity
         Raise(new EventCancelledDomainEvent(Id, OrganizerId, Title, reason, DateTimeOffset.UtcNow));
     }
 
-    // ---------------------------------------------------------------
     // Guncelleme kurallari
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Satış baslamis mi? Bu soru güncelleme kurallarinin merkezinde.
@@ -437,9 +427,7 @@ public class Event : ConcurrentEntity
         CancellationPolicy = policy;
     }
 
-    // ---------------------------------------------------------------
     // Oturum yönetimi
-    // ---------------------------------------------------------------
 
     public EventSession AddSession(
         DateTimeOffset startDate,

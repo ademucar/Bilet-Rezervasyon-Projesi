@@ -2,16 +2,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { bookingApi } from '../api/bookingApi'
 
 /**
- * ==================================================================
+ *
  * FAVORI DUGMESI -- PDF Sprint 12
- * ==================================================================
+ *
  * PDF uclari:
  *   POST   /api/v1/events/{eventId}/favorite
  *   DELETE /api/v1/events/{eventId}/favorite
  *
- * ------------------------------------------------------------------
  * IYIMSER GUNCELLEME (optimistic update)
- * ------------------------------------------------------------------
+ *
  * Kalp ikonu, sunucu cevabini BEKLEMEDEN doluyor.
  *
  * Neden? Çünkü favorileme "anlik" hissetmesi gereken bir eylem.
@@ -19,10 +18,10 @@ import { bookingApi } from '../api/bookingApi'
  * kullanıcı tekrar tiklar.
  *
  * Risk: istek başarısız olursa ekran YALAN soylemis olur. Bu yuzden
- * onError'da eski duruma GERİ ALIYORUZ. Iyimser guncellemenin
+ * onError'da eski duruma GERİ ALIYORUM. Iyimser guncellemenin
  * vazgecilmez parcasi budur -- geri alma olmadan yapilirsa arayüz
  * ile sunucu sessizce ayrisir.
- * ------------------------------------------------------------------
+ *
  */
 export function FavoriteButton({ eventId }: { eventId: string }) {
   const queryClient = useQueryClient()
@@ -45,7 +44,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     onMutate: async () => {
       // Devam eden bir çekim varsa İPTAL ET.
       //
-      // Etmeseydik, o çekim bizim iyimser guncellememizden SONRA
+      // Etmeseydik, o çekim benim iyimser guncellememizden SONRA
       // tamamlanip ESKİ veriyi geri yazabilirdi -- kalp bir dolup
       // bir bosalirdi.
       await queryClient.cancelQueries({ queryKey: ['favorites'] })
@@ -89,7 +88,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
       type="button"
       onClick={() => degistir.mutate()}
       // aria-pressed: ekran okuyucuya dugmenin ACIK/KAPALI olduğunu
-      // söyler. Yalnızca ikonu değiştirseydik görmeyen kullanıcı
+      // söyler. Yalnızca ikonu değiştirseydim görmeyen kullanıcı
       // favoride olup olmadigini anlayamazdi.
       aria-pressed={favoriMi}
       aria-label={favoriMi ? 'Favorilerden çıkar' : 'Favorilere ekle'}

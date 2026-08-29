@@ -26,9 +26,7 @@ public class PaymentTests
         return odeme;
     }
 
-    // ---------------------------------------------------------------
     // Olusturma
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_YeniOdeme_PendingDurumundaBaslamali()
@@ -45,14 +43,11 @@ public class PaymentTests
              .Which.ErrorCode.Should().Be("payment.invalid_amount");
     }
 
-    // ---------------------------------------------------------------
     // IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Complete_IkinciKezCagrilirsa_FalseDonmeliVeHataFirlatMAMALI()
     {
-        // ===============================================================
         // Odeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderir.
         // Bu bir hata degil, normal davranistir: saglayici cevap
         // alamadigini dusunurse tekrar dener.
@@ -60,10 +55,9 @@ public class PaymentTests
         // Hata firlatsaydik saglayici "callback basarisiz" deyip tekrar
         // tekrar denerdi -- sonsuz dongu.
         //
-        // false donuyoruz ki cagiran taraf "yeni bir sey olmadi,
+        // false donuyorum ki cagiran taraf "yeni bir sey olmadi,
         // TEKRAR BILET URETME" diye anlasin. Bu donus degeri, ayni
         // rezervasyon icin iki kez bilet uretilmesini engelliyor.
-        // ===============================================================
         var odeme = Odeme();
         odeme.StartProcessing("REF-1");
 
@@ -88,9 +82,7 @@ public class PaymentTests
         odeme.Status.Should().Be(PaymentStatus.Failed);
     }
 
-    // ---------------------------------------------------------------
     // Durum makinesi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Complete_ProcessingOlmadanDogrudan_HataFirlatmali()
@@ -129,9 +121,7 @@ public class PaymentTests
         odeme.DomainEvents.Should().ContainItemsAssignableTo<PaymentFailedDomainEvent>();
     }
 
-    // ---------------------------------------------------------------
     // IADE
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Refund_TamIade_DurumuRefundedYapmali()
@@ -149,7 +139,7 @@ public class PaymentTests
     public void Refund_KismiIade_DurumSuccessfulKalmali()
     {
         // Kismi iadede odeme HALA gecerli, sadece bir kismi geri donmus.
-        // Durumu Refunded yapsaydik "bu odeme tamamen iade edildi" gibi
+        // Durumu Refunded yapsaydim "bu odeme tamamen iade edildi" gibi
         // gorunurdu ve raporlar yanlis cikardi.
         var odeme = BasariliOdeme(500m);
 
@@ -175,13 +165,11 @@ public class PaymentTests
     [Fact]
     public void Refund_OdenendenFazlasi_HataFirlatmali()
     {
-        // ===============================================================
         // Bu kontrol gercek para kaybini engelliyor.
         //
         // Senaryo: iade callback'i iki kez gelirse ve kontrol olmasaydi
-        // kullaniciya IKI KAT para gonderirdik. Bu, geri alinmasi cok
+        // kullaniciya IKI KAT para gonderirdim. Bu, geri alinmasi cok
         // zor bir hatadir.
-        // ===============================================================
         var odeme = BasariliOdeme(500m);
         odeme.Refund(new Money(400m, "TRY"));
 
@@ -205,9 +193,7 @@ public class PaymentTests
              .Which.ErrorCode.Should().Be("payment.not_refundable");
     }
 
-    // ---------------------------------------------------------------
     // Denetim izi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Transactions_HerAdimIcinKayitOlusturmali()

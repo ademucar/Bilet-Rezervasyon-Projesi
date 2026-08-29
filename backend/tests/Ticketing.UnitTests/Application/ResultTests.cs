@@ -31,7 +31,7 @@ public class ResultTests
     [Fact]
     public void BasarisizSonucunDegerineErisim_ExceptionFirlatmali()
     {
-        // null donmuyoruz. Cunku null donseydik cagiran kisi onu gecerli
+        // null donmuyoruz. Cunku null donseydim cagiran kisi onu gecerli
         // bir deger sanip devam eder ve hata cok ilerideki bir noktada,
         // hicbir sey anlatmayan bir NullReferenceException olarak patlardi.
         //
@@ -143,7 +143,6 @@ public class PaginationRequestTests
     [Fact]
     public void PageSize_UstSiniriAsamaz()
     {
-        // ===============================================================
         // BU TEST BIR GUVENLIK KONTROLU
         //
         // Ust sinir olmasaydi bir kullanici
@@ -153,7 +152,6 @@ public class PaginationRequestTests
         // Kod yazmayi bilen herkesin yapabilecegi en basit DoS saldirisi.
         // Siniri SUNUCU tarafinda zorlamak sart -- frontend'in dogru
         // deger gonderecegine guvenemeyiz.
-        // ===============================================================
         var istek = new TestIstegi { PageSize = 999_999_999 };
 
         istek.PageSize.Should().Be(PaginationRequest.MaxPageSize);
@@ -172,8 +170,8 @@ public class PaginationRequestTests
     [InlineData(3, 15, 30)]
     public void Skip_DogruHesaplanmali(int sayfa, int boyut, int beklenenSkip)
     {
-        // (pageNumber - 1) * pageSize hesabini tek yerde tutuyoruz.
-        // Her sorguda elle yazsaydik birinde mutlaka -1'i unuturduk
+        // (pageNumber - 1) * pageSize hesabini tek yerde tutuyorum.
+        // Her sorguda elle yazsaydik birinde mutlaka -1'i unuturdum
         // ve ilk sayfa atlanirdi -- fark edilmesi zor bir hata.
         new TestIstegi { PageNumber = sayfa, PageSize = boyut }.Skip.Should().Be(beklenenSkip);
     }

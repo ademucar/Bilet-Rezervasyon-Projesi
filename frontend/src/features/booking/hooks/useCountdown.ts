@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
- * ==================================================================
- * GERİ SAYIM -- PDF Sprint 7: "Geri sayım göstergesi"
- * ==================================================================
  *
- * ------------------------------------------------------------------
+ * GERİ SAYIM -- PDF Sprint 7: "Geri sayım göstergesi"
+ *
  * 1) NEDEN SUNUCUNUN SANIYESINDEN BASLIYORUZ?
- * ------------------------------------------------------------------
+ *
  * Backend `remainingSeconds` gönderiyor, `expiresAt` yerine önü
- * kullanıyoruz.
+ * kullanıyorum.
  *
  * Çünkü kullanıcının bilgisayar saati YANLIS olabilir. `expiresAt`
  * mutlak bir zaman; saati 5 dakika geri olan bir kullanıcı
@@ -18,9 +16,8 @@ import { useEffect, useRef, useState } from 'react'
  *
  * Kalan süreyi SANIYE olarak almak saat farkindan tamamen bağımsız.
  *
- * ------------------------------------------------------------------
  * 2) NEDEN HER TIK'TA 1 AZALTMIYORUZ?
- * ------------------------------------------------------------------
+ *
  * En yaygin (ve hatalı) yazım sudur:
  *
  *     setInterval(() => setKalan((s) => s - 1), 1000)
@@ -36,14 +33,14 @@ import { useEffect, useRef, useState } from 'react'
  *      saniye azalmis görünürdü. Ekranda "7:00 kaldı" yazarken
  *      rezervasyon coktan silinmis olurdu.
  *
- * COZUM: Baslangicta bir BITIS ANI hesapliyoruz ve her tik'ta
- * "bitise ne kadar kaldı" diye YENIDEN olcuyoruz. Tik geç de gelse,
+ * COZUM: Baslangicta bir BITIS ANI hesapliyorum ve her tik'ta
+ * "bitise ne kadar kaldı" diye YENIDEN olcuyorum. Tik geç de gelse,
  * hiç de gelmese, gosterilen deger her zaman doğru olur.
  *
  * `performance.now()` kullanıyorum, `Date.now()` değil:
  * performance.now() monotondur -- sistem saati degisse veya yaz
  * saati uygulamasi devreye girse bile geriye gitmez.
- * ==================================================================
+ *
  */
 export function useCountdown(initialSeconds: number | undefined): number {
   const [remaining, setRemaining] = useState(initialSeconds ?? 0)
@@ -52,9 +49,8 @@ export function useCountdown(initialSeconds: number | undefined): number {
   // yeniden cizim tetiklememeli -> useRef, useState değil.
   const deadlineRef = useRef<number>(0)
 
-  // ----------------------------------------------------------------
   // 3) LINT UYARISI VE NEDEN SUSTURDUM
-  // ----------------------------------------------------------------
+  //
   // Aşağıdaki effect, içinde setRemaining cagirdigi için oxlint'in
   // `react(set-state-in-effect)` kuralini tetikliyor. Kural haklı
   // bir sey söylüyor: state'i effect içinde ayarlamak çoğu zaman
@@ -74,7 +70,6 @@ export function useCountdown(initialSeconds: number | undefined): number {
   // Bu yuzden kuralı dar kapsamda, gerekcesiyle susturuyorum.
   // Projede benimsedigim kural: uyariyi susturmak serbest değil,
   // yalnızca "neden" yazildiginda serbest.
-  // ----------------------------------------------------------------
   useEffect(() => {
     if (initialSeconds === undefined) {
       return
@@ -108,10 +103,10 @@ export function useCountdown(initialSeconds: number | undefined): number {
     // 250 ms'de bir olcuyorum, 1000 ms'de bir değil.
     //
     // Sebep: 1 saniyelik araliklarla olcersek, gerçek saniye gecisi
-    // ile bizim olcumumuz arasında 999 ms'ye kadar fark olusabilir
+    // ile benim olcumumuz arasında 999 ms'ye kadar fark olusabilir
     // ve sayaç bazen bir saniyeyi ATLAR (7:00 -> 6:58 gibi görünür).
     // 250 ms hem bunu onluyor hem de gozle gorulur bir maliyeti yok:
-    // yalnızca bir cikarma islemi yapiyoruz.
+    // yalnızca bir cikarma islemi yapiyorum.
     const timer = setInterval(tick, 250)
 
     // Temizlik ŞART. Kullanıcı ödeme sayfasindan cikinca zamanlayici

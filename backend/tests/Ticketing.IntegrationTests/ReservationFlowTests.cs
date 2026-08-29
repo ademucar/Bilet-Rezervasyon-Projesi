@@ -63,9 +63,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             belge.RootElement.GetProperty("reservationCode").GetString()!);
     }
 
-    // ==============================================================
     // PDF: "Rezervasyon olusturma"
-    // ==============================================================
 
     [Fact]
     public async Task Rezervasyon_olusturuldugunda_koltuklar_kilitlenmeli()
@@ -89,14 +87,12 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         koltuklar.Should().OnlyContain(s => s.Status == EventSeatStatus.Locked);
 
-        // ==========================================================
         // KILIT SURESI KONTROLU
-        // ==========================================================
+        //
         // Sadece "Locked" olmasi yetmez: kilidin bir SON KULLANMA
         // tarihi olmali. Olmasaydi koltuk sonsuza kadar kilitli
         // kalir ve odeme yapmayan bir kullanici koltugu kalici
         // olarak isgal ederdi.
-        // ==========================================================
         koltuklar.Should().OnlyContain(s => s.LockedUntil != null);
 
         var rezervasyon = await db.Reservations.SingleAsync(r => r.Id == rezervasyonId);
@@ -105,21 +101,17 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         rezervasyon.ExpiresAt.Should().BeAfter(DateTimeOffset.UtcNow);
     }
 
-    // ==============================================================
     // PDF: "Ayni koltugu iki kullanicinin almaya calismasi"
-    // ==============================================================
 
     /// <remarks>
-    /// ==============================================================
     /// PROJENIN EN KRITIK TESTI
-    /// ==============================================================
+    ///
     /// Bu davranis, EF Core InMemory saglayicisiyla test EDILEMEZ:
     /// xmin tabanli iyimser eszamanlilik orada hic yok. Test yesil
     /// doner ve HICBIR SEY kanitlamaz.
     ///
     /// Testcontainers'in bu projede var olma sebebi tam olarak bu
     /// senaryo -- PDF de zaten gercek kapsayici istiyor.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public async Task Ayni_koltugu_ikinci_kullanici_alamamali()
@@ -142,9 +134,8 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             eventSeatIds = new[] { koltuk },
         });
 
-        // ==========================================================
         // 409 Conflict -- 500 DEGIL
-        // ==========================================================
+        //
         // Durum kodu onemli: 500 "sunucu bozuk" demek olurdu, oysa
         // sunucu tam olarak dogru calisti ve veri butunlugunu
         // korudu. Frontend 409'da koltuk haritasini yenileyip
@@ -153,19 +144,16 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         // 422 de degil: bu bir is kurali ihlali degil, bir YARIS
         // sonucu. Kullanici tekrar denerse (baska koltukla)
         // basarili olabilir.
-        // ==========================================================
         yanit.StatusCode.Should().Be(HttpStatusCode.Conflict);
 
         using var db = Db();
 
-        // ==========================================================
         // EN ONEMLI DOGRULAMA: VERI BOZULMADI
-        // ==========================================================
+        //
         // Ikinci istek reddedildi ama BIRINCININ kilidini de
         // bozmadi. "Son yazan kazanir" davranisi olsaydi koltuk
         // ikinci kullaniciya gecerdi ve birinci kullanici odeme
         // yapmaya calisirken koltugunu kaybettigini gorurdu.
-        // ==========================================================
         var rezervasyonSayisi = await db.Reservations.CountAsync();
         rezervasyonSayisi.Should().Be(1, "yalnizca birinci rezervasyon olusmali");
 
@@ -173,9 +161,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         kilitliKoltuk.Status.Should().Be(EventSeatStatus.Locked);
     }
 
-    // ==============================================================
     // PDF: "Suresi dolmus rezervasyonda odeme"
-    // ==============================================================
 
     [Fact]
     public async Task Suresi_dolmus_rezervasyonda_odeme_baslatilamamali()
@@ -210,9 +196,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         (await db2.Payments.CountAsync()).Should().Be(0);
     }
 
-    // ==============================================================
     // PDF: "Basarili odeme sonrasi bilet olusturma"
-    // ==============================================================
 
     [Fact]
     public async Task Basarili_odeme_bilet_uretmeli_ve_koltugu_satmali()
@@ -238,9 +222,8 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         var odemeId = odemeBelge.RootElement.GetProperty("id").GetGuid();
 
-        // ==========================================================
         // PROVIDER REFERENCE'I UYDURAMAYIZ -- ILK DENEMEM BUYDU
-        // ==========================================================
+        //
         // Once "TEST-REF-1" diye kendi uydurdugum bir referans
         // gonderdim ve 422 aldim.
         //
@@ -255,7 +238,6 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         //
         // Bos gonderiyoruz; handler odemenin kendi kayitli
         // referansini kullaniyor.
-        // ==========================================================
         var tamamla = await Client.PostAsJsonAsync(
             $"/api/v1/payments/{odemeId}/complete",
             new { providerReference = (string?)null });
@@ -326,14 +308,11 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         biletSayisi.Should().Be(1, "ikinci callback yeni bilet uretmemeli");
     }
 
-    // ==============================================================
     // PDF: "Basarisiz odeme sonrasi koltuk serbest birakma"
-    // ==============================================================
 
     /// <remarks>
-    /// ==============================================================
     /// BU TESTI ONCE YANLIS YAZDIM
-    /// ==============================================================
+    ///
     /// Ilk halinde "koltuk kilitli kalmali, kullanici tekrar
     /// denesin" bekliyordum ve gerekcesini de yazmistim: kart hatasi
     /// yaygin, kullanici baska kartla hemen tekrar dener.
@@ -429,9 +408,8 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             await SenaryoKurucu.RezervasyonSuresiniDoldurAsync(db, rezervasyonId);
         }
 
-        // ==========================================================
         // BU UC ADMIN YETKISI ISTIYOR -- ILK DENEMEM 403 ALDI
-        // ==========================================================
+        //
         // Müşteri token'iyla cagirdim ve reddedildi. Dogru davranis:
         // suresi dolan rezervasyonlari toplu temizlemek, siradan bir
         // kullanicinin yapabilecegi bir islem degil.
@@ -442,7 +420,6 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         // Testte Hangfire'i beklemek yerine ucu dogrudan
         // cagiriyoruz: ayni komutu (ExpireReservationsCommand)
         // calistirdigi icin dogrulanan davranis ayni.
-        // ==========================================================
         await KayitOlVeGirisYapAsync("temizlik-admin@ornek.com");
         var adminToken = await RolVerVeYenidenGirisAsync(
             "temizlik-admin@ornek.com", Role.Names.Admin);
@@ -465,9 +442,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             "suresi dolan rezervasyonun koltugu yeniden satilabilir olmali");
     }
 
-    // ==============================================================
     // PDF: "Iade islemi"
-    // ==============================================================
 
     [Fact]
     public async Task Tam_iade_koltuklari_serbest_birakmali()

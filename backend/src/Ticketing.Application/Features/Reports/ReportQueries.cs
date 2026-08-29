@@ -8,17 +8,14 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reports;
 
-// ===================================================================
 // ORTAK: KAPSAM (SCOPE) BELIRLEME
-// ===================================================================
 
 /// <summary>
 /// Raporlarin hangi veriyi kapsayacagini belirler.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF BU DOSYANIN GÜVENLİK OMURGASI
-/// ==================================================================
+///
 /// Bes raporun HEPSI aynı soruyu sormak zorunda: "bu kullanıcı hangi
 /// etkinliklerin verisini görebilir?"
 ///
@@ -33,7 +30,6 @@ namespace Ticketing.Application.Features.Reports;
 /// Tek yerde tutuyorum. Yeni bir rapor eklendiginde bu metodu
 /// cagirmamak, derleme hatası vermez ama kod incelemesinde hemen
 /// goze carpar: "scope nerede?"
-/// ==================================================================
 /// </remarks>
 internal sealed record ReportScope(bool IsAdmin, Guid? OrganizerId)
 {
@@ -95,22 +91,20 @@ internal static class ReportScopeResolver
     /// Kapsami DOGRUDAN kullanıcı kimliginden cozer.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// ARKA PLAN ISLERI ICIN -- HTTP BAGLAMI OLMADAN
-    /// ==============================================================
+    ///
     /// Rapor disa aktarimi arka planda çalışıyor ve orada
     /// ICurrentUser boş. Kimlik, talep anında DOGRULANIP Outbox
-    /// payload'ina yazildi; burada önü kullanıyoruz.
+    /// payload'ina yazildi; burada önü kullanıyorum.
     ///
     /// Yetki kontrolü ZAYIFLAMIYOR: talep sırasında kullanıcının
     /// organizatör ya da admin olduğu zaten dogrulandi. Burada
-    /// yalnızca aynı kapsami yeniden kuruyoruz.
+    /// yalnızca aynı kapsami yeniden kuruyorum.
     ///
-    /// Rolu veritabanindan OKUYORUZ, payload'a yazmiyoruz. Sebep:
+    /// Rolu veritabanindan OKUYORUM, payload'a yazmiyorum. Sebep:
     /// kullanıcının rolü talep ile isleme arasında degismis
     /// olabilir (admin yetkisi alinmis olabilir). Güncel rol her
     /// zaman doğru olandir.
-    /// ==============================================================
     /// </remarks>
     public static async Task<ReportScope> ResolveForUserAsync(
         IApplicationDbContext context,
@@ -152,9 +146,7 @@ public abstract record ReportRangeRequest
     public DateTimeOffset? To { get; init; }
 }
 
-// ===================================================================
 // 1) SATIS OZETI -- GET /api/v1/reports/sales-summary
-// ===================================================================
 
 public sealed record SalesSummaryReport(
     int TicketCount,
@@ -207,22 +199,20 @@ internal sealed class GetSalesSummaryReportQueryHandler
     /// Sorgunun KENDISI. Kapsami disaridan aliyor.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN AYRI BIR static METOT?
-    /// ==============================================================
+    ///
     /// Bu sorgu IKI FARKLI YERDEN çalışıyor:
     ///
     ///   1) HTTP ucu       -> kapsam ICurrentUser'dan cozuluyor
     ///   2) Arka plan isi  -> kapsam Outbox payload'indaki userId'den
     ///
     /// Arka planda HTTP baglami YOK, yani ICurrentUser boş döner.
-    /// Handler'i doğrudan cagirsaydik rapor "yetkisiz" hatası verirdi
+    /// Handler'i doğrudan cagirsaydim rapor "yetkisiz" hatası verirdi
     /// ya da (daha kotusu) kapsam boş kalip TÜM VERIYI dondururdu.
     ///
     /// Sorguyu kapsamdan ayirinca ikisi de aynı kodu kullaniyor ve
     /// yetki kurallari HER IKI YOLDA da AYNEN uygulaniyor. Arka planda
     /// "her seyi gor" gibi bir ayricalik YOK.
-    /// ==============================================================
     /// </remarks>
     internal static async Task<SalesSummaryReport> RunAsync(
         IApplicationDbContext _context,
@@ -304,7 +294,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
             // Admin panelindeki "işlem hacmi" ile KARISTIRILMAMALI --
             // orada iade dusulmuyor çünkü o metrik sistemden gecen
             // parayi olcuyor. Burada organizatorun eline gecen parayi
-            // olcuyoruz; iade dusulmek ZORUNDA.
+            // olcuyorum; iade dusulmek ZORUNDA.
             gross - refundedAmount,
             refundedCount,
             reservationCount,
@@ -313,9 +303,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
     }
 }
 
-// ===================================================================
 // 2) ETKİNLİK DOLULUGU -- GET /api/v1/reports/event-occupancy
-// ===================================================================
 
 public sealed record EventOccupancyRow(
     Guid EventId,
@@ -408,9 +396,7 @@ internal sealed class GetEventOccupancyReportQueryHandler
     }
 }
 
-// ===================================================================
 // 3) ETKİNLİK BAZLI GELIR -- GET /api/v1/reports/revenue-by-event
-// ===================================================================
 
 public sealed record GetRevenueByEventReportQuery : ReportRangeRequest,
     IRequest<Result<IReadOnlyList<EventRevenue>>>;
@@ -480,9 +466,8 @@ internal sealed class GetRevenueByEventReportQueryHandler
                 t.EventSeat.EventSession.Event.Title,
             })
 
-            // ==========================================================
             // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
-            // ==========================================================
+            //
             // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:
             //
@@ -500,7 +485,6 @@ internal sealed class GetRevenueByEventReportQueryHandler
             // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
             // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
-            // ==========================================================
             .Select(g => new
             {
                 g.Key.Id,
@@ -516,9 +500,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
     }
 }
 
-// ===================================================================
 // 4) BİLET TURU SATISLARI -- GET /api/v1/reports/ticket-type-sales
-// ===================================================================
 
 public sealed record TicketTypeSalesRow(
     string TicketTypeName,
@@ -594,7 +576,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
 
                 // Satılan ve iade edilen AYNI gruplamada.
                 //
-                // Iki ayrı sorgu yapip birlestirseydik, aralarinda bir
+                // Iki ayrı sorgu yapip birlestirseydim, aralarinda bir
                 // iade gerceklesirse rakamlar tutarsiz olurdu.
                 Sold = g.Count(t => t.Status == TicketStatus.Active
                                  || t.Status == TicketStatus.Used),
@@ -628,9 +610,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
     }
 }
 
-// ===================================================================
 // 5) ÖDEME DURUMLARI -- GET /api/v1/reports/payment-statuses
-// ===================================================================
 
 public sealed record PaymentStatusRow(
     PaymentStatus Status,
@@ -725,7 +705,7 @@ internal sealed class GetPaymentStatusReportQueryHandler
 
                 // Enum adını METİN olarak da donuyorum.
                 //
-                // Yalnızca sayi donseydik her istemci kendi cevirim
+                // Yalnızca sayi donseydim her istemci kendi cevirim
                 // tablosunu tutmak zorunda kalırdı -- ve enum değişince
                 // biri guncellenmeyi unuturdu.
                 r.Status.ToString(),

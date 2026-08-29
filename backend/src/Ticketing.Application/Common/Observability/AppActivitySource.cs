@@ -7,9 +7,8 @@ namespace Ticketing.Application.Common.Observability;
 /// PDF Sprint 16: "Background job islemleri" takip edilmelidir.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN APPLICATION KATMANINDA?
-/// ==================================================================
+///
 /// İlk yazdigimda bunu WebApi altina koymustum. Sonra arka plan
 /// isleri (Infrastructure) buna ihtiyac duyunca sorun cikti:
 /// Infrastructure, WebApi'ye referans VEREMEZ -- Onion mimarisinin
@@ -21,9 +20,8 @@ namespace Ticketing.Application.Common.Observability;
 /// Bu, bagimliligi TERS CEVIRMENIN küçük ama tipik bir ornegi:
 /// ortak ihtiyac, ortak bagimlilik olan katmana cikiyor.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN System.Diagnostics, OpenTelemetry DEĞİL?
-/// ------------------------------------------------------------------
+///
 /// ActivitySource, .NET'in KENDİ sinifi. OpenTelemetry paketine
 /// bagimli degiliz.
 ///
@@ -31,7 +29,6 @@ namespace Ticketing.Application.Common.Observability;
 /// Yarin OpenTelemetry yerine başka bir sey kullanilirsa buradaki
 /// kodun tek satiri degismez -- yalnızca WebApi'deki dinleyici
 /// yapilandirmasi degisir.
-/// ==================================================================
 /// </remarks>
 public static class AppActivitySource
 {
@@ -41,7 +38,7 @@ public static class AppActivitySource
     /// <remarks>
     /// Sabit olarak paylasiyorum çünkü ad iki yerde birden gecmek
     /// zorunda: burada (uretici) ve OpenTelemetry yapilandirmasinda
-    /// (dinleyici). Iki yerde elle yazsaydık ve biri degisirse,
+    /// (dinleyici). Iki yerde elle yazsaydım ve biri degisirse,
     /// izleme SESSIZCE durur -- hata vermez, sadece hiçbir iz
     /// uretilmez. Tam olarak fark edilmesi en zor ariza türü.
     /// </remarks>
@@ -61,9 +58,8 @@ public static class AppActivitySource
     /// Bir arka plan isi için izleme kapsami baslatir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// DONUS DEGERI null OLABILIR -- VE BU NORMAL
-    /// ==============================================================
+    ///
     /// Hicbir dinleyici yoksa StartActivity null döner. Bu bir hata
     /// değil, bilinçli bir performans tasarimi: izleme kapaliyken
     /// hiçbir nesne tahsis edilmiyor.
@@ -75,7 +71,6 @@ public static class AppActivitySource
     /// giden bir cagri da değil -- uygulamanin kendi ic islemi.
     /// Dogru türü vermek, izleme arayuzunde islerin HTTP
     /// isteklerinden ayrı gruplanmasini sagliyor.
-    /// ==============================================================
     /// </remarks>
     public static Activity? StartJob(string jobName)
     {

@@ -11,9 +11,9 @@ interface EventFilterPanelProps {
 }
 
 /**
- * ==================================================================
+ *
  * ETKİNLİK FILTRE PANELİ -- PDF Sprint 11
- * ==================================================================
+ *
  * PDF'in saydığı sekiz filtre:
  *   Şehir, Kategori, Tarih, Fiyat aralığı, Mekan, Organizatör,
  *   Yaş sınırı, Satış durumu
@@ -31,7 +31,7 @@ interface EventFilterPanelProps {
  * Yani sekiz filtre de API'de VAR; panelde son kullanıcının gerçekten
  * kullanacagi altisi gösteriliyor. Her filtreyi ekrana koymak
  * "eksiksiz" değil, "kullanilamaz" bir arayüz üretirdi.
- * ==================================================================
+ *
  */
 export function EventFilterPanel({
   filters,
@@ -39,9 +39,8 @@ export function EventFilterPanel({
   onReset,
   activeCount,
 }: EventFilterPanelProps) {
-  // ================================================================
   // SEHIR VE KATEGORI: SUNUCUDA REDIS'TE, ISTEMCIDE TANSTACK'TE
-  // ================================================================
+  //
   // Iki katmanli önbellek gibi görünüyor ve oyle -- ikisi de gerekli:
   //
   //   Redis (sunucu)     -> tüm kullanıcılar için veritabani yukunu
@@ -51,7 +50,6 @@ export function EventFilterPanel({
   //
   // staleTime 1 saat: şehir ve kategori listesi neredeyse hiç
   // degismiyor. Varsayılan 60 saniye burada gereksiz istek üretirdi.
-  // ================================================================
   const citiesQuery = useQuery({
     queryKey: ['cities'],
     queryFn: bookingApi.getCities,
@@ -136,7 +134,7 @@ export function EventFilterPanel({
               value={filters.dateFrom?.slice(0, 10) ?? ''}
               // Tarihi ISO 8601'e cevirip UTC olarak gonderiyorum.
               //
-              // Ham "2026-12-05" gonderseydik backend bunu yerel saat
+              // Ham "2026-12-05" gonderseydim backend bunu yerel saat
               // sanabilir ve zaman dilimi farki yuzunden bir günlük
               // kayma olusabilirdi -- kullanıcı 5 Aralik seçip
               // 4 Aralik'taki etkinliği gormezdi.
@@ -153,7 +151,7 @@ export function EventFilterPanel({
               value={filters.dateTo?.slice(0, 10) ?? ''}
               // Bitiş gununun SONU (23:59:59).
               //
-              // T00:00:00 gonderseydik, kullanıcının sectigi son günde
+              // T00:00:00 gonderseydim, kullanıcının sectigi son günde
               // olan etkinlikler haric kalırdı. "5-10 Aralik" diyen
               // kullanıcı 10 Aralik'taki konseri gormezdi -- sessiz
               // ve can sıkıcı bir hata.
@@ -179,7 +177,7 @@ export function EventFilterPanel({
               value={filters.minPrice ?? ''}
               // Number('') === 0 tuzagi.
               //
-              // Dogrudan Number(e.target.value) yazsaydık, kullanıcı
+              // Dogrudan Number(e.target.value) yazsaydım, kullanıcı
               // alanı TEMIZLEDIGINDE filtre "minPrice=0" olurdu --
               // yani filtre kalkmis görünür ama aslında hâlâ aktif
               // kalırdı. Boş kontrolü ŞART.

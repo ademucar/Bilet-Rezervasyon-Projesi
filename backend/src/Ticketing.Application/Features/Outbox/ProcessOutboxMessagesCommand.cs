@@ -52,7 +52,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     /// Mesaj türü -> isleyici eslemesi.
     ///
     /// DI konteyneri kayıtlı TÜM IOutboxMessageHandler'lari enjekte
-    /// ediyor; biz bunlari bir sozluge ceviriyoruz. Yeni bir isleyici
+    /// ediyor; biz bunlari bir sozluge ceviriyorum. Yeni bir isleyici
     /// eklemek için bu dosyaya dokunmaya gerek yok -- yalnızca
     /// DI'ya kaydetmek yeterli.
     /// </summary>
@@ -81,9 +81,8 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     {
         var now = _clock.UtcNow;
 
-        // ==============================================================
         // BEKLEYEN MESAJLARI SEC
-        // ==============================================================
+        //
         // Filtreyi ENTITY'deki IsReadyToProcess ile değil, SORGUDA
         // yazıyorum. Sebep: IsReadyToProcess bir C# metodu; EF önü
         // SQL'e ceviremez ve tabloyu KOMPLE bellege cekerdi.
@@ -118,9 +117,8 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 
         foreach (var message in messages)
         {
-            // ==============================================================
             // CORRELATION ID'YI MESAJDAN DEVRAL -- PDF Sprint 16
-            // ==============================================================
+            //
             // PDF: correlation ID "Background job log" içinde de
             // kullanılmalıdır.
             //
@@ -143,8 +141,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // calismis olsa bile.
             //
             // Kapsam DONGUNUN ICINDE: her mesajin kendi ID'si var,
-            // disarida acsaydik hepsi ilk mesajin ID'siyle loglanirdi.
-            // ==============================================================
+            // disarida acsaydim hepsi ilk mesajin ID'siyle loglanirdi.
             using var kapsam = string.IsNullOrWhiteSpace(message.CorrelationId)
                 ? null
                 : _logger.BeginScope(new Dictionary<string, object>
@@ -153,9 +150,8 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                     ["OutboxMessageId"] = message.Id,
                 });
 
-            // ==========================================================
             // HER MESAJ KENDİ BASINA -- BIRI DIGERINI DEVIRMESIN
-            // ==========================================================
+            //
             // try/catch DONGUNUN ICINDE. Disinda olsaydı tek bir bozuk
             // mesaj (örneğin geçersiz JSON) partinin geri kalanini da
             // durdururdu ve o mesaj her turda aynı engeli olustururdu:
@@ -163,7 +159,6 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             //
             // PDF: "Başarısız işlem yeniden denenmelidir." -- yeniden
             // denenmesi gereken YALNIZCA başarısız olan mesaj.
-            // ==========================================================
             try
             {
                 if (!_handlers.TryGetValue(message.Type, out var handler))
@@ -208,17 +203,16 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             {
                 // Uygulama kapaniyor. Bu bir HATA DEĞİL.
                 //
-                // MarkAsFailed cagirsaydik, her yeniden baslatmada
+                // MarkAsFailed cagirsaydim, her yeniden baslatmada
                 // isleme sirasindaki mesajlarin RetryCount'u boşuna
                 // artardi ve saglam mesajlar zamanla dead letter
-                // olurdu. Mesaji olduğu gibi birakiyoruz; bir
+                // olurdu. Mesaji olduğu gibi birakiyorum; bir
                 // sonraki calismada bastan denenecek.
                 throw;
             }
 #pragma warning disable CA1031 // Genel istisna yakalama
-            // ==========================================================
             // NEDEN GENEL catch? -- CA1031 BILINCLI OLARAK SUSTURULDU
-            // ==========================================================
+            //
             // Analiz kuralı haklı: normalde yalnızca bekledigin
             // istisnalari yakalamalisin, çünkü beklenmedik bir hatayi
             // yutmak sorunu gizler.
@@ -238,13 +232,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // ekraninda görünüyor. Yani gizlenmiyor, KAYIT ALTINA
             // aliniyor -- bir arka plan islemcisinden beklenen tam
             // olarak budur.
-            // ==========================================================
             catch (Exception ex)
 #pragma warning restore CA1031
             {
                 // Mesajin tamami değil, ilk 1000 karakteri.
                 // Yigin izi (stack trace) bazen onbinlerce karakter
-                // olur; tabloyu sismekten koruyoruz. Tam ayrinti
+                // olur; tabloyu sismekten koruyorum. Tam ayrinti
                 // zaten logda.
                 var error = ex.ToString();
                 message.MarkAsFailed(
@@ -265,13 +258,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             }
         }
 
-        // ==============================================================
         // TEK SaveChanges -- DONGUNUN ICINDE DEĞİL
-        // ==============================================================
-        // Her mesajtan sonra kaydetseydik 20 ayrı veritabani gidis
+        //
+        // Her mesajtan sonra kaydetseydim 20 ayrı veritabani gidis
         // donusu olurdu. Burada tek turda hepsi yaziliyor.
         //
-        // Riski kabul ediyoruz: kayıt oncesi cokme olursa islenmis
+        // Riski kabul ediyorum: kayıt oncesi cokme olursa islenmis
         // mesajlar tekrar islenir. Isleyiciler zaten idempotent
         // olmak zorunda olduğu için bu tolere edilebilir.
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -282,9 +274,8 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
         return Result.Success(new OutboxProcessingResult(processed, failed, deadLettered));
     }
 
-    // ==================================================================
     // KAYNAK URETECI ILE LOGLAMA ([LoggerMessage])
-    // ==================================================================
+    //
     // logger.LogInformation("... {A} {B}", a, b) yazmak yerine bunu
     // kullanıyorum çünkü:
     //   - Kutu (boxing) ve dizi tahsisi olmuyor
@@ -292,7 +283,6 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     //   - CA1848 analiz kuralı bunu zorunlu kiliyor
     //
     // Kod uretecinin metotlari doldurabilmesi için sinif `partial`.
-    // ==================================================================
 
     [LoggerMessage(
         EventId = 9001,

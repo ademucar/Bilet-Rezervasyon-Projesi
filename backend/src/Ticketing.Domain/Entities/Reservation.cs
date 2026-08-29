@@ -19,10 +19,8 @@ public class Reservation : ConcurrentEntity
         TotalAmount = Money.Zero("TRY");
     }
 
-    // ---------------------------------------------------------------
     // DURUM MAKINESI
     // docs/02-domain-model.md'deki tablonun birebir karşılığı
-    // ---------------------------------------------------------------
 
     private static readonly Dictionary<ReservationStatus, ReservationStatus[]> AllowedTransitions = new()
     {
@@ -53,9 +51,7 @@ public class Reservation : ConcurrentEntity
         // bu kural yapisal olarak imkansiz hale geliyor.
     };
 
-    // ---------------------------------------------------------------
     // Alanlar
-    // ---------------------------------------------------------------
 
     public Guid UserId { get; private set; }
 
@@ -124,9 +120,7 @@ public class Reservation : ConcurrentEntity
 
     public IReadOnlyCollection<ReservationItem> Items => _items.AsReadOnly();
 
-    // ---------------------------------------------------------------
     // Olusturma
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Yeni rezervasyon oluşturur ve koltukları kilitler.
@@ -204,7 +198,7 @@ public class Reservation : ConcurrentEntity
     ///
     /// Karisabilecek karakterleri (0/O, 1/I/L) bilerek CIKARIYORUM.
     /// Kullanıcı kodu telefonda okuyacak veya elle yazacak; "0" mi "O" mu
-    /// diye dusunmesini istemiyoruz. Bu detay cagri merkezi yukunu
+    /// diye dusunmesini istemiyorum. Bu detay cagri merkezi yukunu
     /// gerçekten azaltir.
     /// </summary>
     private static string GenerateCode()
@@ -220,9 +214,7 @@ public class Reservation : ConcurrentEntity
         return string.Concat("RSV-", new string(karakterler));
     }
 
-    // ---------------------------------------------------------------
     // Durum gecisleri
-    // ---------------------------------------------------------------
 
     private void TransitionTo(ReservationStatus target)
     {

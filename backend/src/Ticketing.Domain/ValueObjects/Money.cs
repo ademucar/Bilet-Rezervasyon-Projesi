@@ -9,11 +9,10 @@ namespace Ticketing.Domain.ValueObjects;
 /// PDF Sprint 6: "Para değerleri decimal olarak tutulmalidir. Floating point
 /// kullanilmamalidir. Currency alanı bulunmalidir."
 ///
-/// ------------------------------------------------------------------
 /// NEDEN decimal, double DEĞİL?
-/// ------------------------------------------------------------------
+///
 /// double ikili (binary) tabanda çalışır ve 0.1 sayisini TAM olarak temsil
-/// edemez -- tipki bizim 1/3'u ondalik olarak tam yazamadigimiz gibi.
+/// edemez -- tipki benim 1/3'u ondalik olarak tam yazamadigimiz gibi.
 ///
 ///     double a = 0.1 + 0.2;   // 0.30000000000000004
 ///
@@ -24,16 +23,15 @@ namespace Ticketing.Domain.ValueObjects;
 /// tam olarak bu is için tasarlanmistir. Biraz daha yavastir ama para
 /// hesabinda hiz değil DOGRULUK onceliklidir.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN readonly record struct?
-/// ------------------------------------------------------------------
+///
 /// record  : Para bir KIMLIK değil, bir DEGERDIR. 100 TL ile 100 TL aynı
 ///           seydir; hangi nesne oldugunun onemi yoktur. record bana bu
 ///           deger bazlı esitligi (Equals, GetHashCode, ==) bedavaya verir.
 ///           Elle yazsaydim mutlaka bir hata yapardim.
 ///
 /// struct  : Her para isleminde heap'te yeni nesne olusturmayi engeller.
-///           Bir rezervasyonda 8 koltuk varsa 8 kez toplama yapiyoruz;
+///           Bir rezervasyonda 8 koltuk varsa 8 kez toplama yapiyorum;
 ///           bunlarin cop toplayiciya yuk olmasinin anlami yok.
 ///
 /// readonly: Olusturulduktan sonra DEGISTIRILEMEZ. Paranin sessizce
@@ -81,9 +79,7 @@ public readonly record struct Money
 
     public static Money Zero(string currency) => new(0m, currency);
 
-    // ---------------------------------------------------------------
     // Operatorler
-    // ---------------------------------------------------------------
 
     public static Money operator +(Money left, Money right)
     {

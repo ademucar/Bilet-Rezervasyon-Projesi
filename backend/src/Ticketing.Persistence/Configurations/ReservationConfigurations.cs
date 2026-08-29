@@ -38,9 +38,8 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
 
         builder.HasIndex(r => r.ReservationCode).IsUnique();
 
-        // ------------------------------------------------------------------
         // IDEMPOTENCY -- PDF Sprint 15
-        // ------------------------------------------------------------------
+        //
         // Kullanıcı butona iki kez basarsa ikinci istek bu unique index'e
         // takilir ve yeni rezervasyon OLUSMAZ.
         //
@@ -57,9 +56,8 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         // "Benim rezervasyonlarim" sayfası
         builder.HasIndex(r => new { r.UserId, r.Status });
 
-        // ------------------------------------------------------------------
         // SURE ASIMI JOB'ININ SORGUSU
-        // ------------------------------------------------------------------
+        //
         //     WHERE Status IN (Locked, PaymentPending) AND ExpiresAt <= now()
         //
         // Bu sorgu DAKIKADA BIR calisacak. Index olmasaydı her calismada

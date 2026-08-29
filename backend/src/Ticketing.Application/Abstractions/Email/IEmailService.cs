@@ -12,7 +12,7 @@ namespace Ticketing.Application.Abstractions.Email;
 /// mesaj yazacak ve gonderimi arka plandaki job yapacak.
 ///
 /// Neden simdiden oyle yapmiyorum? Çünkü Outbox islemcisi Sprint 9'da
-/// yazilacak. Simdi outbox'a yazsaydık e-postalar HİÇ gonderilmezdi ve
+/// yazilacak. Simdi outbox'a yazsaydım e-postalar HİÇ gonderilmezdi ve
 /// akışı ucdan uca dogrulayamazdik. Calisir bir sey birakip sonra
 /// iyilestirmek, çalışmayan bir iskelet birakmaktan iyidir.
 /// </summary>

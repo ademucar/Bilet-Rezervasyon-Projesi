@@ -4,9 +4,8 @@ namespace Ticketing.Application.Abstractions.Storage;
 /// Dosya depolama soyutlamasi. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN SOYUTLAMA? DISKE YAZMAK ZATEN BASIT
-/// ==================================================================
+///
 /// File.WriteAllBytes cagirmak bir satır. O zaman bu arayüz niye?
 ///
 /// 1) Application katmani File API'sini BILMEMELI. Onion mimarisinde
@@ -19,8 +18,7 @@ namespace Ticketing.Application.Abstractions.Storage;
 ///    O gün yalnızca bu arayuzun yeni bir uygulamasi yazilacak.
 ///
 /// 3) Test edilebilirlik: handler'i gerçek disk olmadan test
-///    edebiliyoruz.
-/// ==================================================================
+///    edebiliyorum.
 /// </remarks>
 public interface IFileStorage
 {

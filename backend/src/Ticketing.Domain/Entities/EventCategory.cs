@@ -27,7 +27,7 @@ public class EventCategory : AuditableEntity
     ///
     /// Neden gerekli? Etkinlik listesi sayfasinin adresi
     ///     /etkinlikler?kategori=rock-konseri
-    /// seklinde olacak. Guid kullansaydık adres
+    /// seklinde olacak. Guid kullansaydım adres
     ///     /etkinlikler?kategori=8f3a...
     /// olurdu; ne kullanıcı okuyabilir ne de arama motoru anlamlandirabilir.
     /// </summary>

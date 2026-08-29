@@ -9,10 +9,8 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Outbox;
 
-// ===================================================================
 // YAKLASAN ETKİNLİK HATIRLATMASI
 // PDF Sprint 9 Background Job: "Yaklasan etkinlik hatirlatmasi"
-// ===================================================================
 
 /// <param name="WithinHours">
 /// Kac saat içinde baslayan oturumlar için hatirlatma gonderilecek.
@@ -43,16 +41,14 @@ internal sealed class SendEventRemindersCommandHandler
         var now = _clock.UtcNow;
         var upperBound = now.AddHours(request.WithinHours);
 
-        // ==============================================================
         // GECMIS OTURUMLARI DISLA (StartDate > now)
-        // ==============================================================
-        // Yalnızca "StartDate <= upperBound" yazsaydık, GECMISTEKI tüm
+        //
+        // Yalnızca "StartDate <= upperBound" yazsaydım, GECMISTEKI tüm
         // oturumlar da kosula uyardi ve sistem bir yil önceki
         // etkinlikler için hatirlatma gondermeye calisirdi.
         //
         // Bu, kolay atlanan ama sonucu utanc verici bir hata: müşteri
         // "gecen yilki konseriniz yarin başlıyor" e-postası alır.
-        // ==============================================================
         var sessions = await _context.EventSessions
             .AsNoTracking()
             .Where(s => s.StartDate > now
@@ -75,9 +71,8 @@ internal sealed class SendEventRemindersCommandHandler
 
         var sessionIds = sessions.ConvertAll(s => s.Id);
 
-        // ==============================================================
         // BİLET SAHIPLERI TEK SORGUDA -- OTURUM BASINA DEĞİL
-        // ==============================================================
+        //
         // İlk yazimda bunu oturum projeksiyonunun icine gomecektim.
         // Ayirdim çünkü ic ice koleksiyon projeksiyonu EF'te ya
         // cevrilemez ya da her oturum için ayrı sorgu üretir (N+1):
@@ -85,7 +80,6 @@ internal sealed class SendEventRemindersCommandHandler
         //
         // Distinct SUNUCUDA çalışıyor: bir kullanıcının aynı oturuma
         // 4 bileti varsa 4 değil 1 satır döner ve 1 hatirlatma alır.
-        // ==============================================================
         var ticketHolders = await _context.Tickets
             .AsNoTracking()
             .Where(t => sessionIds.Contains(t.EventSessionId) && t.Status == TicketStatus.Active)
@@ -109,15 +103,14 @@ internal sealed class SendEventRemindersCommandHandler
 
             foreach (var userId in userIds)
             {
-                // ==================================================
                 // JOB DOGRUDAN BILDIRIM YAZMIYOR, OUTBOX'A YAZIYOR
-                // ==================================================
+                //
                 // Neden dolayli yol? Çünkü PDF'in kuralı su:
                 // "Job islemleri kullanıcı istegini gereksiz yere
                 // bekletmemelidir" ve "Başarısız işlem yeniden
                 // denenmelidir".
                 //
-                // Bildirimi burada yazsaydık ve e-posta gonderimi
+                // Bildirimi burada yazsaydım ve e-posta gonderimi
                 // başarısız olsaydı, yeniden deneme mekanizmasi
                 // olmazdi -- job bir sonraki gün calisana kadar
                 // hiçbir sey olmazdi ve o zaman da etkinlik gecmis
@@ -125,7 +118,6 @@ internal sealed class SendEventRemindersCommandHandler
                 //
                 // Outbox'a yazinca, isleyici başarısız olursa ustel
                 // geri cekilme ile dakikalar içinde tekrar denenir.
-                // ==================================================
                 _context.OutboxMessages.Add(OutboxMessage.Create(
                     OutboxMessageTypes.EventReminder,
                     JsonSerializer.Serialize(new EventReminderPayload(
@@ -148,9 +140,7 @@ internal sealed class SendEventRemindersCommandHandler
     }
 }
 
-// ===================================================================
 // GUNLUK SATIS OZETI -- PDF: "Günlük satış özeti oluşturma"
-// ===================================================================
 
 /// <param name="Date">
 /// Raporlanacak gün. null ise DUNU raporlar.
@@ -187,9 +177,8 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
         var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
         var end = start.AddDays(1);
 
-        // ==============================================================
         // TEK SORGU, IKI TOPLAM -- GroupBy ile
-        // ==============================================================
+        //
         // Brüt ve iade tutarini ayrı sorgularla da alabilirdim ama o
         // zaman iki tur veritabani gidis donusu olurdu. Daha onemlisi:
         // iki sorgu arasında yeni bir ödeme gelirse rakamlar birbiriyle
@@ -213,9 +202,10 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
         // Coklu para birimi bu ozette DESTEKLENMIYOR: en çok işlem
         // yapilan para birimini raporluyorum.
         //
-        // Dogru çözüm para birimi başına ayrı satır olurdu ama PDF
-        // Sprint 13'te gerçek raporlama ekrani gelecek; burada
-        // günlük bir özet bildirimi yeterli. Bunu sessizce
+        // Dogru çözüm para birimi başına ayrı satır olurdu. Sprint
+        // 13'te gerçek raporlama ekrani geldi ve ayrintili kirilim
+        // orada var; buradaki gunluk ozet bildirimi icin tek satir
+        // yeterli. Bunu sessizce
         // toplamiyorum -- farklı para birimlerini toplamak
         // (100 TRY + 50 USD = 150) açık bir hata olurdu.
         var main = payments.OrderByDescending(p => p.Count).FirstOrDefault();

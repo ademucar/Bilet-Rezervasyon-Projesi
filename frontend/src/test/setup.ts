@@ -2,9 +2,8 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 
-// ==================================================================
 // HER TESTTEN SONRA DOM TEMIZLENIYOR
-// ==================================================================
+//
 // Testing Library bileşenleri gerçek bir DOM'a bağlıyor. Temizlemezsek
 // önceki testin render ettiği elemanlar sayfada kalır ve
 // getByText("Giriş") gibi sorgular "birden fazla eşleşme" hatası verir.
@@ -12,19 +11,16 @@ import { afterEach, vi } from 'vitest'
 // Daha kötüsü: bazen hata vermez, ESKİ elemanı bulur ve test yanlış
 // bir şeyi doğrular. Sırasına göre geçip kalan testler, ayıklanması en
 // zor test türüdür.
-// ==================================================================
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
 })
 
-// ==================================================================
 // jsdom'DA OLMAYAN TARAYICI API'LERI
-// ==================================================================
+//
 // jsdom tam bir tarayıcı değil; bazı API'ler eksik. Bileşenlerimiz
 // bunları kullanıyor ve mock'lamazsak test "matchMedia is not a
 // function" diye patlar -- oysa bileşende hata yok.
-// ==================================================================
 
 // Tailwind'in duyarlı (responsive) davranışını test ederken gerekli.
 Object.defineProperty(window, 'matchMedia', {

@@ -36,9 +36,8 @@ internal sealed class GetCitiesQueryHandler
         GetCitiesQuery request,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // PDF Sprint 11: "Şehir listesi" cache edilebilir.
-        // ==============================================================
+        //
         // Onbelleklemek için en ideal veri: 81 satır, yillardir
         // degismiyor ve neredeyse her sayfada isteniyor (filtre
         // açılır listesi).
@@ -47,7 +46,6 @@ internal sealed class GetCitiesQueryHandler
         // yüzden ortak onbellekte tutulmasi güvenli.
         // PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache
         // içinde tutulmamalidir." Burada kullanıcıya ozel hiçbir sey yok.
-        // ==============================================================
         var cities = await _cache.GetOrCreateAsync(
             CacheKeys.Cities,
             LoadAsync,
@@ -66,7 +64,7 @@ internal sealed class GetCitiesQueryHandler
             .OrderBy(c => c.Name)
             // Projeksiyon: yalnızca 3 sutun çekiliyor.
             // Entity'nin tamamini yukleyip donusturseydik CreatedAt,
-            // UpdatedBy, IsDeleted gibi alanlari da boşuna tasirdik.
+            // UpdatedBy, IsDeleted gibi alanlari da boşuna tasirdim.
             .Select(c => new CityDto(c.Id, c.Name, c.PlateCode))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

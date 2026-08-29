@@ -7,9 +7,8 @@ namespace Ticketing.WebApi.Observability;
 /// Saglik kontrolleri. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// UC UC, UC FARKLI SORU
-/// ==================================================================
+///
 /// PDF ucunu de istiyor ve ucu de farklı bir soruya cevap veriyor.
 /// Aralarindaki farki bilmemek, uretimde en can sıkıcı hatalardan
 /// birine yol aciyor.
@@ -27,10 +26,9 @@ namespace Ticketing.WebApi.Observability;
 ///
 ///   GET /health        Insan için: her seyin özeti.
 ///
-/// ------------------------------------------------------------------
 /// BU AYRIM NEDEN HAYATI? -- SOMUT FELAKET SENARYOSU
-/// ------------------------------------------------------------------
-/// Diyelim /health/live de veritabanini kontrol ettik.
+///
+/// Diyelim /health/live de veritabanini kontrol ettim.
 ///
 /// PostgreSQL 30 saniye için yanit vermez oldu (bakim, ag dalgalanmasi).
 /// TÜM kapsayicilarin live probe'u başarısız olur. Kubernetes hepsini
@@ -44,7 +42,6 @@ namespace Ticketing.WebApi.Observability;
 /// Dogru davranis: live gecer (process sağlıklı), ready kalır
 /// (trafik alma). Veritabani donunce ready kendiliginden gecer ve
 /// trafik geri gelir. Hicbir kapsayici oldurulmez.
-/// ==================================================================
 /// </remarks>
 internal static class HealthChecksSetup
 {
@@ -55,7 +52,7 @@ internal static class HealthChecksSetup
     /// Etiket kullanmamin sebebi: /health/ready yalnızca bu etikete
     /// sahip kontrolleri calistiriyor, /health/live ise HICBIRINI.
     ///
-    /// Etiketsiz yapsaydik, her yeni saglik kontrolü otomatik olarak
+    /// Etiketsiz yapsaydim, her yeni saglik kontrolü otomatik olarak
     /// live probe'a da girerdi -- yukaridaki felaket senaryosunu
     /// farkinda olmadan geri getirirdik.
     /// </remarks>
@@ -70,9 +67,7 @@ internal static class HealthChecksSetup
 
         var builder = services.AddHealthChecks();
 
-        // ==============================================================
         // 1) VERITABANI -- PDF maddesi
-        // ==============================================================
         var postgres = configuration.GetConnectionString("Postgres");
 
         if (!string.IsNullOrWhiteSpace(postgres))
@@ -92,9 +87,7 @@ internal static class HealthChecksSetup
                 tags: [ReadyTag]);
         }
 
-        // ==============================================================
         // 2) REDIS -- PDF maddesi
-        // ==============================================================
         var redis = configuration.GetConnectionString("Redis");
 
         if (!string.IsNullOrWhiteSpace(redis))
@@ -103,30 +96,27 @@ internal static class HealthChecksSetup
                 redisConnectionString: redis,
                 name: "redis",
 
-                // ==========================================================
                 // DEGRADED, UNHEALTHY DEĞİL -- BILINCLI KARAR
-                // ==========================================================
+                //
                 // Sprint 11'de önbelleği BILINCLI olarak opsiyonel
-                // yaptik: Redis yoksa sorgular veritabanindan
+                // yaptim: Redis yoksa sorgular veritabanindan
                 // karsilaniyor (Null Object Pattern). Yani Redis
                 // olmadan sistem YAVAS çalışır, BOZUK calismaz.
                 //
-                // Unhealthy deseydik: Redis dustugunde /health/ready
+                // Unhealthy deseydim: Redis dustugunde /health/ready
                 // başarısız olur, Kubernetes tüm kapsayicilari yuk
                 // dengeleyiciden cikarir ve site TAMAMEN erişilemez
                 // hale gelirdi.
                 //
                 // Yani calisabilecek bir sistemi, çalışmayan bir
-                // önbellek yuzunden kapatmis olurduk. Degraded doğru
+                // önbellek yuzunden kapatmis olurdum. Degraded doğru
                 // seviye: alarm üretir, trafigi kesmez.
-                // ==========================================================
                 failureStatus: HealthStatus.Degraded,
                 tags: [ReadyTag]);
         }
 
-        // ==============================================================
         // 3) ARKA PLAN ISLERI -- PDF maddesi
-        // ==============================================================
+        //
         // Hangfire kontrolü iki sey söylüyor: depolama erişilebilir mi
         // ve CALISAN (worker) var mi.
         //
@@ -148,10 +138,9 @@ internal static class HealthChecksSetup
             failureStatus: HealthStatus.Degraded,
             tags: [ReadyTag]);
 
-        // ==============================================================
         // 4) DEPOLAMA -- PDF maddesi
-        // ==============================================================
-        // Sprint 15'te dosya yukleme ekledik; Sprint 13'te rapor
+        //
+        // Sprint 15'te dosya yukleme ekledim; Sprint 13'te rapor
         // disa aktarimi. Ikisi de DISKE yazıyor.
         //
         // Disk dolarsa: yukleme başarısız olur, rapor uretilemez ve
@@ -202,9 +191,8 @@ internal sealed class StorageHealthCheck : IHealthCheck
                     $"Depolama klasörü yok: {_yol}"));
             }
 
-            // ==========================================================
             // GERCEKTEN YAZMAYI DENIYORUZ
-            // ==========================================================
+            //
             // Directory.Exists yeterli DEĞİL: klasor var olabilir ama
             // salt okunur baglanmis olabilir (Docker volume ayari),
             // izinler degismis olabilir veya disk dolmuş olabilir.
@@ -214,7 +202,6 @@ internal sealed class StorageHealthCheck : IHealthCheck
             //
             // Gecici dosya adı Guid: es zamanlı kontroller birbirinin
             // dosyasini silmesin.
-            // ==========================================================
             var denemeDosyasi = Path.Combine(_yol, $".health-{Guid.NewGuid():N}");
 
             File.WriteAllBytes(denemeDosyasi, [0]);
@@ -243,9 +230,8 @@ internal sealed class StorageHealthCheck : IHealthCheck
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // ==========================================================
             // ISTISNA MESAJI MASKELENIYOR
-            // ==========================================================
+            //
             // Saglik ucu genellikle disaridan erişilebilir olur
             // (yuk dengeleyici cagiriyor). IO istisnalari TAM DOSYA
             // YOLUNU iceriyor:
@@ -253,8 +239,7 @@ internal sealed class StorageHealthCheck : IHealthCheck
             //
             // Sunucu dizin yapisini disariya acmak, Sprint 15'te
             // stack trace için verdigimiz kararin aynisi -- burada da
-            // maskeliyoruz.
-            // ==========================================================
+            // maskeliyorum.
             return Task.FromResult(HealthCheckResult.Unhealthy(
                 "Depolamaya yazılamıyor.",
                 exception: null,

@@ -5,9 +5,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.SeatLayouts;
 
-// ===================================================================
 // DTO'lar
-// ===================================================================
 
 public sealed record SeatLayoutDetail(
     Guid Id,
@@ -46,9 +44,7 @@ public sealed record SeatLayoutListItem(
     int SectionCount,
     int SeatCount);
 
-// ===================================================================
 // PLAN DETAYI -- PDF: GET /api/v1/seat-layouts/{id}
-// ===================================================================
 
 public sealed record GetSeatLayoutQuery(Guid Id) : IRequest<Result<SeatLayoutDetail>>;
 
@@ -63,9 +59,8 @@ internal sealed class GetSeatLayoutQueryHandler
         GetSeatLayoutQuery request,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // AsSplitQuery -- BURADA KRITIK
-        // ==============================================================
+        //
         // Bu sorgu uc seviyeli bir koleksiyon zinciri iceriyor:
         //     SeatLayout -> Sections -> Seats
         //
@@ -81,7 +76,6 @@ internal sealed class GetSeatLayoutQueryHandler
         // Ne zaman kullanilmaz? Tek koleksiyon varsa veya kayıt sayısı
         // azsa; o zaman ekstra gidis-donus maliyeti kazanci gecer.
         // Burada koltuk sayısı binleri bulabilecegi için acikca aciyorum.
-        // ==============================================================
         var layout = await _context.SeatLayouts
             .AsNoTracking()
             .AsSplitQuery()
@@ -134,9 +128,7 @@ internal sealed class GetSeatLayoutQueryHandler
     }
 }
 
-// ===================================================================
 // SALONA AIT PLANLARIN LISTESI
-// ===================================================================
 
 public sealed record GetSeatLayoutsByHallQuery(Guid HallId)
     : IRequest<Result<IReadOnlyList<SeatLayoutListItem>>>;

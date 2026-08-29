@@ -160,9 +160,8 @@ export const reportsApi = {
   /**
    * Rapor disa aktarimi TALEP EDER.
    *
-   * ==============================================================
    * BU CAGRI DOSYAYI DONDURMEZ
-   * ==============================================================
+   *
    * PDF: "Rapor üretimi background job olarak calistirilmali ve
    * tamamlandiginda kullanıcıya bildirim gonderilmelidir."
    *
@@ -172,7 +171,7 @@ export const reportsApi = {
    * Arayuzde bunu ACIKCA söylemek zorundayız: kullanıcı "indir"
    * dedikten sonra dosya inmezse ve hiçbir açıklama gormezse
    * dugmenin bozuk olduğunu dusunur.
-   * ==============================================================
+   *
    */
   requestExport: async (type: number, format: number): Promise<string> => {
     const { data } = await api.post<{ exportId: string }>('/reports/export', { type, format })

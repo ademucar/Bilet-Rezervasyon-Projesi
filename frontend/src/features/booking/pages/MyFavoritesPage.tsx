@@ -55,15 +55,13 @@ export function MyFavoritesPage() {
 
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {favoritesQuery.data?.map((ev) => {
-            // ==========================================================
             // İPTAL EDILMIS ETKİNLİK LISTEDEN CIKARILMIYOR
-            // ==========================================================
+            //
             // Backend bunlari da döndürüyor (bilinçli). Kullanıcı
             // favoriledigi etkinliğin iptal edildigini GORMELI.
             //
-            // Sessizce kaldirsaydik "favorim nereye gitti?" derdi ve
+            // Sessizce kaldirsaydim "favorim nereye gitti?" derdi ve
             // cevabini hiçbir yerde bulamazdi.
-            // ==========================================================
             const iptalEdildi = ev.status === EventStatus.Cancelled
             const tamamlandi = ev.status === EventStatus.Completed
 

@@ -12,9 +12,8 @@ namespace Ticketing.WebApi.Controllers;
 /// <summary>
 /// Mekan ve salon yönetimi. PDF Sprint 4.
 ///
-/// ==================================================================
 /// YETKILENDIRME STRATEJISI
-/// ==================================================================
+///
 /// OKUMA islemleri ANONIM: kullanıcı etkinlik ararken mekan bilgisini
 /// gormeli ve bunun için giriş yapmak zorunda kalmamali.
 ///
@@ -23,7 +22,6 @@ namespace Ticketing.WebApi.Controllers;
 ///
 /// Bu ayrim olmasaydı her organizatör kendi "salon"unu tanimlardi ve
 /// "aynı salon aynı saatte iki etkinlige atanamaz" kuralı anlamsizlasirdi.
-/// ==================================================================
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/venues")]
@@ -78,9 +76,8 @@ public sealed class VenuesController : ApiControllerBase
         [FromBody] UpdateVenueRequest request,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // ID GOVDEDEN DEĞİL URL'DEN ALINIYOR
-        // ==============================================================
+        //
         // Komut nesnesini doğrudan [FromBody] ile baglasaydim, istemci
         // URL'de bir Id, govdede BASKA bir Id gonderebilirdi:
         //     PUT /api/v1/venues/AAA   { "id": "BBB", ... }
@@ -137,9 +134,7 @@ public sealed record UpdateVenueRequest(
 
 public sealed record CreateHallRequest(string Name, int Capacity);
 
-// ===================================================================
 // SALON VE OTURMA PLANI
-// ===================================================================
 
 /// <summary>Salon ve oturma planı islemleri. PDF Sprint 4.</summary>
 [ApiVersion("1.0")]
@@ -149,7 +144,7 @@ public sealed class HallsController : ApiControllerBase
     /// <summary>Salonun adını ve kapasitesini günceller.</summary>
     /// <remarks>
     /// Kapasite, mevcut oturma planlarindaki koltuk sayisindan KUCUK
-    /// olamaz: aksi halde planı geçersiz kilardik ve o salonda
+    /// olamaz: aksi halde planı geçersiz kilardim ve o salonda
     /// üretilmiş koltuklar kapasiteyi asmis görünürdü.
     /// </remarks>
     /// <response code="204">Guncellendi.</response>

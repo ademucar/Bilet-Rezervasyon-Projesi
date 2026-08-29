@@ -38,9 +38,8 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(e => e.CancellationReason).HasMaxLength(1000);
         builder.Property(e => e.Status).HasConversion<int>();
 
-        // ------------------------------------------------------------------
         // CancellationPolicy -> jsonb
-        // ------------------------------------------------------------------
+        //
         // Uc ayrı sutun (FullRefundHours, PartialRefundHours, Percentage)
         // yerine tek bir jsonb sutunu kullanıyorum.
         //
@@ -87,9 +86,7 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
                .HasForeignKey(t => t.EventId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        // ------------------------------------------------------------------
         // INDEX'LER -- docs/01-is-analizi.md soru 16
-        // ------------------------------------------------------------------
 
         // Ana listeleme sorgusu: WHERE Status = SalesOpen ORDER BY EventDate
         builder.HasIndex(e => new { e.Status, e.EventDate })
@@ -138,7 +135,7 @@ internal sealed class EventSessionConfiguration : IEntityTypeConfiguration<Event
         // NOT: Index tek başına kuralı GARANTI ETMEZ -- sadece hizlandirir.
         // Tam garanti için PostgreSQL'in EXCLUDE constraint'i gerekiyor:
         //     EXCLUDE USING gist (HallId WITH =, tsrange(StartDate, EndDate) WITH &&)
-        // Bunu Sprint 5'te ham SQL migration'i olarak ekleyecegiz;
+        // Bunu Sprint 5'te ham SQL migration'i olarak ekleyecegim;
         // EF Core bu constraint tipini fluent API ile desteklemiyor.
         builder.HasIndex(s => new { s.HallId, s.StartDate, s.EndDate })
                .HasDatabaseName("ix_event_sessions_hall_period");
@@ -184,10 +181,9 @@ internal sealed class TicketTypeSectionConfiguration : IEntityTypeConfiguration<
                .HasForeignKey(ts => ts.SeatSectionId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        // ==============================================================
         // PDF is kuralı: "Aynı koltuk birden fazla aktif bilet turune
         // atanamaz."
-        // ==============================================================
+        //
         // Bu index, bir BOLUMUN yalnızca BIR bilet turune ait olmasini
         // garanti ediyor. Bölüm tekil olduğu için o bolumdeki koltuklar
         // da otomatik olarak tek bir bilet turune ait oluyor.
@@ -214,9 +210,7 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
 
         builder.ConfigureAuditFields();
 
-        // ==================================================================
         // BU IKI SATIR PROJENIN EN KRITIK KISMI
-        // ==================================================================
 
         // 1) OPTIMISTIC CONCURRENCY
         // Iki kullanıcı aynı koltuğu aynı anda kilitlemeye calisirsa
@@ -239,8 +233,6 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
                .IsUnique()
                .HasFilter("\"IsDeleted\" = false")
                .HasDatabaseName("ix_event_seats_session_seat");
-
-        // ==================================================================
 
         builder.Property(es => es.Status).HasConversion<int>();
 

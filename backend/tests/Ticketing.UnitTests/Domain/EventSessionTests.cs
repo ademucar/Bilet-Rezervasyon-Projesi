@@ -26,11 +26,9 @@ public class EventSessionTests
         return evt.AddSession(Baslangic, Baslangic.AddHours(2), Guid.CreateVersion7(), Guid.CreateVersion7());
     }
 
-    // ---------------------------------------------------------------
     // ARALIK CAKISMA FORMULU
     // Formul: a1 < b2 VE b1 < a2
     // Oturum: 20:00 - 22:00
-    // ---------------------------------------------------------------
 
     [Theory]
     // --- CAKISANLAR ---
@@ -57,9 +55,7 @@ public class EventSessionTests
         sonuc.Should().Be(beklenen, senaryo);
     }
 
-    // ---------------------------------------------------------------
     // Tarih doğrulama
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_BitisBaslangictanOnceyse_HataFirlatmali()
@@ -94,9 +90,7 @@ public class EventSessionTests
              .Which.ErrorCode.Should().Be("event_session.invalid_dates");
     }
 
-    // ---------------------------------------------------------------
     // Koltuk uretimi ve plan degisikligi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void ChangeSeatLayout_KoltuklarUretilmisse_HataFirlatmali()

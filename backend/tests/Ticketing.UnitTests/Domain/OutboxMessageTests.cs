@@ -18,9 +18,7 @@ public class OutboxMessageTests
     private static OutboxMessage YeniMesaj()
         => OutboxMessage.Create("TestMesaji", """{"a":1}""");
 
-    // ===============================================================
     // OLUSTURMA
-    // ===============================================================
 
     [Fact]
     public void Create_YeniMesaj_IslenmemisOlmali()
@@ -53,9 +51,7 @@ public class OutboxMessageTests
              .Which.ErrorCode.Should().Be("outbox.payload_required");
     }
 
-    // ===============================================================
     // PDF: "Ayni Outbox kaydi iki kez islenmemelidir."
-    // ===============================================================
 
     [Fact]
     public void MarkAsProcessed_IslenmisMesaj_IlkZamaniKorumali()
@@ -82,9 +78,7 @@ public class OutboxMessageTests
         mesaj.IsReadyToProcess(Simdi.AddHours(1)).Should().BeFalse();
     }
 
-    // ===============================================================
     // PDF: "Basarisiz islem yeniden denenmelidir."
-    // ===============================================================
 
     [Fact]
     public void MarkAsFailed_IlkHata_YenidenDenemeIcinPlanlanmali()
@@ -161,9 +155,7 @@ public class OutboxMessageTests
         mesaj.NextRetryAt.Should().Be(Simdi.AddMinutes(60));
     }
 
-    // ===============================================================
     // PDF: "Belirli deneme sayisindan sonra hata kaydi olusturulmalidir."
-    // ===============================================================
 
     [Fact]
     public void MarkAsFailed_EsigeUlasinca_DeadLetterOlmali()
@@ -202,9 +194,7 @@ public class OutboxMessageTests
         mesaj.IsReadyToProcess(Simdi.AddDays(1)).Should().BeFalse();
     }
 
-    // ===============================================================
     // TOPARLANMA
-    // ===============================================================
 
     [Fact]
     public void MarkAsProcessed_HatadanSonraBasarili_HataTemizlenmeli()

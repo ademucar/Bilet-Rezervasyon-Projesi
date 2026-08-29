@@ -9,9 +9,8 @@ namespace Ticketing.ArchitectureTests;
 /// "Domain Entity dogrudan DTO dondurmemelidir."
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU KURAL NEDEN VAR?
-/// ==================================================================
+///
 /// Bir entity'nin uzerine ToDto() yazmak cok pratik gorunuyor:
 ///
 ///     public EventDto ToDto() => new(Id, Title, ...);
@@ -35,7 +34,6 @@ namespace Ticketing.ArchitectureTests;
 /// Projemizde DTO donusumu Application katmaninda, ToDto() uzanti
 /// metotlariyla yapiliyor (ornegin PaymentQueries icindeki
 /// projeksiyonlar). Bu test o sinirin korundugunu dogruluyor.
-/// ==================================================================
 /// </remarks>
 public class DomainPurityTests
 {
@@ -54,16 +52,14 @@ public class DomainPurityTests
 
         foreach (var tip in domainTipleri)
         {
-            // ==================================================
             // YALNIZCA public YUZEY INCELENIYOR
-            // ==================================================
+            //
             // private bir yardimci metodun ne dondurdugu disariya
             // sizmaz. Kural, KATMANLAR ARASI sozlesmeyle ilgili --
             // ic ayrintiyla degil.
             //
             // DeclaredOnly: miras alinan (object.ToString gibi)
             // metotlar her tipte tekrar sayilmasin.
-            // ==================================================
             var metotlar = tip.GetMethods(
                 BindingFlags.Public | BindingFlags.Instance |
                 BindingFlags.Static | BindingFlags.DeclaredOnly);
@@ -129,10 +125,10 @@ public class DomainPurityTests
     /// </summary>
     private static bool DtoTuruMu(Type tip)
     {
-        // Koleksiyonlarin ICINE de bakiyoruz: IReadOnlyList&lt;EventDto&gt;
+        // Koleksiyonlarin ICINE de bakiyorum: IReadOnlyList&lt;EventDto&gt;
         // donduren bir metot da ihlaldir.
         //
-        // Bunu unutsaydik kural kolayca atlatilirdi: tekil DTO yerine
+        // Bunu unutsaydim kural kolayca atlatilirdi: tekil DTO yerine
         // liste donduren bir metot yazmak yeterdi.
         if (tip.IsGenericType)
         {

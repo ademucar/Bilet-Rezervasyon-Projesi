@@ -4,9 +4,8 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.WebApi.Security;
 
 /// <summary>
-/// ==================================================================
 /// HANGFIRE IZLEME EKRANI ERISIM KONTROLU
-/// ==================================================================
+///
 /// Hangfire'in /hangfire ekrani VARSAYILAN OLARAK YALNIZCA
 /// localhost'tan erişilebilir. Yani uretime cikildiginda ekran
 /// çalışır görünür ama uzaktan acilmaz.
@@ -24,7 +23,6 @@ namespace Ticketing.WebApi.Security;
 /// Yani burasi salt okunur bir gosterge paneli değil, bir YONETIM
 /// arayuzu. Yanlis yapilandirilirsa saldirgan istedigi is'i istedigi
 /// zaman tetikleyebilir.
-/// ==================================================================
 /// </summary>
 public sealed class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
 {
@@ -39,7 +37,7 @@ public sealed class HangfireDashboardAuthorizationFilter : IDashboardAuthorizati
         // 1) Kimlik dogrulanmis olmalı
         // 2) Admin rolunde olmalı
         //
-        // Yalnızca ikincisine baksaydik ve IsInRole kimliksiz bir
+        // Yalnızca ikincisine baksaydim ve IsInRole kimliksiz bir
         // kullanıcı için beklenmedik bir sey donduseydi, ekran acilirdi.
         // Iki kosulu da acikca yazmak, tek satirlik bir hatanin
         // tüm paneli acmasini engelliyor.

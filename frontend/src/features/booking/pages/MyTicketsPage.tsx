@@ -28,7 +28,7 @@ export function MyTicketsPage() {
   const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<number | undefined>(undefined)
 
-  // Ödeme sonrası buraya "?yeni=1" ile geliyoruz.
+  // Ödeme sonrası buraya "?yeni=1" ile geliyorum.
   // Kullanıcının "odemem gecti mi?" tereddudunu ortadan kaldiriyor.
   const isFreshPurchase = searchParams.get('yeni') === '1'
 
@@ -66,7 +66,7 @@ export function MyTicketsPage() {
               type="button"
               onClick={() => setFilter(tab.value)}
               // aria-pressed: ekran okuyucuya hangi filtrenin açık
-              // olduğunu söyler. Yalnızca renk değiştirseydik
+              // olduğunu söyler. Yalnızca renk değiştirseydim
               // görmeyen kullanıcı hangi sekmede olduğunu bilemezdi.
               aria-pressed={filter === tab.value}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${

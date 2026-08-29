@@ -7,9 +7,8 @@ namespace Ticketing.Persistence.Seeding;
 /// <summary>
 /// Başlangıç verisi. YALNIZCA gelistirme ortaminda çalışır.
 ///
-/// ==================================================================
 /// NEDEN MIGRATION'IN HasData'SI DEĞİL?
-/// ==================================================================
+///
 /// Roller için HasData kullandim (RoleConfiguration'da). Şehirler ve
 /// kategoriler için KULLANMIYORUM. Fark su:
 ///
@@ -18,14 +17,13 @@ namespace Ticketing.Persistence.Seeding;
 ///                 Her ortamda AYNI olmalı. -> HasData doğru yer.
 ///
 ///   Şehirler   -> Sadece VERIDIR. Admin arayuzunden eklenip
-///                 silinebilir. HasData ile koysaydık, admin bir
+///                 silinebilir. HasData ile koysaydım, admin bir
 ///                 şehri sildiginde bir sonraki migration önü geri
 ///                 getirmeye calisirdi.
 ///
 /// Ayrıca HasData'daki her degisiklik yeni bir migration gerektirir.
 /// 81 sehirlik listeyi migration'a gommek, sema degisikligi ile veri
 /// degisikligini birbirine karistirmak olurdu.
-/// ==================================================================
 /// </summary>
 public sealed class DatabaseSeeder
 {
@@ -49,7 +47,7 @@ public sealed class DatabaseSeeder
         // IDEMPOTENT: zaten veri varsa hiçbir sey yapma.
         //
         // Bu kontrol olmasaydı uygulama her baslatildiginda şehirler
-        // tekrar eklenmeye calisilir ve unique index ihlali alırdık.
+        // tekrar eklenmeye calisilir ve unique index ihlali alırdım.
         // Seeder'lar HER ZAMAN idempotent olmalı -- uygulamanin kac
         // kez baslatildigi belli olmaz.
         if (await _context.Cities.AnyAsync(cancellationToken).ConfigureAwait(false))
@@ -109,7 +107,7 @@ public sealed class DatabaseSeeder
 
     // LoggerMessage yerine basit bir yardimci kullanıyorum: bu kod
     // uygulama omru boyunca en fazla BIR KEZ çalışıyor, performans
-    // optimizasyonu gereksiz. CA1848'i bu yüzden burada uygulamiyoruz --
+    // optimizasyonu gereksiz. CA1848'i bu yüzden burada uygulamiyorum --
     // aşağıdaki sarmalayici, analizciyi de memnun ediyor.
     private static readonly Action<ILogger, int, string, Exception?> SeedLog =
         LoggerMessage.Define<int, string>(

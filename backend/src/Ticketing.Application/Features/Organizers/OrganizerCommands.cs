@@ -27,9 +27,7 @@ internal static class OrganizerErrors
         "Organizatör profiliniz bulunamadı.");
 }
 
-// ===================================================================
 // BASVURU -- kullanıcı organizatör olmak istiyor
-// ===================================================================
 
 /// <summary>PDF sayfa 5: kullanıcı organizatör basvurusu yapar.</summary>
 public sealed record ApplyForOrganizerCommand(
@@ -88,7 +86,7 @@ internal sealed class ApplyForOrganizerCommandHandler
         // panelinde aynı kisiden 10 kayıt birikir ve degerlendirme
         // zorlasir. Ayrıca hangisini onaylayacagi belirsizlesir.
         //
-        // REDDEDILMIS basvuru varsa yenisine IZIN VERIYORUZ -- kullanıcı
+        // REDDEDILMIS basvuru varsa yenisine IZIN VERIYORUM -- kullanıcı
         // eksiklerini giderip tekrar basvurabilmeli.
         var hasPending = await _context.OrganizerApplications
             .AsNoTracking()
@@ -112,9 +110,7 @@ internal sealed class ApplyForOrganizerCommandHandler
     }
 }
 
-// ===================================================================
 // ONAY -- admin basvuruyu onayliyor
-// ===================================================================
 
 public sealed record ApproveOrganizerApplicationCommand(Guid ApplicationId) : IRequest<Result>;
 
@@ -166,9 +162,8 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // bir basvuru tekrar onaylanamaz (DomainException -> 422).
         application.Approve(_currentUser.UserId ?? Guid.Empty, _clock.UtcNow);
 
-        // ==============================================================
         // ONAY = UC ISLEM, TEK SaveChanges
-        // ==============================================================
+        //
         //   1. Basvuruyu onayla
         //   2. Organizatör profilini oluştur
         //   3. Organizatör rolunu ata
@@ -176,11 +171,10 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // Ucu de AYNI SaveChangesAsync cagrisinda kaydediliyor. EF bunu
         // tek bir transaction içinde calistirir.
         //
-        // Ayrı ayrı kaydetseydik su risk olusurdu: basvuru onaylandı
+        // Ayrı ayrı kaydetseydim su risk olusurdu: basvuru onaylandı
         // ama rol atanamadi (bağlantı koptu). Kullanıcı "onaylandiniz"
         // bildirimi alır ama hiçbir sey yapamaz -- ve bu durumu
         // duzeltmek için elle mudahale gerekir.
-        // ==============================================================
         var profile = OrganizerProfile.Create(
             application.UserId, application.CompanyName, application.ContactEmail);
 
@@ -190,7 +184,7 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
             application.ContactPhone,
             application.Description);
 
-        // Admin onayladigi için dogrulanmis sayiyoruz.
+        // Admin onayladigi için dogrulanmis sayiyorum.
         profile.Verify();
 
         _context.OrganizerProfiles.Add(profile);
@@ -203,15 +197,16 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // Yeni rolü gorebilmesi için token'ini yenilemesi gerekiyor --
         // en geç 15 dakika içinde otomatik olacak.
         //
-        // Frontend'e "rolunuz güncellendi, sayfayı yenileyin" bildirimi
-        // gondermek Sprint 10'da SignalR ile yapilacak.
+        // Frontend'e "rolunuz güncellendi, sayfayı yenileyin" diye
+        // anlik bildirim gondermeyi dusunmustum; SignalR Sprint 10'da
+        // geldi ama bunu YAPMADIM. Sebebi: rol degisimi cok nadir bir
+        // olay ve 15 dakikalik gecikmenin somut bir zarari yok. Koltuk
+        // guncellemesi gibi saniyelerin onemli oldugu bir sey degil.
         return Result.Success();
     }
 }
 
-// ===================================================================
 // RED
-// ===================================================================
 
 public sealed record RejectOrganizerApplicationCommand(Guid ApplicationId, string Reason)
     : IRequest<Result>;
@@ -265,9 +260,7 @@ internal sealed class RejectOrganizerApplicationCommandHandler
     }
 }
 
-// ===================================================================
 // LISTELEME -- admin paneli
-// ===================================================================
 
 public sealed record OrganizerApplicationDto(
     Guid Id,

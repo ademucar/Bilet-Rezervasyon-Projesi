@@ -6,9 +6,8 @@ namespace Ticketing.WebApi.Hubs;
 /// <summary>
 /// Gerçek zamanlı koltuk guncellemeleri. PDF Sprint 10.
 ///
-/// ==================================================================
 /// NEDEN [AllowAnonymous]?
-/// ==================================================================
+///
 /// Bu karari uzun dusundum, çünkü ilk refleks "her seyi kilitle" oluyor.
 ///
 /// 1) TUTARLILIK: GET /event-sessions/{id}/seat-availability zaten
@@ -36,7 +35,6 @@ namespace Ticketing.WebApi.Hubs;
 /// eklendiginde (kullanıcıya OZEL veri tasiyacak) orada kimlik ŞART
 /// olacak ve token sorgu dizesi cozumunu, loglardan token'i maskeleyen
 /// bir yapilandirmayla birlikte kuracagiz.
-/// ==================================================================
 /// </summary>
 [AllowAnonymous]
 public sealed class SeatHub : Hub
@@ -44,7 +42,7 @@ public sealed class SeatHub : Hub
     /// <summary>Bir oturumun grup adı. Tek yerde uretiliyor.</summary>
     /// <remarks>
     /// Grup adını hem hub hem de bildirim gonderen sinif uretiyor.
-    /// Iki yerde elle yazsaydık birinde yazım hatası yapmak,
+    /// Iki yerde elle yazsaydım birinde yazım hatası yapmak,
     /// mesajlarin HİÇ ULASMAMASINA yol acardi -- ve hiçbir hata
     /// vermezdi, çünkü SignalR var olmayan bir gruba gondermeyi
     /// hata saymaz. Sessizce çalışmayan bir sistem, patlayan
@@ -57,10 +55,9 @@ public sealed class SeatHub : Hub
     /// Istemciyi bir oturumun grubuna alır.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// PDF IS KURALI: "Kullanıcı yalnızca goruntuledigi etkinlik
     /// oturumunun grubuna katilmalidir."
-    /// ==============================================================
+    ///
     /// Neden bu kural var? Grup olmasaydı tek seçenek TÜM istemcilere
     /// yayin yapmak olurdu (Clients.All).
     ///
@@ -75,7 +72,6 @@ public sealed class SeatHub : Hub
     /// gezinirse (A oturumu -> B oturumu) eski gruptan cikmazsa
     /// artık bakmadigi oturumun mesajlarini almaya devam ederdi.
     /// Zamanla bir istemci onlarca gruba uye olurdu.
-    /// ==============================================================
     /// </remarks>
     public async Task JoinSession(Guid eventSessionId)
     {
@@ -101,7 +97,7 @@ public sealed class SeatHub : Hub
         // Bagli olduğu oturumu bağlantı uzerinde sakliyorum.
         //
         // Context.Items, bu BAGLANTIYA ozel bir sozluk. Statik bir
-        // sozluk kullansaydık iki sorun çıkardı: es zamanlı erişim
+        // sozluk kullansaydım iki sorun çıkardı: es zamanlı erişim
         // kilitleme gerektirirdi ve bağlantı kapandiginda kayıt
         // silinmezse bellek sizardi.
         Context.Items["EventSessionId"] = eventSessionId;

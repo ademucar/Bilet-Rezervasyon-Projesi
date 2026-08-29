@@ -3,9 +3,8 @@ using System.Globalization;
 namespace Ticketing.Application.Abstractions.Caching;
 
 /// <summary>
-/// ==================================================================
 /// ONBELLEK ANAHTAR STANDARDI -- PDF Sprint 11
-/// ==================================================================
+///
 /// PDF kuralı: "Cache key standardi olusturulmalidir."
 ///
 /// STANDART:  {alan}:{varlik}:{ayirt-edici}
@@ -17,9 +16,8 @@ namespace Ticketing.Application.Abstractions.Caching;
 ///     event:popular:{adet}           -> popüler etkinlikler
 ///     layout:{id}                    -> salon oturma planı
 ///
-/// ------------------------------------------------------------------
 /// NEDEN STANDART ŞART? -- Iki somut sorun
-/// ------------------------------------------------------------------
+///
 /// 1) CAKISMA: Anahtarlar elle yazilsaydi, birinin "event:123" digerinin
 ///    "events:123" yazmasi kacinilmazdi. Ikisi FARKLI anahtar olur;
 ///    biri temizlenir digeri bayat kalır. Kullanıcı bazen güncel bazen
@@ -33,9 +31,8 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// RedisInsight gibi araclar anahtarlari bu ayirica göre agac olarak
 /// gosteriyor.
 ///
-/// ------------------------------------------------------------------
 /// BURADA OLMAYAN SEY: KULLANICIYA OZEL ANAHTARLAR
-/// ------------------------------------------------------------------
+///
 /// PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache içinde
 /// tutulmamalidir."
 ///
@@ -45,7 +42,6 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// Sebep sadece gizlilik değil, DOGRULUK da: rezervasyon durumu
 /// saniyeler içinde değişiyor. Bir saniye bile bayat veri, kullanıcının
 /// süresi dolmuş bir rezervasyona ödeme yapmaya calismasi demek.
-/// ==================================================================
 /// </summary>
 public static class CacheKeys
 {
@@ -74,9 +70,8 @@ public static class CacheKeys
     /// Salonun oturma PLANI -- koltuk UYGUNLUGU değil.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// BU AYRIM KRITIK -- KARISTIRILIRSA KOLTUK IKI KISIYE SATILIR
-    /// ==============================================================
+    ///
     /// PDF "Salon oturma planı" cache edilebilir diyor. Dogru, ama
     /// hangi veri olduğu çok önemli:
     ///
@@ -96,7 +91,6 @@ public static class CacheKeys
     /// Ustelik Sprint 10'da SignalR ile koltuk durumunu GERCEK ZAMANLI
     /// yayinliyoruz. Aynı veriyi hem onbellekten (eski) hem SignalR'dan
     /// (güncel) beslemek, birbiriyle celisen iki kaynak demek olurdu.
-    /// ==============================================================
     /// </remarks>
     public static string SeatLayout(Guid seatLayoutId)
         => string.Create(CultureInfo.InvariantCulture, $"layout:{seatLayoutId}");
@@ -105,9 +99,8 @@ public static class CacheKeys
 /// <summary>
 /// Onbellek yasam sureleri. PDF kuralı: "Cache expiration tanimlanmalidir."
 ///
-/// ==================================================================
 /// SURELER NEYE GORE SECILDI?
-/// ==================================================================
+///
 /// Tek soru: "Bu veri degistikten sonra kullanıcının eski halini
 /// gormesi ne kadar süre kabul edilebilir?"
 ///
@@ -117,7 +110,6 @@ public static class CacheKeys
 /// geç bu süre sonunda kendini yeniler.
 ///
 /// Yani "sonsuza kadar bayat kalma" ihtimalini ortadan kaldiriyor.
-/// ==================================================================
 /// </summary>
 public static class CacheDurations
 {

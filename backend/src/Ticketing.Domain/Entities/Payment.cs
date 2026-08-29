@@ -8,8 +8,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Ödeme kaydı. PDF Sprint 8.
 ///
-/// Gerçek bir ödeme sağlayıcısı kullanmiyoruz ama entegrasyona BENZER
-/// bir yapi kuruyoruz: IPaymentService arayuzu + MockPaymentProvider.
+/// Gerçek bir ödeme sağlayıcısı kullanmiyorum ama entegrasyona BENZER
+/// bir yapi kuruyorum: IPaymentService arayuzu + MockPaymentProvider.
 /// Bu entity, hangi sağlayıcı kullanilirsa kullanilsin aynı kalır.
 /// </summary>
 public class Payment : ConcurrentEntity
@@ -53,7 +53,7 @@ public class Payment : ConcurrentEntity
     public string ProviderName { get; private set; }
 
     /// <summary>
-    /// Saglayicinin bize verdiği işlem referansı.
+    /// Saglayicinin bana verdiği işlem referansı.
     /// Mutabakat (reconciliation) ve destek talepleri için sart:
     /// saglayiciya "su islemde ne oldu" diye sorarken bu numarayi veririz.
     /// </summary>
@@ -69,7 +69,7 @@ public class Payment : ConcurrentEntity
     /// Neden bir bool değil de TUTAR? Çünkü kismi iade var
     /// (bkz. CancellationPolicy: %50 iade). Bir rezervasyondaki 4 biletten
     /// 2'si iade edilirse tutarin yarisi geri döner. bool ile bunu
-    /// modelleyemezdik.
+    /// modelleyemezdim.
     /// </summary>
     public Money RefundedAmount { get; private set; }
 
@@ -154,9 +154,8 @@ public class Payment : ConcurrentEntity
     /// <summary>
     /// Ödeme başarılı.
     ///
-    /// ------------------------------------------------------------------
     /// IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
-    /// ------------------------------------------------------------------
+    ///
     /// Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderebilir.
     /// Bu bir hata değil, normal davranistir: sağlayıcı cevap alamadigini
     /// dusunurse tekrar dener.

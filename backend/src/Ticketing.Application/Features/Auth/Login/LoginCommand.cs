@@ -20,11 +20,10 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
     public LoginCommandValidator()
     {
-        // ==================================================================
         // LOGIN'DE SIFRE KURALLARI UYGULANMAZ -- BU KASITLI
-        // ==================================================================
+        //
         // Register'da "en az bir büyük harf" gibi kurallar var ama burada
-        // YOK. Sadece "boş olmasın" diyoruz.
+        // YOK. Sadece "boş olmasın" diyorum.
         //
         // Neden? Iki sebep:
         //
@@ -36,7 +35,6 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
         // 2) Saldirgana bilgi vermemek. "Şifre en az bir rakam
         //    içermelidir" hatası, saldirgana şifre politikasini ogretir
         //    ve deneme uzayini daraltmasini saglar.
-        // ==================================================================
         RuleFor(x => x.Email).NotEmpty().WithMessage("E-posta adresi zorunludur.");
         RuleFor(x => x.Password).NotEmpty().WithMessage("Şifre zorunludur.");
     }
@@ -84,10 +82,9 @@ internal sealed partial class LoginCommandHandler
 
         if (user is null)
         {
-            // ==============================================================
             // ZAMANLAMA SALDIRISINA KARSI SAHTE HASH DOGRULAMA
-            // ==============================================================
-            // Burada doğrudan donseydik su açık olusurdu:
+            //
+            // Burada doğrudan donseydim su açık olusurdu:
             //
             //   Kullanıcı YOK  -> istek ~5 ms surer (sadece DB sorgusu)
             //   Kullanıcı VAR  -> istek ~300 ms surer (BCrypt dogrulamasi)
@@ -100,23 +97,22 @@ internal sealed partial class LoginCommandHandler
             // calistiriyoruz. Boylece iki durum da aynı süreyi aliyor.
             //
             // Kullanilan hash geçerli bir BCrypt hash'i ("dummy" kelimesinin
-            // hash'i); sonucu zaten kullanmiyoruz, amac sadece aynı
+            // hash'i); sonucu zaten kullanmiyorum, amac sadece aynı
             // hesaplama maliyetini odemek.
             _ = _passwordHasher.Verify(
                 request.Password,
                 "$2a$12$C6UzMDM.H6dfI/f/IKcEe.7ZLQhO7BsLFcHy5UbfHYHmqLQ8sBEHu");
 
-            // ==========================================================
             // PDF Sprint 16: "Başarısız login" loglanmalidir.
-            // ==========================================================
+            //
             // E-POSTA MASKELI (Sprint 15 gerekçesi): başarısız giriş
             // loglari saldiri sırasında BINLERCE satır uretiyor. Acik
-            // yazsaydık, saldirganin denedigi tüm adresler log
+            // yazsaydım, saldirganin denedigi tüm adresler log
             // dosyasinda toplu bir liste oluşturur -- yani saldirgan
-            // başarısız olsa bile bizim loglarimiz onun ise yarardi.
+            // başarısız olsa bile benim loglarimiz onun ise yarardi.
             //
             // Sebebi de ayrı bir alan olarak veriyorum ("kullanıcı yok"
-            // / "şifre yanlış"). Aynı mesaji kullansaydık, uretimde
+            // / "şifre yanlış"). Aynı mesaji kullansaydım, uretimde
             // "hangi hesaplar VAR?" sorusunu loglardan cevaplamak
             // imkansiz olurdu -- oysa bu, bir saldirinin hedefli mi
             // yoksa korlemesine mi olduğunu anlamak için gerekli.
@@ -124,7 +120,6 @@ internal sealed partial class LoginCommandHandler
             // DIKKAT: bu ayrim yalnızca LOGDA var. Kullanıcıya donen
             // yanit ikisinde de aynı ("E-posta veya şifre hatalı") --
             // aksi halde hesap sayimi (user enumeration) yapilabilirdi.
-            // ==========================================================
             LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "kullanici_yok");
 
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
@@ -171,7 +166,7 @@ internal sealed partial class LoginCommandHandler
             // kurulacak esik: tek bir başarısız giriş gurultu, ama
             // "son 10 dakikada 50 hesap kilitlendi" bir saldiri.
             //
-            // Aynı EventId'yi kullansaydık bu iki durumu birbirinden
+            // Aynı EventId'yi kullansaydım bu iki durumu birbirinden
             // ayiran bir alarm kuralı yazilamazdi.
             if (user.IsLockedOut())
             {
@@ -219,17 +214,15 @@ internal sealed partial class LoginCommandHandler
                 roles)));
     }
 
-    // ==============================================================
     // LOG TANIMLARI
-    // ==============================================================
+    //
     // [LoggerMessage] kaynak ureteci kullanıyorum (CA1848):
-    // _logger.LogInformation("...", arg) yazsaydık her cagride
+    // _logger.LogInformation("...", arg) yazsaydım her cagride
     // string bicimlendirme ve kutulama (boxing) olurdu -- log
     // seviyesi kapalı olsa BILE.
     //
     // Uretilen kod önce IsEnabled kontrolü yapiyor; kapaliysa
     // hiçbir tahsis yapmiyor.
-    // ==============================================================
 
     [LoggerMessage(
         EventId = LogEvents.LoginBasarili,
@@ -241,7 +234,7 @@ internal sealed partial class LoginCommandHandler
     /// Warning seviyesi, Information değil.
     ///
     /// Sebep: üretim ortamlarinda Information çoğu zaman
-    /// filtreleniyor. Başarısız girişi Information yapsaydik,
+    /// filtreleniyor. Başarısız girişi Information yapsaydim,
     /// "son 5 dakikada 100 başarısız giriş" alarmi HİÇ tetiklenmezdi
     /// -- kural doğru olurdu ama besleyen veri hiç gelmezdi.
     ///
@@ -270,7 +263,7 @@ internal sealed partial class LoginCommandHandler
         CancellationToken cancellationToken)
     {
         // Join yerine navigation kullanıyorum; EF bunu tek sorguya cevirir.
-        // AsNoTracking çünkü bu veriyi yalnızca okuyup token'a yazacagiz;
+        // AsNoTracking çünkü bu veriyi yalnızca okuyup token'a yazacagim;
         // EF'in degisiklik takibi yapmasina gerek yok (bellek tasarrufu).
         return await _context.UserRoles
             .AsNoTracking()

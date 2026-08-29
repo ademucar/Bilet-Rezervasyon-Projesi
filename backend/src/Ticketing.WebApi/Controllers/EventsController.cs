@@ -32,9 +32,8 @@ public sealed class EventsController : ApiControllerBase
         [FromQuery] GetEventsQuery query,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // GORUNURLUK KARARI SUNUCUDA VERILIYOR
-        // ==============================================================
+        //
         // IncludeUnpublished, GetEventsQuery uzerinde bir alan ve
         // [FromQuery] ile bağlanıyor. Yani istemci
         //     GET /api/v1/events?includeUnpublished=true
@@ -46,7 +45,6 @@ public sealed class EventsController : ApiControllerBase
         //
         // Bu, "istemciden gelen hiçbir yetki bilgisine guvenme"
         // ilkesinin somut bir ornegi.
-        // ==============================================================
         var effectiveQuery = query with
         {
             IncludeUnpublished = User.IsInRole(Role.Names.Admin)
@@ -160,16 +158,14 @@ public sealed class EventsController : ApiControllerBase
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // ==========================================================
         // KIMLIK ADRESTEN, GOVDEDEN DEĞİL
-        // ==========================================================
-        // Govdede de bir EventId tasisaydik, ikisi FARKLI olabilirdi:
+        //
+        // Govdede de bir EventId tasisaydim, ikisi FARKLI olabilirdi:
         // adreste kendi etkinligini, govdede baskasininkini gonderen
         // bir istek EventOwner kontrolunu atlatabilirdi.
         //
         // Yetkilendirme adresteki kimlige bakiyor; komutu da ondan
-        // kuruyoruz. Boylece iki kaynak arasında fark olusamiyor.
-        // ==========================================================
+        // kuruyorum. Boylece iki kaynak arasında fark olusamiyor.
         return HandleResult(await Sender
             .Send(
                 new UpdateEventCommand(

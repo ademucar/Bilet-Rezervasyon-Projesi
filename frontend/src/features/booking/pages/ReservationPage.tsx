@@ -17,14 +17,14 @@ import {
 } from '../api/bookingApi'
 
 /**
- * ==================================================================
+ *
  * REZERVASYON VE ÖDEME EKRANI -- PDF Sprint 7 + Sprint 8
- * ==================================================================
+ *
  * Iki sprintin frontend'i tek sayfada bulusuyor çünkü kullanıcı
  * acisindan bunlar tek bir an: "koltugum tutuldu, süreyi kaybetmeden
  * odeyeyim". Ayrı sayfalara bolseydik geri sayım sıfırdan başlar,
  * kullanıcı da her geciste bir tur yukleme beklerdi.
- * ==================================================================
+ *
  */
 export function ReservationPage() {
   const { reservationId = '' } = useParams()
@@ -53,9 +53,8 @@ export function ReservationPage() {
   // Detayli gerekce useCountdown içinde.
   const remaining = useCountdown(reservation?.remainingSeconds)
 
-  // ================================================================
   // "OLU" REZERVASYON UC HALDE OLUR -- VE UCU AYNI SEY DEĞİL
-  // ================================================================
+  //
   // İlk yazimimda ucunu tek bir `isExpired` degiskeninde toplamistim.
   // Tarayicida denerken hatayi gordum: ödemeyi "başarısız" olarak
   // isaretleyince ekranda "Rezervasyon süresi doldu" yazıyor ve
@@ -66,7 +65,6 @@ export function ReservationPage() {
   // cevapsiz birakir -- hatta destek talebine yol acar.
   //
   // Ayırt etmek zorundayız.
-  // ================================================================
   const isCancelled = reservation?.status === ReservationStatus.Cancelled
 
   const isTimedOut =
@@ -78,19 +76,17 @@ export function ReservationPage() {
 
   const isConfirmed = reservation?.status === ReservationStatus.Confirmed
 
-  // ----------------------------------------------------------------
   // SURE DOLDUGUNDA SUNUCUYLA TEYITLES
-  // ----------------------------------------------------------------
-  // Sayac sıfıra dustugunde ekranda "süreniz doldu" yazıyoruz ama
+  //
+  // Sayac sıfıra dustugunde ekranda "süreniz doldu" yazıyorum ama
   // bu YALNIZCA istemcinin tahmini. Gerçek karari veren sunucu.
   //
-  // Bu yuzden sıfıra dusunce bir kez daha soruyoruz. Ornegin
+  // Bu yuzden sıfıra dusunce bir kez daha soruyorum. Ornegin
   // kullanıcı başka bir sekmede süreyi uzatmis olabilir; o zaman
   // sunucu yeni süreyi döner ve sayaç devam eder.
   //
   // useRef ile "bir kez" garantisi: olmasaydı her render'da yeni
   // istek gider, sonsuz donguye girerdik.
-  // ----------------------------------------------------------------
   const expiryCheckedRef = useRef(false)
 
   useEffect(() => {
@@ -104,9 +100,7 @@ export function ReservationPage() {
     }
   }, [remaining, reservation, reservationQuery])
 
-  // ================================================================
   // ÖDEME BASLAT
-  // ================================================================
   const paymentKeyRef = useRef<string | null>(null)
 
   const startPayment = useMutation({
@@ -124,9 +118,7 @@ export function ReservationPage() {
     onSuccess: setPayment,
   })
 
-  // ================================================================
   // ODEMEYI TAMAMLA (SIMULASYON)
-  // ================================================================
   const completePayment = useMutation({
     mutationFn: (paymentId: string) => bookingApi.completePayment(paymentId),
 
@@ -358,22 +350,21 @@ interface PaymentSimulationProps {
 }
 
 /**
- * ==================================================================
+ *
  * ÖDEME SIMULASYONU -- PDF Sprint 8
- * ==================================================================
+ *
  * PDF: "Gerçek bir ödeme sağlayıcısı entegre edilmeyecektir. Ancak
  * gerçek bir entegrasyona benzer bir yapi kurulmalidir."
  *
- * ------------------------------------------------------------------
  * NEDEN SAHTE BIR KART FORMU KOYMUYORUM?
- * ------------------------------------------------------------------
+ *
  * İlk aklima gelen, gercekci gorunsun diye kart numarasi alanlari
  * olan bir form cizmekti. VAZGECTIM, iki sebeple:
  *
- * 1) Gerçek bir entegrasyonda kart bilgisi BIZIM sayfamiza HİÇ
+ * 1) Gerçek bir entegrasyonda kart bilgisi BENIM sayfamiza HİÇ
  *    girilmez. Kullanıcı sağlayıcının (Iyzico, Stripe) kendi
  *    sayfasına yönlendirilir veya iframe içinde onun formunu
- *    doldurur. Kart verisi bizim sunucumuza ugramaz -- PCI-DSS
+ *    doldurur. Kart verisi benim sunucumuza ugramaz -- PCI-DSS
  *    zorunlulugu budur. Kart formu cizmek, ogrenilmesi GEREKEN
  *    seyin tam tersini ogretirdi.
  *
@@ -383,18 +374,18 @@ interface PaymentSimulationProps {
  * Bunun yerine simulasyonun ne olduğunu acikca yazıyorum ve iki
  * sonucu da denenebilir kiliyorum -- başarısız ödeme yolu en az
  * başarılı yol kadar test edilmeli.
- * ------------------------------------------------------------------
+ *
  * BU BUTONLAR GERCEKTE KIM?
- * ------------------------------------------------------------------
+ *
  * "Ödemeyi onayla" butonu POST /payments/{id}/complete cagiriyor.
  * Gerçek hayatta bu adresi KULLANICI değil, SAGLAYICI cagirir
  * (callback / webhook).
  *
  * Backend bunu bildigi için callback'e koru korune guvenmiyor:
  * islemi saglayiciya sorup DOGRULUYOR (VerifyPaymentAsync). Yani
- * bu butona basmak "bilet ver" demek değil, "sağlayıcı bize haber
+ * bu butona basmak "bilet ver" demek değil, "sağlayıcı bana haber
  * verdi" demek. Dogrulama gecmezse bilet uretilmiyor.
- * ==================================================================
+ *
  */
 function PaymentSimulation({
   payment,

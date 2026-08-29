@@ -11,9 +11,8 @@ public class Result
 {
     protected Result(bool isSuccess, Error error)
     {
-        // ------------------------------------------------------------------
         // BU KONTROL NEDEN VAR?
-        // ------------------------------------------------------------------
+        //
         // Iki tutarsiz durum mumkun:
         //   - Başarılı ama hata dolu   -> "Basardim ama hata var" (celiski)
         //   - Başarısız ama hata boş   -> "Basaramadim ama sebebi yok" (ise yaramaz)
@@ -99,7 +98,7 @@ public class Result<TValue> : Result
     /// [NotNullWhen(true)] niteligini eklememin sebebi: derleyiciye
     /// "bu metot true dondurdugunde value KESINLIKLE null degildir"
     /// demek. Boylece if bloguunun içinde derleyici null uyarısı vermiyor
-    /// ve gereksiz null kontrolü yazmiyoruz.
+    /// ve gereksiz null kontrolü yazmiyorum.
     /// </summary>
     public bool TryGetValue([NotNullWhen(true)] out TValue? value)
     {

@@ -30,20 +30,16 @@ public class GenerateSeatsValidatorTests
         _validator.Validate(Komut(10, 20)).IsValid.Should().BeTrue();
     }
 
-    // ---------------------------------------------------------------
     // DoS KORUMASI -- bu testin konusu bir guvenlik siniri
-    // ---------------------------------------------------------------
 
     [Fact]
     public void CokBuyukKoltukSayisi_ReddedilmeliDoSKorumasi()
     {
-        // ===============================================================
         // Sinir olmasaydi bu istek 10 MILYAR koltuk uretmeye calisirdi.
         // Sunucu bellegi tukenir, veritabani kilitlenir, sistem coker.
         //
         // Kod yazmayi bilen herkesin gonderebilecegi tek bir JSON
         // istegiyle servisi disari birakma saldirisi.
-        // ===============================================================
         var sonuc = _validator.Validate(Komut(100_000, 100_000));
 
         sonuc.IsValid.Should().BeFalse();
@@ -76,9 +72,7 @@ public class GenerateSeatsValidatorTests
         _validator.Validate(Komut(500, 40)).IsValid.Should().BeTrue();
     }
 
-    // ---------------------------------------------------------------
     // Sira etiketleri
-    // ---------------------------------------------------------------
 
     [Fact]
     public void EtiketSayisiSiraSayisiylaUyusmuyorsa_Reddedilmeli()

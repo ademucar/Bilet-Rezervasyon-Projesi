@@ -8,11 +8,10 @@ namespace Ticketing.WebApi.Observability;
 /// Serilog yapilandirmasi. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// SERILOG NEYI DEGISTIRIYOR, NEYI DEGISTIRMIYOR?
-/// ==================================================================
+///
 /// DEGISTIRMEDIGI: kodumuzdaki tek bir log satiri bile. Her yerde
-/// ILogger ve [LoggerMessage] kullanmaya devam ediyoruz. Serilog,
+/// ILogger ve [LoggerMessage] kullanmaya devam ediyorum. Serilog,
 /// Microsoft.Extensions.Logging'in ARKASINA geciyor.
 ///
 /// DEGISTIRDIGI: o loglarin nereye ve hangi bicimde yazildigi.
@@ -31,8 +30,7 @@ namespace Ticketing.WebApi.Observability;
 ///
 /// Mesaj sablonundaki {ReservationId} gibi yer tutucular otomatik
 /// olarak alan adina donusuyor. Yani bu bicimi kazanmak için ekstra
-/// hiçbir sey yazmiyoruz -- zaten doğru şekilde logluyorduk.
-/// ==================================================================
+/// hiçbir sey yazmiyorum -- zaten doğru şekilde logluyorduk.
 /// </remarks>
 internal static class SerilogSetup
 {
@@ -46,9 +44,8 @@ internal static class SerilogSetup
         builder.Host.UseSerilog((context, services, configuration) =>
         {
             configuration
-                // ======================================================
                 // SEVIYELER
-                // ======================================================
+                //
                 // Varsayılan Information; framework gurultusu bastirilmis.
                 //
                 // Microsoft.AspNetCore Information seviyesinde her istek
@@ -69,9 +66,8 @@ internal static class SerilogSetup
                 // anlamlı olani söylüyor.
                 .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
 
-                // ======================================================
                 // ZENGINLESTIRICILER (enrichers)
-                // ======================================================
+                //
                 // Her log satirina otomatik olarak eklenen alanlar.
                 //
                 // Neden gerekli? Uretimde birden fazla sunucu (instance)
@@ -82,11 +78,10 @@ internal static class SerilogSetup
                 .Enrich.WithProperty("Application", "Ticketing.Api")
                 .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
 
-                // ======================================================
                 // KONSOL
-                // ======================================================
+                //
                 // Gelistirmede insan tarafından okunuyor, o yüzden duz
-                // metin. JSON yazsaydık gelistirme deneyimi berbat
+                // metin. JSON yazsaydım gelistirme deneyimi berbat
                 // olurdu -- her satır 400 karakterlik bir JSON blogu.
                 .WriteTo.Console(
                     // CA1305: bicimlendirme kullanıcının yerel ayarina
@@ -98,9 +93,8 @@ internal static class SerilogSetup
                         "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} " +
                         "{Properties:j}{NewLine}{Exception}")
 
-                // ======================================================
                 // DOSYA -- JSON, günlük donen
-                // ======================================================
+                //
                 // Burada JSON kullanıyorum çünkü bu dosyalar MAKINE
                 // tarafından okunuyor: merkezi log sistemine (Seq, ELK)
                 // aktarilacak veya jq ile sorgulanacak.
@@ -129,9 +123,8 @@ internal static class SerilogSetup
     /// Her HTTP isteği için TEK satirlik özet log ekler.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN KENDİ OZETIMIZ?
-    /// ==============================================================
+    ///
     /// ASP.NET Core'un yerlesik istek loglamasi aynı istek için
     /// birden fazla satır uretiyor ve hicbiri süreyi net vermiyor.
     /// Serilog'un UseSerilogRequestLogging'i ise tek satirda
@@ -140,7 +133,6 @@ internal static class SerilogSetup
     /// Ustune kendi alanlarimizi ekliyorum: CorrelationId ve
     /// kullanıcı kimliği. Boylece tek bir satirdan "kim, neyi, ne
     /// kadar surede" sorularinin hepsi cevaplaniyor.
-    /// ==============================================================
     /// </remarks>
     public static void UseRequestLogging(this WebApplication app)
     {
@@ -151,10 +143,9 @@ internal static class SerilogSetup
             options.MessageTemplate =
                 "{RequestMethod} {RequestPath} -> {StatusCode} ({Elapsed:0.0} ms)";
 
-            // ==========================================================
             // SEVIYE, DURUM KODUNA GORE
-            // ==========================================================
-            // Hepsini Information yapsaydik 500'ler normal isteklerin
+            //
+            // Hepsini Information yapsaydim 500'ler normal isteklerin
             // arasında kaybolurdu. Sprint 15'te "alarm yorgunlugu"
             // baglaminda konustugumuz ayrimin aynı si.
             options.GetLevel = (httpContext, elapsed, ex) =>
@@ -170,7 +161,7 @@ internal static class SerilogSetup
                 }
 
                 // Saglik kontrolleri saniyede bir cagriliyor (Kubernetes
-                // probe'lari). Information yapsaydik loglarin büyük
+                // probe'lari). Information yapsaydim loglarin büyük
                 // kismi bu gurultu olurdu.
                 //
                 // Debug'a dusuruyorum: sorun olduğunda acilabiliyor,

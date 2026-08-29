@@ -81,7 +81,7 @@ export function MyReservationsPage() {
             // Ödemeye devam edilebilir mi?
             //
             // Hem durum uygun olmalı hem de süre bitmemis olmalı.
-            // Yalnızca duruma baksaydik, süresi dolmuş ama arka plan
+            // Yalnızca duruma baksaydim, süresi dolmuş ama arka plan
             // isi (Sprint 9) henüz temizlememis bir rezervasyon için
             // "Ödemeye devam et" gosterirdik ve kullanıcı tıklayınca
             // hata alırdı.

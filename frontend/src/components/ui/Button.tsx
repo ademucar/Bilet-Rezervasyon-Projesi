@@ -21,31 +21,27 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  // ================================================================
   // rounded-lg YERINE rounded-[4px]
-  // ================================================================
+  //
   // Eski halde her dugme 8px yuvarlaktı. Kartlar 16px, girdiler
   // 8px... uc farklı yaricap vardi ve hicbiri digerine
   // benzemiyordu.
   //
   // Artık tek deger: 4px. Dugme, girdi ve kart aynı ailedenmis gibi
   // duruyor.
-  // ================================================================
   const base =
     'inline-flex items-center justify-center gap-2 rounded-[4px] px-4 py-2.5 ' +
     'text-sm font-medium transition-colors ' +
     'disabled:cursor-not-allowed disabled:opacity-60'
 
-  // ================================================================
   // BIRINCIL DUGME SLATE-900, MARKA RENGI DEĞİL
-  // ================================================================
+  //
   // Marka moru her dugmede kullanildiginda "hangisi asil eylem?"
   // sorusu cevapsiz kaliyordu: sayfada bes mor dugme vardi.
   //
   // Artık mor YALNIZCA baglantilarda ve seçili durumda. Eylem
   // dugmesi koyu lacivert — sayfada tek bir tane olduğunda gozu
   // doğrudan oraya cekiyor.
-  // ================================================================
   const variants = {
     primary: 'bg-slate-900 text-white hover:bg-slate-800',
     secondary: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',

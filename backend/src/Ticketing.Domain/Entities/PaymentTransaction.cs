@@ -7,9 +7,8 @@ namespace Ticketing.Domain.Entities;
 /// Ödeme uzerindeki her denemenin kaydı. PDF'in ER diyagramindaki
 /// PaymentTransactions tablosu.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN AYRI BIR TABLO? Payment'a birkaç sutun eklesek olmaz miydi?
-/// ------------------------------------------------------------------
+///
 /// Olmazdi. Çünkü bir odemede BIRDEN FAZLA işlem olabilir:
 ///   1. Tahsilat denemesi -> başarısız (kart limiti)
 ///   2. Tahsilat denemesi -> başarılı

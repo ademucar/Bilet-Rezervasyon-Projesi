@@ -5,9 +5,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// FIZIKSEL koltuk. "Salon A, Orta Blok, C sırası, 12 numara".
 ///
-/// ------------------------------------------------------------------
 /// EN ONEMLI AYRIM: Seat ile EventSeat karistirilmamali
-/// ------------------------------------------------------------------
+///
 /// Seat      = Fiziksel koltuk. Salon yikilmadikca degismez.
 ///             Bir kere olusturulur, yillarca aynı kalır.
 ///
@@ -24,7 +23,6 @@ namespace Ticketing.Domain.Entities;
 /// Bu kasitli bir veri cogaltmasidir ve dogrudur: her satirin BAGIMSIZ
 /// olarak kilitlenebilmesi gerekiyor. Sprint 7'deki tüm concurrency
 /// cozumu bu bagimsizliga dayaniyor.
-/// ------------------------------------------------------------------
 /// </summary>
 public class Seat : AuditableEntity
 {
@@ -46,7 +44,7 @@ public class Seat : AuditableEntity
     /// Neden int değil string?
     /// Gerçek salonlarda siralar harfle adlandirilir (A, B, C) veya
     /// karma olur (A1, B2, "Loca-3"). int secseydik bu salonlari
-    /// modelleyemezdik. Sıralama için ayrıca DisplayOrder gerekirse
+    /// modelleyemezdim. Sıralama için ayrıca DisplayOrder gerekirse
     /// sonra ekleriz; simdi gereksiz karmasiklik yaratmiyorum.
     /// </summary>
     public string RowLabel { get; private set; }

@@ -10,9 +10,8 @@ using Ticketing.Application.Features.Reservations;
 namespace Ticketing.Infrastructure.BackgroundJobs;
 
 /// <summary>
-/// ==================================================================
 /// ARKA PLAN ISLERI -- PDF Sprint 9
-/// ==================================================================
+///
 /// PDF'in istedigi bes is:
 ///   1. Süresi dolan rezervasyonları iptal etme
 ///   2. Outbox mesajlarini isleme
@@ -20,9 +19,8 @@ namespace Ticketing.Infrastructure.BackgroundJobs;
 ///   4. Yaklasan etkinlik hatirlatmasi
 ///   5. Günlük satış özeti oluşturma
 ///
-/// ------------------------------------------------------------------
 /// BU SINIFLAR NEDEN BU KADAR INCE?
-/// ------------------------------------------------------------------
+///
 /// Her is yalnızca bir MediatR komutu gönderiyor ve sonucu logluyor.
 /// Is mantiginin TEK SATIRI bile burada değil.
 ///
@@ -34,7 +32,6 @@ namespace Ticketing.Infrastructure.BackgroundJobs;
 /// Ikinci fayda: is mantığı Application'da olduğu için HTTP ucundan
 /// da tetiklenebiliyor (admin "simdi calistir" diyebiliyor) ve birim
 /// testlerinde Hangfire'a hiç ihtiyac duyulmuyor.
-/// ==================================================================
 /// </summary>
 public sealed partial class TicketingJobs
 {
@@ -47,17 +44,14 @@ public sealed partial class TicketingJobs
         _logger = logger;
     }
 
-    // ==================================================================
     // 1) SURESI DOLAN REZERVASYONLARI İPTAL ETME
-    // ==================================================================
 
     /// <summary>
     /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// [DisableConcurrentExecution] -- NEDEN ŞART?
-    /// ==============================================================
+    ///
     /// Bu is dakikada bir çalışıyor. Bir calisma 70 saniye surerse
     /// (çok rezervasyon birikmisse olur) Hangfire varsayılan olarak
     /// IKINCISINI de baslatir.
@@ -74,7 +68,6 @@ public sealed partial class TicketingJobs
     /// timeoutInSeconds: kilidi bekleme süresi. 0 verirsek beklemez,
     /// hemen atlar. 60 saniye beklemesi daha iyi: uzun suren bir
     /// calismanin ardindan bir sonraki hemen devam eder.
-    /// ==============================================================
     /// </remarks>
     [DisableConcurrentExecution(timeoutInSeconds: 60)]
 
@@ -87,9 +80,8 @@ public sealed partial class TicketingJobs
     [AutomaticRetry(Attempts = 0)]
     public async Task ExpireReservationsAsync(CancellationToken cancellationToken)
     {
-        // ==========================================================
         // PDF Sprint 16: "Background job islemleri" izlenmelidir.
-        // ==========================================================
+        //
         // Her is kendi izleme kapsamini aciyor. Boylece izleme
         // arayuzunde is, HTTP isteklerinden ayrı bir kok (root)
         // olarak görünüyor ve icindeki veritabani/Redis cagrilari
@@ -101,7 +93,6 @@ public sealed partial class TicketingJobs
         //
         // activity null olabilir (dinleyici yoksa); using bunu
         // sorunsuz karsiliyor.
-        // ==========================================================
         using var activity = AppActivitySource.StartJob(nameof(ExpireReservationsAsync));
 
         var result = await _sender
@@ -112,7 +103,7 @@ public sealed partial class TicketingJobs
         {
             // Basarisizligi ISTISNA olarak firlatiyorum.
             //
-            // Sessizce loglasaydik Hangfire is'i "başarılı" sayar ve
+            // Sessizce loglasaydim Hangfire is'i "başarılı" sayar ve
             // izleme ekraninda yesil görünürdü. Arka plan islerinde
             // en tehlikeli durum, calismadigi halde çalışıyor
             // gorunmektir.
@@ -127,17 +118,14 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // ==================================================================
     // 2 ve 3) OUTBOX MESAJLARINI ISLEME + BASARISIZLARI YENIDEN DENEME
-    // ==================================================================
 
     /// <summary>
     /// Bekleyen Outbox mesajlarini isler.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// "BASARISIZ MESAJLARI YENIDEN DENEME" NEDEN AYRI BIR IS DEĞİL?
-    /// ==============================================================
+    ///
     /// PDF bu ikisini ayrı maddeler olarak sayiyor. Ayrı iki is
     /// yazmayi dusundum ve VAZGECTIM.
     ///
@@ -147,14 +135,13 @@ public sealed partial class TicketingJobs
     /// diyor -- yani yeni mesajlar ile yeniden denenecekleri AYNI
     /// sorgu topluyor.
     ///
-    /// Ayrı bir is yazsaydık aynı tabloyu aynı kosulla tarayan iki
+    /// Ayrı bir is yazsaydım aynı tabloyu aynı kosulla tarayan iki
     /// is olurdu ve ikisi aynı anda calisip aynı mesaji islemeye
     /// calisirdi.
     ///
     /// PDF'in istedigi DAVRANIS (başarısız mesaj yeniden denenmeli)
     /// tam olarak karsilaniyor; ayrı bir zamanlayici gerekmiyor.
     /// Ustel geri cekilme OutboxMessage.MarkAsFailed içinde.
-    /// ==============================================================
     /// </remarks>
     [DisableConcurrentExecution(timeoutInSeconds: 30)]
     [AutomaticRetry(Attempts = 0)]
@@ -177,7 +164,7 @@ public sealed partial class TicketingJobs
         // Sifir mesaj islendiginde LOG YAZMIYORUZ.
         //
         // Bu is 30 saniyede bir çalışıyor: günde 2880 kez. Her
-        // calismada "0 mesaj islendi" yazsaydık loglar günde 2880
+        // calismada "0 mesaj islendi" yazsaydım loglar günde 2880
         // anlamsiz satirla dolar ve gerçek hatalar arasında
         // kaybolurdu.
         if (summary.Processed > 0 || summary.Failed > 0 || summary.DeadLettered > 0)
@@ -186,9 +173,7 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // ==================================================================
     // 4) YAKLASAN ETKİNLİK HATIRLATMASI
-    // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 120)]
     [AutomaticRetry(Attempts = 0)]
@@ -209,15 +194,13 @@ public sealed partial class TicketingJobs
         LogRemindersQueued(_logger, result.Value);
     }
 
-    // ==================================================================
     // 5c) SURESI DOLMAK UZERE OLAN REZERVASYONLARI UYAR
-    // ==================================================================
+    //
     // PDF Sprint 14: "Rezervasyon süresi dolmak uzereyken" bildirim.
     //
     // DAKIKADA BIR çalışıyor -- uyarinin zamaninda gitmesi için sart.
     // Bes dakikada bir calissaydi, 3 dakikalik uyarı penceresini
     // tamamen KACIRABILIRDI.
-    // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 30)]
     [AutomaticRetry(Attempts = 0)]
@@ -241,9 +224,8 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // ==================================================================
     // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 için eklendi
-    // ==================================================================
+    //
     // PDF Sprint 9 bu isi SAYMIYOR. Sprint 12'yi yazarken ortaya cikti:
     // "Etkinlik tamamlanmadan yorum yapılamaz" kuralı, etkinlikleri
     // Completed durumuna gecirecek bir mekanizma OLMADAN hiçbir zaman
@@ -252,7 +234,6 @@ public sealed partial class TicketingJobs
     // Yani PDF'in bir sprintteki kuralı, başka bir sprintte olmayan bir
     // isi zorunlu kiliyor. Sprintleri tek tek okuyup "bu gerçekten
     // çalışır mi?" diye sormanin karşılığı.
-    // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 60)]
     [AutomaticRetry(Attempts = 0)]
@@ -276,9 +257,7 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // ==================================================================
     // 5) GUNLUK SATIS OZETI
-    // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 120)]
     [AutomaticRetry(Attempts = 0)]
@@ -313,9 +292,7 @@ public sealed partial class TicketingJobs
             summary.Currency);
     }
 
-    // ==================================================================
     // LOGLAMA -- kaynak ureteci ile (CA1848)
-    // ==================================================================
 
     [LoggerMessage(
         EventId = 9101,

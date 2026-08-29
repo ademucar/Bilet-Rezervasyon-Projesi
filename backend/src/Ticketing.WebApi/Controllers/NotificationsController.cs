@@ -43,7 +43,7 @@ public sealed class NotificationsController : ApiControllerBase
     /// PATCH kullanıyorum, PUT değil.
     ///
     /// PUT "kaynagin TAMAMINI degistir" demek; biz yalnızca tek bir
-    /// alanı (IsRead) degistiriyoruz. PATCH kismi guncellemenin
+    /// alanı (IsRead) degistiriyorum. PATCH kismi guncellemenin
     /// doğru fiili -- ve PDF de PATCH yazmis.
     /// </remarks>
     [HttpPatch("{id:guid}/read")]

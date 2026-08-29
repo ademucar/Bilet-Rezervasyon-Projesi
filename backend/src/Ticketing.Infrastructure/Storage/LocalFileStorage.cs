@@ -7,9 +7,8 @@ namespace Ticketing.Infrastructure.Storage;
 /// Yuklenen dosyalari yerel diske yazar. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// URETIMDE BU SINIF YETMEZ -- BILINCLI BIR SINIRLAMA
-/// ==================================================================
+///
 /// Birden fazla sunucuya olceklenince disk PAYLASILMAZ: kullanıcı
 /// afisi sunucu-1 e yukler, sunucu-2 den istendiginde bulunamaz.
 ///
@@ -17,9 +16,8 @@ namespace Ticketing.Infrastructure.Storage;
 /// Application katmaninda TEK SATIR degismeyecek. Arayuzun varlik
 /// sebebi tam olarak bu.
 ///
-/// Şimdilik yerel disk yeterli çünkü tek sunucuda calisiyoruz --
+/// Şimdilik yerel disk yeterli çünkü tek sunucuda calisiyorum --
 /// ihtiyac duymadigimiz altyapiyi simdiden kurmuyorum.
-/// ==================================================================
 /// </remarks>
 internal sealed class LocalFileStorage : IFileStorage
 {
@@ -45,9 +43,8 @@ internal sealed class LocalFileStorage : IFileStorage
 
         var yol = TamYol(storedFileName);
 
-        // ==============================================================
         // FileMode.CreateNew -- Create DEĞİL
-        // ==============================================================
+        //
         // Create, var olan dosyanin USTUNE yazar. CreateNew ise dosya
         // varsa HATA firlatir.
         //
@@ -56,7 +53,6 @@ internal sealed class LocalFileStorage : IFileStorage
         // tercih ediyorum: bir gün ad üretimi bozulursa (örneğin biri
         // Guid yerine kullanıcı adını koyarsa) bu satır sessiz veri
         // kaybi yerine gurultulu bir hata verir.
-        // ==============================================================
         await using var dosya = new FileStream(
             yol,
             FileMode.CreateNew,
@@ -92,9 +88,8 @@ internal sealed class LocalFileStorage : IFileStorage
     /// klasorun altinda kaldigini dogrular.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// UCUNCU SIPER -- DERINLEMESINE SAVUNMA
-    /// ==============================================================
+    ///
     /// Bu noktaya gelen ad zaten Guid: FileUploadValidator uretti ve
     /// kullanıcı girdisi icermiyor. Yani bu kontrol BUGUN gereksiz.
     ///
@@ -104,7 +99,6 @@ internal sealed class LocalFileStorage : IFileStorage
     ///
     /// Güvenlik kontrolü, ona GUVENEN katmanda değil, ihlal
     /// EDILEBILECEK katmanda durmali.
-    /// ==============================================================
     /// </remarks>
     private string TamYol(string storedFileName)
     {

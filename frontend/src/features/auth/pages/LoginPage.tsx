@@ -20,7 +20,7 @@ export function LoginPage() {
   const [serverError, setServerError] = useState<string | null>(null)
 
   // Interceptor oturumu sonlandirirken sebebi URL'e yazıyor.
-  // Kullanıcıya "neden çıkış yaptım?" sorusunun cevabini veriyoruz --
+  // Kullanıcıya "neden çıkış yaptım?" sorusunun cevabini veriyorum --
   // sessizce giriş ekranına atmak çok kötü bir deneyimdir.
   const sessionReason = searchParams.get('sebep')
 
@@ -40,7 +40,7 @@ export function LoginPage() {
 
       // Kullanıcı korumali bir sayfaya gitmeye calistiysa ProtectedRoute
       // önü buraya yonlendirirken hedefi state içinde tasidi.
-      // Giristen sonra oraya donuyoruz -- basa donmek yerine.
+      // Giristen sonra oraya donuyorum -- basa donmek yerine.
       const from = (location.state as { from?: string } | null)?.from ?? '/'
 
       // replace: true -> tarayıcı gecmisinde giriş sayfasini BIRAKMA.
@@ -134,7 +134,7 @@ export function LoginPage() {
         })}
         className="space-y-4"
         // noValidate: tarayıcının kendi doğrulama balonlarini kapat.
-        // Zod ile tutarli, Turkce ve erişilebilir hatalar gosteriyoruz;
+        // Zod ile tutarli, Turkce ve erişilebilir hatalar gosteriyorum;
         // tarayıcının Ingilizce balonlari bunu bozardi.
         noValidate
       >

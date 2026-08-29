@@ -20,9 +20,8 @@ public sealed record RenderedEmail(string Subject, string HtmlBody);
 /// E-posta sablonlarini üretir. PDF Sprint 14.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN SABLON SISTEMI? Onceden ne vardi?
-/// ==================================================================
+///
 /// Sprint 9'a kadar e-posta govdeleri handler'larin ICINE gomulu
 /// HTML metinleriydi:
 ///
@@ -46,7 +45,6 @@ public sealed record RenderedEmail(string Subject, string HtmlBody);
 /// Sablon sistemi ucunu de cozuyor: ortak bir cerceve (layout) var,
 /// her sablon yalnızca KENDİ icerigini uretiyor, handler'lar da
 /// yalnızca VERI gönderiyor.
-/// ==================================================================
 /// </remarks>
 public interface IEmailTemplateRenderer
 {

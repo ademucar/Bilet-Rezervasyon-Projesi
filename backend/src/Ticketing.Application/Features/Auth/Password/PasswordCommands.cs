@@ -10,9 +10,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Auth.Password;
 
-// ===================================================================
 // 1) SIFRE DEGISTIRME -- giriş yapmış kullanıcı
-// ===================================================================
 
 /// <summary>PDF: POST /api/v1/auth/change-password</summary>
 public sealed record ChangePasswordCommand(string CurrentPassword, string NewPassword)
@@ -89,9 +87,8 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
 
         user.ChangePasswordHash(_passwordHasher.Hash(request.NewPassword));
 
-        // ==============================================================
         // SIFRE DEGISINCE TÜM OTURUMLARI KAPAT
-        // ==============================================================
+        //
         // Kullanıcı sifresini genelde "biri hesabima girmis olabilir"
         // supehesiyle değiştirir. Eski refresh token'lar geçerli kalsaydi
         // saldirgan 7 gün daha erisebilirdi -- yani şifre degistirmek
@@ -115,9 +112,7 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
     }
 }
 
-// ===================================================================
 // 2) SIFREMI UNUTTUM
-// ===================================================================
 
 /// <summary>PDF: POST /api/v1/auth/forgot-password</summary>
 public sealed record ForgotPasswordCommand(string Email) : IRequest<Result>;
@@ -169,13 +164,12 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
             .FirstOrDefaultAsync(u => u.Email == email && u.IsActive, cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
-        // KULLANICI BULUNAMASA BILE BASARILI DONUYORUZ
-        // ==============================================================
+        // KULLANICI BULUNAMASA BILE BASARILI DONUYORUM
+        //
         // Bu, Login'dekiyle AYNI sebep: kullanıcı numaralandirmayi
         // engellemek.
         //
-        // "Bu e-posta kayıtlı değil" deseydik, saldirgan bir e-posta
+        // "Bu e-posta kayıtlı değil" deseydim, saldirgan bir e-posta
         // listesini bu endpoint'e sokup hangilerinin sistemde olduğunu
         // ogrenirdi. Ustelik bu endpoint kimlik dogrulamasi
         // gerektirmiyor -- yani herkese açık bir tarama araci olurdu.
@@ -217,9 +211,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
     }
 }
 
-// ===================================================================
 // 3) SIFRE SIFIRLAMA
-// ===================================================================
 
 /// <summary>PDF: POST /api/v1/auth/reset-password</summary>
 public sealed record ResetPasswordCommand(string Token, string NewPassword) : IRequest<Result>;
@@ -263,15 +255,15 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
     {
         var tokenHash = _tokenService.HashRefreshToken(request.Token);
 
-        // Token hash'i ile kullanıcıyı ariyoruz.
+        // Token hash'i ile kullanıcıyı ariyorum.
         // ix_users_password_reset_token partial index'i bu sorguyu karsiliyor.
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.PasswordResetTokenHash == tokenHash, cancellationToken)
             .ConfigureAwait(false);
 
-        // Token yoksa veya süresi dolmussa AYNI hatayi donuyoruz.
+        // Token yoksa veya süresi dolmussa AYNI hatayi donuyorum.
         //
-        // "Token süresi dolmuş" ile "token geçersiz" ayrimini yapmiyoruz
+        // "Token süresi dolmuş" ile "token geçersiz" ayrimini yapmiyorum
         // çünkü ikisi de saldirgana bilgi verir: "süresi dolmuş" demek,
         // o token'in bir zamanlar GECERLI olduğunu itiraf etmektir.
         if (user is null || !user.IsPasswordResetTokenValid(tokenHash, _clock.UtcNow))

@@ -19,9 +19,7 @@ public sealed record NotificationDto(
     bool IsRead,
     DateTimeOffset CreatedAt);
 
-// ===================================================================
 // 1) LISTE -- PDF: GET /api/v1/notifications
-// ===================================================================
 
 public sealed record GetNotificationsQuery : PaginationRequest,
     IRequest<Result<PagedResult<NotificationDto>>>
@@ -52,9 +50,8 @@ internal sealed class GetNotificationsQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // KULLANICI FILTRESI -- BU SORGUNUN EN ONEMLI SATIRI
-        // ==============================================================
+        //
         // Bildirimler tanim geregi KISISEL: rezervasyon kodlari, ödeme
         // tutarlari, hangi etkinlige gittiginiz.
         //
@@ -65,7 +62,6 @@ internal sealed class GetNotificationsQueryHandler
         // Bu sorgu ASLA onbelleklenmiyor (PDF Sprint 11 kuralı:
         // "Kullanıcıya ozel hassas veriler ortak cache içinde
         // tutulmamalidir").
-        // ==============================================================
         var query = _context.Notifications
             .AsNoTracking()
             .Where(n => n.UserId == userId);
@@ -101,27 +97,23 @@ internal sealed class GetNotificationsQueryHandler
     }
 }
 
-// ===================================================================
 // 2) OKUNMAMIS SAYISI -- PDF: GET /api/v1/notifications/unread-count
-// ===================================================================
 
 /// <summary>
 /// Okunmamis bildirim sayısı. Zil ikonundaki rozet için.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN AYRI BIR UC? Listeden de sayilabilirdi.
-/// ==================================================================
+///
 /// Sayiyi liste ucundan da alabilirdik (totalCount). Ama zil rozeti
 /// HER SAYFADA ve DUZENLI ARALIKLARLA yenileniyor.
 ///
-/// Liste ucunu cagirsaydik her yenilemede 20 bildirimin tüm metnini
-/// (başlık, mesaj, adres) boşuna tasirdik. Bu uc tek bir SAYI
+/// Liste ucunu cagirsaydim her yenilemede 20 bildirimin tüm metnini
+/// (başlık, mesaj, adres) boşuna tasirdim. Bu uc tek bir SAYI
 /// dönüyor -- SQL tarafında da yalnızca COUNT çalışıyor, satirlar
 /// hiç okunmuyor.
 ///
 /// ix_notifications_user_isread index'i bu sorguyu karsiliyor.
-/// ==================================================================
 /// </remarks>
 public sealed record GetUnreadNotificationCountQuery : IRequest<Result<int>>;
 
@@ -163,9 +155,7 @@ internal sealed class GetUnreadNotificationCountQueryHandler
     }
 }
 
-// ===================================================================
 // 3) OKUNDU ISARETLE -- PDF: PATCH /api/v1/notifications/{id}/read
-// ===================================================================
 
 public sealed record MarkNotificationReadCommand(Guid Id) : IRequest<Result>;
 
@@ -198,7 +188,7 @@ internal sealed class MarkNotificationReadCommandHandler
         // Sahiplik kontrolü SORGUYA dahil.
         //
         // Önce kaydı cekip sonra "senin mi?" diye sorsaydik, iki
-        // adımda yaptigimiz seyi tek adımda yapiyoruz ve yanlislikla
+        // adımda yaptigimiz seyi tek adımda yapiyorum ve yanlislikla
         // kontrolü atlamak imkansizlasiyor.
         var notification = await _context.Notifications
             .FirstOrDefaultAsync(
@@ -210,8 +200,8 @@ internal sealed class MarkNotificationReadCommandHandler
         {
             // Baskasinin bildirimi de buraya duser ve 404 alır.
             //
-            // 403 deseydik "bu bildirim VAR ama senin değil" demis
-            // olurduk -- baskasinin bildirim aldigini dogrulamak
+            // 403 deseydim "bu bildirim VAR ama senin değil" demis
+            // olurdum -- baskasinin bildirim aldigini dogrulamak
             // bile gereksiz bir sizinti.
             return Result.Failure(Error.NotFound(
                 "notification.not_found", "Bildirim bulunamadı."));
@@ -226,9 +216,7 @@ internal sealed class MarkNotificationReadCommandHandler
     }
 }
 
-// ===================================================================
 // 4) TUMUNU OKUNDU ISARETLE -- PDF: PATCH /api/v1/notifications/read-all
-// ===================================================================
 
 public sealed record MarkAllNotificationsReadCommand : IRequest<Result<int>>;
 
@@ -260,9 +248,8 @@ internal sealed class MarkAllNotificationsReadCommandHandler
 
         var now = _clock.UtcNow;
 
-        // ==============================================================
         // NEDEN ExecuteUpdateAsync DEĞİL?
-        // ==============================================================
+        //
         // EF Core 7+ ile toplu güncelleme yapilabilir:
         //
         //     await query.ExecuteUpdateAsync(s => s
@@ -285,7 +272,6 @@ internal sealed class MarkAllNotificationsReadCommandHandler
         //
         // Binlerce satira ciksaydi karar degisirdi -- o zaman toplu
         // güncelleme yapip denetim alanlarini elle yazardim.
-        // ==============================================================
         var unread = await _context.Notifications
             .Where(n => n.UserId == userId && !n.IsRead)
             .ToListAsync(cancellationToken)

@@ -20,20 +20,18 @@ public static partial class CachingSetup
 
         var connectionString = configuration.GetConnectionString("Redis");
 
-        // ==============================================================
         // ONBELLEK ISTEGE BAGLI -- PDF: "Cache kapalı olduğunda sistem
         // calismaya devam edebilmelidir."
-        // ==============================================================
+        //
         // Bağlantı dizesi yoksa bu BIR HATA DEĞİL, bir TERCIH.
         //
         // Gelistirici Redis kurmak istemeyebilir; testler Redis'siz
         // calismali; küçük bir kurulumda Redis gereksiz olabilir.
         //
         // Burada istisna firlatsaydik (JWT_SECRET'te olduğu gibi)
-        // Redis'i zorunlu kilardik. Ama JWT olmadan sistem GUVENLI
+        // Redis'i zorunlu kilardim. Ama JWT olmadan sistem GUVENLI
         // calisamaz; Redis olmadan sadece YAVAS çalışır. Bu fark
         // karari belirliyor.
-        // ==============================================================
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             services.AddSingleton<ICacheService, NullCacheService>();
@@ -41,9 +39,8 @@ public static partial class CachingSetup
             return services;
         }
 
-        // ==============================================================
         // BAGLANTI KURULAMAZSA UYGULAMA COKMEMELI
-        // ==============================================================
+        //
         // ConnectionMultiplexer.Connect(), Redis kapaliysa istisna
         // firlatir. Burada yakalamasaydik uygulama HİÇ BASLAMAZDI.
         //
@@ -55,7 +52,6 @@ public static partial class CachingSetup
         // istemci nesnesi olusuyor ve arka planda yeniden baglanmayi
         // deniyor. Yani Redis sonradan ayaga kalkarsa uygulamayi
         // yeniden baslatmaya gerek kalmiyor.
-        // ==============================================================
         try
         {
             var options = ConfigurationOptions.Parse(connectionString);

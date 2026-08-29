@@ -15,9 +15,9 @@ const SELECTED_COLOR = '#16a34a'
 const INACTIVE_COLOR = '#e2e8f0'
 
 /**
- * ==================================================================
+ *
  * ADMIN KOLTUK PLANI
- * ==================================================================
+ *
  * Sprint 4'te bu dosya koltuk haritasinin KENDISIYDI. Sprint 7'de
  * bilet alma ekrani da bir harita isteyince cizim mantigini
  * components/seatmap/SeatMap.tsx'e tasidim.
@@ -31,16 +31,15 @@ const INACTIVE_COLOR = '#e2e8f0'
  * calisiyorlar. Refactor'un doğru yapilmis olmasinin olcusu budur:
  * cagiran taraf degisikligi fark etmez.
  *
- * ------------------------------------------------------------------
  * ADMIN'DE RENK NE ANLAMA GELIR?
- * ------------------------------------------------------------------
+ *
  * Burada koltuğun SATIS durumu yok -- oturum bile secilmemis.
  * Renk yalnızca BOLUMU anlatiyor. Bilet alma ekraninda ise renk
  * "boş mu, kilitli mi, satilmis mi" demek.
  *
  * Iki ekranin renk kuralı farklı olduğu için renk secimini
  * paylasilan bilesene KOYMADIM; her ekran kendi kuralini yazıyor.
- * ==================================================================
+ *
  */
 export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps) {
   const mapped = useMemo<SeatMapSection[]>(

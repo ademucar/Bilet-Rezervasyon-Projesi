@@ -24,16 +24,14 @@ public sealed record UploadedFileDto(
 /// Dosya yukleme. PDF Sprint 15: file type / MIME type / güvenli dosya adı.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN IFormFile DEĞİL, STREAM?
-/// ==================================================================
+///
 /// IFormFile, Microsoft.AspNetCore.Http içinde tanimli. Application
 /// katmanina almak, is mantigini WEB e bagimli yapardi -- mimari
 /// testimiz bunu zaten reddediyor.
 ///
 /// Stream ise System.IO içinde. Aynı komut yarin bir arka plan
 /// isinden veya konsol aracindan da cagrilabilir.
-/// ==================================================================
 /// </remarks>
 public sealed record UploadFileCommand(
     string FileName,
@@ -59,30 +57,26 @@ internal sealed class UploadFileCommandHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // ==============================================================
         // 1) IMZA ICIN BASTAN BIRKAC BAYT OKU
-        // ==============================================================
+        //
         // Tüm dosyayı belege almiyorum. 5 MB tek başına sorun değil ama
         // es zamanlı 100 yukleme 500 MB eder ve sunucuyu dusurur.
         //
         // Yalnızca imza için gereken kadar okuyup akışı BASA SARIYORUM;
         // sonra aynı akis doğrudan diske kopyalaniyor.
-        // ==============================================================
         var basBaytlari = new byte[FileUploadValidator.ImzaIcinGerekenBayt];
         var okunan = await request.Content
             .ReadAtLeastAsync(basBaytlari, basBaytlari.Length, throwOnEndOfStream: false, cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // 2) DOGRULA -- diske YAZMADAN ONCE
-        // ==============================================================
+        //
         // Sıra önemli: önce yazip sonra dogrulasaydik, zararli dosya
         // geçersiz bulunana kadar diskte durmus olurdu. Kisa bir an
         // gibi görünüyor ama bu süre içinde başka bir istek o dosyayı
         // isteyebilir.
         //
         // Hicbir zaman diske dusmemesi, sonra silmekten guvenlidir.
-        // ==============================================================
         var dogrulama = FileUploadValidator.Dogrula(
             request.FileName,
             request.ContentType,
@@ -106,9 +100,8 @@ internal sealed class UploadFileCommandHandler
             .SaveAsync(guvenliAd, request.Content, cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // 3) VERITABANI KAYDI
-        // ==============================================================
+        //
         // Dosya diskte, kayıt veritabaninda -- iki ayrı sistem. Kayıt
         // başarısız olursa dosya SAHIPSIZ kalır.
         //
@@ -118,7 +111,6 @@ internal sealed class UploadFileCommandHandler
         //
         // Ters yon (kayıt var, dosya yok) COK daha kötü olurdu: kullanıcı
         // kırık bir bağlantı gorurdu. Bu yüzden önce dosya, sonra kayıt.
-        // ==============================================================
         var kayit = UploadedFile.Create(
             // Orijinal ad SAKLANIYOR ama diske yazilmiyor -- yalnızca
             // kullanıcıya gosterim için. Path.GetFileName ile dizin

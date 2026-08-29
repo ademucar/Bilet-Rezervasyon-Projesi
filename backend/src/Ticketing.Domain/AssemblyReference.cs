@@ -8,7 +8,7 @@ namespace Ticketing.Domain;
 ///
 /// Neden gerekli?
 /// Architecture testlerinde ve DI kayitlarinda "su assembly'deki tüm
-/// handler'lari bul" gibi islemler yapacagiz. Bunun için Assembly nesnesine
+/// handler'lari bul" gibi islemler yapacagim. Bunun için Assembly nesnesine
 /// ihtiyacimiz var. Assembly.Load("Ticketing.Domain") gibi metin tabanli bir
 /// yontem kullanabilirdim ama proje adı degistiginde derleme hatası vermez,
 /// calisma zamaninda patlar.

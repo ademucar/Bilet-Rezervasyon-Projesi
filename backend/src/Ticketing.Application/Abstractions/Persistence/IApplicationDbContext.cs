@@ -6,9 +6,8 @@ namespace Ticketing.Application.Abstractions.Persistence;
 /// <summary>
 /// Application katmaninin veritabanina bakan yuzu.
 ///
-/// ==================================================================
 /// NEDEN REPOSITORY DEĞİL DE DOGRUDAN DbSet?
-/// ==================================================================
+///
 /// Klasik yaklasim her entity için bir repository yazmaktir:
 /// IUserRepository, IEventRepository, IReservationRepository...
 ///
@@ -30,16 +29,15 @@ namespace Ticketing.Application.Abstractions.Persistence;
 /// PDF de bu konuda esnek: "Repository abstraction GEREKIYORSA yalnızca
 /// interface seviyesinde" diyor. Yani zorunlu tutmuyor.
 ///
-/// ------------------------------------------------------------------
 /// PEKI TEST EDILEBILIRLIK?
-/// ------------------------------------------------------------------
+///
 /// Repository'nin ana gerekçesi "handler'i mock'layabilmek"tir.
 /// Ama biz zaten Testcontainers ile GERCEK PostgreSQL uzerinde
-/// integration test yazacagiz (PDF Sprint 17 bunu zorunlu tutuyor).
+/// integration test yazacagim (PDF Sprint 17 bunu zorunlu tutuyor).
 ///
 /// Mock'lanmis bir repository ile yazilan test, gerçek veritabanindaki
 /// unique index ihlallerini, concurrency cakismalarini ve transaction
-/// davranisini YAKALAYAMAZ -- ki bizim projemizin en kritik kisimlari
+/// davranisini YAKALAYAMAZ -- ki benim projemizin en kritik kisimlari
 /// tam olarak bunlar.
 ///
 /// Bu arayüz yine de degerli: Application katmani somut

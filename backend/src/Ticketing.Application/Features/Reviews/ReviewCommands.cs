@@ -38,9 +38,7 @@ internal static class ReviewErrors
         "review.not_owner", "Yalnızca kendi yorumunuzu duzenleyebilirsiniz.");
 }
 
-// ===================================================================
 // ORTAK KURAL KONTROLU
-// ===================================================================
 
 /// <summary>
 /// PDF'in yorum yapma on kosullarini kontrol eder.
@@ -55,9 +53,8 @@ internal static class ReviewErrors
 internal static class ReviewEligibility
 {
     /// <summary>
-    /// ==============================================================
     /// "GECERLI BİLET" NE DEMEK? -- PDF'in soylemedigi ayrinti
-    /// ==============================================================
+    ///
     /// PDF "geçerli bilet almis kullanıcı" diyor ama hangi bilet
     /// durumlarinin geçerli sayilacagini soylemiyor. Karar bana ait:
     ///
@@ -76,7 +73,6 @@ internal static class ReviewEligibility
     /// Neden Refunded'i disliyorum? Çünkü aksi halde bilet alip hemen
     /// iade eden biri yorum hakki kazanirdi. Bu, sahte yorum uretmenin
     /// en ucuz yolu olurdu: al, iade et, kötü puan ver.
-    /// ==============================================================
     /// </summary>
     public static readonly TicketStatus[] ValidTicketStatuses =
     [
@@ -98,9 +94,7 @@ internal static class ReviewEligibility
                 cancellationToken);
 }
 
-// ===================================================================
 // OLUSTUR -- PDF: POST /api/v1/events/{eventId}/reviews
-// ===================================================================
 
 public sealed record CreateReviewCommand(Guid EventId, int Rating, string Comment)
     : IRequest<Result<Guid>>;
@@ -153,9 +147,8 @@ internal sealed class CreateReviewCommandHandler
             return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // KURAL 1: Etkinlik var mi ve TAMAMLANDI mi?
-        // ==============================================================
+        //
         // PDF: "Etkinlik tamamlanmadan yorum yapılamaz."
         //
         // Neden bu kural var? Çünkü yorum bir DENEYIM anlatisidir.
@@ -164,7 +157,6 @@ internal sealed class CreateReviewCommandHandler
         //
         // Yalnızca durumu okuyorum, entity'nin tamamini değil:
         // güncelleme yapmayacagim.
-        // ==============================================================
         var eventInfo = await _context.Events
             .AsNoTracking()
             .Where(e => e.Id == request.EventId)
@@ -182,15 +174,13 @@ internal sealed class CreateReviewCommandHandler
             return Result.Failure<Guid>(ReviewErrors.EventNotCompleted);
         }
 
-        // ==============================================================
         // KURAL 2: Geçerli bilet var mi?
-        // ==============================================================
+        //
         // PDF: "Yalnızca etkinlige geçerli bilet almis kullanıcı yorum
         // yapabilir."
         //
         // Bu kural yorumlarin GUVENILIRLIGINI koruyor. Olmasaydı
         // rakip bir organizatör sahte hesaplarla puan dusurebilirdi.
-        // ==============================================================
         var hasTicket = await ReviewEligibility
             .HasValidTicketAsync(_context, userId, request.EventId, cancellationToken)
             .ConfigureAwait(false);
@@ -200,9 +190,8 @@ internal sealed class CreateReviewCommandHandler
             return Result.Failure<Guid>(ReviewErrors.NoValidTicket);
         }
 
-        // ==============================================================
         // KURAL 3: Etkinlik başına TEK yorum
-        // ==============================================================
+        //
         // PDF: "Kullanıcı etkinlik başına bir yorum olusturabilir."
         //
         // Bu kontrol YARISA ACIK: iki istek aynı anda gelirse ikisi de
@@ -212,7 +201,6 @@ internal sealed class CreateReviewCommandHandler
         //
         // Buradaki kontrol YAYGIN durumu (kullanıcı ikinci kez yorum
         // yazmaya çalışıyor) ucuz ve ANLASILIR bir mesajla cozuyor.
-        // ==============================================================
         var alreadyExists = await _context.Reviews
             .AsNoTracking()
             .AnyAsync(r => r.UserId == userId && r.EventId == request.EventId, cancellationToken)
@@ -236,7 +224,7 @@ internal sealed class CreateReviewCommandHandler
             // UNIQUE index ihlali: yaris durumunda ikinci istek buraya duser.
             //
             // Kullanıcıya "beklenmedik hata" demek yerine gerçek sebebi
-            // soyluyoruz -- zaten bir yorumu var.
+            // soyluyorum -- zaten bir yorumu var.
             return Result.Failure<Guid>(ReviewErrors.AlreadyReviewed);
         }
 
@@ -248,9 +236,7 @@ internal sealed class CreateReviewCommandHandler
     }
 }
 
-// ===================================================================
 // GUNCELLE -- PDF: PUT /api/v1/reviews/{id}
-// ===================================================================
 
 public sealed record UpdateReviewCommand(Guid Id, int Rating, string Comment) : IRequest<Result>;
 
@@ -297,9 +283,8 @@ internal sealed class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewC
             return Result.Failure(ReviewErrors.NotFound);
         }
 
-        // ==============================================================
         // PDF: "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
-        // ==============================================================
+        //
         // Burada 404 DEĞİL 403 donuyorum -- rezervasyon ve odemede
         // verdigim karardan FARKLI. Sebep:
         //
@@ -310,7 +295,6 @@ internal sealed class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewC
         // Rezervasyonda 404 dondurmustum çünkü orada kaydin VARLIGI
         // gizli bilgiydi. Burada değil. Kural ezbere değil, neyin
         // gizli olduğu dusunulerek uygulanmali.
-        // ==============================================================
         if (review.UserId != userId)
         {
             return Result.Failure(ReviewErrors.NotOwner);
@@ -329,9 +313,7 @@ internal sealed class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewC
     }
 }
 
-// ===================================================================
 // SIL -- PDF: DELETE /api/v1/reviews/{id}
-// ===================================================================
 
 /// <param name="HideReason">
 /// Admin gizliyorsa sebep. Kullanıcı kendi yorumunu siliyorsa null.
@@ -372,9 +354,8 @@ internal sealed class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewC
 
         var isAdmin = _currentUser.Roles.Contains(Role.Names.Admin);
 
-        // ==============================================================
         // AYNI UC, IKI FARKLI ISLEM -- BILINCLI
-        // ==============================================================
+        //
         // PDF iki ayrı kural veriyor:
         //   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
         //   "Admin uygunsuz yorumu kaldirabilir."
@@ -396,7 +377,6 @@ internal sealed class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewC
         //
         // Ayrıca "neden yorumum kayboldu?" sorusuna cevap verebilmek
         // için HiddenReason saklaniyor.
-        // ==============================================================
         if (isAdmin && review.UserId != userId)
         {
             review.Hide(request.HideReason ?? "Uygunsuz icerik.");

@@ -13,9 +13,8 @@ namespace Ticketing.Infrastructure.Email;
 /// <summary>
 /// SMTP üzerinden e-posta gönderir. Yerel gelistirmede Mailpit'e baglanir.
 ///
-/// ==================================================================
 /// SPRINT 3'TE BIRAKTIGIM NOTUN KARSILIGI
-/// ==================================================================
+///
 /// Sprint 3'te ilk tercihim MailKit'ti (.NET dunyasinda standart
 /// e-posta kutuphanesi). Ama paket ekleme komutu su hatayi verdi:
 ///
@@ -33,9 +32,8 @@ namespace Ticketing.Infrastructure.Email;
 ///    sinif degisecek. O gün MailKit advisory'sinin kapanip
 ///    kapanmadigi TEKRAR kontrol edilmeli."
 ///
-/// ------------------------------------------------------------------
 /// SPRINT 14: KONTROL ETTIM, ACIK KAPANMIS
-/// ------------------------------------------------------------------
+///
 /// MailKit 4.17.0 ile tarama TEMIZ dondu:
 ///
 ///   dotnet list package -vulnerable -include-transitive
@@ -43,14 +41,13 @@ namespace Ticketing.Infrastructure.Email;
 ///
 /// Yani Sprint 3'teki gerekce artık geçerli değil. MailKit'e geciyorum:
 ///
-///   - SYSLIB0014 bastirmasi KALKTI (artık eskimis API kullanmiyoruz)
+///   - SYSLIB0014 bastirmasi KALKTI (artık eskimis API kullanmiyorum)
 ///   - Microsoft'un kendisi SmtpClient yerine MailKit'i oneriyor
 ///   - Modern TLS ve kimlik doğrulama destegi var
 ///
 /// Bu, kodda birakilan bir "sonra bak" notunun neden degerli oldugunun
 /// somut ornegi: karar o gunun kosullarina göre verilmisti, kosullar
 /// değişti ve karar güncellendi.
-/// ==================================================================
 /// </summary>
 internal sealed partial class SmtpEmailService : IEmailService
 {
@@ -77,9 +74,8 @@ internal sealed partial class SmtpEmailService : IEmailService
         message.To.Add(MailboxAddress.Parse(recipient));
         message.Subject = subject;
 
-        // ==============================================================
         // HTML GOVDE + DUZ METİN ALTERNATIFI
-        // ==============================================================
+        //
         // BodyBuilder ile hem HTML hem duz metin surumu gonderiyoruz
         // (multipart/alternative).
         //
@@ -96,7 +92,6 @@ internal sealed partial class SmtpEmailService : IEmailService
         // Duz metni HTML'den TUREITIYORUM: etiketleri sokup metni
         // biraktigimda ayrı bir sablon yazmaya gerek kalmiyor ve
         // ikisi birbirinden ayrisamiyor.
-        // ==============================================================
         var builder = new BodyBuilder
         {
             HtmlBody = htmlBody,
@@ -109,15 +104,14 @@ internal sealed partial class SmtpEmailService : IEmailService
 
         try
         {
-            // ==========================================================
             // TLS SECIMI
-            // ==========================================================
+            //
             // Mailpit (yerel gelistirme) TLS kullanmiyor; gerçek
             // saglayicilar kullaniyor.
             //
             // SecureSocketOptions.Auto sectim: MailKit sunucunun
             // yeteneklerine bakip karar veriyor. Sabit bir deger
-            // verseydik ya yerelde ya uretimde calismazdi ve
+            // verseydim ya yerelde ya uretimde calismazdi ve
             // yapilandirma ile ayrilmasi gerekirdi.
             //
             // UseSsl acikca true ise zorluyoruz -- yapilandirmayla
@@ -132,12 +126,12 @@ internal sealed partial class SmtpEmailService : IEmailService
             // Kimlik bilgisi VARSA dogrula.
             //
             // Mailpit kimlik doğrulama istemiyor; kosulsuz
-            // AuthenticateAsync cagirsaydik yerelde patlardi.
+            // AuthenticateAsync cagirsaydim yerelde patlardi.
             if (!string.IsNullOrWhiteSpace(_options.Username))
             {
                 // Parola null olabilir (yalnızca kullanıcı adiyla
                 // doğrulama yapan sunucular var). MailKit null kabul
-                // etmiyor; boş metne ceviriyoruz.
+                // etmiyor; boş metne ceviriyorum.
                 await client.AuthenticateAsync(
                     _options.Username,
                     _options.Password ?? string.Empty,
@@ -146,9 +140,8 @@ internal sealed partial class SmtpEmailService : IEmailService
 
             await client.SendAsync(message, cancellationToken).ConfigureAwait(false);
 
-            // ==========================================================
             // E-POSTA KISMEN MASKELENIYOR -- PDF Sprint 15
-            // ==========================================================
+            //
             // E-posta adresi KVKK/GDPR kapsaminda kisisel veri. Her
             // gonderimde açık açık loglamak, log dosyalarini bir
             // kullanıcı listesine cevirir -- ve o dosyalar yedeklenip
@@ -165,9 +158,8 @@ internal sealed partial class SmtpEmailService : IEmailService
             //
             // Kaynak ureteci normalde bu kontrolü KENDISI ekliyor -- ama
             // yalnızca cagriya PARAMETRE OLARAK gecilen degerler için.
-            // Burada parametreyi biz hesapliyoruz, o yüzden kontrolü de
+            // Burada parametreyi biz hesapliyorum, o yüzden kontrolü de
             // elle yazmamiz gerekiyor.
-            // ==========================================================
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 // Maskeleme SONUCU bir yerel degiskene aliniyor.
@@ -185,9 +177,8 @@ internal sealed partial class SmtpEmailService : IEmailService
         }
         finally
         {
-            // ==========================================================
             // BAGLANTIYI HER DURUMDA KAPAT
-            // ==========================================================
+            //
             // finally ŞART: gonderim istisna firlatirsa bile SMTP
             // bağlantısı kapanmali.
             //
@@ -210,7 +201,7 @@ internal sealed partial class SmtpEmailService : IEmailService
     /// </summary>
     /// <remarks>
     /// Tam bir HTML ayristiricisi DEĞİL ve olmasını da gerekmiyor:
-    /// sablonlarimizi biz yazıyoruz ve yapilari basit.
+    /// sablonlarimizi biz yazıyorum ve yapilari basit.
     ///
     /// AngleSharp gibi bir kutuphane eklemek, yalnızca yedek metin
     /// uretmek için çok agir olurdu.

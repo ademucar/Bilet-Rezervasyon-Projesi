@@ -9,9 +9,8 @@ namespace Ticketing.Infrastructure.Reporting;
 /// Uretilen rapor dosyalarini diskte saklar. PDF Sprint 13.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN VERITABANI DEĞİL, DISK?
-/// ==================================================================
+///
 /// Dosyalari veritabaninda bytea olarak da tutabilirdik. Tutmadim:
 ///
 ///   - Rapor dosyalari megabaytlarca olabilir. Veritabaninin her
@@ -22,9 +21,8 @@ namespace Ticketing.Infrastructure.Reporting;
 ///     Veritabani ise dogruluk kaynagimiz; oraya geçici veri koymak
 ///     iki farklı sorumlulugu karistirmak olurdu.
 ///
-/// ------------------------------------------------------------------
 /// URETIMDE NE DEGISIR?
-/// ------------------------------------------------------------------
+///
 /// Birden fazla sunucuya olceklenirse disk PAYLASILMAZ: rapor
 /// sunucu-1'de üretilir, kullanıcı sunucu-2'ye baglanir ve dosyayı
 /// bulamaz.
@@ -32,7 +30,6 @@ namespace Ticketing.Infrastructure.Reporting;
 /// O zaman bu sinifin yerine bir S3/Azure Blob uygulamasi gelir --
 /// arayüz (IReportFileStore) aynı kaldigi için Application katmaninda
 /// TEK SATIR degismez. Zaten arayuzun varlik sebebi bu.
-/// ==================================================================
 /// </remarks>
 internal sealed class FileSystemReportStore : IReportFileStore
 {
@@ -53,17 +50,15 @@ internal sealed class FileSystemReportStore : IReportFileStore
     /// Dosya yolunu üretir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// DOSYA ADI OLARAK GUID -- KULLANICI GIRDISI DEĞİL
-    /// ==============================================================
-    /// Rapor basligini dosya adı yapsaydik, ilerde ozellestirilebilir
+    ///
+    /// Rapor basligini dosya adı yapsaydim, ilerde ozellestirilebilir
     /// bir başlık "../../appsettings.json" olabilirdi ve dizin gecisi
     /// (path traversal) acigi olusurdu.
     ///
     /// Guid.ToString("N") yalnızca 32 onaltilik karakter uretiyor --
     /// tanim geregi güvenli. Gerçek dosya adı ve içerik türü ayrı bir
     /// meta dosyasinda duruyor.
-    /// ==============================================================
     /// </remarks>
     private string DosyaYolu(Guid exportId, string uzanti)
         => Path.Combine(_root, $"{exportId:N}.{uzanti}");

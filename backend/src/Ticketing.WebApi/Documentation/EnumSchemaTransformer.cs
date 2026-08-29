@@ -10,9 +10,8 @@ namespace Ticketing.WebApi.Documentation;
 /// PDF Sprint 18: "Endpoint aciklamalari" ve OpenAPI client arastirmasi.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF, ORVAL ARASTIRMASI SIRASINDA BULUNAN BOSLUGU KAPATIYOR
-/// ==================================================================
+///
 /// Sprint 18'de OpenAPI'den TypeScript istemci uretimini denedim
 /// (Orval). Uretilen tip su cikti:
 ///
@@ -29,9 +28,8 @@ namespace Ticketing.WebApi.Documentation;
 /// yapacagini bilemiyordu. Kaynak koda erişimi olmayan biri için
 /// bu alan tamamen anlamsizdi.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN STRING'E CEVIRMEDIM?
-/// ------------------------------------------------------------------
+///
 /// JsonStringEnumConverter ekleyip enum'lari metin olarak
 /// gonderebilirdim ("Confirmed" gibi). Daha okunakli olurdu.
 ///
@@ -52,7 +50,6 @@ namespace Ticketing.WebApi.Documentation;
 /// x-enum-varnames, OpenAPI Generator ve NSwag'in tanidigi yaygin
 /// bir uzanti; description ise HER aracta ve insan gozunde
 /// çalışıyor.
-/// ==================================================================
 /// </remarks>
 internal sealed class EnumSchemaTransformer : IOpenApiSchemaTransformer
 {
@@ -89,16 +86,15 @@ internal sealed class EnumSchemaTransformer : IOpenApiSchemaTransformer
             eslesme.Add($"`{sayi}` = {adlar[i]}");
         }
 
-        // ==============================================================
         // x-enum-varnames: KOD URETICILERI ICIN
-        // ==============================================================
+        //
         // OpenAPI standardinda enum değerleri var ama ISIMLERI yok.
         // Bu uzanti, araclarin anlamlı enum uretebilmesi için
         // toplulukta yaygınlasan çözüm.
         //
         // Taniyamayan bir arac için ZARARSIZ: bilinmeyen "x-" alanlari
         // yok sayiliyor.
-        // ==============================================================
+        //
         // OpenApiArray, List<IOpenApiAny> turevi; koleksiyon
         // baslatici yerine AddRange kullanıyorum (spread operatoru
         // burada Index olarak yorumlanip derlenmiyor).

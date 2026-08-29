@@ -12,9 +12,8 @@ public enum ReportFormat
 /// Bicimden bağımsız rapor verisi.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN TABLO SEKLINDE ARA BIR MODEL?
-/// ==================================================================
+///
 /// Her rapor tipi için ayrı bir Excel/CSV/PDF yazici yazmak
 /// 5 rapor x 3 biçim = 15 metot demekti.
 ///
@@ -27,7 +26,6 @@ public enum ReportFormat
 /// tarih, ondalik ayirici) raporu ureten tarafta yapiliyor.
 /// Yaziciya "bu sutun para" demek gerekseydi, tablo modeli tip
 /// sistemi tasimak zorunda kalırdı ve is yeniden karmasiklasirdi.
-/// ==================================================================
 /// </remarks>
 public sealed record ReportTable(
     string Title,

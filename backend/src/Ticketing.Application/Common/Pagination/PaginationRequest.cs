@@ -11,9 +11,8 @@ public abstract record PaginationRequest
     /// <summary>
     /// Izin verilen en büyük sayfa boyutu.
     ///
-    /// ------------------------------------------------------------------
     /// BU SABIT NEDEN BIR GÜVENLİK ONLEMI?
-    /// ------------------------------------------------------------------
+    ///
     /// Ust sinir olmasaydı bir kullanıcı
     ///     GET /api/v1/events?pageSize=999999999
     /// isteyebilirdi. Sunucu tüm tabloyu belege yukler, JSON'a cevirir

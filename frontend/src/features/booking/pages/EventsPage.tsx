@@ -12,9 +12,9 @@ import { EventFilterPanel } from '../components/EventFilterPanel'
 import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '../api/bookingApi'
 
 /**
- * ==================================================================
+ *
  * ETKİNLİK LISTESI -- PDF Sprint 11
- * ==================================================================
+ *
  * Sprint 7'de bu sayfa yalnızca metin aramasi ve sayfalama
  * yapiyordu ve su notu birakmistim:
  *
@@ -22,15 +22,15 @@ import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '
  *    Ekrani simdiden asiri tasarlamiyorum."
  *
  * Sprint 11 geldi: sekiz filtre, sıralama ve popüler etkinlikler.
- * ==================================================================
+ *
  */
 export function EventsPage() {
   const [search, setSearch] = useState('')
 
   /**
-   * ----------------------------------------------------------------
+   *
    * NEDEN TEK BIR `filters` NESNESI?
-   * ----------------------------------------------------------------
+   *
    * Her filtre için ayrı useState acabilirdim: cityId, categoryId,
    * minPrice, maxPrice, dateFrom, dateTo, sortBy... on tane state.
    *
@@ -42,7 +42,7 @@ export function EventsPage() {
    *
    * Tek nesne + tek güncelleme fonksiyonu ile bu kuralı TEK YERDE
    * uyguluyorum (bkz. updateFilters).
-   * ----------------------------------------------------------------
+   *
    */
   const [filters, setFilters] = useState<EventFilters>({
     pageNumber: 1,
@@ -59,7 +59,7 @@ export function EventsPage() {
       // Filtre değişince HER ZAMAN 1. sayfaya dön.
       //
       // Tek istisna: degisiklik zaten sayfa numarasi ise (kullanıcı
-      // "Sonraki"ye basmis). O zaman gelen değeri koruyoruz.
+      // "Sonraki"ye basmis). O zaman gelen değeri koruyorum.
       pageNumber: degisiklik.pageNumber ?? 1,
     }))
   }, [])
@@ -98,15 +98,13 @@ export function EventsPage() {
     placeholderData: keepPreviousData,
   })
 
-  // ================================================================
   // POPULER ETKINLIKLER -- PDF Sprint 11 (Redis'te 10 dakika)
-  // ================================================================
+  //
   // YALNIZCA filtresiz gorunumde gösteriliyor.
   //
   // Kullanıcı filtre uyguladiginda ne aradigini biliyor; ustune
   // alakasiz "popüler" onerileri koymak ekrani kalabaliklastirir ve
   // gerçek sonuclari asagi iter.
-  // ================================================================
   const filtresizMi = activeCount === 0 && !search
 
   const popularQuery = useQuery({

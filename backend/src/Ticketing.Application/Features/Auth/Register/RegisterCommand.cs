@@ -7,7 +7,7 @@ namespace Ticketing.Application.Features.Auth.Register;
 /// Yeni kullanıcı kaydı. PDF: POST /api/v1/auth/register
 ///
 /// Neden "record"? Çünkü bir komut bir VERI TASIYICISIDIR, davranisi yoktur.
-/// record bize deger esitligi ve degismezlik (immutability) veriyor --
+/// record bana deger esitligi ve degismezlik (immutability) veriyor --
 /// yani bir komut olusturulduktan sonra handler'a giderken degistirilemez.
 ///
 /// IRequest&lt;Result&lt;AuthResponse&gt;&gt;: bu komut calistiginda

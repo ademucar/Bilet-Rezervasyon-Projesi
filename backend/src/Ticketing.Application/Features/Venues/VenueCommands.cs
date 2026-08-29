@@ -26,9 +26,7 @@ internal static class VenueErrors
         "Bu sehirde aynı isimde bir mekan zaten var.");
 }
 
-// ===================================================================
 // OLUSTURMA
-// ===================================================================
 
 /// <summary>PDF Sprint 4: POST /api/v1/venues</summary>
 public sealed record CreateVenueCommand(
@@ -129,9 +127,7 @@ internal sealed class CreateVenueCommandHandler : IRequestHandler<CreateVenueCom
     }
 }
 
-// ===================================================================
 // GUNCELLEME
-// ===================================================================
 
 public sealed record UpdateVenueCommand(
     Guid Id,
@@ -169,7 +165,7 @@ internal sealed class UpdateVenueCommandHandler : IRequestHandler<UpdateVenueCom
         // Şehir DEGISTIRILEMEZ -- komutda CityId alanı bilerek yok.
         //
         // Bir mekan fiziksel bir binadir; şehir degistirmez. Izin
-        // verseydik, gecmis etkinliklerin şehir bilgisi de degismis
+        // verseydim, gecmis etkinliklerin şehir bilgisi de degismis
         // olurdu ve "İstanbul'da izledigim konser" birden Ankara'ya
         // tasinirdi. Raporlar bozulurdu.
         //
@@ -188,9 +184,7 @@ internal sealed class UpdateVenueCommandHandler : IRequestHandler<UpdateVenueCom
     }
 }
 
-// ===================================================================
 // SILME
-// ===================================================================
 
 public sealed record DeleteVenueCommand(Guid Id) : IRequest<Result>;
 
@@ -211,9 +205,8 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
             return Result.Failure(VenueErrors.NotFound);
         }
 
-        // ==============================================================
         // PDF is kuralı: "Aktif etkinlik bulunan salon silinememelidir."
-        // ==============================================================
+        //
         // Mekan seviyesinde de aynı kural geçerli: mekani silersek
         // altindaki salonlar da erişilemez hale gelir.
         //
@@ -236,7 +229,7 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
 
         // SOFT DELETE.
         //
-        // Fiziksel silme yapsaydik gecmis etkinliklerin VenueId'si
+        // Fiziksel silme yapsaydim gecmis etkinliklerin VenueId'si
         // bosluga isaret ederdi ve "3 yil önceki konser neredeydi?"
         // sorusu cevapsiz kalırdı. Ayrıca FK kisiti (Restrict) zaten
         // silmeye izin vermezdi.

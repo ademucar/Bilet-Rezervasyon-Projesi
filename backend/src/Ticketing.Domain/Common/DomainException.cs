@@ -7,7 +7,7 @@ namespace Ticketing.Domain.Common;
 ///
 ///   1. DomainException  -> "Süresi dolmuş rezervasyonda ödeme baslatilamaz."
 ///      Bu bir HATA DEĞİL, beklenen bir durumdur. Kullanıcıya anlamlı bir
-///      mesaj gostermeliyiz ve HTTP 400/409 donmeliyiz. Alarm calmamali.
+///      mesaj gostermeliyim ve HTTP 400/409 donmeliyim. Alarm calmamali.
 ///
 ///   2. Diger exception'lar -> NullReferenceException, veritabani bağlantı
 ///      hatası vb. Bunlar GERCEK hatalardir. HTTP 500 donmeli, tam stack

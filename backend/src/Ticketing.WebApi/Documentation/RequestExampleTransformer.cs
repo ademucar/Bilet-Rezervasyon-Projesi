@@ -8,9 +8,8 @@ namespace Ticketing.WebApi.Documentation;
 /// İstek govdelerine örnek deger ekler. PDF Sprint 18: "Request ornekleri".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN ORNEK GEREKLI? SEMA ZATEN VAR
-/// ==================================================================
+///
 /// OpenAPI semasi alan adlarini ve turlerini söylüyor ama GECERLI
 /// bir degerin neye benzedigini soylemiyor.
 ///
@@ -24,14 +23,12 @@ namespace Ticketing.WebApi.Documentation;
 ///
 /// Gercekci ornekler, ilk denemeyi CALISIR hale getiriyor.
 ///
-/// ------------------------------------------------------------------
 /// ORNEKLER GERCEK KURALLARLA UYUMLU OLMALI
-/// ------------------------------------------------------------------
+///
 /// Ornek şifre "Şifre123!" -- çünkü dogrulayici en az 8 karakter,
 /// bir büyük harf ve bir rakam istiyor (Sprint 3). "string" veya
-/// "test" yazsaydık örnek REDDEDILIRDI ve dokumantasyon kendi
+/// "test" yazsaydım örnek REDDEDILIRDI ve dokumantasyon kendi
 /// API'siyle celisirdi.
-/// ==================================================================
 /// </remarks>
 internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 {
@@ -70,7 +67,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
         {
             ["eventSessionId"] = new OpenApiString("01a0436e-7300-7bd1-a4bd-31dd7f662f8d"),
 
-            // Coklu koltuk ornegi BILINCLI: tekil bir dizi gosterseydik
+            // Coklu koltuk ornegi BILINCLI: tekil bir dizi gosterseydim
             // istemci gelistiricisi tek koltuk varsayabilir ve
             // arayuzunu ona göre kurgulardi.
             ["eventSeatIds"] = new OpenApiArray
@@ -127,7 +124,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
             ["eventDate"] = new OpenApiString("2026-07-15T20:00:00Z"),
 
             // Satış baslangici ETKINLIKTEN önce olmalı; ornekte de
-            // oyle. Tersini gosterseydik örnek dogrulamadan gecmezdi.
+            // oyle. Tersini gosterseydim örnek dogrulamadan gecmezdi.
             ["salesStartDate"] = new OpenApiString("2026-05-01T09:00:00Z"),
             ["salesEndDate"] = new OpenApiString("2026-07-15T19:00:00Z"),
             ["durationMinutes"] = new OpenApiInteger(120),
@@ -198,7 +195,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 
             foreach (var icerik in operation.RequestBody.Content.Values)
             {
-                // Zaten örnek varsa dokunmuyoruz: elle yazilmis bir
+                // Zaten örnek varsa dokunmuyorum: elle yazilmis bir
                 // örnek buradaki genel ornekten daha degerlidir.
                 icerik.Example ??= ornek;
             }

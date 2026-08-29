@@ -38,15 +38,14 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
                .HasFilter("\"PasswordResetTokenHash\" IS NOT NULL")
                .HasDatabaseName("ix_users_password_reset_token");
 
-        // ------------------------------------------------------------------
         // PARTIAL UNIQUE INDEX -- dikkat edilmesi gereken bir ayrinti
-        // ------------------------------------------------------------------
-        // Normal bir unique index koysaydık su sorun çıkardı:
+        //
+        // Normal bir unique index koysaydım su sorun çıkardı:
         // Bir kullanıcıyı soft delete ile sildikten sonra AYNI e-postayla
         // yeni kayıt acilamazdi. Çünkü silinmis satır hâlâ index'te yer
         // tutuyor olurdu.
         //
-        // HasFilter ile index'i yalnızca silinmemis satirlara uyguluyoruz:
+        // HasFilter ile index'i yalnızca silinmemis satirlara uyguluyorum:
         //     CREATE UNIQUE INDEX ... WHERE "IsDeleted" = false
         //
         // Bu, soft delete kullanan TÜM unique index'ler için geçerli bir
@@ -83,7 +82,7 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         // Başlangıç verisi (seed). Role.Ids'teki SABIT GUID'ler kullanılıyor.
         //
-        // Neden sabit? Guid.CreateVersion7() kullansaydık migration her
+        // Neden sabit? Guid.CreateVersion7() kullansaydım migration her
         // calistiginda farklı ID üretir, EF "bu veri degismis" diyerek
         // her seferinde yeni migration istemek isterdi. Ayrıca gelistirme,
         // test ve production ortamlarinda Admin rolunun ID'si farklı olurdu.

@@ -11,9 +11,8 @@ namespace Ticketing.IntegrationTests;
 /// Entegrasyon testlerinin ortak temeli. PDF Sprint 17.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// HER TEST TEMIZ BIR VERITABANIYLA BASLIYOR
-/// ==================================================================
+///
 /// InitializeAsync her testten ONCE calisiyor ve tablolari
 /// bosaltiyor.
 ///
@@ -24,7 +23,6 @@ namespace Ticketing.IntegrationTests;
 ///
 /// Boyle bir hatayi ayiklamak saatler alir: test tek basina geciyor,
 /// paket halinde kiriliyor, sebep gorunmuyor.
-/// ==================================================================
 /// </remarks>
 [Collection(TicketingTestSuite.Name)]
 public abstract class IntegrationTestBase : IAsyncLifetime
@@ -42,16 +40,14 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     {
         await Factory.ResetDatabaseAsync().ConfigureAwait(false);
 
-        // ==========================================================
         // HER TEST ICIN YENI HttpClient
-        // ==========================================================
+        //
         // Ayni istemciyi paylassaydik, bir testte eklenen
         // Authorization başlığı sonraki teste sizardi ve
         // "yetkisiz erisim" testi yanlislikla GECERDI.
         //
         // Yani en kritik guvenlik testimiz, bir yan etki yuzunden
         // hicbir sey dogrulamayan bir teste donusurdu.
-        // ==========================================================
         Client = Factory.CreateClient();
 
         // Referans verisi (roller, kategoriler) her testte gerekli:
@@ -66,11 +62,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    // ==============================================================
     // YARDIMCILAR
-    // ==============================================================
 
-    /// <summary>Roller olmadan kayit calismaz; her testten once ekliyoruz.</summary>
+    /// <summary>Roller olmadan kayit calismaz; her testten once ekliyorum.</summary>
     private async Task SeedReferansVerisiAsync()
     {
         using var db = Factory.CreateDbContext();
@@ -140,9 +134,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     /// Kullaniciya rol verir ve YENI token uretir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// ROL EKLEDIKTEN SONRA NEDEN TEKRAR GIRIS?
-    /// ==============================================================
+    ///
     /// Roller JWT'nin ICINE yaziliyor (Sprint 3). Var olan token,
     /// rol eklenmeden once uretildigi icin yeni rolu ICERMIYOR.
     ///
@@ -153,7 +146,6 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     /// Uretimde de ayni kural gecerli: rol degisikligi ancak
     /// kullanici yeniden giris yapinca (veya token yenilenince)
     /// etkili oluyor. Bu, JWT'nin durumsuz olmasinin dogal bedeli.
-    /// ==============================================================
     /// </remarks>
     protected async Task<string> RolVerVeYenidenGirisAsync(string email, string rolAdi)
     {
@@ -171,9 +163,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
             var rol = await db.Roles.FirstAsync(r => r.Name == rolAdi).ConfigureAwait(false);
 
-            // ==================================================
             // ROL, DOMAIN METODUYLA ATANIYOR -- TABLOYA DEGIL
-            // ==================================================
+            //
             // db.UserRoles.Add(new UserRole(...)) yazmayi denedim:
             // DERLENMEDI, cunku UserRole'un kurucusu internal.
             //
@@ -184,9 +175,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
             //
             // AssignRole ayrica "ayni rol iki kez atanmasin"
             // kontrolunu de yapiyor -- tabloya dogrudan yazsaydik
-            // o kontrolu atlamis olurduk ve test, uretimde
+            // o kontrolu atlamis olurdum ve test, uretimde
             // olmayan bir durumu dogrulardi.
-            // ==================================================
             kullanici.AssignRole(rol);
 
             await db.SaveChangesAsync().ConfigureAwait(false);

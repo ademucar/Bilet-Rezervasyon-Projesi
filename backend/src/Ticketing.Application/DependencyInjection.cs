@@ -18,14 +18,13 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
         {
             // Bu assembly'deki TÜM handler'lari tarayip kaydeder.
-            // Her handler'i elle kaydetseydik 100. handler'da birini
+            // Her handler'i elle kaydetseydim 100. handler'da birini
             // unutmak kacinilmaz olurdu -- ve hata calisma zamaninda
             // "handler bulunamadı" olarak ortaya çıkardı.
             cfg.RegisterServicesFromAssembly(assembly);
 
-            // ==============================================================
             // PIPELINE SIRASI ONEMLIDIR
-            // ==============================================================
+            //
             // Behavior'lar KAYIT SIRASIYLA çalışır. Su an tek behavior var
             // ama Sprint 7'de TransactionBehavior eklendiginde sıra soyle
             // olmalı:
@@ -37,16 +36,14 @@ public static class DependencyInjection
             // çünkü yalnızca handler'in veritabani islemlerini sarmalamali;
             // doğrulama süresi boyunca açık kalmis bir transaction
             // bağlantı havuzunu (connection pool) gereksiz mesgul eder.
-            // ==============================================================
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 
         // Bu assembly'deki tüm AbstractValidator siniflarini kaydeder.
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
-        // ==============================================================
         // OUTBOX ISLEYICILERI -- PDF Sprint 9
-        // ==============================================================
+        //
         // Bu kaydı ONCE Infrastructure'a yazmistim; derlenmedi, çünkü
         // isleyiciler `internal`. Hatayi gorunce iki secenegim vardi:
         //
@@ -63,14 +60,13 @@ public static class DependencyInjection
         // Kaydi ait olduğu yere tasimak doğru çözüm.
         //
         // Scoped: hepsi IApplicationDbContext kullaniyor ve o scoped.
-        // Singleton yapsaydik "captive dependency" olusurdu --
+        // Singleton yapsaydim "captive dependency" olusurdu --
         // uygulama omru boyunca yasayan tek bir DbContext.
         //
         // Assembly taramasi yerine ACIKCA yazıyorum: bir isleyici
         // eklendiginde bu listeye de eklenmesi gerektigi belli olsun.
         // Unutulursa processor "kayıtlı isleyici yok" hatası verip
         // dead letter'a dusurur; sessizce kaybolmaz.
-        // ==============================================================
         services.AddScoped<IOutboxMessageHandler, TicketsIssuedOutboxHandler>();
         services.AddScoped<IOutboxMessageHandler, PaymentSucceededOutboxHandler>();
         services.AddScoped<IOutboxMessageHandler, ReservationExpiredOutboxHandler>();

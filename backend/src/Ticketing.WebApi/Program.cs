@@ -22,13 +22,12 @@ using Ticketing.WebApi.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===================================================================
 // LOGLAMA -- PDF Sprint 16
-// ===================================================================
+//
 // Serilog'u EN BASTA baglıyorum.
 //
 // Sebep: bundan sonraki her satır (servis kayitlari, yapilandirma
-// okuma, veritabani bağlantısı) log uretebiliyor. Sonra baglasaydik
+// okuma, veritabani bağlantısı) log uretebiliyor. Sonra baglasaydim
 // uygulamanin ACILIS asamasindaki loglar varsayılan saglayiciya
 // giderdi ve dosyaya HİÇ yazilmazdi.
 //
@@ -37,9 +36,7 @@ var builder = WebApplication.CreateBuilder(args);
 // olmuyor.
 builder.AddSerilogLogging();
 
-// ===================================================================
 // SERVISLER
-// ===================================================================
 
 builder.Services.AddControllers();
 // ---- API dokumantasyonu (PDF Sprint 18) ----
@@ -125,9 +122,7 @@ builder.Services.AddObservability(
     builder.Configuration,
     builder.Environment.EnvironmentName);
 
-// ===================================================================
 // API GUVENLIGI -- PDF Sprint 15
-// ===================================================================
 
 // ---- İstek hizi sinirlama ----
 // Varsayılan açık; yalnızca yapilandirma acikca "false" derse
@@ -137,16 +132,14 @@ builder.Services.AddRateLimiting(
 
 // ---- CORS ----
 //
-// ==================================================================
 // GELISTIRMEDE CORS'A NEDEN IHTIYAC YOK AMA YINE DE TANIMLIYORUZ?
-// ==================================================================
+//
 // Gelistirmede Vite proxy'si sayesinde istekler tarayıcı acisindan
 // AYNI kaynaga (5173) gidiyor; CORS hiç devreye girmiyor.
 //
 // Uretimde ise frontend ve API farklı alan adlarinda olabilir. O gün
 // yapilandirma yapmak yerine SIMDIDEN kuruyorum -- ama izin verilen
 // kaynaklari YAPILANDIRMADAN okuyorum, kodda sabitlemiyorum.
-// ==================================================================
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? [];
@@ -188,9 +181,8 @@ builder.Services.AddCors(options =>
 
 // ---- İstek boyutu sınırı ----
 //
-// ==================================================================
 // PDF: "Request size limit"
-// ==================================================================
+//
 // Varsayılan Kestrel sınırı ~30 MB. Bizim en büyük istegimiz bir
 // JSON govdesi ve birkaç kilobayt.
 //
@@ -203,14 +195,12 @@ builder.Services.AddCors(options =>
 // NOT: Dosya yukleme ucu eklendiginde O UC ICIN ayrı ve daha yüksek
 // bir sinir gerekecek -- [RequestSizeLimit] ozniteligi ile uc bazinda
 // verilebiliyor.
-// ==================================================================
 builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>(options =>
 {
     options.Limits.MaxRequestBodySize = 1 * 1024 * 1024;
 
-    // ==============================================================
     // "Server: Kestrel" BASLIGINI KALDIR -- YAKALADIGIM HATA
-    // ==============================================================
+    //
     // Önce bunu SecurityHeadersMiddleware içinde
     // headers.Remove("Server") ile yapmaya calistim. CALISMADI.
     //
@@ -227,15 +217,13 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
     //
     // Tek başına bir açık değil ama saldirgana bilgi veriyor:
     // hangi sunucu, hangi surum, hangi bilinen aciklar.
-    // ==============================================================
     options.AddServerHeader = false;
 });
 
 // ---- Ters vekil sunucu basliklari ----
 //
-// ==================================================================
 // BU YAPILANDIRMA OLMADAN HIZ SINIRI URETIMDE YANLIS CALISIR
-// ==================================================================
+//
 // Uretimde uygulama bir ters vekil sunucu (nginx, load balancer)
 // arkasinda çalışıyor. O durumda RemoteIpAddress VEKILIN adresini
 // gosterir -- gerçek istemciyi değil.
@@ -246,14 +234,12 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
 //
 // ForwardedHeaders, X-Forwarded-For basligini okuyup gerçek istemci
 // adresini geri koyuyor.
-// ==================================================================
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
-    // ==============================================================
     // KNOWN PROXIES TEMIZLENIYOR -- DIKKAT
-    // ==============================================================
+    //
     // Varsayılan olarak yalnızca localhost'tan gelen X-Forwarded-For
     // basliklarina guveniliyor. Docker/Kubernetes'te vekil sunucu
     // farklı bir IP'de olur ve basliklar YOK SAYILIR.
@@ -267,27 +253,21 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     // yazilmali. Bunu bir NOT olarak birakiyorum çünkü değeri
     // ortama bağlı ve yanlış yapilandirmasi sessizce güvenlik
     // acigi olusturuyor.
-    // ==============================================================
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
 
-// ===================================================================
 // ARKA PLAN ISLERI -- PDF Sprint 9
-// ===================================================================
 builder.Services.AddBackgroundJobs(builder.Configuration);
 
-// ===================================================================
 // REDIS ONBELLEK -- PDF Sprint 11
-// ===================================================================
+//
 // Bağlantı dizesi yoksa veya Redis kapaliysa uygulama YINE ACILIR;
 // önbellek devre dışı kalır ve sorgular veritabanindan karsilanir.
 // PDF: "Cache kapalı olduğunda sistem calismaya devam edebilmelidir."
 builder.Services.AddCaching(builder.Configuration);
 
-// ===================================================================
 // GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
-// ===================================================================
 builder.Services.AddSignalR(options =>
 {
     // Gelistirmede ayrintili hata dondur.
@@ -299,14 +279,13 @@ builder.Services.AddSignalR(options =>
 });
 
 // Singleton: IHubContext zaten singleton ve bu sinif durum tutmuyor.
-// Scoped yapsaydik her istekte gereksiz nesne uretilirdi.
+// Scoped yapsaydim her istekte gereksiz nesne uretilirdi.
 builder.Services.AddSingleton<ISeatNotifier, SignalRSeatNotifier>();
 
 var app = builder.Build();
 
-// ===================================================================
 // VERITABANI SEMASI -- HER ORTAMDA
-// ===================================================================
+//
 // Bu blok YOKTU ve eksikligi ancak yayin yigini ilk kez temiz bir
 // birimle ayaga kaldirilinca ortaya cikti: butun uclar 500 donuyordu,
 // log'da tek satir vardi:
@@ -319,9 +298,8 @@ var app = builder.Build();
 // duruyordu. Yani sema, kimsenin bir daha calistirmadigi tek
 // seferlik bir komutla var olmustu.
 //
-// -------------------------------------------------------------------
 // NEDEN UYGULAMA ICINDE? Neden ayri bir adim degil?
-// -------------------------------------------------------------------
+//
 // "Dogrusu" CI/CD'de ayri bir migration adimidir. Bu proje tek
 // sunucuda ve TEK API container'i ile calisiyor
 // (docker-compose.prod.yml); orada ayri bir adim, unutuldugunda
@@ -334,7 +312,6 @@ var app = builder.Build();
 //
 // MigrateAsync bekleyen migration yoksa hicbir sey yapmiyor;
 // her aciliste calismasinin maliyeti tek bir sorgu.
-// ===================================================================
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
@@ -358,9 +335,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ===================================================================
 // REFERANS VERISI -- HER ORTAMDA
-// ===================================================================
+//
 // Burada onceden "Uretimde ASLA otomatik seed calistirmiyoruz"
 // yaziyordu ve seed yalnizca Development'ta kosuyordu. Yayin yigini
 // ilk kez temiz bir veritabaniyla ayaga kalkinca bunun tutmadigi
@@ -373,9 +349,8 @@ using (var scope = app.Services.CreateScope())
 // geliyor. Yani uygulama yayina cikar cikmaz KULLANILAMAZ
 // durumdaydi ve bunu ancak biri elle SQL yazarak duzeltebilirdi.
 //
-// -------------------------------------------------------------------
 // ESKI GEREKCE NEDEN GECERLI DEGIL?
-// -------------------------------------------------------------------
+//
 // Eski not "seed kodu yanlislikla veri uzerine yazabilir" diyordu.
 // DatabaseSeeder IDEMPOTENT: tablo bossa ekliyor, doluysa hicbir
 // sey yapmiyor. Ustune yazma ihtimali yok.
@@ -398,9 +373,7 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync().ConfigureAwait(false);
 }
 
-// ===================================================================
 // HTTP PIPELINE -- SIRA ONEMLI
-// ===================================================================
 
 // 1) En basta: kendisinden sonraki her seyi sarmalar.
 app.UseExceptionHandler();
@@ -416,9 +389,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 // birakirdi: kod var, alan boş.
 app.UseRequestLogging();
 
-// ===================================================================
 // GÜVENLİK KATMANLARI -- PDF Sprint 15
-// ===================================================================
 
 // 3) Ters vekil basliklari: hiz sinirindan ONCE olmalı.
 //
@@ -429,7 +400,7 @@ app.UseForwardedHeaders();
 // 4) Güvenlik basliklari: mumkun oldugunca ERKEN.
 //
 // Hata sayfalari ve statik dosyalar dahil TÜM yanitlara eklensin
-// istiyoruz.
+// istiyorum.
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
 // 5) CORS: kimlik dogrulamadan ONCE.
@@ -452,9 +423,8 @@ if (app.Environment.IsDevelopment())
     // Ham OpenAPI belgesi: /openapi/v1.json
     app.MapOpenApi();
 
-    // ==============================================================
     // SCALAR ARAYUZU -- /scalar
-    // ==============================================================
+    //
     // Yalnızca GELISTIRMEDE aciliyor.
     //
     // Uretimde açık birakmak, tüm uclarin, parametrelerin ve hata
@@ -464,7 +434,6 @@ if (app.Environment.IsDevelopment())
     //
     // Gerçek bir uretimde bu arayüz ayrı bir ic ag adresinde veya
     // kimlik dogrulamali olarak sunulur.
-    // ==============================================================
     app.MapScalarApiReference(options =>
     {
         options.Title = "Biletim API";
@@ -480,21 +449,18 @@ else
     app.UseHttpsRedirection();
 }
 
-// ==================================================================
 // SIRA KRITIK: Authentication ONCE, Authorization SONRA
-// ==================================================================
+//
 // UseAuthentication  -> "Sen kimsin?"   (token'i okur, User'i doldurur)
 // UseAuthorization   -> "Yetkin var mi?" (User'a bakip karar verir)
 //
-// Ters yazsaydık Authorization henüz doldurulmamis bir User goreceginden
+// Ters yazsaydım Authorization henüz doldurulmamis bir User goreceginden
 // giriş yapmış kullanıcılar bile 401 alırdı. Ve bu hata çok kafa
 // karistiricidir: token doğru, kod doğru ama calismiyor.
-// ==================================================================
 app.UseAuthentication();
 app.UseRateLimiter();
-// ===================================================================
 // SAHIPLIK REDDINDE 404 -- PDF Sprint 19 denetiminde eklendi
-// ===================================================================
+//
 // UseAuthorization'dan ONCE kaydediliyor. İlk denememde SONRASINA
 // koymustum ve middleware HİÇ CALISMADI.
 //
@@ -506,21 +472,19 @@ app.UseRateLimiter();
 // dönüyor ve sonraki halkayi HİÇ CAGIRMIYOR. Yani sonrasina
 // konan bir middleware o durumda calismaz.
 //
-// Önce koydugumuzda ise: bizim _next() cagrimiz yetkilendirmeyi
-// KAPSIYOR. O reddedip donunce kontrol bize geri geliyor ve
+// Önce koydugumuzda ise: benim _next() cagrimiz yetkilendirmeyi
+// KAPSIYOR. O reddedip donunce kontrol bana geri geliyor ve
 // yaniti duzeltebiliyoruz.
 //
 // Ders: "sonra calissin" istiyorsan middleware'i ONCE kaydet.
 // Sirala mantığı isteklerde ileri, YANITLARDA geri isliyor.
-// ===================================================================
 app.UseMiddleware<OwnershipNotFoundMiddleware>();
 
 app.UseAuthorization();
 
 app.MapControllers();
-// ===================================================================
 // SAGLIK UCLARI -- PDF Sprint 16
-// ===================================================================
+//
 // Ucu de AllowAnonymous: yuk dengeleyici ve Kubernetes probe'lari
 // token tasiyamaz. Bu yüzden yanitlarda hiçbir hassas bilgi yok
 // (bağlantı dizesi, surum, ic hata mesaji donmuyor).
@@ -543,9 +507,8 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 // 3) "Process ayakta mi?" -- HICBIR bagimlilik kontrol edilmiyor.
 //
-// ==================================================================
 // Predicate = _ => false  SATIRI BU DOSYADAKI EN KRITIK SATIR
-// ==================================================================
+//
 // Buraya veritabani kontrolü eklemek çok mantikli görünür ve
 // FELAKETLE sonuclanir:
 //
@@ -559,27 +522,23 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 //
 // Live probe yalnızca "bu process kilitlendi mi?" sorusunu
 // cevaplamali. Cevabi bagimliliklara BAGLI OLMAMALI.
-// ==================================================================
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false,
 });
 
-// ===================================================================
 // KOLTUK HUB'I -- PDF Sprint 10
-// ===================================================================
+//
 // Adres frontend'deki VITE proxy'siyle eslesiyor: /hubs/seats
 app.MapHub<SeatHub>("/hubs/seats");
 
-// ===================================================================
 // HANGFIRE IZLEME EKRANI -- PDF Sprint 9
-// ===================================================================
+//
 // UseAuthentication/UseAuthorization SONRASINA konuldu.
 //
 // Önce konsaydi, filtre calistiginda HttpContext.User henüz
 // doldurulmamis olurdu: admin olan kullanıcı bile panele
 // giremezdi ve sebebi anlasilmazdi.
-// ===================================================================
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = [new HangfireDashboardAuthorizationFilter()],
@@ -590,7 +549,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     // adminin sorunu duzeltip yeniden denemesi gerekiyor -- panelin
     // asil faydasi bu.
     //
-    // Erişim zaten Admin roluyle sinirli; salt okunur yapsaydik
+    // Erişim zaten Admin roluyle sinirli; salt okunur yapsaydim
     // dead letter mesajlari için elle SQL yazmak gerekirdi ki
     // uretimde çok daha risklidir.
     IsReadOnlyFunc = _ => false,
@@ -600,19 +559,17 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     DisplayStorageConnectionString = false
 });
 
-// ===================================================================
 // TEKRARLANAN ISLERI KAYDET
-// ===================================================================
+//
 // Uygulama AYAGA KALKTIKTAN SONRA cagiriliyor.
 //
-// builder asamasinda yapsaydik Hangfire deposu (storage) henüz
-// hazır olmazdi ve kayıt sırasında istisna alırdık.
+// builder asamasinda yapsaydim Hangfire deposu (storage) henüz
+// hazır olmazdi ve kayıt sırasında istisna alırdım.
 BackgroundJobSetup.RegisterRecurringJobs(
     app.Services.GetRequiredService<IRecurringJobManager>());
 
-// ===================================================================
 // CALISTIR
-// ===================================================================
+//
 // try/finally içinde: Log.CloseAndFlush() cagrilmazsa dosya sink'i
 // tamponundaki son loglar DISKE YAZILMADAN process sonlanir.
 //

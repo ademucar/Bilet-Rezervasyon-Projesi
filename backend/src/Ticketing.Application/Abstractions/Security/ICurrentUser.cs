@@ -3,7 +3,7 @@ namespace Ticketing.Application.Abstractions.Security;
 /// <summary>
 /// Istegi yapan kullanıcının kimliği.
 ///
-/// Neden HttpContext'i doğrudan kullanmiyoruz?
+/// Neden HttpContext'i doğrudan kullanmiyorum?
 /// Çünkü HttpContext ASP.NET Core'a aittir ve Application katmani
 /// web'i bilmemelidir -- architecture testimiz bunu zaten engelliyor.
 ///

@@ -26,9 +26,7 @@ public class ReservationTests
             Simdi);
     }
 
-    // ---------------------------------------------------------------
     // Olusturma
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_YeniRezervasyon_LockedDurumundaBaslamali()
@@ -54,15 +52,13 @@ public class ReservationTests
     [Fact]
     public void Create_ToplamTutariBackendHesaplamali()
     {
-        // ===============================================================
         // PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
         // guvenilmemelidir."
         //
         // Reservation.Create metodunun imzasinda "toplam tutar" diye bir
         // parametre YOK. Bu kasitli bir tasarim: cagiran taraf tutar
         // gonderemez bile. Guvenligi kural ile degil, TIP SISTEMI ile
-        // sagliyoruz -- unutulmasi imkansiz.
-        // ===============================================================
+        // sagliyorum -- unutulmasi imkansiz.
         var rezervasyon = Rezervasyon(koltukSayisi: 3, birimFiyat: 150m);
 
         rezervasyon.TotalAmount.Amount.Should().Be(450m);
@@ -132,9 +128,7 @@ public class ReservationTests
         rezervasyon.ReservationCode[4..].Should().NotContainAny("0", "O", "1", "I", "L");
     }
 
-    // ---------------------------------------------------------------
     // SURE KONTROLU -- PDF Sprint 7'nin kalbi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_SureyiDogruHesaplamali()
@@ -145,7 +139,6 @@ public class ReservationTests
     [Fact]
     public void StartPayment_SuresiDolmusRezervasyon_HataFirlatmali()
     {
-        // ===============================================================
         // PDF: "Suresi dolmus rezervasyon uzerinden odeme baslatilamaz."
         //
         // Bu kural IKI KATMANDA korunuyor:
@@ -156,7 +149,6 @@ public class ReservationTests
         // suresi gecmis bir rezervasyonda odeme baslatmaya calisabilir
         // (temizlik job'i henuz gelmemistir). Durum makinesi bunu
         // yakalayamaz cunku durum hala Locked'dir.
-        // ===============================================================
         var rezervasyon = Rezervasyon();
         var sureSonrasi = Simdi.AddMinutes(11);
 
@@ -182,7 +174,7 @@ public class ReservationTests
         // Bu test, sure kontrolunden BAGIMSIZ olarak durum makinesinin
         // calistigini dogruluyor. Bu yuzden "simdi" degerini bilerek
         // sure DOLMADAN once seciyorum -- yoksa sure kontrolu devreye girer
-        // ve durum makinesini hic test etmemis olurduk.
+        // ve durum makinesini hic test etmemis olurdum.
         //
         // (Ilk yazisimda burada "reservation.invalid_transition" bekleyip
         // "simdi"yi sure sonrasi vermistim; test kirmizi yandi cunku
@@ -214,15 +206,13 @@ public class ReservationTests
     [Fact]
     public void GetRemainingTime_SureGectiyse_SifirDonmeli()
     {
-        // Negatif sure donseydik frontend geri sayimda "-00:03" gosterirdi.
+        // Negatif sure donseydim frontend geri sayimda "-00:03" gosterirdi.
         var rezervasyon = Rezervasyon();
 
         rezervasyon.GetRemainingTime(Simdi.AddMinutes(15)).Should().Be(TimeSpan.Zero);
     }
 
-    // ---------------------------------------------------------------
     // Sure uzatma
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Extend_LimitDahilinde_SureyiUzatmali()
@@ -262,20 +252,16 @@ public class ReservationTests
              .Which.ErrorCode.Should().Be("reservation.expired");
     }
 
-    // ---------------------------------------------------------------
     // Odeme basarisiz akisi (docs/01-is-analizi.md soru 8)
-    // ---------------------------------------------------------------
 
     [Fact]
     public void RevertToLocked_OdemeBasarisiz_SureyiUZATMAMALI()
     {
-        // ===============================================================
         // Bu testin adi buyuk harfle: kolay atlanacak ama onemli bir kural.
         //
-        // Odeme basarisiz olunca kullaniciya ikinci sans veriyoruz ama
+        // Odeme basarisiz olunca kullaniciya ikinci sans veriyorum ama
         // SURE UZATMIYORUZ. Uzatsaydik, surekli basarisiz odeme deneyerek
         // koltugu suresiz bloke etmek mumkun olurdu.
-        // ===============================================================
         var rezervasyon = Rezervasyon();
         var ilkSure = rezervasyon.ExpiresAt;
 
@@ -286,9 +272,7 @@ public class ReservationTests
         rezervasyon.ExpiresAt.Should().Be(ilkSure, "odeme basarisizliginda sure uzatilmaz");
     }
 
-    // ---------------------------------------------------------------
     // Onaylama ve son durumlar
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Confirm_OdemeBasarili_ConfirmedOlmaliVeOlayFirlatmali()

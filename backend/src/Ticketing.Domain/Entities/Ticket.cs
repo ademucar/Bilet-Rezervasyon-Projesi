@@ -177,7 +177,7 @@ public class Ticket : AuditableEntity
     /// <summary>
     /// İade edilebilir mi?
     /// İade oranı hesabi CancellationPolicy'nin isi; burada sadece
-    /// biletin durumuna bakiyoruz.
+    /// biletin durumuna bakiyorum.
     /// </summary>
     public bool IsRefundable() => Status == TicketStatus.Active;
 }

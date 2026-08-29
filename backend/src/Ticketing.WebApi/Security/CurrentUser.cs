@@ -58,9 +58,8 @@ internal sealed class CurrentUser : ICurrentUser
                 return null;
             }
 
-            // ======================================================
             // ONCE HttpContext.Items -- SONRA response header
-            // ======================================================
+            //
             // Eskiden YALNIZCA response header'ina bakiyordu ve bu
             // SESSIZ bir hataydi: header'i CorrelationIdMiddleware
             // OnStarting içinde yazıyor, o da handler CALISTIKTAN
@@ -77,7 +76,6 @@ internal sealed class CurrentUser : ICurrentUser
             // Header'a bakan dal FALLBACK olarak duruyor: yanit
             // yazilmaya baslandiktan sonra cagrilan kodlar (örneğin
             // istek özeti logu) için hâlâ geçerli bir kaynak.
-            // ======================================================
             if (context.Items.TryGetValue(
                     CorrelationIdMiddleware.HeaderName, out var item)
                 && item is string fromItems
@@ -96,9 +94,8 @@ internal sealed class CurrentUser : ICurrentUser
     /// <summary>
     /// Istegin geldigi IP adresi.
     ///
-    /// ==================================================================
     /// GÜVENLİK UYARISI -- X-Forwarded-For BURADA OKUNMUYOR
-    /// ==================================================================
+    ///
     /// Uygulama bir reverse proxy (nginx, yuk dengeleyici) arkasindaysa
     /// RemoteIpAddress proxy'nin IP'sini verir, gerçek kullanicininkini
     /// değil. Gerçek IP "X-Forwarded-For" header'inda gelir.
@@ -113,9 +110,8 @@ internal sealed class CurrentUser : ICurrentUser
     /// header'i yalnızca guvenilen bir proxy'den geldiğinde dikkate
     /// alır ve RemoteIpAddress'i doğru degerle değiştirir.
     ///
-    /// Bunu Sprint 15'te (API guvenligi) yapacagiz. O zamana kadar
+    /// Bunu Sprint 15'te (API guvenligi) yapacagim. O zamana kadar
     /// RemoteIpAddress doğru çalışıyor çünkü proxy yok.
-    /// ==================================================================
     /// </summary>
     public string? IpAddress
         => _accessor.HttpContext?.Connection.RemoteIpAddress?.ToString();

@@ -33,9 +33,7 @@ public sealed record EventReviewsResult(
     ReviewSummary Summary,
     PagedResult<ReviewDto> Reviews);
 
-// ===================================================================
 // LISTELE -- PDF: GET /api/v1/events/{eventId}/reviews
-// ===================================================================
 
 public sealed record GetEventReviewsQuery : PaginationRequest, IRequest<Result<EventReviewsResult>>
 {
@@ -62,26 +60,23 @@ internal sealed class GetEventReviewsQueryHandler
         // hiçbir yorum "benim" olmaz.
         var currentUserId = _currentUser.UserId;
 
-        // ==============================================================
         // GIZLENMIS YORUMLAR LISTEDE YOK
-        // ==============================================================
+        //
         // PDF: "Admin uygunsuz yorumu kaldirabilir."
         //
         // Gizleme ancak yorum GORUNMEZSE bir anlam tasir. Bu filtreyi
-        // unutsaydik moderasyon ozelligi hiçbir ise yaramazdi -- admin
+        // unutsaydim moderasyon ozelligi hiçbir ise yaramazdi -- admin
         // gizler, yorum yine görünürdü.
         //
         // (Soft delete edilenler zaten global query filter ile eleniyor.)
-        // ==============================================================
         var query = _context.Reviews
             .AsNoTracking()
             .Where(r => r.EventId == request.EventId && !r.IsHidden);
 
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
-        // ==============================================================
         // OZET: TEK SORGUDA GRUPLAMA
-        // ==============================================================
+        //
         // Ortalamayi ve dagilimi AYRI sorgularla da alabilirdim ama:
         //
         //   - Iki gidis donus olurdu
@@ -91,7 +86,6 @@ internal sealed class GetEventReviewsQueryHandler
         //
         // Tek GroupBy ile puan başına sayimi alıyorum; ortalamayi
         // bunlardan HESAPLIYORUM. Boylece ikisi tanim geregi tutarli.
-        // ==============================================================
         var dagilim = await query
             .GroupBy(r => r.Rating)
             .Select(g => new { Rating = g.Key, Count = g.Count() })
@@ -119,9 +113,8 @@ internal sealed class GetEventReviewsQueryHandler
             TotalCount: totalCount,
             RatingCounts: counts);
 
-        // ==============================================================
         // AD KISALTMASI SORGUDA DEĞİL, BELLEKTE
-        // ==============================================================
+        //
         // Önce "FirstName + LastName.Substring(0,1)" seklinde SORGUYA
         // yazmistim. Derleyici CA1845 ile uyardi (Substring yerine
         // AsSpan kullan) -- ama AsSpan bir IFADE AGACINDA calismaz,
@@ -136,7 +129,6 @@ internal sealed class GetEventReviewsQueryHandler
         // yapiliyor ve veritabani yalnızca ham sutunlari döndürüyor.
         // Sayfa başına en fazla 20 satır olduğu için bellekte
         // islemenin maliyeti yok.
-        // ==============================================================
         var ham = await query
             // En yeni yorum önce. Kullanıcı etkinliğin GUNCEL durumunu
             // merak eder; iki yil önceki yorumu değil.
@@ -161,9 +153,8 @@ internal sealed class GetEventReviewsQueryHandler
             r.Id,
             r.UserId,
 
-            // ==========================================================
             // TAM AD DEĞİL, KISALTILMIS AD
-            // ==========================================================
+            //
             // "Adem U." seklinde donuyorum.
             //
             // Yorumlar HERKESE ACIK ve arama motorlari tarafından

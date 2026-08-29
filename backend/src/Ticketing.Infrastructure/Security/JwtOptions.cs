@@ -20,7 +20,7 @@ public sealed class JwtOptions
     /// anahtarla kutuphane zaten hata verir -- ama o hata calisma zamaninda,
     /// ilk giriş denemesinde ortaya çıkar.
     ///
-    /// Burada dogrulayarak uygulamanin BASLANGICTA patlamasini sagliyoruz.
+    /// Burada dogrulayarak uygulamanin BASLANGICTA patlamasini sagliyorum.
     /// Yanlis yapilandirmayla ayaga kalkip trafik almaya baslamasindansa
     /// hiç kalkmamasi iyidir.
     /// </summary>
@@ -49,7 +49,7 @@ public sealed class JwtOptions
     /// Kullanıcı deneyimi bozulmaz çünkü refresh token sessizce
     /// yenileme yapar.
     ///
-    /// 24 saat verseydik, calinan bir token bir gün boyunca geçerli olurdu.
+    /// 24 saat verseydim, calinan bir token bir gün boyunca geçerli olurdu.
     /// </summary>
     [Range(1, 1440)]
     public int AccessTokenMinutes { get; set; } = 15;

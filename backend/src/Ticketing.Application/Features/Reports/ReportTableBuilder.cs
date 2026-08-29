@@ -9,19 +9,17 @@ namespace Ticketing.Application.Features.Reports;
 /// PDF Sprint 13 export akisinin ortasindaki parca.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BICIMLENDIRME NEDEN BURADA?
-/// ==================================================================
+///
 /// Para, tarih ve yüzde bicimlendirmesini yaziciya (CSV/Excel/PDF)
 /// birakmadim. Sebep: uc yazici da aynı bicimlendirmeyi tekrar
 /// yazmak zorunda kalırdı ve birinde farklı yaparsak aynı rapor
 /// Excel'de başka, PDF'te başka görünürdü.
 ///
-/// Burada bir kez bicimlendirip metin olarak veriyoruz.
+/// Burada bir kez bicimlendirip metin olarak veriyorum.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN InvariantCulture?
-/// ------------------------------------------------------------------
+///
 /// Rapor dosyalari BASKA SISTEMLERE aktariliyor: muhasebe yazilimi,
 /// bir başka Excel, bir veri ambari.
 ///
@@ -31,20 +29,17 @@ namespace Ticketing.Application.Features.Reports;
 ///
 /// Nokta ayirici (1234.56) makineler için evrensel. Ekranda Turkce
 /// göstermek arayuzun isi; disa aktarilan dosyanin isi değil.
-/// ------------------------------------------------------------------
 /// </remarks>
 internal static class ReportTableBuilder
 {
-    // ==============================================================
     // BASLIK DIZILERI static readonly -- CA1861
-    // ==============================================================
-    // Metot içinde "new[] { ... }" yazsaydık her cagirimda YENI bir
+    //
+    // Metot içinde "new[] { ... }" yazsaydım her cagirimda YENI bir
     // dizi ayrilirdi. Analiz kuralı bunu yakaladi.
     //
     // Rapor üretimi zaten arka planda ve seyrek çalışıyor, yani
     // performans farki onemsiz. Yine de kurala uyuyorum: basliklar
     // zaten sabit ve tek yerde durmalari okunakliligi da artiriyor.
-    // ==============================================================
     private static readonly string[] SalesSummaryHeaders = ["Metrik", "Deger"];
 
     private static readonly string[] OccupancyHeaders =
@@ -106,9 +101,7 @@ internal static class ReportTableBuilder
     private static string S(int sayi)
         => sayi.ToString(CultureInfo.InvariantCulture);
 
-    // ==================================================================
     // 1) SATIS OZETI
-    // ==================================================================
 
     private static async Task<ReportTable> SalesSummaryAsync(
         IApplicationDbContext context,
@@ -120,16 +113,14 @@ internal static class ReportTableBuilder
             .RunAsync(context, scope, data.From, data.To, cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // TEK SATIRLIK RAPORU DIKEY YAZIYORUM
-        // ==============================================================
-        // Satış özeti 8 metrikten olusan TEK bir kayıt. Yatay yazsaydık
+        //
+        // Satış özeti 8 metrikten olusan TEK bir kayıt. Yatay yazsaydım
         // 8 sutunlu ve 1 satirlik bir tablo çıkardı -- Excel'de saga
         // doğru kaydirilmasi gereken, PDF'te sigmayan bir sey.
         //
         // Metrik/deger ciftleri halinde DIKEY yazmak, tek kayıtlı
         // raporlar için doğru biçim.
-        // ==============================================================
         var rows = new List<IReadOnlyList<string>>
         {
             new[] { "Satılan bilet", S(r.TicketCount) },
@@ -144,9 +135,7 @@ internal static class ReportTableBuilder
         return new ReportTable("Satış Özeti", SalesSummaryHeaders, rows);
     }
 
-    // ==================================================================
     // 2) ETKİNLİK DOLULUGU
-    // ==================================================================
 
     private static async Task<ReportTable> EventOccupancyAsync(
         IApplicationDbContext context,
@@ -172,9 +161,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // ==================================================================
     // 3) ETKİNLİK BAZLI GELIR
-    // ==================================================================
 
     private static async Task<ReportTable> RevenueByEventAsync(
         IApplicationDbContext context,
@@ -197,9 +184,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // ==================================================================
     // 4) BİLET TURU SATISLARI
-    // ==================================================================
 
     private static async Task<ReportTable> TicketTypeSalesAsync(
         IApplicationDbContext context,
@@ -224,9 +209,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // ==================================================================
     // 5) ÖDEME DURUMLARI
-    // ==================================================================
 
     private static async Task<ReportTable> PaymentStatusesAsync(
         IApplicationDbContext context,

@@ -8,9 +8,9 @@ namespace Ticketing.Application.Common.Results;
 /// Neden ayrı bir enum? Çünkü Application katmani HTTP'yi BILMEMELI.
 /// Burada "404 dondur" yazsaydim, Application katmani web'e bagimli
 /// hale gelirdi ve aynı kodu bir konsol uygulamasindan veya gRPC
-/// servisinden kullanamazdik.
+/// servisinden kullanamazdim.
 ///
-/// Bunun yerine "kayıt bulunamadı" diyoruz; HTTP'ye cevirme isi
+/// Bunun yerine "kayıt bulunamadı" diyorum; HTTP'ye cevirme isi
 /// WebApi katmaninin sorumlulugunda.
 /// </summary>
 public enum ErrorType
@@ -40,9 +40,8 @@ public enum ErrorType
 /// <summary>
 /// Bir hatayi temsil eder.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN EXCEPTION DEĞİL DE BU?
-/// ------------------------------------------------------------------
+///
 /// Exception'lar BEKLENMEYEN durumlar icindir. "Kullanıcı bulunamadı"
 /// veya "bu koltuk dolu" beklenen durumlardir -- her gün yuzlerce kez
 /// olusurlar.
@@ -59,7 +58,7 @@ public enum ErrorType
 ///
 /// 3) AKIS KONTROLU. try/catch ile is akışı yonetmek okunabilirligi bozar.
 ///
-/// Not: Domain katmaninda hâlâ DomainException kullanıyoruz. Orada
+/// Not: Domain katmaninda hâlâ DomainException kullanıyorum. Orada
 /// amac farklı: entity'nin ic tutarliligini korumak. Bir entity
 /// geçersiz duruma DUSEMEMELI, bu yüzden orada patlamak doğru.
 /// Application katmani ise o exception'i yakalayip Result'a cevirir.

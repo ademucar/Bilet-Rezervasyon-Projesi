@@ -15,9 +15,8 @@ namespace Ticketing.IntegrationTests;
 /// kapsayicilariyla ayaga kaldirir. PDF Sprint 17: "Testcontainers".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN GERCEK VERITABANI? -- InMemory NEDEN YETMEZ?
-/// ==================================================================
+///
 /// EF Core'un InMemory saglayicisi bir veritabani DEGIL, bir sozluk.
 /// Su ozelliklerin HICBIRI orada yok:
 ///
@@ -37,19 +36,16 @@ namespace Ticketing.IntegrationTests;
 /// yesil olurdu ve HICBIR SEY kanitlamazdi. PDF de zaten gercek
 /// kapsayici istiyor.
 ///
-/// ------------------------------------------------------------------
 /// MALIYETI: yaklasik 10-20 saniyelik bir baslangic
-/// ------------------------------------------------------------------
+///
 /// Kapsayicilar TEK KEZ baslatiliyor (ICollectionFixture) ve tum
 /// testler paylasiyor. Her test icin ayri kapsayici baslatsaydik
 /// paket dakikalarca surerdi.
-/// ==================================================================
 /// </remarks>
 public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    // ==============================================================
     // POSTGRESQL KAPSAYICISI
-    // ==============================================================
+    //
     // Surumu ACIKCA sabitliyorum ("17-alpine"), "latest" DEGIL.
     //
     // "latest" kullansaydik: bugun gecen bir test, PostgreSQL 18
@@ -58,7 +54,6 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
     //
     // 17, uretimde kullandigimiz surumle ayni (docker-compose.yml).
     // Farkli olsaydi testler "baska bir veritabaninda" gecerdi.
-    // ==============================================================
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17-alpine")
         .WithDatabase("ticketing_test")
         .WithUsername("test")
@@ -83,9 +78,8 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         return scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
     }
 
-    // ==============================================================
     // IMZA NOTU: xunit 2.x IAsyncLifetime, Task doner (ValueTask degil)
-    // ==============================================================
+    //
     // WebApplicationFactory ise IAsyncDisposable'dan ValueTask donen
     // bir DisposeAsync tasiyor. Ikisi ayni sinifta cakisiyor.
     //
@@ -93,7 +87,6 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
     // olarak yaziyorum (asagida) ve taban sinifin surumune
     // yonlendiriyorum. Boylece iki sozlesme de bozulmadan
     // karsilaniyor.
-    // ==============================================================
     public async Task InitializeAsync()
     {
         // Ikisini PARALEL baslatiyorum: sirayla baslatmanin bir
@@ -102,9 +95,8 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
             _postgres.StartAsync(),
             _redis.StartAsync()).ConfigureAwait(false);
 
-        // ==========================================================
         // SEMAYI MIGRATION ILE KUR -- EnsureCreated DEGIL
-        // ==========================================================
+        //
         // EnsureCreated() semayi model'den uretiyor ve
         // MIGRATION'LARI HIC CALISTIRMIYOR.
         //
@@ -114,7 +106,6 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         //
         // Migrate() ile testler, uretimde calisacak olan AYNI yoldan
         // gecen bir sema uzerinde calisiyor.
-        // ==========================================================
         using (var scope = Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
@@ -122,9 +113,8 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
             await db.Database.MigrateAsync().ConfigureAwait(false);
         }
 
-        // ==========================================================
         // RESPAWN: testler arasi temizlik
-        // ==========================================================
+        //
         // Her testten once tablolari bosaltiyor.
         //
         // Olmasaydi testler birbirinin verisini gorurdu ve
@@ -132,9 +122,8 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         // zor test turudur: tek basina calistirinca geciyor, paket
         // halinde kiriliyor.
         //
-        // "__EFMigrationsHistory" HARIC: onu silseydik migration
+        // "__EFMigrationsHistory" HARIC: onu silseydim migration
         // gecmisi kaybolur ve EF semayi yeniden kurmaya calisirdi.
-        // ==========================================================
         _respawnConnection = new NpgsqlConnection(_postgres.GetConnectionString());
         await _respawnConnection.OpenAsync().ConfigureAwait(false);
 
@@ -161,22 +150,19 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        // ==========================================================
         // BAGLANTI DIZELERINI KAPSAYICILARA YONLENDIR
-        // ==========================================================
+        //
         // Uygulama baglanti dizelerini yapilandirmadan okuyor
         // (Sprint 1 karari: hassas degerler kodda sabit degil).
         //
         // Bu, tam olarak burada ise yariyor: tek satir kod
         // degistirmeden testleri baska bir veritabanina
         // yonlendirebiliyoruz.
-        // ==========================================================
         builder.UseSetting("ConnectionStrings:Postgres", _postgres.GetConnectionString());
         builder.UseSetting("ConnectionStrings:Redis", _redis.GetConnectionString());
 
-        // ==========================================================
         // ZORUNLU AYARLAR -- UYGULAMA BUNLAR OLMADAN ACILMIYOR
-        // ==========================================================
+        //
         // Ilk calistirmada 8 testin 8'i de ayni hatayla dustu:
         //
         //   DataAnnotation validation failed for 'JwtOptions'
@@ -192,7 +178,6 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         // patlamasi, o felaketin onlenmis olmasi demek.
         //
         // Test degerleri GERCEK degerlerden farkli ve zararsiz.
-        // ==========================================================
         builder.UseSetting("Jwt:Secret", "test-icin-en-az-32-karakterlik-gizli-anahtar-degeri");
         builder.UseSetting("Jwt:Issuer", "Ticketing.Tests");
         builder.UseSetting("Jwt:Audience", "Ticketing.Tests.Client");
@@ -208,17 +193,15 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         builder.UseSetting("Smtp:Port", "1");
         builder.UseSetting("Smtp:From", "test@ornek.local");
 
-        // ==========================================================
         // HIZ SINIRLAMASI TESTLERDE KAPALI
-        // ==========================================================
-        // Sprint 15'te auth ucuna 5 dakikada 10 istek siniri koyduk.
+        //
+        // Sprint 15'te auth ucuna 5 dakikada 10 istek siniri koydum.
         // Testler ayni IP'den (bellek ici sunucu) onlarca giris
         // yapiyor ve 11. testten sonra hepsi 429 alirdi.
         //
         // Yani hiz siniri, KENDI testlerimizi engellerdi. Ayri bir
-        // testte (RateLimitTests) acikca dogruluyoruz; digerlerinde
+        // testte (RateLimitTests) acikca dogruluyorum; digerlerinde
         // kapatiyoruz.
-        // ==========================================================
         builder.UseSetting("RateLimiting:Enabled", "false");
 
         builder.UseEnvironment("Testing");
@@ -248,9 +231,8 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
 /// Tum entegrasyon testlerinin PAYLASTIGI kapsayici kumesi.
 /// </summary>
 /// <remarks>
-/// ==============================================================
 /// NEDEN COLLECTION FIXTURE?
-/// ==============================================================
+///
 /// Kapsayici baslatmak 10-20 saniye suruyor. Her test sinifi kendi
 /// kapsayicisini baslatsaydi paket dakikalarca surerdi ve kimse
 /// testleri calistirmak istemezdi -- calistirilmayan test, olmayan
@@ -263,7 +245,6 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
 /// Bu bedeli bilincli odedim. Paralel calissalardi ayni
 /// veritabanini paylasip birbirlerinin verisini silerlerdi
 /// (Respawn her testin basinda TUM tablolari bosaltiyor).
-/// ==============================================================
 /// </remarks>
 [CollectionDefinition(Name)]
 // CA1711: tur adi "Collection" ile bitmemeli -- o son ek .NET'te

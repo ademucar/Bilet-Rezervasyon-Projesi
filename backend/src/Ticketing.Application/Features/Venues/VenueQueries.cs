@@ -7,9 +7,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Venues;
 
-// ===================================================================
 // LISTELEME
-// ===================================================================
 
 /// <summary>
 /// PDF Sprint 4: GET /api/v1/venues
@@ -54,18 +52,16 @@ internal sealed class GetVenuesQueryHandler
     {
         var query = _context.Venues.AsNoTracking();
 
-        // ==============================================================
         // FILTRELERI KOSULLU EKLIYORUM
-        // ==============================================================
+        //
         // IQueryable tembeldir (lazy): aşağıdaki Where cagrilarinin
         // hicbiri veritabanina gitmez. Yalnızca SQL agacini insa eder.
         // Sorgu, ToListAsync cagrildiginda TEK SEFERDE çalışır.
         //
         // Bu yüzden filtreleri if bloklariyla eklemek maliyetsiz.
         // "her ihtimale karsi hepsini ekleyip null kontrolü yapayim"
-        // deseydik, SQL'e gereksiz "WHERE (@p IS NULL OR ...)" kosullari
+        // deseydim, SQL'e gereksiz "WHERE (@p IS NULL OR ...)" kosullari
         // girer ve PostgreSQL index kullanamaz hale gelirdi.
-        // ==============================================================
         if (request.CityId.HasValue)
         {
             query = query.Where(v => v.CityId == request.CityId.Value);
@@ -75,9 +71,8 @@ internal sealed class GetVenuesQueryHandler
         {
             var search = request.Search.Trim();
 
-            // ==========================================================
             // NEDEN EF.Functions.ILike KULLANMIYORUM?
-            // ==========================================================
+            //
             // İlk yazisimda ILike kullanmistim -- PostgreSQL'in
             // büyük/küçük harf duyarsiz LIKE'i ve tam ihtiyacimiz olan sey.
             //
@@ -100,14 +95,14 @@ internal sealed class GetVenuesQueryHandler
             // Cozum, veritabaninda FONKSIYONEL index tanimlamak:
             //     CREATE INDEX ix_venues_name_lower ON "Venues" (LOWER("Name"));
             // Bunu Sprint 11'de (arama ve performans sprinti) ham SQL
-            // migration'i olarak ekleyecegiz.
+            // migration'i olarak ekleyecegim.
             var pattern = $"%{search.ToLowerInvariant()}%";
             query = query.Where(v => EF.Functions.Like(v.Name.ToLower(), pattern));
         }
 
         // Toplam sayiyi ONCE alıyorum, sayfalamadan önce.
         //
-        // Skip/Take uyguladiktan sonra Count() cagirsaydik yalnızca o
+        // Skip/Take uyguladiktan sonra Count() cagirsaydim yalnızca o
         // sayfadaki kayitlari sayardik ve TotalPages hep 1 çıkardı.
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
@@ -131,9 +126,7 @@ internal sealed class GetVenuesQueryHandler
     }
 }
 
-// ===================================================================
 // DETAY
-// ===================================================================
 
 public sealed record GetVenueByIdQuery(Guid Id) : IRequest<Result<VenueDetail>>;
 

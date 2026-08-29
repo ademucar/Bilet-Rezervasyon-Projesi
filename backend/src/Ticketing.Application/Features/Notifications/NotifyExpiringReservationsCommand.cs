@@ -50,9 +50,8 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         var now = _clock.UtcNow;
         var esik = now.AddMinutes(request.WarnBeforeMinutes);
 
-        // ==============================================================
         // HANGI REZERVASYONLAR?
-        // ==============================================================
+        //
         // Kosullar:
         //   ExpiresAt > now      -> HENUZ dolmamis (dolmussa uyarinin
         //                           anlami yok, zaten "doldu"
@@ -61,7 +60,6 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         //   Status Locked/PaymentPending -> ödeme bekliyor
         //
         // Onaylanmis veya iptal edilmiş rezervasyonlar disarida.
-        // ==============================================================
         var yaklasanlar = await _context.Reservations
             .AsNoTracking()
             .Where(r => r.ExpiresAt > now
@@ -85,9 +83,8 @@ internal sealed class NotifyExpiringReservationsCommandHandler
             return Result.Success(0);
         }
 
-        // ==============================================================
         // IDEMPOTENCY: AYNI REZERVASYON ICIN IKINCI UYARI YOK
-        // ==============================================================
+        //
         // Bu is DAKIKADA BIR çalışıyor ve uyarı penceresi 3 dakika.
         // Yani aynı rezervasyon UC KEZ secilir.
         //
@@ -97,9 +94,8 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         // kapatır.
         //
         // Zaten uyarilmis olanlari TEK sorguda cikariyorum; rezervasyon
-        // başına sorgu atsaydik 200 rezervasyon için 200 gidis donus
+        // başına sorgu atsaydim 200 rezervasyon için 200 gidis donus
         // olurdu.
-        // ==============================================================
         var ids = yaklasanlar.ConvertAll(r => r.Id);
 
         var uyarilmisOlanlar = await _context.Notifications

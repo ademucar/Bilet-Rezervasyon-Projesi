@@ -45,9 +45,8 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// ==============================================================
     /// BILET NUMARASI BENZERSIZ OLMALI
-    /// ==============================================================
+    ///
     /// Ayni numaraya sahip iki bilet uretilseydi, girişte QR
     /// dogrulamasi hangi bileti kastettigini bilemezdi: bir kisi
     /// digerinin biletiyle iceri girebilir, gercek sahibi ise
@@ -55,7 +54,6 @@ public class TicketTests
     ///
     /// Ayni ANDA uretilen biletlerle test ediyorum: zamana dayali bir
     /// numaralandirma en kolay burada kirilir.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public void Ayni_anda_uretilen_biletlerin_numaralari_farkli_olmali()
@@ -67,9 +65,7 @@ public class TicketTests
         numaralar.Should().OnlyHaveUniqueItems();
     }
 
-    // ==============================================================
     // DURUM GECISLERI
-    // ==============================================================
 
     [Fact]
     public void Aktif_bilet_kullanilabilmeli()
@@ -117,15 +113,13 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// ==============================================================
     /// IADELI VE IADESIZ IPTAL AYRI DURUMLAR
-    /// ==============================================================
+    ///
     /// Tek bir "Cancelled" durumu kullansaydik, mutabakat sirasinda
     /// "bu bilet icin para geri gonderildi mi?" sorusunu yalnizca
     /// odeme kayitlarina bakarak cevaplayabilirdik.
     ///
     /// Ayri durum, sorunun cevabini biletin KENDISINDE tutuyor.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public void Iadeli_ve_iadesiz_iptal_farkli_durum_uretmeli()
@@ -141,9 +135,8 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// ==============================================================
     /// BU TESTI DE ONCE YANLIS YAZDIM
-    /// ==============================================================
+    ///
     /// Ikinci iptalin HATA firlatmasini bekliyordum. Test kirildi:
     /// Cancel() sessizce geri donuyor.
     ///
@@ -163,7 +156,6 @@ public class TicketTests
     /// gecis denendi, reddet" farkli seyler. Kullanilmis bir bileti
     /// iptal etmek gercekten YANLIS (yukaridaki test), ama iptal
     /// edilmis bir bileti tekrar iptal etmek yalnizca GEREKSIZ.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public void Iptal_tekrar_cagrilirsa_durum_degismemeli()

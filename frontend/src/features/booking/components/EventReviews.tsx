@@ -9,9 +9,8 @@ import { bookingApi, EventStatus, type ReviewDto } from '../api/bookingApi'
 /**
  * Yildiz göstergesi. Salt okunur veya secilebilir.
  *
- * ==================================================================
  * ERİŞİLEBİLİRLİK: YILDIZLAR SADECE GORSEL DEĞİL
- * ==================================================================
+ *
  * Yildizlari yalnızca sembol olarak cizseydik ekran okuyucu
  * "yıldız yıldız yıldız" derdi -- kac tane olduğunu saymak
  * kullanıcıya kalırdı.
@@ -20,7 +19,7 @@ import { bookingApi, EventStatus, type ReviewDto } from '../api/bookingApi'
  * veriyorum ve yildizlari aria-hidden yapıyorum. Secilebilir halde
  * ise gerçek radio dugmeleri kullanıyorum -- klavyeyle ok tuslariyla
  * gezilebiliyor.
- * ==================================================================
+ *
  */
 function StarRating({
   value,
@@ -84,9 +83,9 @@ interface EventReviewsProps {
 }
 
 /**
- * ==================================================================
+ *
  * ETKİNLİK YORUMLARI -- PDF Sprint 12
- * ==================================================================
+ *
  * PDF is kurallarinin arayuze yansimasi:
  *
  *   "Etkinlik tamamlanmadan yorum yapılamaz"
@@ -99,9 +98,8 @@ interface EventReviewsProps {
  *   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir"
  *      -> Düzenle/Sil dugmeleri yalnızca isMine=true olanlarda
  *
- * ------------------------------------------------------------------
  * NEDEN BİLET KONTROLUNU ISTEMCIDE YAPMIYORUM?
- * ------------------------------------------------------------------
+ *
  * Yapabilirdim: "biletlerim" listesini cekip bu etkinlik var mi diye
  * bakardim. Yapmadim çünkü:
  *
@@ -113,7 +111,7 @@ interface EventReviewsProps {
  *      yere gizlerdim
  *
  * Hatayi acikca göstermek, sessizce dugme gizlemekten daha durust.
- * ------------------------------------------------------------------
+ *
  */
 export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
   const queryClient = useQueryClient()

@@ -12,9 +12,8 @@ namespace Ticketing.WebApi.Documentation;
 /// PDF Sprint 18: "Endpoint aciklamalari", "Response ornekleri".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF NEDEN VAR? -- .NET 9'UN EKSIGI
-/// ==================================================================
+///
 /// GenerateDocumentationFile'i acip Swagger'a baktim: 78 ucun
 /// HICBIRINDE açıklama yoktu.
 ///
@@ -22,16 +21,15 @@ namespace Ticketing.WebApi.Documentation;
 /// (Microsoft.AspNetCore.OpenApi) XML yorumlarini OKUMUYOR. O
 /// ozellik .NET 10 ile geldi.
 ///
-/// Swashbuckle kullansaydık hazır gelirdi -- ama o zaman iki ayrı
+/// Swashbuckle kullansaydım hazır gelirdi -- ama o zaman iki ayrı
 /// OpenAPI ureticisi çalışır ve iki farklı belge üretirdi.
 ///
 /// Bu yüzden XML dosyalarini kendim okuyup belgeye bagliyorum.
 /// Kod, cercevenin bir sonraki surumunde gereksiz hale gelecek;
 /// o zaman silinebilir.
 ///
-/// ------------------------------------------------------------------
 /// BILINCLI BASITLESTIRME: PARAMETRE IMZASI YOK SAYILIYOR
-/// ------------------------------------------------------------------
+///
 /// XML uye kimlikleri parametre turlerini de iceriyor:
 ///
 ///   M:Ticketing.WebApi.Controllers.EventsController.Publish(
@@ -47,7 +45,6 @@ namespace Ticketing.WebApi.Documentation;
 /// YOK -- her uc kendi adiyla duruyor. Ilerde eklenirse açıklama
 /// yanlış uca gider; bu bir belge sorunu olur, calisma zamani
 /// hatası değil.
-/// ==================================================================
 /// </remarks>
 internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTransformer
 {
@@ -94,7 +91,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
         // ---- <remarks> -> açıklama ----
         //
         // Aciklamayi EKLIYORUM, ustune yazmiyorum: AuthorizationTransformer
-        // buraya yetki notunu koyuyor olabilir ve önü silmek istemiyoruz.
+        // buraya yetki notunu koyuyor olabilir ve önü silmek istemiyorum.
         var aciklama = Metin(dugum.Element("remarks"));
 
         if (!string.IsNullOrWhiteSpace(aciklama))
@@ -124,7 +121,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             if (operation.Responses.TryGetValue(kod, out var mevcut))
             {
                 // Cercevenin urettigi genel metin ("OK", "Created")
-                // yerine BIZIM aciklamamiz gecsin.
+                // yerine BENIM aciklamamiz gecsin.
                 mevcut.Description = metin;
             }
             else
@@ -183,7 +180,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     /// Uygulama klasorundeki TÜM XML dokumantasyon dosyalarini okur.
     /// </summary>
     /// <remarks>
-    /// Yalnızca WebApi.xml'i okusaydik, Application katmanindaki
+    /// Yalnızca WebApi.xml'i okusaydim, Application katmanindaki
     /// DTO ve komut aciklamalari disarida kalırdı. Hepsini okumak
     /// daha fazla is değil ve belgeyi belirgin şekilde
     /// zenginlestiriyor.
@@ -229,18 +226,16 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     /// XML dugumunun metnini okunabilir hale getirir.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// YORUMLARIMIZ UZUN VE COK SATIRLI -- TEMIZLENMESI GEREKIYOR
-    /// ==============================================================
+    ///
     /// Kodda yazdigimiz yorumlar "=====" cizgileri ve girintiler
-    /// iceriyor. Ham haliyle Swagger'a koysaydık okunamaz olurdu.
+    /// iceriyor. Ham haliyle Swagger'a koysaydım okunamaz olurdu.
     ///
     /// Yaptiklarim:
     ///   - Her satirin bas/son bosluklarini kirp
     ///   - "=====" ve "-----" ayirici satirlarini at
     ///   - see cref etiketlerini sade metne cevir
     ///   - Ardisik boş satirlari tekile indir
-    /// ==============================================================
     /// </remarks>
     private static string Metin(XElement? dugum)
     {

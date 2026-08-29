@@ -9,9 +9,7 @@ public class UserTests
     private static User GecerliKullanici()
         => User.Create("ahmet@ornek.com", "hash", "Ahmet", "Yilmaz");
 
-    // ---------------------------------------------------------------
     // Olusturma ve normalizasyon
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_BuyukHarfliEposta_KucukHarfeCevrilmeli()
@@ -67,15 +65,13 @@ public class UserTests
              .Which.ErrorCode.Should().Be("user.name_required");
     }
 
-    // ---------------------------------------------------------------
     // Rol atama
-    // ---------------------------------------------------------------
 
     [Fact]
     public void AssignRole_AyniRolIkiKez_TekKayitOlusturmali()
     {
         // Idempotency: "bu kullaniciya Admin rolu ver" istegi iki kez
-        // gelirse sonuc ayni olmali. Hata firlatmak yerine yok sayiyoruz.
+        // gelirse sonuc ayni olmali. Hata firlatmak yerine yok sayiyorum.
         var user = GecerliKullanici();
         var role = Role.Create(Role.Ids.Admin, Role.Names.Admin);
 
@@ -91,7 +87,7 @@ public class UserTests
         // Bu test kapsullemeyi koruyor: rol ekleme yetkisi yalnizca
         // User.AssignRole metodunda olmali.
         //
-        // ONEMLI AYRINTI: AsReadOnly() bize ReadOnlyCollection<T> dondurur.
+        // ONEMLI AYRINTI: AsReadOnly() bana ReadOnlyCollection<T> dondurur.
         // Bu tip ICollection<T>'yi ACIKCA (explicitly) implemente eder --
         // yani arayuz uzerinden Add cagrilabilir ama calisma zamaninda
         // NotSupportedException firlatir.
@@ -114,9 +110,7 @@ public class UserTests
         user.UserRoles.Should().HaveCount(1);
     }
 
-    // ---------------------------------------------------------------
     // Brute force korumasi (PDF Sprint 15)
-    // ---------------------------------------------------------------
 
     [Fact]
     public void RegisterFailedLogin_LimitAltinda_HesapKilitlenmemeli()

@@ -8,16 +8,14 @@ namespace Ticketing.WebApi.Security;
 /// İstek hizi sinirlama. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN AYRI KUTUPHANE YOK?
-/// ==================================================================
+///
 /// AspNetCoreRateLimit gibi paketler var ama .NET 7'den beri
 /// Microsoft.AspNetCore.RateLimiting FRAMEWORK ICINDE geliyor.
 ///
 /// Ucuncu bir bagimlilik eklemek; güvenlik taramasi, surum takibi ve
 /// gecisli bagimlilik maliyeti getirir. Yerlesik olan ihtiyacimizi
 /// karsiliyor.
-/// ==================================================================
 /// </remarks>
 public static class RateLimitingSetup
 {
@@ -38,9 +36,9 @@ public static class RateLimitingSetup
     /// Hiz sinirlamasini yapilandirir.
     /// </summary>
     /// <param name="enabled">
-    /// ==========================================================
+    ///
     /// NEDEN KAPATILABILIR OLMALI? (PDF Sprint 17)
-    /// ==========================================================
+    ///
     /// Entegrasyon testleri aynı istemciden (bellek ici sunucu)
     /// onlarca giriş yapiyor. Auth politikasi 5 dakikada 10 istek
     /// olduğu için 11. testten sonra HEPSI 429 alırdı.
@@ -56,7 +54,7 @@ public static class RateLimitingSetup
     /// Hiz sinirinin GERCEKTEN calistigi ayrı bir testte
     /// (RateLimitingTests) acikca dogrulaniyor -- yani bu bayrak
     /// bir kapsam bosluguna yol acmiyor.
-    /// ==========================================================
+    ///
     /// </param>
     public static IServiceCollection AddRateLimiting(
         this IServiceCollection services,
@@ -72,7 +70,7 @@ public static class RateLimitingSetup
                 // ozniteligi taniyamadigi bir politika adı gorurse
                 // uygulama ACILMAZ.
                 //
-                // Yalnızca sınırları pratikte sonsuz yapiyoruz.
+                // Yalnızca sınırları pratikte sonsuz yapiyorum.
                 options.AddPolicy(Policies.Authentication, SinirsizPartition());
                 options.AddPolicy(Policies.Transaction, SinirsizPartition());
                 options.AddPolicy(Policies.Search, SinirsizPartition());
@@ -80,9 +78,8 @@ public static class RateLimitingSetup
                 return;
             }
 
-            // ==========================================================
             // SINIRA TAKILAN ISTEK: 429 + Retry-After
-            // ==========================================================
+            //
             // Varsayılan 503 Service Unavailable dönüyor. 429 Too Many
             // Requests dogrusu: 503 "sunucu bozuk" der, 429 "yavasla"
             // der. Istemci ikisine farklı tepki vermeli.
@@ -90,7 +87,6 @@ public static class RateLimitingSetup
             // Retry-After başlığı ŞART: istemcinin ne kadar bekleyecegini
             // bilmesi gerekiyor. Olmasaydı istemci korlemesine tekrar
             // dener ve durumu kotulestirirdi.
-            // ==========================================================
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
             options.OnRejected = async (context, cancellationToken) =>
@@ -118,9 +114,8 @@ public static class RateLimitingSetup
                     cancellationToken).ConfigureAwait(false);
             };
 
-            // ==========================================================
             // 1) KIMLIK DOGRULAMA -- PDF: login, register, şifre sıfırlama
-            // ==========================================================
+            //
             // 5 dakikada 10 istek.
             //
             // Neden bu kadar siki? Çünkü bunlar brute force'un hedefi.
@@ -134,14 +129,12 @@ public static class RateLimitingSetup
             // IP bazlı sinir bu saldiriyi durduruyor. Ikisi birlikte
             // çalışıyor: hesap kilidi tek hesabi, hiz sınırı tüm
             // saldiriyi.
-            // ==========================================================
             options.AddPolicy(Policies.Authentication, IpPartitionFactory(
                 permitLimit: 10,
                 window: TimeSpan.FromMinutes(5)));
 
-            // ==========================================================
             // 2) ISLEM -- PDF: rezervasyon oluşturma, ödeme
-            // ==========================================================
+            //
             // 1 dakikada 20 istek.
             //
             // Normal bir kullanıcı dakikada 20 rezervasyon denemez.
@@ -151,14 +144,12 @@ public static class RateLimitingSetup
             // gerçekten ust uste birkaç kez deneyebilir (koltuklar
             // kapiliyor). 20, mesru kullanıcıyı engellemeyecek kadar
             // genis.
-            // ==========================================================
             options.AddPolicy(Policies.Transaction, IpPartitionFactory(
                 permitLimit: 20,
                 window: TimeSpan.FromMinutes(1)));
 
-            // ==========================================================
             // 3) ARAMA -- PDF: search endpointi
-            // ==========================================================
+            //
             // 1 dakikada 60 istek.
             //
             // Arama pahalidir (LIKE sorgusu, birden fazla JOIN) ve
@@ -167,20 +158,17 @@ public static class RateLimitingSetup
             //
             // Saniyede 1 istek ortalamasi, elle kullanim için fazlasiyla
             // yeterli; otomatik kazima için çok yavas.
-            // ==========================================================
             options.AddPolicy(Policies.Search, IpPartitionFactory(
                 permitLimit: 60,
                 window: TimeSpan.FromMinutes(1)));
 
-            // ==========================================================
             // 4) GENEL SINIR -- her istek için
-            // ==========================================================
+            //
             // Politikasi olmayan uclar da korunmali. Aksi halde yeni
             // eklenen bir uc, politika atanana kadar TAMAMEN korumasiz
             // kalırdı -- ve bunu kimse fark etmezdi.
             //
             // "Varsayılan olarak güvenli" (secure by default) ilkesi.
-            // ==========================================================
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
                 context => RateLimitPartition.GetFixedWindowLimiter(
                     ClientKey(context),
@@ -213,25 +201,22 @@ public static class RateLimitingSetup
                 PermitLimit = permitLimit,
                 Window = window,
 
-                // ==================================================
                 // KUYRUK YOK (QueueLimit = 0)
-                // ==================================================
-                // Kuyruk acsaydik, sinira takilan istek beklerdi ve
+                //
+                // Kuyruk acsaydim, sinira takilan istek beklerdi ve
                 // sunucu kaynagini tutardi. Saldirgan bunu kullanip
                 // binlerce isteği kuyrukta bekletebilir ve gerçek
                 // kullanıcılar için kaynak birakmayabilirdi.
                 //
                 // Hemen reddetmek daha güvenli: istemci 429 alip
                 // Retry-After'a göre bekliyor.
-                // ==================================================
                 QueueLimit = 0,
             });
 
     /// <summary>
-    /// ==============================================================
     /// ISTEMCI ANAHTARI: GIRIS YAPMISSA KULLANICI, YOKSA IP
-    /// ==============================================================
-    /// Yalnızca IP kullansaydık, aynı sirket agindan (tek NAT IP)
+    ///
+    /// Yalnızca IP kullansaydım, aynı sirket agindan (tek NAT IP)
     /// baglanan yuzlerce calisan TEK bir sinira takilirdi -- biri
     /// digerlerini engellerdi.
     ///
@@ -239,11 +224,9 @@ public static class RateLimitingSetup
     /// herkesin kendi kotasi oluyor.
     ///
     /// Giriş yapmamislarda IP tek seçenek.
-    /// ==============================================================
     ///
-    /// ==============================================================
     /// UYARI: IP GUVENILIR OLMALI
-    /// ==============================================================
+    ///
     /// RemoteIpAddress, ters vekil sunucu (nginx, load balancer)
     /// arkasinda VEKILIN adresini gosterir -- gerçek istemciyi değil.
     /// O durumda TÜM istekler tek bir IP'den gelmis gibi görünür ve
@@ -252,7 +235,6 @@ public static class RateLimitingSetup
     /// Cozum ForwardedHeaders middleware'i (Program.cs'te
     /// yapilandirildi). O olmadan bu sinirlayici uretimde YANLIS
     /// çalışır.
-    /// ==============================================================
     /// </summary>
     private static string ClientKey(HttpContext context)
     {

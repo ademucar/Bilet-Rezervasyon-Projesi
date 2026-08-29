@@ -12,15 +12,14 @@ internal sealed class PasswordHasher : IPasswordHasher
     /// <summary>
     /// BCrypt maliyet faktoru (work factor).
     ///
-    /// ==================================================================
     /// BU SAYI NEDEN ONEMLI?
-    /// ==================================================================
+    ///
     /// BCrypt kasitli olarak YAVAS bir algoritmadir. Maliyet faktoru her
     /// 1 arttiginda hesaplama süresi IKIYE KATLANIR (2^12 = 4096 tur).
     ///
-    /// Neden yavaslik istiyoruz? Çünkü veritabani sizarsa saldirgan
+    /// Neden yavaslik istiyorum? Çünkü veritabani sizarsa saldirgan
     /// hash'leri kaba kuvvetle kirmaya çalışır. SHA-256 gibi HIZLI bir
-    /// algoritma kullansaydık, modern bir GPU saniyede milyarlarca
+    /// algoritma kullansaydım, modern bir GPU saniyede milyarlarca
     /// deneme yapabilirdi. BCrypt ile bu sayi saniyede birkaç bine duser.
     ///
     /// 12 değeri, 2024-2026 donanimlarinda yaklasik 250-400 ms surer:
@@ -66,7 +65,7 @@ internal sealed class PasswordHasher : IPasswordHasher
         try
         {
             // BCrypt.Verify, maliyet faktorunu ve salt'i hash'in icinden
-            // okur; bize ayrıca saklamamiza gerek yok.
+            // okur; bana ayrıca saklamamiza gerek yok.
             return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
         catch (BCrypt.Net.SaltParseException)

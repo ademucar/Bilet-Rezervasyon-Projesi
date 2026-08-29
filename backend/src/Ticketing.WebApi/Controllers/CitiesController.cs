@@ -18,8 +18,8 @@ public sealed class CitiesController : ApiControllerBase
     /// </summary>
     /// <remarks>
     /// Sayfalama YOK: 81 il var ve filtre listesinde tamaminin
-    /// görünmesi gerekiyor. Sayfalasaydik frontend'i "sonraki sayfa"
-    /// mantığı yazmaya zorlardik -- hiçbir kullanıcı şehir listesinde
+    /// görünmesi gerekiyor. Sayfalasaydim frontend'i "sonraki sayfa"
+    /// mantığı yazmaya zorlardim -- hiçbir kullanıcı şehir listesinde
     /// sayfa gezmek istemez.
     ///
     /// Sonuç kullanicidan bağımsız olduğu için 24 saat onbellekte

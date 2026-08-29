@@ -19,9 +19,7 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 }
 
 /// <summary>
-/// ==================================================================
 /// REFRESH TOKEN ROTATION VE CALINMA TESPITI
-/// ==================================================================
 ///
 /// PDF Sprint 3 uc kural istiyor:
 ///   - "Refresh Token rotation uygulanmalıdır."
@@ -47,7 +45,7 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 ///      kullanmaya çalışıyor". Bunun iki acikamasi var: ya token
 ///      calindi ya da ciddi bir hata var. IKISI DE ALARM SEBEBI.
 ///
-///   5. O kullanıcının TÜM aktif token'larini iptal ediyoruz.
+///   5. O kullanıcının TÜM aktif token'larini iptal ediyorum.
 ///      Hem saldirgan hem gerçek kullanıcı disari atiliyor.
 ///      Kullanıcı tekrar giriş yapabilir; saldirgan yapamaz
 ///      (sifreyi bilmiyor).
@@ -57,7 +55,6 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 ///
 /// Bu, RefreshToken entity'sindeki ReplacedByTokenHash alaninin
 /// var olma sebebidir.
-/// ==================================================================
 /// </summary>
 internal sealed class RefreshTokenCommandHandler
     : IRequestHandler<RefreshTokenCommand, Result<AuthResponse>>
@@ -102,9 +99,8 @@ internal sealed class RefreshTokenCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.InvalidRefreshToken);
         }
 
-        // ==============================================================
         // CALINMA TESPITI
-        // ==============================================================
+        //
         // İptal edilmiş bir token tekrar kullanilmaya calisiliyor.
         //
         // Mesru bir istemci bunu YAPMAZ: yenileme yaptiktan sonra eski

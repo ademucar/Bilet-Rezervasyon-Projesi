@@ -3,10 +3,9 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// <summary>
 /// Dagitik önbellek. PDF Sprint 11.
 ///
-/// ==================================================================
 /// NEDEN ARAYUZ? Neden doğrudan Redis?
-/// ==================================================================
-/// Application katmanina StackExchange.Redis enjekte etseydik:
+///
+/// Application katmanina StackExchange.Redis enjekte etseydim:
 ///
 ///   - Is mantığı bir ONBELLEK URUNUNE baglanirdi
 ///   - Mimari testimiz kırmızı yanardi (ve haklı olarak)
@@ -14,7 +13,6 @@ namespace Ticketing.Application.Abstractions.Caching;
 ///
 /// Bu arayüz sayesinde handler'lar yalnızca "bu veriyi onbellekten
 /// ver, yoksa üret ve sakla" diyor.
-/// ==================================================================
 /// </summary>
 public interface ICacheService
 {
@@ -23,9 +21,8 @@ public interface ICacheService
     /// uretip saklar.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN "GET" VE "SET" AYRI DEĞİL DE TEK METOT?
-    /// ==============================================================
+    ///
     /// Ayrı olsaydı her cagiran su kaliba mecbur kalırdı:
     ///
     ///     var cached = await cache.GetAsync&lt;T&gt;(key);
@@ -39,7 +36,6 @@ public interface ICacheService
     /// etmez -- sistem çalışır, sadece yavastir.
     ///
     /// Tek metot bu hatayi imkansiz kiliyor.
-    /// ==============================================================
     ///
     /// PDF kuralı: "Cache kapalı olduğunda sistem calismaya devam
     /// edebilmelidir." Uygulamalar bu sozu tutmak zorunda: Redis'e

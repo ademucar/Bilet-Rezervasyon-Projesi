@@ -49,9 +49,8 @@ export function EventDetailPage() {
 
   const ev = eventQuery.data
 
-  // ==================================================================
   // SATIS ACIK MI?
-  // ==================================================================
+  //
   // Bu kontrol yalnızca KULLANICI DENEYİMİ için.
   //
   // Satış kapaliyken koltuk seçim baglantisini gizlemek, kullanıcının
@@ -61,7 +60,6 @@ export function EventDetailPage() {
   // sayfasına girebilir. Gerçek kontrol backend'de
   // CreateReservationCommand içinde -- oradaki kontrol kaldirilirsa
   // sistem açık olur, buradaki kaldirilirsa yalnızca deneyim bozulur.
-  // ==================================================================
   const isOnSale = ev.status === EventStatus.SalesOpen
   const isCancelled = ev.status === EventStatus.Cancelled
 

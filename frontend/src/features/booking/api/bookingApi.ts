@@ -2,9 +2,9 @@ import { api } from '../../../lib/api/client'
 import type { Paged } from '../../admin/api/adminApi'
 
 /**
- * ==================================================================
+ *
  * BİLET ALMA API KATMANI -- PDF Sprint 7 ve 8
- * ==================================================================
+ *
  * Backend DTO'lariyla birebir eşleyen tipler.
  *
  * Sayilarin (enum) TypeScript karsiliklarini `as const` nesnesiyle
@@ -16,7 +16,7 @@ import type { Paged } from '../../admin/api/adminApi'
  * NOMINAL karsilastirilir; backend'den gelen ham sayi (3) bir
  * TS enum'una doğrudan atanamaz, cast gerekir. `as const` ile
  * bu sorun hiç dogmuyor.
- * ==================================================================
+ *
  */
 
 export const EventSeatStatus = {
@@ -64,9 +64,7 @@ export const EventStatus = {
   Suspended: 8,
 } as const
 
-// ===================================================================
 // ETKİNLİK
-// ===================================================================
 
 export interface EventListItem {
   id: string
@@ -115,9 +113,7 @@ export interface EventDetail {
   sessions: EventSessionDto[]
 }
 
-// ===================================================================
 // KOLTUK UYGUNLUGU
-// ===================================================================
 
 export interface SeatAvailabilityItem {
   eventSeatId: string
@@ -143,9 +139,7 @@ export interface SeatAvailability {
   seats: SeatAvailabilityItem[]
 }
 
-// ===================================================================
 // REZERVASYON
-// ===================================================================
 
 export interface ReservationItemDto {
   id: string
@@ -174,9 +168,7 @@ export interface ReservationDto {
   items: ReservationItemDto[]
 }
 
-// ===================================================================
 // ÖDEME VE BİLET
-// ===================================================================
 
 export interface PaymentTransactionDto {
   type: number
@@ -217,9 +209,9 @@ export interface TicketDto {
 }
 
 /**
- * ------------------------------------------------------------------
+ *
  * IDEMPOTENCY ANAHTARI
- * ------------------------------------------------------------------
+ *
  * Backend hem rezervasyon hem ödeme olustururken "Idempotency-Key"
  * header'ini kabul ediyor: aynı anahtarla gelen ikinci istek YENI
  * kayıt olusturmuyor, ilkini döndürüyor.
@@ -230,7 +222,7 @@ export interface TicketDto {
  *
  * crypto.randomUUID() tarayıcıda yerlesik ve kriptografik olarak
  * güçlü. Kutuphane eklemeye gerek yok.
- * ------------------------------------------------------------------
+ *
  */
 export function newIdempotencyKey(): string {
   return crypto.randomUUID()
@@ -275,9 +267,7 @@ export interface CityDto {
   plateCode: number
 }
 
-// ===================================================================
 // YORUM VE FAVORI -- PDF Sprint 12
-// ===================================================================
 
 export interface ReviewDto {
   id: string
@@ -306,9 +296,8 @@ export interface EventReviewsResult {
 
 export const bookingApi = {
   getEvents: async (params: EventFilters) => {
-    // ==============================================================
     // BOŞ ALANLARI TEMIZLE
-    // ==============================================================
+    //
     // Axios, undefined değerleri zaten atliyor ama BOŞ METIN ('')
     // gönderiyor: ?cityId=&categoryId=
     //
@@ -318,7 +307,6 @@ export const bookingApi = {
     //
     // Temizligi TEK YERDE yapıyorum ki her cagirim yerinde
     // tekrarlanmasin.
-    // ==============================================================
     const temiz = Object.fromEntries(
       Object.entries(params).filter(
         ([, deger]) => deger !== undefined && deger !== '' && deger !== null,

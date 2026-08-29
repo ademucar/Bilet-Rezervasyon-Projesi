@@ -61,9 +61,9 @@ describe('EventFilterPanel', () => {
   })
 
   /**
-   * ================================================================
+   *
    * FİLTRE DEĞİŞİKLİĞİ YALNIZCA DEĞİŞEN ALANI BİLDİRMELİ
-   * ================================================================
+   *
    * onChange, Partial<EventFilters> alıyor — yani "yalnızca bunu
    * değiştir" diyor.
    *
@@ -72,7 +72,7 @@ describe('EventFilterPanel', () => {
    * şehir seçilir, hemen ardından kategori seçilir ve kategori
    * çağrısı eski (şehirsiz) durumu taşıdığı için şehir seçimi
    * kaybolurdu.
-   * ================================================================
+   *
    */
   it('şehir seçilince yalnızca cityId bildirilir', async () => {
     const kullanici = userEvent.setup()

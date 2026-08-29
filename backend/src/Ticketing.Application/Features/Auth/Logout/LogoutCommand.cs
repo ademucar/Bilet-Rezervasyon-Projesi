@@ -55,9 +55,8 @@ internal sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand, Resu
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // ------------------------------------------------------------------
         // TOKEN BULUNAMASA BILE BASARILI DONUYORUM
-        // ------------------------------------------------------------------
+        //
         // "Çıkış yapamadiniz" demek anlamsiz olurdu: kullanıcının niyeti
         // oturumu kapatmak ve sonuç olarak oturum ZATEN kapalı.
         //

@@ -13,9 +13,7 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.Application.Features.Reservations;
 
-// ===================================================================
 // İPTAL -- PDF: POST /api/v1/reservations/{id}/cancel
-// ===================================================================
 
 public sealed record CancelReservationCommand(Guid Id, string? Reason) : IRequest<Result>;
 
@@ -70,9 +68,8 @@ internal sealed class CancelReservationCommandHandler
         // veya onaylanmis bir rezervasyon iptal edilemez.
         reservation.Cancel(request.Reason);
 
-        // ==============================================================
         // KOLTUKLARI SERBEST BIRAK
-        // ==============================================================
+        //
         // Bu adim ATLANIRSA en kötü hata olusur: rezervasyon iptal
         // görünür ama koltuklar 10 dakika daha kilitli kalır.
         // Kullanıcı "iptal ettim ama koltuk hâlâ dolu" der ve
@@ -80,7 +77,7 @@ internal sealed class CancelReservationCommandHandler
         //
         // Release, satılmış koltuğu reddediyor -- iptal edilen bir
         // rezervasyonda satılmış koltuk olamaz ama savunmayi
-        // entity'de tutuyoruz.
+        // entity'de tutuyorum.
         foreach (var item in reservation.Items)
         {
             item.EventSeat.Release();
@@ -100,9 +97,7 @@ internal sealed class CancelReservationCommandHandler
     }
 }
 
-// ===================================================================
 // SURE UZATMA -- PDF: POST /api/v1/reservations/{id}/extend
-// ===================================================================
 
 public sealed record ExtendReservationCommand(Guid Id) : IRequest<Result<ReservationDto>>;
 
@@ -158,16 +153,15 @@ internal sealed class ExtendReservationCommandHandler
             _options.MaxExtensionCount,
             now);
 
-        // ==============================================================
         // KOLTUKLARIN KILIT SURESINI DE UZAT
-        // ==============================================================
+        //
         // Bu adim atlanirsa TUTARSIZLIK olusur: rezervasyon 15 dakika
         // geçerli görünür ama koltuklar 10. dakikada "musait" olur ve
         // başkası alabilir.
         //
         // Rezervasyon ile koltuk sureleri HER ZAMAN aynı olmalı.
         // Ikisini ayrı yerlerde tuttugumuz için bu senkronizasyon
-        // bizim sorumlulugumuzda.
+        // benim sorumlulugumuzda.
         foreach (var item in reservation.Items)
         {
             item.EventSeat.ExtendLock(reservation.ExpiresAt);
@@ -187,9 +181,7 @@ internal sealed class ExtendReservationCommandHandler
     }
 }
 
-// ===================================================================
 // SURESI DOLANLARI TEMIZLE -- background job cagiracak (Sprint 9)
-// ===================================================================
 
 /// <summary>
 /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
@@ -226,9 +218,8 @@ internal sealed class ExpireReservationsCommandHandler
     {
         var now = _clock.UtcNow;
 
-        // ==============================================================
         // TOPLU ISLEM SINIRI (BatchSize)
-        // ==============================================================
+        //
         // Sinir olmasaydı, sistem bir süre durup 50.000 süresi dolmuş
         // rezervasyon birikseydi, job hepsini tek transaction'da
         // islemeye çalışır ve dakikalarca tablo kilitlerdi.
@@ -242,7 +233,7 @@ internal sealed class ExpireReservationsCommandHandler
                 .ThenInclude(i => i.EventSeat)
 
             // Etkinlik başlığı, Outbox mesajinin içeriği için gerekli.
-            // Include etmeseydik her rezervasyon için ayrı bir sorgu
+            // Include etmeseydim her rezervasyon için ayrı bir sorgu
             // atilirdi (N+1) -- 100 rezervasyonluk bir partide 100
             // fazladan gidis donus.
             .Include(r => r.EventSession)
@@ -277,9 +268,8 @@ internal sealed class ExpireReservationsCommandHandler
                 }
             }
 
-            // ==========================================================
-            // BILDIRIMI BURADA GONDERMIYORUZ -- OUTBOX'A YAZIYORUZ
-            // ==========================================================
+            // BILDIRIMI BURADA GONDERMIYORUZ -- OUTBOX'A YAZIYORUM
+            //
             // PDF Sprint 9: "Rezervasyon süresi doldu bildirimi"
             // Outbox senaryolari arasında.
             //
@@ -296,7 +286,6 @@ internal sealed class ExpireReservationsCommandHandler
             // Gonderim isi ayrı bir job'a devrediliyor.
             // PDF: "Job islemleri kullanıcı istegini gereksiz yere
             // bekletmemelidir."
-            // ==========================================================
             _context.OutboxMessages.Add(OutboxMessage.Create(
                 OutboxMessageTypes.ReservationExpired,
                 JsonSerializer.Serialize(new ReservationExpiredPayload(
@@ -311,10 +300,9 @@ internal sealed class ExpireReservationsCommandHandler
         {
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            // ==========================================================
             // PDF is kuralı: "Rezervasyon süresi doldugunda koltuk
             // serbest gorunmelidir."
-            // ==========================================================
+            //
             // Bu, Sprint 10'un en görünür faydasi. SignalR olmasaydı
             // kullanıcının bosalan koltuğu gormesi için sayfayı
             // yenilemesi gerekirdi -- ya da Sprint 7'de koydugum
@@ -324,7 +312,7 @@ internal sealed class ExpireReservationsCommandHandler
             //   SeatReleased      -> oturumu izleyen HERKESE
             //   ReservationExpired -> "senin rezervasyonun bitti"
             //
-            // Tek olayda birlestirseydik, rezervasyon sahibi kendi
+            // Tek olayda birlestirseydim, rezervasyon sahibi kendi
             // rezervasyonunun mu yoksa baskasininkinin mi bittigini
             // ayırt edemezdi.
             foreach (var reservation in expired)

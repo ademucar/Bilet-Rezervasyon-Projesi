@@ -5,9 +5,8 @@ import { useCountdown } from './useCountdown'
 /**
  * PDF Sprint 17 frontend testi: "Rezervasyon sayaçı".
  *
- * ==================================================================
  * BU HOOK NEDEN AYRICA TEST EDİLİYOR?
- * ==================================================================
+ *
  * Sayaç, kullanıcının koltuğunu kaybetmeden önce elindeki tek
  * uyarı. Yanlış çalışması iki yönde de kötü:
  *
@@ -20,13 +19,13 @@ import { useCountdown } from './useCountdown'
  * Hook'un içindeki asıl zorluk, tarayıcının arka plan sekmelerde
  * zamanlayıcıları yavaşlatması. Onu doğrudan test edemiyoruz ama
  * hook'un buna karşı kullandığı tasarımı (bitiş anına göre yeniden
- * ölçme) test edebiliyoruz.
- * ==================================================================
+ * ölçme) test edebiliyorum.
+ *
  */
 describe('useCountdown', () => {
   beforeEach(() => {
     // Sahte zamanlayıcılar: 10 dakika beklemek yerine zamanı
-    // ilerletiyoruz. Gerçek beklemeyle test etseydik tek bir test
+    // ilerletiyoruz. Gerçek beklemeyle test etseydim tek bir test
     // 10 dakika sürerdi ve kimse bu paketi çalıştırmazdı.
     vi.useFakeTimers()
   })
@@ -58,16 +57,16 @@ describe('useCountdown', () => {
   })
 
   /**
-   * ================================================================
+   *
    * EN ÖNEMLİ TEST: SIFIRIN ALTINA İNMEMELİ
-   * ================================================================
+   *
    * Negatife inseydi ekranda "-3:12 kaldı" gibi bir şey yazardı.
    * Bu yalnızca çirkin değil, YANILTICI: kullanıcı eksi bir sayıyı
    * "hâlâ süre var" diye okuyabilir.
    *
    * Ayrıca sayaç 0'a ulaştığında arayüz "süre doldu" durumuna
    * geçiyor; negatif değer o mantığı da bozardı.
-   * ================================================================
+   *
    */
   it('sıfırın altına inmez', () => {
     const { result } = renderHook(() => useCountdown(3))

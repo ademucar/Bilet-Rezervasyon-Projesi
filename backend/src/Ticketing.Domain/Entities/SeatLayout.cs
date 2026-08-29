@@ -38,7 +38,7 @@ public class SeatLayout : AuditableEntity
     /// Plan yeni etkinliklerde kullanilabilir mi?
     ///
     /// Silmek yerine pasife almanin sebebi: gecmis etkinlikler bu plana
-    /// referans veriyor. Silseydik eski biletlerin koltuk bilgisi kaybolurdu
+    /// referans veriyor. Silseydim eski biletlerin koltuk bilgisi kaybolurdu
     /// ve "3 yil önceki konserde hangi koltuktaydim" sorusu cevapsiz kalırdı.
     /// </summary>
     public bool IsActive { get; private set; }

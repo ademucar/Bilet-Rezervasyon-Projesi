@@ -85,9 +85,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         };
     }
 
-    // ==============================================================
     // PDF: "Etkinlik olusturma"
-    // ==============================================================
 
     [Fact]
     public async Task Organizator_etkinlik_olusturabilmeli()
@@ -101,9 +99,8 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         yanit.StatusCode.Should().Be(HttpStatusCode.Created);
 
         using var belge = JsonDocument.Parse(await yanit.Content.ReadAsStringAsync());
-        // ==========================================================
         // YANIT GOVDESI NESNE DEGIL, DOGRUDAN GUID
-        // ==========================================================
+        //
         // Once GetProperty("id") yazdim ve su hatayi aldim:
         //   "requires an element of type 'Object', but the target
         //    element has type 'String'"
@@ -115,23 +112,20 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         // Bu bir hata degil, bilincli bir tasarim: olusturma ucu
         // yeni kaynagin KIMLIGINI donuyor ve adresi Location
         // header'inda veriyor.
-        // ==========================================================
         var etkinlikId = belge.RootElement.GetGuid();
 
         using var db = Db();
 
         var etkinlik = await db.Events.SingleAsync(e => e.Id == etkinlikId);
 
-        // ==========================================================
         // YENI ETKINLIK TASLAK OLARAK BASLAMALI
-        // ==========================================================
+        //
         // Dogrudan yayinda baslasaydi, yarim hazirlanmis bir etkinlik
         // (oturumu yok, bilet turu yok, koltugu yok) ana sayfada
         // gorunurdu ve kullanicilar bilet almaya calisirdi.
         //
         // Taslak durumu, organizatore hazirligi bitirme firsati
         // veriyor.
-        // ==========================================================
         etkinlik.Status.Should().Be(EventStatus.Draft);
 
         // Denetim alanlari dolmali (Sprint 12'de bulunan hatanin
@@ -162,20 +156,16 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         (await db.Events.CountAsync()).Should().Be(0);
     }
 
-    // ==============================================================
     // PDF: "Etkinlik yayinlama"
-    // ==============================================================
 
     /// <remarks>
-    /// ==============================================================
     /// YAYINLAMA, DURUM MAKINESINDEN GECMEK ZORUNDA
-    /// ==============================================================
+    ///
     /// Draft -> PendingApproval -> Published
     ///
     /// Taslaktan dogrudan yayina gecmeyi de deniyoruz (asagidaki
     /// test) ve reddedilmesini bekliyoruz. Bu, Sprint 2'de kurulan
     /// durum makinesinin gercekten korudugunu dogruluyor.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public async Task Onaya_gonderilen_etkinlik_yayinlanabilmeli()
@@ -183,9 +173,8 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         var (token, kategori, sehir, mekan, salon, profil, plan) =
             await OrganizatorHazirlaAsync();
 
-        // ==========================================================
         // ETKINLIK OTURUM VE BILET TURU ILE KURULUYOR
-        // ==========================================================
+        //
         // Ilk denememde bos bir taslak olusturup dogrudan onaya
         // gonderdim ve reddedildim.
         //
@@ -197,7 +186,6 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         // sirasini gereksiz isten koruyor.
         //
         // (Bu kuralin kendisi asagidaki ayri testte dogrulaniyor.)
-        // ==========================================================
         Guid etkinlikId;
 
         using (var db = Db())
@@ -220,13 +208,11 @@ public sealed class EventLifecycleTests : IntegrationTestBase
             bekleyen.Status.Should().Be(EventStatus.PendingApproval);
         }
 
-        // ==========================================================
         // YAYINLAMA YALNIZCA ADMIN
-        // ==========================================================
+        //
         // Organizator kendi etkinligini onaylayabilseydi onay sureci
         // tamamen anlamsiz olurdu. Once organizator token'iyla
         // deneyip 403 bekliyoruz.
-        // ==========================================================
         var organizatorYayin = await Client.PostAsync(
             new Uri($"/api/v1/events/{etkinlikId}/publish", UriKind.Relative), content: null);
 

@@ -7,16 +7,15 @@ namespace Ticketing.Application.Behaviors;
 /// <summary>
 /// Her komut/sorgu MediatR'a ulasmadan ONCE dogrulanir.
 ///
-/// ==================================================================
 /// PIPELINE BEHAVIOR NEDIR?
-/// ==================================================================
+///
 /// MediatR'da bir istek handler'a giderken bir "boru hattindan" gecer.
 /// Her behavior bu hattin bir halkasidir ve isteği hem oncesinde hem
 /// sonrasinda isleyebilir. Rus matruskasi gibi ic ice gecerler:
 ///
 ///   İstek -> [Validation] -> [Logging] -> [Transaction] -> Handler
 ///
-/// NEDEN HANDLER ICINDE DOGRULAMA YAPMIYORUZ?
+/// NEDEN HANDLER ICINDE DOGRULAMA YAPMIYORUM?
 ///
 /// Yapabilirdik ama 100 handler'in 100'unde de aynı uc satiri yazmak
 /// gerekirdi. Bir gün birinde unutulur ve dogrulanmamis veri sisteme
@@ -24,7 +23,6 @@ namespace Ticketing.Application.Behaviors;
 ///
 /// Burada merkezi olarak yaptigimizda UNUTMAK IMKANSIZ hale geliyor:
 /// validator varsa çalışır, yoksa istek gecer.
-/// ==================================================================
 /// </summary>
 public sealed class ValidationBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
@@ -72,9 +70,8 @@ public sealed class ValidationBehavior<TRequest, TResponse>
             return await next().ConfigureAwait(false);
         }
 
-        // ------------------------------------------------------------------
         // EXCEPTION FIRLATIYORUM, Result DONMUYORUM. NEDEN?
-        // ------------------------------------------------------------------
+        //
         // Behavior'in donus tipi TResponse (yani Result veya Result<T>).
         // Result<T> uretmek için T'yi bilmem ve ona göre nesne olusturmam
         // gerekir -- bu ancak reflection ile yapilabilir ve hem yavas

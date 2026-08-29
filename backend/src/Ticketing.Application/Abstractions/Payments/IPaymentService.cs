@@ -22,8 +22,8 @@ public sealed record PaymentRequest(
 ///
 /// Bu alan MUTABAKAT (reconciliation) için kritik: ay sonunda
 /// saglayicidan gelen ekstreyi kendi kayitlarimizla eslestirirken
-/// bu numarayi kullanıyoruz. Ayrıca destek talebinde "su islemde
-/// ne oldu" diye sorarken saglayiciya bu numarayi veriyoruz.
+/// bu numarayi kullanıyorum. Ayrıca destek talebinde "su islemde
+/// ne oldu" diye sorarken saglayiciya bu numarayi veriyorum.
 /// </param>
 /// <param name="ErrorCode">Basarisizsa sağlayıcının hata kodu.</param>
 /// <param name="ErrorMessage">Kullanıcıya gosterilebilir hata mesaji.</param>
@@ -41,9 +41,8 @@ public sealed record PaymentResult(
 }
 
 /// <summary>
-/// ==================================================================
 /// ÖDEME SAGLAYICI SOYUTLAMASI
-/// ==================================================================
+///
 /// PDF Sprint 8:
 ///   "Gerçek ödeme sağlayıcısı kullanilmak zorunda degildir. Ancak
 ///    ödeme sağlayıcısı entegrasyonuna BENZER bir yapi kurulmalidir."
@@ -51,9 +50,8 @@ public sealed record PaymentResult(
 /// Istenen metotlar: CreatePayment, VerifyPayment, RefundPayment,
 /// CancelPayment.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN SOYUTLAMA? Dogrudan Iyzico cagirsak olmaz miydi?
-/// ------------------------------------------------------------------
+///
 /// Uc sebep:
 ///
 /// 1) TEST EDILEBILIRLIK. Gerçek saglayiciyi cagiran bir kod, testte
@@ -72,7 +70,6 @@ public sealed record PaymentResult(
 /// PDF'in istedigi iki uygulama:
 ///   - MockPaymentProvider     -> her zaman başarılı
 ///   - FailedPaymentProvider   -> her zaman başarısız
-/// ==================================================================
 /// </summary>
 public interface IPaymentService
 {
@@ -93,10 +90,9 @@ public interface IPaymentService
     /// <summary>
     /// Odemenin gerçekten gerceklestigini SAGLAYICIYA SORARAK dogrular.
     ///
-    /// ==============================================================
     /// BU METOT NEDEN VAR? -- Guvenligin temel tasi
-    /// ==============================================================
-    /// Gerçek entegrasyonlarda sağlayıcı, ödeme sonucunu bize bir
+    ///
+    /// Gerçek entegrasyonlarda sağlayıcı, ödeme sonucunu bana bir
     /// "callback" (webhook) ile bildirir. AMA o callback'e KORU KORUNE
     /// GUVENILMEZ: saldirgan callback adresini bulup "ödeme başarılı"
     /// diye sahte bir istek gonderebilir ve bedava bilet alabilir.
@@ -107,7 +103,6 @@ public interface IPaymentService
     ///
     /// Simulasyonda da bu adimi ISLETIYORUZ ki gerçek saglayiciya
     /// gecerken akis degismesin.
-    /// ==============================================================
     /// </summary>
     Task<PaymentResult> VerifyPaymentAsync(
         string providerReference,

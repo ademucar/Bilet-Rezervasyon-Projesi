@@ -46,9 +46,9 @@ function bolum(): SeatMapSection[] {
 
 describe('SeatMap', () => {
   /**
-   * ================================================================
+   *
    * ERİŞİLEBİLİR AD, MODA GÖRE FARKLI YERDEN GELİYOR
-   * ================================================================
+   *
    * İlk yazdığımda salt okunur haritada getByLabelText kullandım ve
    * test "Unable to find a label" diye kırıldı.
    *
@@ -62,12 +62,12 @@ describe('SeatMap', () => {
    *
    * Yani test kırılması bileşende hata olduğunu değil, iki modun
    * gerçekten farklı olduğunu gösterdi.
-   * ================================================================
+   *
    */
   it('salt okunur haritada koltuklar başlıkla tanımlanır', () => {
     const { container } = render(<SeatMap sections={bolum()} />)
 
-    // SVG <title> içeriğini doğrudan okuyoruz.
+    // SVG <title> içeriğini doğrudan okuyorum.
     //
     // getByTitle ile de denedim ama başlık metni JSX'te parçalara
     // ayrılmış ({section.name} - {seat.label}) ve DOM'da birden
@@ -104,9 +104,9 @@ describe('SeatMap', () => {
   })
 
   /**
-   * ================================================================
+   *
    * SATILMIŞ KOLTUK TIKLANAMAMALI
-   * ================================================================
+   *
    * Sunucu zaten reddeder — ama kullanıcıya tıklatıp sonra hata
    * göstermek kötü bir deneyim. Daha da önemlisi: satılmış koltuğu
    * seçilebilir göstermek, kullanıcıya olmayan bir koltuğu vaat
@@ -115,7 +115,7 @@ describe('SeatMap', () => {
    * Bu, "sunucu nasılsa kontrol ediyor" diyerek atlanabilecek bir
    * kontrol değil: iki katman FARKLI şeyler için var. Sunucu veri
    * bütünlüğünü, arayüz kullanıcının zamanını koruyor.
-   * ================================================================
+   *
    */
   it('satılmış koltuğa tıklanamaz', async () => {
     const tiklama = vi.fn()
@@ -145,9 +145,9 @@ describe('SeatMap', () => {
   })
 
   /**
-   * ================================================================
+   *
    * KLAVYE ERİŞİMİ
-   * ================================================================
+   *
    * Koltuk seçimi yalnızca fareyle yapılabilseydi, klavye kullanan
    * herkes (motor engelli kullanıcılar, ekran okuyucu kullananlar)
    * bilet alamazdı.
@@ -155,7 +155,7 @@ describe('SeatMap', () => {
    * Koltukları <button> olarak çizdiğimiz için bu bedava geliyor —
    * ama "bedava geliyor" varsayımını test ediyorum, çünkü biri
    * ilerde performans için <div>'e çevirmek isteyebilir.
-   * ================================================================
+   *
    */
   it('koltuklar klavyeyle seçilebilir', async () => {
     const tiklama = vi.fn()

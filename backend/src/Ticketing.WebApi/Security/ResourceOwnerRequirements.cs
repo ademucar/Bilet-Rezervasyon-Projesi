@@ -5,19 +5,17 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.WebApi.Security;
 
-// ===================================================================
 // KAYNAK BAZLI YETKILENDIRME -- PDF: "Resource based authorization"
-// ===================================================================
+//
 // Sprint 3'te TicketOwner ve ReservationOwner politikalari
 // tanimlanmisti ama yalnızca RequireAuthenticatedUser() yapiyorlardi.
 // Koddaki not soyluyordu: "gerçek sahiplik kontrollerini Sprint 7-8'de
-// yazacagiz."
+// yazacagim."
 //
 // Sprint 19 denetiminde yazilmadiklarini buldum.
 //
-// ------------------------------------------------------------------
 // PEKI SISTEM ACIK MIYDI? -- HAYIR, VE BUNU OLCTUM
-// ------------------------------------------------------------------
+//
 // Iki kullanıcı olusturup birinin rezervasyonuna digerinin erismesini
 // denedim:
 //
@@ -29,9 +27,8 @@ namespace Ticketing.WebApi.Security;
 // Yani handler'lar sahiplik kontrolunu ZATEN yapiyor (ve varligi
 // sizdirmamak için 403 yerine 404 donuyorlar -- doğru davranis).
 //
-// ------------------------------------------------------------------
 // O ZAMAN BU DOSYA NEDEN VAR?
-// ------------------------------------------------------------------
+//
 // Uc sebep:
 //
 // 1) POLITIKA YANILTICIYDI. Bir controller'a
@@ -51,7 +48,6 @@ namespace Ticketing.WebApi.Security;
 // Kalip EventOwnerRequirement ile birebir aynı -- bilinçli: uc
 // politika aynı şekilde okunuyor ve aynı tuzaklardan (captive
 // dependency, admin muafiyeti) aynı şekilde korunuyor.
-// ===================================================================
 
 /// <summary>Kullanıcı bu bilete sahip mi? PDF: TicketOwner.</summary>
 public sealed class TicketOwnerRequirement : IAuthorizationRequirement;
@@ -63,22 +59,20 @@ public sealed class ReservationOwnerRequirement : IAuthorizationRequirement;
 /// Sahiplik kontrolü yapan handler'lar için ortak temel.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN ORTAK TEMEL SINIF?
-/// ==================================================================
+///
 /// Iki handler da AYNI dort adimi yapiyor:
 ///   1) HttpContext var mi?
 ///   2) Admin mi? (evetse geç)
 ///   3) Kullanıcı kimliği nedir?
 ///   4) Route'taki kaynak bu kullanıcıya mi ait?
 ///
-/// Yalnızca 4. adim farklı. Ikisini ayrı ayrı yazsaydık, ilk uc adim
+/// Yalnızca 4. adim farklı. Ikisini ayrı ayrı yazsaydım, ilk uc adim
 /// kopyalanirdi ve biri degistiginde digerini guncellemeyi unutmak
 /// çok kolay olurdu -- ozellikle admin muafiyetini.
 ///
 /// Admin muafiyetinin unutulmasi somut bir hataya yol acardi: destek
 /// ekibi bir kullanıcının biletini inceleyemezdi.
-/// ==================================================================
 /// </remarks>
 internal abstract class ResourceOwnerHandlerBase<TRequirement>
     : AuthorizationHandler<TRequirement>
@@ -137,9 +131,8 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
         if (!httpContext.Request.RouteValues.TryGetValue(RouteParameterName, out var deger)
             || !Guid.TryParse(deger?.ToString(), out var resourceId))
         {
-            // ==========================================================
             // ROUTE PARAMETRESI YOKSA REDDEDIYORUZ
-            // ==========================================================
+            //
             // Bu politikayi parametresiz bir uca (örneğin liste ucuna)
             // yanlislikla eklersek, "kontrol edecek bir kaynak yok"
             // durumu olusuyor.
@@ -147,19 +140,16 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
             // Sessizce GECIRSEYDIK o uc korumasiz kalırdı ve kimse
             // fark etmezdi. Reddetmek, yanlış kullanimi HEMEN görünür
             // kiliyor: uc 403 döner ve gelistirici sebebini arar.
-            // ==========================================================
             return;
         }
 
-        // ==============================================================
         // KENDİ KAPSAMIM (scope) -- captive dependency'den kacinmak için
-        // ==============================================================
+        //
         // AuthorizationHandler singleton; DbContext scoped. Singleton'a
         // scoped enjekte etmek DbContext'i uygulama omru boyunca
         // yasatir, baglantiyi tutar ve es zamanlı isteklerde bozar.
         //
         // EventOwnerAuthorizationHandler ile aynı çözüm.
-        // ==============================================================
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 

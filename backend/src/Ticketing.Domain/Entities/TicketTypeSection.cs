@@ -3,9 +3,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Bir bilet turunun hangi oturma planı bolumlerini kapsadigi.
 ///
-/// ==================================================================
 /// BU TABLO PDF'IN ER DIYAGRAMINDA YOK -- NEDEN EKLIYORUM?
-/// ==================================================================
+///
 /// PDF Sprint 6 su endpoint'i istiyor:
 ///     POST /api/v1/ticket-types/{id}/assign-section
 ///
@@ -23,8 +22,7 @@ namespace Ticketing.Domain.Entities;
 ///
 /// Ters yon ise TEKILDIR: bir bölüm yalnızca BIR bilet turune ait
 /// olabilir -- yoksa o bolumdeki koltuğun fiyati belirsiz kalırdı.
-/// Bu kisiti UNIQUE (SeatSectionId) index'i ile garanti ediyoruz.
-/// ==================================================================
+/// Bu kisiti UNIQUE (SeatSectionId) index'i ile garanti ediyorum.
 ///
 /// UserRole ve Favorite gibi bu da COMPOSITE KEY kullaniyor:
 /// kendine ait bir kimliği yok, kimliği iliskilendirdigi iki

@@ -7,9 +7,8 @@ namespace Ticketing.Persistence;
 /// "dotnet ef migrations add" ve "dotnet ef database update" komutlarinin
 /// kullandigi tasarım zamani fabrikasi.
 ///
-/// ------------------------------------------------------------------
 /// BU SINIF NEDEN GEREKLI?
-/// ------------------------------------------------------------------
+///
 /// EF Core araclari migration uretirken uygulamayi baslatmaya çalışır:
 /// Program.cs'i calistirir, DI konteynerini kurar, DbContext'i alır.
 ///
@@ -22,7 +21,7 @@ namespace Ticketing.Persistence;
 ///    URETMEK için gerçek bir veritabanina hiç gerek yok.
 ///
 /// 2) CI/CD ortaminda veritabani yokken de migration dogrulamasi
-///    yapabilmek istiyoruz.
+///    yapabilmek istiyorum.
 ///
 /// Bu fabrika devreye girdiginde EF, Program.cs'i hiç calistirmaz.
 /// Buradaki sahte connection string yalnızca SQL URETMEK için kullanilir;

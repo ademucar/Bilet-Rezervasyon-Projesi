@@ -17,9 +17,7 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .MaximumLength(256).WithMessage("E-posta adresi en fazla 256 karakter olabilir.")
             .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
 
-        // ==================================================================
         // SIFRE POLITIKASI
-        // ==================================================================
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Şifre zorunludur.")
 
@@ -27,19 +25,18 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             // her ek karakter olasilik uzayini katlanarak buyutur.
             .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.")
 
-            // ------------------------------------------------------------------
             // UST SINIR NEDEN VAR? -- COK ONEMLI BIR AYRINTI
-            // ------------------------------------------------------------------
+            //
             // BCrypt, girdinin YALNIZCA ILK 72 BYTE'INI dikkate alır.
             // Gerisi sessizce yok sayilir.
             //
-            // Ust sinir koymasaydik su olurdu: 100 karakterlik bir şifre
+            // Ust sinir koymasaydim su olurdu: 100 karakterlik bir şifre
             // giren kullanıcı, aslında ilk 72 karakteriyle korunuyor olurdu
             // ve bunu bilmezdi. Daha kotusu: ilk 72 karakteri aynı olan iki
             // FARKLI şifre aynı hash'i üretir ve ikisi de çalışır.
             //
             // 72'yi acikca yasaklayarak kullanıcıya doğru geri bildirim
-            // veriyoruz. Bu, BCrypt kullanan projelerde en sik atlanan
+            // veriyorum. Bu, BCrypt kullanan projelerde en sik atlanan
             // detaylardan biridir.
             .MaximumLength(72).WithMessage("Şifre en fazla 72 karakter olabilir.")
 

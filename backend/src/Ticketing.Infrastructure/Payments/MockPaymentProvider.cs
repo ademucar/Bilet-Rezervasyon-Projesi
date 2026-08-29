@@ -20,19 +20,18 @@ internal sealed class MockPaymentProvider : IPaymentService
     /// <summary>
     /// Uretilen işlem referanslarini tutar.
     ///
-    /// ==============================================================
     /// NEDEN BELLEKTE BIR SOZLUK?
-    /// ==============================================================
+    ///
     /// VerifyPaymentAsync'in ANLAMLI olmasını için. Sozluk olmasaydı
     /// "her referansı dogrula" derdik ve doğrulama adimi hiçbir sey
     /// test etmezdi -- uydurma bir referans bile gecerdi.
     ///
-    /// Boylece gerçek davranisi taklit ediyoruz: yalnızca BIZIM
+    /// Boylece gerçek davranisi taklit ediyorum: yalnızca BENIM
     /// urettigimiz referanslar dogrulanabiliyor. Sahte callback
-    /// senaryosunu test edebiliyoruz.
+    /// senaryosunu test edebiliyorum.
     ///
     /// ConcurrentDictionary: bu servis SINGLETON ve es zamanlı
-    /// isteklerden erisilecek. Duz Dictionary kullansaydık es zamanlı
+    /// isteklerden erisilecek. Duz Dictionary kullansaydım es zamanlı
     /// yazmada bozulabilir ve sonsuz donguye bile girebilirdi.
     ///
     /// NOT: Bu yalnızca simülasyon için. Uretimde sağlayıcı bu bilgiyi
@@ -91,7 +90,7 @@ internal sealed class MockPaymentProvider : IPaymentService
         // Sağlayıcı da odenenden fazlasini iade etmeyi reddeder.
         //
         // Payment entity'sinde de aynı kural var. Iki yerde olmasını
-        // tekrar değil: biri BIZIM tarafimizin butunlugunu korur,
+        // tekrar değil: biri BENIM tarafimizin butunlugunu korur,
         // digeri sağlayıcının davranisini taklit eder. Gerçek
         // hayatta ikisi ayrı sistemlerdir ve ikisi de kontrol eder.
         if (amount > originalAmount)

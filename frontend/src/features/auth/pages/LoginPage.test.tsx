@@ -9,9 +9,8 @@ import { renderWithProviders } from '../../../test/testUtils'
 /**
  * PDF Sprint 17 frontend testleri: "Login formu" ve "API hata ekranı".
  *
- * ==================================================================
  * API MOCK'LANIYOR, AĞ İSTEĞİ YAPILMIYOR
- * ==================================================================
+ *
  * Gerçek backend'e istek atsaydık bu testler:
  *   - Backend ayakta olmadan çalışmazdı
  *   - Yavaş olurdu
@@ -22,7 +21,7 @@ import { renderWithProviders } from '../../../test/testUtils'
  * backend entegrasyon testlerinde doğrulanıyor. Burada test edilen
  * şey ARAYÜZÜN DAVRANIŞI: doğru alanları gösteriyor mu, hatayı
  * kullanıcıya iletiyor mu, boş formu gönderiyor mu.
- * ==================================================================
+ *
  */
 
 vi.mock('../api/authApi', () => ({
@@ -47,16 +46,16 @@ describe('LoginPage', () => {
   })
 
   /**
-   * ================================================================
+   *
    * BOŞ FORM SUNUCUYA GİTMEMELİ
-   * ================================================================
+   *
    * Sunucu zaten reddedecek — ama boşuna bir istek atmak hem
    * kullanıcıyı bekletir hem de hız sınırından (Sprint 15: 5
    * dakikada 10 giriş) boşuna kota harcar.
    *
    * Kullanıcı formu üç kez boş gönderirse, gerçek denemeleri için
    * yalnızca yedi hakkı kalırdı.
-   * ================================================================
+   *
    */
   it('boş form gönderilince istek atılmaz ve hata gösterilir', async () => {
     const kullanici = userEvent.setup()
@@ -122,7 +121,7 @@ describe('LoginPage', () => {
     // kırıldı: TanStack Query, mutationFn'i ikinci bir bağlam
     // parametresiyle çağırıyor.
     //
-    // O parametre bizim sözleşmemizin parçası değil — kütüphanenin
+    // O parametre benim sözleşmemizin parçası değil — kütüphanenin
     // iç ayrıntısı. Ona bağlanan bir test, kütüphane sürümü
     // değiştiğinde kodda hiçbir hata olmadan kırılırdı.
     expect(girisYap.mock.calls[0][0]).toEqual({
@@ -131,21 +130,19 @@ describe('LoginPage', () => {
     })
   })
 
-  // ==============================================================
   // PDF: "API hata ekranı"
-  // ==============================================================
 
   /**
-   * ================================================================
+   *
    * HATA KULLANICIYA GÖSTERİLMELİ, KONSOLA DEĞİL
-   * ================================================================
+   *
    * En yaygın arayüz hatası: istek başarısız oluyor, konsola log
    * düşüyor, ekranda hiçbir şey değişmiyor. Kullanıcı butona basıp
    * bekliyor ve hiçbir şey olmuyor.
    *
    * Bu testin doğruladığı şey, sunucudan gelen mesajın GERÇEKTEN
    * ekrana çıktığı.
-   * ================================================================
+   *
    */
   it('sunucu hatası ekranda gösterilir', async () => {
     const kullanici = userEvent.setup()

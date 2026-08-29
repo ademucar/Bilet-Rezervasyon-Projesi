@@ -4,16 +4,14 @@ namespace Ticketing.WebApi.Middleware;
 /// Güvenlik basliklarini ekler. PDF Sprint 15: "Security headers".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN MIDDLEWARE? Neden her yanitta elle eklemiyoruz?
-/// ==================================================================
+///
 /// Basliklari controller'larda eklemek, birini unutmak demektir --
 /// ve unutulan uc tam olarak korumasiz olandir.
 ///
 /// Middleware TÜM yanitlara ekliyor: controller, statik dosya,
 /// hata sayfası, Swagger, Hangfire paneli. Yeni bir uc eklendiginde
 /// hiçbir sey yapmaya gerek yok.
-/// ==================================================================
 /// </remarks>
 internal sealed class SecurityHeadersMiddleware
 {
@@ -32,25 +30,22 @@ internal sealed class SecurityHeadersMiddleware
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        // ==============================================================
         // BASLIKLARI YANIT BASLAMADAN ONCE EKLE
-        // ==============================================================
+        //
         // OnStarting kullanıyorum, doğrudan atama değil.
         //
         // Sebep: _next(context) calistiktan SONRA eklemeye calissaydik,
         // yanit govdesi coktan yazilmaya baslamis olabilirdi ve
-        // "headers are read-only" istisnasi alırdık.
+        // "headers are read-only" istisnasi alırdım.
         //
         // OnStarting, ilk bayt yazilmadan hemen önce çalışıyor --
         // basliklari degistirmek için son güvenli an.
-        // ==============================================================
         context.Response.OnStarting(() =>
         {
             var headers = context.Response.Headers;
 
-            // ----------------------------------------------------------
             // X-Content-Type-Options: nosniff
-            // ----------------------------------------------------------
+            //
             // Tarayicinin içerik turunu TAHMIN etmesini engelliyor.
             //
             // Olmasaydı: kullanıcının yukledigi bir .txt dosyasi HTML
@@ -59,13 +54,12 @@ internal sealed class SecurityHeadersMiddleware
             // saldirisi" deniyor.
             headers["X-Content-Type-Options"] = "nosniff";
 
-            // ----------------------------------------------------------
             // X-Frame-Options: DENY
-            // ----------------------------------------------------------
+            //
             // Sayfanin başka bir sitede iframe icine konmasini
             // engelliyor.
             //
-            // Olmasaydı: saldirgan bizim sitemizi seffaf bir iframe'e
+            // Olmasaydı: saldirgan benim sitemizi seffaf bir iframe'e
             // koyup ustune kendi dugmelerini yerlestirebilirdi.
             // Kullanıcı "odulu al" sanip aslında "bileti iptal et"e
             // basardi. Buna "clickjacking" deniyor.
@@ -74,9 +68,8 @@ internal sealed class SecurityHeadersMiddleware
             // eski tarayicilar yalnızca bu başlığı anliyor.
             headers["X-Frame-Options"] = "DENY";
 
-            // ----------------------------------------------------------
             // Referrer-Policy
-            // ----------------------------------------------------------
+            //
             // Baska siteye giderken ADRESIMIZIN ne kadarinin
             // gonderilecegini belirliyor.
             //
@@ -89,9 +82,8 @@ internal sealed class SecurityHeadersMiddleware
             // adres, disariya yalnızca alan adı.
             headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
 
-            // ----------------------------------------------------------
             // Permissions-Policy
-            // ----------------------------------------------------------
+            //
             // Tarayici ozelliklerini kapatiyor. Bizim uygulamamiz
             // kamera, mikrofon veya konum kullanmiyor.
             //
@@ -100,15 +92,13 @@ internal sealed class SecurityHeadersMiddleware
             // erisemez.
             headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
 
-            // ----------------------------------------------------------
             // Content-Security-Policy
-            // ----------------------------------------------------------
+            //
             // XSS'e karsi en güçlü savunma: hangi kaynaklardan script,
             // stil ve resim yuklenebilecegini belirliyor.
             //
-            // ==========================================================
             // BU API ICIN CSP -- SAYFA SUNMUYORUZ AMA YINE DE GEREKLI
-            // ==========================================================
+            //
             // Bu bir API; HTML dondurmuyor. O zaman CSP niye?
             //
             // Çünkü iki yerde HTML var:
@@ -120,7 +110,6 @@ internal sealed class SecurityHeadersMiddleware
             //
             // default-src 'none': hiçbir sey yuklenemez. En kisitlayici
             // başlangıç; ihtiyac oldukca aciliyor.
-            // ==========================================================
             headers["Content-Security-Policy"] = _isDevelopment
 
                 // Gelistirmede Swagger ve Hangfire paneli satır ici
@@ -147,9 +136,8 @@ internal sealed class SecurityHeadersMiddleware
                   "base-uri 'none'; " +
                   "form-action 'self'";
 
-            // ----------------------------------------------------------
             // Strict-Transport-Security (HSTS)
-            // ----------------------------------------------------------
+            //
             // Tarayiciya "bu siteye bir daha SADECE HTTPS ile gel" der.
             //
             // YALNIZCA URETIMDE. Gelistirmede localhost HTTP kullaniyor;
@@ -168,9 +156,8 @@ internal sealed class SecurityHeadersMiddleware
                 headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
             }
 
-            // ----------------------------------------------------------
             // Sunucu parmak izi
-            // ----------------------------------------------------------
+            //
             // "Server: Kestrel" başlığı BURADAN kaldirilamiyor: Kestrel
             // önü bu geri cagrimdan SONRA ekliyor. Denedim, calismadi.
             //

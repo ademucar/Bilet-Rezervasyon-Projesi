@@ -13,9 +13,8 @@ namespace Ticketing.WebApi.Hubs;
 /// </summary>
 internal sealed partial class SignalRSeatNotifier : ISeatNotifier
 {
-    // ==================================================================
     // OLAY ADLARI -- PDF Sprint 10'da SAYILAN ADLAR
-    // ==================================================================
+    //
     // Bu metinler istemcideki `connection.on("SeatLocked", ...)` ile
     // BIREBIR eslesmek zorunda. SignalR eslesmeyen bir olay adını
     // HATA SAYMAZ; mesaj sessizce hiçbir yere gitmez.
@@ -24,7 +23,6 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
     // doğru kaynak olsun. Istemci tarafi TypeScript'te aynı adlar
     // yine elle yaziliyor -- Sprint 18'de Swagger/Orval ile
     // uretilecek sozlesmeye dahil edilecek.
-    // ==================================================================
     private static class Events
     {
         public const string SeatLocked = "SeatLocked";
@@ -122,9 +120,8 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
     }
 
     /// <summary>
-    /// ==============================================================
     /// BILDIRIM HATASI IS AKISINI ASLA BOZMAMALI
-    /// ==============================================================
+    ///
     /// Bu, bu dosyadaki en önemli karar.
     ///
     /// Bildirim gonderimi rezervasyon olusturmanin SONUNDA cagriliyor
@@ -147,9 +144,8 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
     /// listeyi bastan cekiyor (PDF: "Güncel koltuk listesini yeniden
     /// çekme").
     ///
-    /// Yani hatayi YUTMUYORUZ, logluyoruz; ama kullanıcıya
-    /// yansitmiyoruz.
-    /// ==============================================================
+    /// Yani hatayi YUTMUYORUZ, logluyorum; ama kullanıcıya
+    /// yansitmiyorum.
     /// </summary>
     private async Task SafeSendAsync(string eventName, Func<Task> send)
     {

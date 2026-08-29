@@ -27,7 +27,7 @@ public class Hall : AuditableEntity
     ///
     /// PDF is kuralı: "Koltuk kapasitesi salon kapasitesini asmamalidir."
     /// Yani bir oturma planinda uretilen koltuk sayısı bu değeri gecemez.
-    /// Kontrolu SeatLayout.ValidateCapacity metodunda yapacagiz.
+    /// Kontrolu SeatLayout.ValidateCapacity metodunda yapacagim.
     /// </summary>
     public int Capacity { get; private set; }
 

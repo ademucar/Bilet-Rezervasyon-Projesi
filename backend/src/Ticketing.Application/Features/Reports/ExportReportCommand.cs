@@ -23,22 +23,19 @@ public enum ReportType
     PaymentStatuses = 5,
 }
 
-// ===================================================================
 // 1) TALEP: POST /api/v1/reports/export
-// ===================================================================
 
 /// <summary>
 /// Rapor disa aktarimi TALEP EDER. Üretim arka planda yapilir.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// PDF: "Rapor üretimi background job olarak calistirilmali ve
 /// tamamlandiginda kullanıcıya bildirim gonderilmelidir."
-/// ==================================================================
+///
 /// Bu kural neden var? Çünkü rapor üretimi UZUN SUREBILIR:
 /// on binlerce satirlik bir Excel dosyasi olusturmak saniyeler alır.
 ///
-/// Senkron yapsaydik:
+/// Senkron yapsaydim:
 ///   - Kullanıcının tarayicisi dakikalarca beklerdi
 ///   - Ters vekil sunucu (nginx) zaman asimina ugratirdi
 ///   - İstek yarida kesilse bile sunucu uretmeye devam ederdi
@@ -46,9 +43,8 @@ public enum ReportType
 /// Bu uc, yalnızca "talebi kuyruga aldim" der ve HEMEN döner.
 /// Kullanıcı başka isine bakar, rapor hazır olunca bildirim alır.
 ///
-/// ------------------------------------------------------------------
 /// KUYRUGA ALMA YOLU: OUTBOX
-/// ------------------------------------------------------------------
+///
 /// Hangfire'in BackgroundJob.Enqueue metodu da kullanilabilirdi. Ama
 /// Sprint 9'da kurdugumuz Outbox altyapisi zaten tam olarak bu isi
 /// yapiyor ve UC ONEMLI USTUNLUGU var:
@@ -60,7 +56,6 @@ public enum ReportType
 ///      görünüyor.
 ///
 /// Hangfire.Enqueue ile bunlarin hepsini ayrıca kurmak gerekirdi.
-/// ==================================================================
 /// </remarks>
 public sealed record ExportReportCommand(
     ReportType Type,
@@ -104,18 +99,16 @@ internal sealed class ExportReportCommandHandler
         ExportReportCommand request,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // YETKI KONTROLU TALEP ANINDA -- ISLEME ANINDA DEĞİL
-        // ==============================================================
+        //
         // Bu çok önemli bir ayrim. Rapor arka planda uretilecek ve o
         // sırada HTTP baglami OLMAYACAK: ICurrentUser boş donecek.
         //
         // Yetkiyi burada dogruluyor ve kullanıcı kimligini payload'a
-        // YAZIYORUZ. Isleyici o kimlikle üretim yapiyor.
+        // YAZIYORUM. Isleyici o kimlikle üretim yapiyor.
         //
-        // Kontrolu isleyiciye biraksaydik ya yetkisiz rapor uretilirdi
+        // Kontrolu isleyiciye biraksaydim ya yetkisiz rapor uretilirdi
         // ya da hiçbir rapor uretilemezdi.
-        // ==============================================================
         var scopeResult = await ReportScopeResolver
             .ResolveAsync(_context, _currentUser, cancellationToken)
             .ConfigureAwait(false);
@@ -141,7 +134,7 @@ internal sealed class ExportReportCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // Talep kimligini donuyoruz.
+        // Talep kimligini donuyorum.
         //
         // Kullanıcı bildirimi aldiginda bu kimlikle dosyaya
         // ulasabiliyor (GET /reports/exports/{id}).
@@ -149,9 +142,7 @@ internal sealed class ExportReportCommandHandler
     }
 }
 
-// ===================================================================
 // 2) ISLEME: Outbox isleyicisi
-// ===================================================================
 
 /// <summary>Outbox payload'i. Alan degistirmek eski mesajlari bozar.</summary>
 public sealed record ReportExportPayload(
@@ -188,22 +179,19 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
     {
         var data = OutboxPayload.Parse<ReportExportPayload>(payload);
 
-        // ==============================================================
         // IDEMPOTENCY: DOSYA ZATEN URETILDIYSE TEKRAR URETME
-        // ==============================================================
+        //
         // Outbox "en az bir kez" garantisi veriyor. Kontrol olmasaydı
         // aynı rapor iki kez üretilir ve kullanıcı IKI bildirim alırdı.
         //
         // Dosyanin varligi, isin tamamlandiginin en doğrudan kaniti.
-        // ==============================================================
         if (await _fileStore.ExistsAsync(data.ExportId, cancellationToken).ConfigureAwait(false))
         {
             return;
         }
 
-        // ==============================================================
         // KULLANICI KIMLIGINI TASIYAN OZEL BIR BAGLAM
-        // ==============================================================
+        //
         // Rapor sorgulari ICurrentUser üzerinden kapsam belirliyor.
         // Arka planda HTTP baglami yok -> ICurrentUser boş.
         //
@@ -212,7 +200,7 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
         // (bkz. ReportDataProvider). Boylece kapsam kurallari
         // AYNEN korunuyor -- arka planda "her seyi gor" gibi bir
         // ayricalik YOK.
-        // ==============================================================
+        //
         // Kapsami PAYLOAD'daki kullanıcı kimliginden cozuyoruz.
         //
         // ICurrentUser burada boş -- arka planda HTTP baglami yok.
@@ -260,17 +248,14 @@ public interface IReportFileStore
     Task<bool> ExistsAsync(Guid exportId, CancellationToken cancellationToken);
 }
 
-// ===================================================================
 // 3) SAHIPLIK DOGRULAMASI
-// ===================================================================
 
 /// <summary>
 /// Bu rapor dosyasi isteği yapan kullanıcıya mi ait?
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// TAHMIN EDILEMEZ KIMLIK, YETKI DEĞİLDİR
-/// ==================================================================
+///
 /// exportId bir Guid v7 ve tahmin edilmesi pratikte imkansiz. Ama
 /// buna guvenip yetki kontrolunu atlamak "gizlilik yoluyla güvenlik"
 /// (security through obscurity) olurdu.
@@ -279,9 +264,8 @@ public interface IReportFileStore
 /// gecmisi, paylasilan bir ekran goruntusu, Referer başlığı. Sizan
 /// kimlikle baskasinin GELIR RAPORU indirilebilirdi.
 ///
-/// ------------------------------------------------------------------
-/// SAHIPLIGI NEREDEN BILIYORUZ?
-/// ------------------------------------------------------------------
+/// SAHIPLIGI NEREDEN BILIYORUM?
+///
 /// Ayrı bir "raporlar" tablosu acmadim. Çünkü bilgi ZATEN duruyor:
 /// rapor hazır olduğunda SAHIBINE bir bildirim yaziliyor ve o
 /// bildirimin RelatedEntityId alanı exportId.
@@ -289,7 +273,6 @@ public interface IReportFileStore
 /// Yani "bu raporun bildirimi bu kullanıcıya mi yazilmis?" sorusu,
 /// sahiplik sorusunun ta kendisi. Var olan veriyi kullanmak, aynı
 /// gercegi iki yerde tutmaktan iyi.
-/// ==================================================================
 /// </remarks>
 public sealed record VerifyReportOwnershipQuery(Guid ExportId) : IRequest<Result<bool>>;
 

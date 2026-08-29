@@ -6,9 +6,8 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
 /**
  * PDF Sprint 17 frontend testi: "SignalR güncellemesi".
  *
- * ==================================================================
  * NEDEN HUB'IN KENDİSİNİ DEĞİL, GÖSTERGEYİ TEST EDİYORUM?
- * ==================================================================
+ *
  * useSeatHub gerçek bir WebSocket bağlantısı kuruyor. jsdom'da
  * WebSocket yok; mock'lasaydım @microsoft/signalr'ın iç durum
  * makinesini (negotiate, handshake, reconnect) taklit etmem
@@ -23,7 +22,7 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
  * Burada test ettiğim şey KULLANICININ GÖRDÜĞÜ kısım: bağlantı
  * durumu değiştiğinde ekranda doğru bilgi çıkıyor mu. Gerçek
  * bağlantı davranışı E2E testinde (Playwright) doğrulanıyor.
- * ==================================================================
+ *
  */
 describe('ConnectionIndicator', () => {
   const durumlar: ConnectionStatus[] = ['connecting', 'connected', 'reconnecting', 'disconnected']
@@ -44,9 +43,9 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   * ================================================================
+   *
    * BAĞLANTI YOKKEN KULLANICI BUNU BİLMELİ
-   * ================================================================
+   *
    * Bu göstergenin var olma sebebi Sprint 10'da somut bir hatayı
    * yakalamış olması: Vite proxy'sine /hubs girdisini eklemeyi
    * unutmuştüm.
@@ -58,7 +57,7 @@ describe('ConnectionIndicator', () => {
    * Kullanıcı açısından da önemli: bağlantı yoksa koltuk haritası
    * bayat olabilir. Bunu bilmeden koltuk seçen kullanıcı, "az önce
    * boştu" dediği koltuk için 409 alır ve sistemi hatalı sanır.
-   * ================================================================
+   *
    */
   it('bağlantı yokken kullanıcıyı uyarır', () => {
     render(<ConnectionIndicator status="disconnected" />)
@@ -67,16 +66,16 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   * ================================================================
+   *
    * DURUM DEĞİŞİKLİĞİ EKRAN OKUYUCUYA DA BİLDİRİLMELİ
-   * ================================================================
+   *
    * role="status" + aria-live="polite" ikilisi, ekran okuyucunun
    * bu bölgeyi izlemesini ve içerik değiştiğinde OKUMASINI sağlıyor.
    *
    * "polite" bilinçli: "assertive" olsaydı ekran okuyucu
    * kullanıcının o an okuduğu şeyi keserdi. Bağlantı durumu önemli
    * ama bir cümlenin ortasında araya girecek kadar acil değil.
-   * ================================================================
+   *
    */
   it('durum bölgesi ekran okuyucuya bildiriliyor', () => {
     render(<ConnectionIndicator status="reconnecting" />)

@@ -17,11 +17,10 @@ import {
   type SeatAvailabilityItem,
 } from '../api/bookingApi'
 
-// ===================================================================
 // KOLTUK DURUM RENKLERI
-// ===================================================================
+//
 // Renkleri tek bir yerde topluyorum: hem harita hem de gosterge
-// (legend) aynı değeri kullansin. Ayrı ayrı yazsaydık birini
+// (legend) aynı değeri kullansin. Ayrı ayrı yazsaydım birini
 // değiştirip digerini unutmak kacinilmazdi.
 //
 // Renk seçimi keyfi değil:
@@ -34,7 +33,7 @@ import {
 // <title> etiketinde durumu METIN olarak da yazıyor; renk korlugu
 // olan kullanıcı fareyle uzerine gelince veya ekran okuyucuyla
 // durumu ogrenebiliyor.
-// ===================================================================
+//
 // KOYU ZEMIN PALETI -- harita artik slate-900 uzerinde duruyor.
 //
 // Acik zemindeki eski degerler (bos: #cbd5e1, satildi: #475569)
@@ -68,15 +67,15 @@ function seatStatusLabel(status: number): string {
 }
 
 /**
- * ==================================================================
+ *
  * GORSEL KOLTUK SECIMI -- PDF Sprint 7
- * ==================================================================
+ *
  * PDF'in bu sprintten bekledikleri:
  *   - Görsel koltuk seçimi                    -> SeatMap
  *   - Koltuk kilitleme (10 dk)                -> POST /reservations
  *   - Çakışma bildirimi                       -> 409 yakalama + otomatik yenileme
  *   - Rezervasyon özeti                       -> sag sutun
- * ==================================================================
+ *
  */
 export function SeatSelectionPage() {
   const { sessionId = '' } = useParams()
@@ -94,10 +93,9 @@ export function SeatSelectionPage() {
   /** Etkinlik canlı olarak iptal edildiyse gösterilecek uyarı. */
   const [cancelledTitle, setCancelledTitle] = useState<string | null>(null)
 
-  // ================================================================
   // GELEN OLAYI ONBELLEGE ISLE -- PDF: "Gerçek zamanlı koltuk
   // güncelleme"
-  // ================================================================
+  //
   // Olay geldiğinde sunucudan listeyi TEKRAR CEKMIYORUZ, elimizdeki
   // önbelleği YAMALIYORUZ.
   //
@@ -113,7 +111,6 @@ export function SeatSelectionPage() {
   // mevcut diziyi değiştirmiyorum. Yerinde değiştirseydim React
   // referansin aynı olduğunu gorup EKRANI HİÇ GUNCELLEMEZDI --
   // sessizce çalışmayan bir arayüz olurdu.
-  // ================================================================
   const patchSeatStatus = useCallback(
     (eventSeatIds: string[], newStatus: number) => {
       queryClient.setQueryData<SeatAvailability>(['seat-availability', sessionId], (previous) => {
@@ -138,7 +135,7 @@ export function SeatSelectionPage() {
 
         // Hicbir sey degismediyse ESKİ nesneyi aynen donuyorum.
         //
-        // Yeni nesne donseydik React "veri değişti" deyip tüm
+        // Yeni nesne donseydim React "veri değişti" deyip tüm
         // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
         // için boşuna bir is.
         if (!değişti) {
@@ -201,9 +198,8 @@ export function SeatSelectionPage() {
     queryFn: () => bookingApi.getSeatAvailability(sessionId),
     enabled: sessionId.length > 0,
 
-    // ==============================================================
     // YOKLAMA ARTIK ASIL YOL DEĞİL, YEDEK -- PDF Sprint 10
-    // ==============================================================
+    //
     // Sprint 7'de buraya sabit 10 saniyelik bir yoklama koymus ve
     // su notu birakmistim:
     //
@@ -216,7 +212,7 @@ export function SeatSelectionPage() {
     // uzun baglantilari kesebiliyor, kullanıcının interneti
     // gidebiliyor.
     //
-    // Yoklamayi tamamen silseydik, bu durumlarda koltuk haritası
+    // Yoklamayi tamamen silseydim, bu durumlarda koltuk haritası
     // TAMAMEN DONARDI -- Sprint 7'deki halinden bile kötü olurdu.
     //
     // Cozum: yoklama SignalR calisirken KAPALI, calismazken ACIK.
@@ -226,7 +222,6 @@ export function SeatSelectionPage() {
     //
     // Yani en iyi durumda gerçek zamanlı, en kötü durumda eskisi
     // kadar iyi. "Zarif bozulma" (graceful degradation) denen sey.
-    // ==============================================================
     refetchInterval: hubStatus === 'connected' ? false : 10_000,
 
     // staleTime'i 0'a cekiyorum. App.tsx'te varsayılan 60 saniye ve
@@ -237,10 +232,9 @@ export function SeatSelectionPage() {
 
   const seats = useMemo(() => availabilityQuery.data?.seats ?? [], [availabilityQuery.data])
 
-  // ================================================================
   // CAKISMA TESPITI -- PDF Sprint 7: "Çakışma bildirimi"
-  // ================================================================
-  // Her yenilemeden sonra soruyoruz: sectigim koltuklardan biri
+  //
+  // Her yenilemeden sonra soruyorum: sectigim koltuklardan biri
   // artık boş değil mi?
   //
   // Bu, kullanıcının kaybettigi koltuğu SESSIZCE seçili gostermeyi
@@ -248,9 +242,8 @@ export function SeatSelectionPage() {
   // 409 alır ve neden olduğunu anlamaz. Kotu haberi erken vermek,
   // geç vermekten iyidir.
   //
-  // ----------------------------------------------------------------
   // NEDEN useEffect DEĞİL?
-  // ----------------------------------------------------------------
+  //
   // İlk yazimimda bunu bir effect içinde yapip kaybedilen koltukları
   // setSelected ile state'ten siliyordum. Calisiyordu ama yanlış
   // yontemdi: kullanıcı hiçbir sey YAPMADIGI halde state
@@ -264,7 +257,6 @@ export function SeatSelectionPage() {
   // Bu yuzden render sırasında HESAPLIYORUM. `selected` içinde eski
   // kimlikler kalabilir ama hiçbir yerde doğrudan kullanılmıyor;
   // her tuketici aşağıdaki `activeSelected`i okuyor.
-  // ================================================================
   const lostSeats = useMemo(
     () =>
       seats.filter((s) => selected.has(s.eventSeatId) && s.status !== EventSeatStatus.Available),
@@ -279,9 +271,9 @@ export function SeatSelectionPage() {
   )
 
   /**
-   * ----------------------------------------------------------------
+   *
    * IDEMPOTENCY ANAHTARININ OMRU
-   * ----------------------------------------------------------------
+   *
    * Anahtar, SECIME bağlı. Kullanıcı aynı koltuklarla ikinci kez
    * gonderirse (butona iki kez basti, ag koptu ve tekrar denedi)
    * AYNI anahtar gider ve backend ikinci rezervasyonu olusturmaz.
@@ -293,16 +285,15 @@ export function SeatSelectionPage() {
    *
    * useRef kullanıyorum, useState değil: bu deger ekranda
    * gorunmuyor, degismesi yeniden cizim gerektirmiyor.
-   * ----------------------------------------------------------------
+   *
    */
   const idempotencyKeyRef = useRef<string | null>(null)
 
   const toggleSeat = (eventSeatId: string) => {
     idempotencyKeyRef.current = null
 
-    // ==============================================================
     // NEDEN FONKSIYONEL GUNCELLEME? -- TARAYICIDA YAKALADIGIM HATA
-    // ==============================================================
+    //
     // İlk yazimim soyleydi:
     //
     //     const next = new Set(activeSelected)   // <-- HATALI
@@ -316,14 +307,13 @@ export function SeatSelectionPage() {
     // Uc cagri da aynı render'in `activeSelected` degerini görüyor --
     // yani ucu de BOŞ kumeden turetiliyor ve birbirini eziyor.
     //
-    // `setSelected(prev => ...)` ile React bize O ANKI değeri veriyor;
+    // `setSelected(prev => ...)` ile React bana O ANKI değeri veriyor;
     // ikinci cagri birincinin sonucunu görüyor. Hizli tiklamada da
     // doğru çalışıyor.
     //
     // Kaybedilen koltukları `lostIds` ile burada temizliyorum:
     // `prev` güncel olmalı ama `lostIds` sunucu verisinden geliyor ve
     // tiklama anindaki değeri doğru -- ikisini karistirmamak önemli.
-    // ==============================================================
     setSelected((prev) => {
       const next = new Set([...prev].filter((id) => !lostIds.has(id)))
 
@@ -355,7 +345,7 @@ export function SeatSelectionPage() {
       // Rezervasyon detayını onbellege ELIMIZLE koyuyorum.
       //
       // Yonlendirdigimiz sayfa aynı veriyi isteyecek. Onbellege
-      // koymasaydik o sayfa açılır acilmaz boş bir iskelet gosterip
+      // koymasaydim o sayfa açılır acilmaz boş bir iskelet gosterip
       // yeni bir istek atardi -- oysa veri elimizde.
       //
       // Bu ozellikle önemli çünkü GERİ SAYIM o sayfada başlıyor;
@@ -369,15 +359,14 @@ export function SeatSelectionPage() {
       // Hata ne olursa olsun haritayi tazele.
       //
       // 409 aldiysak koltuğu başkası kapmis demektir; kullanıcıya
-      // güncel durumu gostermeliyiz. Yenilemeseydik kullanıcı aynı
+      // güncel durumu gostermeliyim. Yenilemeseydik kullanıcı aynı
       // dolu koltukla tekrar tekrar denerdi.
       void queryClient.invalidateQueries({ queryKey: ['seat-availability', sessionId] })
     },
   })
 
-  // ================================================================
   // HARITA VERISINI HAZIRLA
-  // ================================================================
+  //
   // Backend koltukları DUZ bir liste olarak dönüyor; harita ise
   // bolumlere gruplanmis istiyor. Ceviriyi burada yapıyorum.
   //
@@ -385,8 +374,7 @@ export function SeatSelectionPage() {
   // Sarmasaydik, her saniye (geri sayım, fare hareketi, herhangi bir
   // state degisikligi) yeniden çalışır ve SeatMap'in kendi useMemo'su
   // da bosa çıkardı -- çünkü ona her seferinde YENI bir dizi
-  // gonderirdik.
-  // ================================================================
+  // gonderirdim.
   const mapSections = useMemo<SeatMapSection[]>(() => {
     const bySection = new Map<string, { name: string; seats: SeatAvailabilityItem[] }>()
 

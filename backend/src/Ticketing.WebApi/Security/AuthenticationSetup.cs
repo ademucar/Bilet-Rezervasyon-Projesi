@@ -33,10 +33,8 @@ internal static class AuthenticationSetup
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                // ==============================================================
                 // TOKEN DOGRULAMA PARAMETRELERI
                 // Her biri KAPATILDIGINDA ne olacagini yazdim.
-                // ==============================================================
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     // Imza geçerli mi? Kapatilirsa HERKES kendi token'ini
@@ -50,7 +48,7 @@ internal static class AuthenticationSetup
                     ValidateIssuer = true,
                     ValidIssuer = configuration["Jwt:Issuer"],
 
-                    // Token BIZIM için mi üretildi? Ornegin bir mobil
+                    // Token BENIM için mi üretildi? Ornegin bir mobil
                     // uygulama için üretilmiş token'in web API'de
                     // kullanilmasini engeller.
                     ValidateAudience = true,
@@ -61,14 +59,13 @@ internal static class AuthenticationSetup
                     // anlami kalmaz.
                     ValidateLifetime = true,
 
-                    // ==============================================================
                     // ClockSkew = ZERO -- VARSAYILANI DEGISTIRIYORUM
-                    // ==============================================================
+                    //
                     // Varsayılan deger BES DAKIKADIR. Yani 15 dakikalik bir
                     // token aslında 20 dakika geçerli olur.
                     //
                     // Bu tolerans, sunucu saatleri arasindaki farki telafi
-                    // etmek için var. Ama biz tüm zamanlari UTC tutuyoruz
+                    // etmek için var. Ama biz tüm zamanlari UTC tutuyorum
                     // ve container'lar ana makine saatini paylasiyor --
                     // sapma yok.
                     //
@@ -85,7 +82,7 @@ internal static class AuthenticationSetup
                     // ClaimTypes.NameIdentifier'a (uzun bir XML URI'sine)
                     // esler. Bu esleme, token'a ne yazdiginizla kodda ne
                     // okudugunuzun tutmamasina yol acan klasik bir
-                    // tuzaktir. Kapatarak standart JWT adlarini koruyoruz.
+                    // tuzaktir. Kapatarak standart JWT adlarini koruyorum.
                     NameClaimType = JwtRegisteredClaimNames.Sub,
                     RoleClaimType = System.Security.Claims.ClaimTypes.Role
                 };
@@ -123,7 +120,7 @@ internal static class AuthenticationSetup
             // RequireRole birden fazla rol aldiginda VEYA mantığı uygular:
             // "Organizer VEYA Admin".
             //
-            // Bunu yazmasaydik admin, organizatör endpoint'lerine
+            // Bunu yazmasaydim admin, organizatör endpoint'lerine
             // erisemezdi ve destek islerini yapamazdi.
             .AddPolicy(Policies.OrganizerOnly, policy =>
                 policy.RequireRole(Role.Names.Organizer, Role.Names.Admin))
@@ -146,12 +143,11 @@ internal static class AuthenticationSetup
                 policy.RequireAuthenticatedUser();
                 policy.AddRequirements(new EventOwnerRequirement());
             })
-            // ==========================================================
             // TicketOwner / ReservationOwner -- SPRINT 19'DA TAMAMLANDI
-            // ==========================================================
+            //
             // Sprint 3'te iskelet olarak birakilmislardi: yalnızca
             // RequireAuthenticatedUser() yapiyorlardi ve koddaki not
-            // "gerçek kontrolleri Sprint 7-8'de yazacagiz" diyordu.
+            // "gerçek kontrolleri Sprint 7-8'de yazacagim" diyordu.
             // Yazilmamislar.
             //
             // Sprint 19 denetiminde OLCTUM: sistem açık DEGILDI --
@@ -162,7 +158,6 @@ internal static class AuthenticationSetup
             // [Authorize(Policy = TicketOwner)] yazan biri kontrolun
             // politikada olduğunu sanirdi. Simdi iki bağımsız katman
             // var; birinin unutulmasi digerini geçersiz kilmiyor.
-            // ==========================================================
             .AddPolicy(Policies.TicketOwner, policy =>
             {
                 policy.RequireAuthenticatedUser();

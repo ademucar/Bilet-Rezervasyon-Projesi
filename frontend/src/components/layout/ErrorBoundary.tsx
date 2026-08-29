@@ -11,9 +11,8 @@ interface State {
 /**
  * PDF Sprint 18: "Error Boundary kullanılmalıdır."
  *
- * ==================================================================
  * NEDEN SINIF BILESENI? Hook'lar varken?
- * ==================================================================
+ *
  * Çünkü React'in hata yakalama mekanizmasi (componentDidCatch ve
  * getDerivedStateFromError) YALNIZCA sinif bilesenlerinde çalışır.
  * Bunlarin hook karşılığı henüz YOK.
@@ -24,7 +23,7 @@ interface State {
  * varsayılan olarak TÜM uygulamayi soker ve kullanıcı bembeyaz bir
  * ekran görür. Error Boundary o hatayi yakalayip anlamlı bir arayüz
  * gosterir.
- * ==================================================================
+ *
  */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -37,8 +36,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Sprint 16'da bu hatalari sunucuya gonderecegiz.
-    // Su an konsola yazıyoruz ki gelistirme sırasında gorelim --
+    // Sprint 16'da bu hatalari sunucuya gonderecegim.
+    // Su an konsola yazıyorum ki gelistirme sırasında gorelim --
     // sessizce yutmak en kotusu olurdu.
     console.error('Yakalanmamış hata:', error, errorInfo)
   }

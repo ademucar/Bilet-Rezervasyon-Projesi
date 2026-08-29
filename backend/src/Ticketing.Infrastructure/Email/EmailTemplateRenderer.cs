@@ -39,16 +39,14 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         return new RenderedEmail(subject, Layout(subject, icerik));
     }
 
-    // ==================================================================
     // GÜVENLİK: HTML KACISI
-    // ==================================================================
+    //
     /// <summary>
     /// Sablona giren her değeri HTML-kacisli döndürür.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// BU METOT OLMASAYDI: E-POSTA UZERINDEN ICERIK ENJEKSIYONU
-    /// ==============================================================
+    ///
     /// Sablon verilerinin çoğu KULLANICIDAN geliyor: ad, soyad,
     /// etkinlik başlığı, iptal sebebi.
     ///
@@ -58,28 +56,24 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     /// girerdi.
     ///
     /// Cogu e-posta istemcisi script calistirmiyor ama BAGLANTI
-    /// çalışıyor. Yani saldirgan, BIZIM alan adimizdan gonderilen
+    /// çalışıyor. Yani saldirgan, BENIM alan adimizdan gonderilen
     /// bir e-postaya kendi kimlik avi baglantisini koyabilirdi --
     /// alicinin gozunde tamamen guvenilir görünen bir mesaj.
     ///
     /// Tek bir yerde kacis yapmak, sekiz sablonda tek tek dusunmekten
     /// çok daha güvenli.
-    /// ==============================================================
     /// </remarks>
     private static string H(IReadOnlyDictionary<string, string> data, string key)
         => WebUtility.HtmlEncode(data.TryGetValue(key, out var v) ? v : "-");
 
-    // ==================================================================
     // ORTAK CERCEVE
-    // ==================================================================
 
     /// <summary>
     /// Tüm e-postalarin ortak govdesi.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN SATIR ICI (inline) CSS?
-    /// ==============================================================
+    ///
     /// Web'de satır ici stil kötü bir aliskanliktir. E-postada ise
     /// ZORUNLULUK: Gmail, Outlook ve çoğu istemci &lt;style&gt;
     /// blogunu SILIYOR veya yok sayiyor.
@@ -90,7 +84,6 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     ///
     /// max-width 600px: e-posta istemcilerinde yaygin kabul goren
     /// genislik. Daha genisi mobilde yatay kaydirma yaratiyor.
-    /// ==============================================================
     /// </remarks>
     private string Layout(string baslik, string icerik)
     {
@@ -156,9 +149,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         return sb.ToString();
     }
 
-    // ==================================================================
     // 1) HOS GELDINIZ
-    // ==================================================================
+    //
     // Beklenen alanlar: FirstName
     private (string, string) Welcome(IReadOnlyDictionary<string, string> d)
         => ("Biletim'e hos geldiniz",
@@ -167,9 +159,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "daha bircok etkinlik icin bilet alabilirsiniz.</p>" +
             Buton($"{_urls.FrontendUrl}/etkinlikler", "Etkinlikleri kesfet"));
 
-    // ==================================================================
     // 2) SIFRE SIFIRLAMA
-    // ==================================================================
+    //
     // Beklenen alanlar: FirstName, ResetUrl, ExpiryMinutes
     private (string, string) PasswordReset(IReadOnlyDictionary<string, string> d)
         => ("Şifre sıfırlama talebi",
@@ -193,9 +184,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "yapmadiysaniz bu e-postayi yok sayabilirsiniz; sifreniz " +
             "degismeyecektir.</p>");
 
-    // ==================================================================
     // 3) REZERVASYON OLUSTURULDU
-    // ==================================================================
+    //
     // Beklenen: FirstName, EventTitle, ReservationCode, SeatCount,
     //           TotalAmount, ExpiresInMinutes
     private (string, string) ReservationCreated(IReadOnlyDictionary<string, string> d)
@@ -216,9 +206,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "Sure dolarsa koltuklar serbest birakilir.</p>" +
             Buton($"{_urls.FrontendUrl}/rezervasyonlarim", "Ödemeye devam et"));
 
-    // ==================================================================
     // 4) ÖDEME BASARILI
-    // ==================================================================
+    //
     // Beklenen: FirstName, EventTitle, Amount, ReservationCode
     private (string, string) PaymentSucceeded(IReadOnlyDictionary<string, string> d)
         => ("Ödemeniz alındı",
@@ -230,9 +219,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
                 ("Odenen tutar", H(d, "Amount"))) +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
 
-    // ==================================================================
     // 5) BİLET BILGILERI
-    // ==================================================================
+    //
     // Beklenen: FirstName, EventTitle, EventDate, VenueName, TicketList
     private (string, string) TicketDetails(IReadOnlyDictionary<string, string> d)
         => ($"Biletleriniz hazır - {H(d, "EventTitle")}",
@@ -250,21 +238,18 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             (d.TryGetValue("TicketList", out var liste) ? liste : string.Empty) +
             "</div>" +
 
-            // ==========================================================
             // QR KODU E-POSTAYA GOMULMUYOR -- Sprint 8 karari
-            // ==========================================================
+            //
             // QR değeri bilet gecerliligini kanitlayan hassas bir veri.
             // E-posta kutusuna dusen bir goruntu, iletildiginde
             // baskasinin biletle girmesine yol acabilir.
             //
             // Kullanıcının giriş yapip kendi ekraninda gormesi daha
             // güvenli.
-            // ==========================================================
             Buton($"{_urls.FrontendUrl}/biletlerim", "QR kodlarimi gor"));
 
-    // ==================================================================
     // 6) ETKİNLİK HATIRLATMA
-    // ==================================================================
+    //
     // Beklenen: FirstName, EventTitle, EventDate, VenueName
     private (string, string) EventReminder(IReadOnlyDictionary<string, string> d)
         => ($"Yarin: {H(d, "EventTitle")}",
@@ -277,9 +262,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
                 ("Mekan", H(d, "VenueName"))) +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletimi ac"));
 
-    // ==================================================================
     // 7) ETKİNLİK IPTALI
-    // ==================================================================
+    //
     // Beklenen: FirstName, EventTitle, Reason
     private (string, string) EventCancelled(IReadOnlyDictionary<string, string> d)
         => ($"Etkinlik iptal edildi - {H(d, "EventTitle")}",
@@ -301,9 +285,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "gecer.</p>" +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
 
-    // ==================================================================
     // 8) IADE TAMAMLANDI
-    // ==================================================================
+    //
     // Beklenen: FirstName, ReservationCode, Amount
     // static: bu sablon _urls kullanmiyor (içinde dugme yok).
     // CA1822 bunu yakaladi ve haklı -- örnek verisine erismeyen bir

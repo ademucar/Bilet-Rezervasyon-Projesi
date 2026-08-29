@@ -44,9 +44,7 @@ internal static class PaymentErrors
         "payment.not_refundable", "Bu ödeme iade edilemez.");
 }
 
-// ===================================================================
 // ÖDEME BASLATMA -- PDF: POST /api/v1/payments
-// ===================================================================
 
 /// <summary>
 /// DIKKAT: Tutar alanı YOK -- rezervasyondan okunuyor.
@@ -89,17 +87,15 @@ internal sealed partial class CreatePaymentCommandHandler
         _logger = logger;
     }
 
-    // ==============================================================
     // PDF Sprint 16: "Ödeme" loglanmalidir.
-    // ==============================================================
+    //
     // TUTARI logluyorum ama KART BILGISI YOK -- zaten hiçbir yerde
-    // saklamiyoruz (simülasyon sağlayıcı kullanıyoruz).
+    // saklamiyoruz (simülasyon sağlayıcı kullanıyorum).
     //
     // Tutar hassas veri değil ama is acisindan kritik: uretimde
     // "bugun ne kadar ödeme alındı?" sorusunun ilk cevabi loglardan
     // geliyor, rapor sisteminden değil -- çünkü rapor sistemi de
     // bozulmus olabilir.
-    // ==============================================================
     [LoggerMessage(
         EventId = LogEvents.OdemeBaslatildi,
         Level = LogLevel.Information,
@@ -152,10 +148,9 @@ internal sealed partial class CreatePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.ReservationNotFound);
         }
 
-        // ==============================================================
         // PDF: "Aynı rezervasyon için birden fazla başarılı ödeme
         //       olusamaz."
-        // ==============================================================
+        //
         // Bu kontrol olmasaydı kullanıcı iki kez ödeme yapip iki kez
         // ucret odeyebilirdi -- ve ikinci ödemeyi iade etmek manuel
         // mudahale gerektirirdi.
@@ -171,9 +166,8 @@ internal sealed partial class CreatePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.AlreadyPaid);
         }
 
-        // ==============================================================
         // PDF: "Ödeme yalnızca AKTIF rezervasyon için baslatilabilir."
-        // ==============================================================
+        //
         // Reservation.StartPayment iki seyi kontrol ediyor:
         //   1. Süre dolmuş mu?  -> "reservation.expired"
         //   2. Durum gecisi geçerli mi? (Locked -> PaymentPending)
@@ -199,16 +193,15 @@ internal sealed partial class CreatePaymentCommandHandler
 
         _context.Payments.Add(payment);
 
-        // ==============================================================
         // SAGLAYICIYA GITMEDEN ONCE KAYDET
-        // ==============================================================
+        //
         // Neden? Sağlayıcı cagrisi sırasında uygulama cokerse, elimizde
         // "Pending" durumda bir kayıt kalır ve ne olduğunu arastirabilir,
         // mutabakat yapabiliriz.
         //
-        // Önce cagirip sonra kaydetseydik: para cekilmis ama bizde
+        // Önce cagirip sonra kaydetseydim: para cekilmis ama bende
         // hiçbir iz yok. Bu, gerçek sistemlerde en korkulan durumdur --
-        // müşteri "param gitti" der, bizde kayıt yoktur.
+        // müşteri "param gitti" der, bende kayıt yoktur.
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         payment.StartProcessing();
@@ -227,12 +220,11 @@ internal sealed partial class CreatePaymentCommandHandler
         {
             payment.Fail(providerResult.ErrorMessage, now, userId);
 
-            // ==========================================================
             // BURADA KOLTUKLARI SERBEST BIRAKMIYORUZ -- BILINCLI AYRIM
-            // ==========================================================
+            //
             // PDF Sprint 8: "Ödeme başarısız olduğunda koltuklar serbest
             // birakilmalidir." Bu kuralı FailPaymentCommandHandler'da
-            // uyguluyoruz. Peki neden burada değil?
+            // uyguluyorum. Peki neden burada değil?
             //
             // Iki durum FARKLIDIR:
             //
@@ -246,7 +238,7 @@ internal sealed partial class CreatePaymentCommandHandler
             //           Bu kesin bir sonuctur; koltukları tutmanin
             //           anlami yok.
             //
-            // Ilkinde koltuğu serbest biraksaydik, sağlayıcının bir
+            // Ilkinde koltuğu serbest biraksaydim, sağlayıcının bir
             // saniyelik kesintisi yuzunden kullanıcı koltuğunu
             // kaybederdi -- ve popüler bir etkinlikte bir daha
             // bulamazdi.
@@ -291,10 +283,8 @@ internal sealed partial class CreatePaymentCommandHandler
     }
 }
 
-// ===================================================================
 // ÖDEME TAMAMLAMA + BİLET URETIMI
 // PDF: POST /api/v1/payments/{id}/complete
-// ===================================================================
 
 public sealed record CompletePaymentCommand(Guid PaymentId, string? ProviderReference)
     : IRequest<Result<PaymentDto>>;
@@ -351,9 +341,8 @@ internal sealed partial class CompletePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.NotFound);
         }
 
-        // ==============================================================
         // 1. SAGLAYICIYA SORARAK DOGRULA
-        // ==============================================================
+        //
         // Callback'e KORU KORUNE GUVENMIYORUZ.
         //
         // Bu endpoint disariya açık (ödeme sağlayıcısı cagiracak).
@@ -379,9 +368,8 @@ internal sealed partial class CompletePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.VerificationFailed);
         }
 
-        // ==============================================================
         // 2. IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
-        // ==============================================================
+        //
         // Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gönderir.
         // Bu bir hata değil, normal davranistir: sağlayıcı cevap
         // alamadigini dusunurse tekrar dener.
@@ -393,16 +381,15 @@ internal sealed partial class CompletePaymentCommandHandler
 
         if (!isFirstCompletion)
         {
-            // Zaten tamamlanmis. Saglayiciya 200 donuyoruz ki tekrar
-            // denemeyi biraksin. Hata donseydik sonsuz dongu olusurdu.
+            // Zaten tamamlanmis. Saglayiciya 200 donuyorum ki tekrar
+            // denemeyi biraksin. Hata donseydim sonsuz dongu olusurdu.
             return await LoadAsync(payment.Id, cancellationToken).ConfigureAwait(false);
         }
 
         var reservation = payment.Reservation;
 
-        // ==============================================================
         // 3. TEK TRANSACTION -- PDF Sprint 8'in acikca istedigi liste
-        // ==============================================================
+        //
         // "Aşağıdaki islemler tek bir transaction içinde calismalidir:
         //    - Ödeme başarılı kaydı
         //    - Rezervasyon onayı
@@ -414,7 +401,7 @@ internal sealed partial class CompletePaymentCommandHandler
         // Hepsi AYNI SaveChangesAsync cagrisinda kaydediliyor; EF bunu
         // tek transaction içinde calistirir.
         //
-        // Ayrı ayrı kaydetseydik: para alındı ama bilet olusmadi
+        // Ayrı ayrı kaydetseydim: para alındı ama bilet olusmadi
         // (bağlantı koptu) gibi durumlar olusurdu ve elle duzeltmek
         // gerekirdi.
 
@@ -455,9 +442,8 @@ internal sealed partial class CompletePaymentCommandHandler
             reservation.Id,
             $"/biletlerim"));
 
-        // ==============================================================
         // OUTBOX -- PDF Sprint 9
-        // ==============================================================
+        //
         // E-postayi BURADA GONDERMIYORUZ. Sebep:
         //
         // E-posta gonderimi ile veritabani yazimi ayrı sistemler ve
@@ -466,7 +452,7 @@ internal sealed partial class CompletePaymentCommandHandler
         // maili alır ama bilet YOKTUR.
         //
         // Bunun yerine "e-posta gonderilecek" NIYETINI aynı transaction
-        // içinde yazıyoruz. Arka plandaki job bunu okuyup gonderecek.
+        // içinde yazıyorum. Arka plandaki job bunu okuyup gonderecek.
         //
         // Job Sprint 9'da yazilacak; mesajlar o zamana kadar tabloda
         // birikecek ve islenecek.
@@ -476,7 +462,7 @@ internal sealed partial class CompletePaymentCommandHandler
         // bir sey: kullanıcı "param gitti mi?" ile "biletim hazır mi?"
         // sorularinin ikisini de soruyor.
         //
-        // Tek bildirimde birlestirseydik, biletlerini gormek isteyen
+        // Tek bildirimde birlestirseydim, biletlerini gormek isteyen
         // kullanıcı ödeme bildirimini aramak zorunda kalırdı.
         _context.Notifications.Add(Notification.Create(
             reservation.UserId,
@@ -513,9 +499,8 @@ internal sealed partial class CompletePaymentCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // ==============================================================
         // PDF Sprint 10: "SeatSold"
-        // ==============================================================
+        //
         // PDF is kuralı: "Satılan koltuk yeniden secilememelidir."
         //
         // SeatLocked yerine AYRI bir olay gonderiyorum çünkü istemci
@@ -525,7 +510,7 @@ internal sealed partial class CompletePaymentCommandHandler
         //   Sold   -> bir daha asla bosalmayacak
         //
         // Istemci bu ayrimi bilmeden doğru rengi ve tiklanabilirligi
-        // secemezdi. Tek olay gonderseydik, satılan koltuk sureli
+        // secemezdi. Tek olay gonderseydim, satılan koltuk sureli
         // kilit gibi görünür ve kullanıcı bosalmasini beklerdi.
         await _seatNotifier.SeatsSoldAsync(
             reservation.EventSessionId,
@@ -557,9 +542,7 @@ internal sealed partial class CompletePaymentCommandHandler
     }
 }
 
-// ===================================================================
 // ÖDEME BASARISIZ -- PDF: POST /api/v1/payments/{id}/fail
-// ===================================================================
 
 public sealed record FailPaymentCommand(Guid PaymentId, string? Reason) : IRequest<Result>;
 
@@ -598,10 +581,9 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
 
         payment.Fail(request.Reason, now, reservation.UserId);
 
-        // ==============================================================
         // PDF Sprint 8 KURALI:
         // "Ödeme başarısız olduğunda koltuklar serbest birakilmalidir."
-        // ==============================================================
+        //
         // ONEMLI NOT: docs/01-is-analizi.md soru 8'de ilk analizimde
         // TERSINI yazmistim -- koltukları kilitli tutup kullanıcıya
         // ikinci sans vermeyi onermistim (kart hatası siktir diye).
@@ -638,7 +620,7 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
 
         // PDF Sprint 10: "SeatReleased".
         // Başarısız odemede koltuklar hemen satışa dönüyor; bekleyen
-        // kullanicilarin ekraninda anında yesile ceviriyoruz.
+        // kullanicilarin ekraninda anında yesile ceviriyorum.
         await _seatNotifier.SeatsReleasedAsync(
             reservation.EventSessionId,
             reservation.Items.Select(i => i.EventSeatId).ToList(),

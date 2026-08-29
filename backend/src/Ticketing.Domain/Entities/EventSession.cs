@@ -11,9 +11,8 @@ namespace Ticketing.Domain.Entities;
 ///   - 3 günlük festival -> 3 oturum
 ///   - Aynı gün 14:00 ve 20:00 tiyatro -> 2 oturum
 ///
-/// ------------------------------------------------------------------
 /// NEDEN KOLTUKLAR ETKINLIGE DEĞİL OTURUMA BAGLI?
-/// ------------------------------------------------------------------
+///
 /// Koltuk satışı OTURUM bazindadir, etkinlik bazinda değil. 14:00
 /// seansinda dolu olan C-12 koltuğu 20:00 seansinda bostur.
 ///
@@ -112,9 +111,8 @@ public class EventSession : ConcurrentEntity
     /// <summary>
     /// Bu oturum verilen zaman araligiyla cakisiyor mu?
     ///
-    /// ------------------------------------------------------------------
     /// ARALIK CAKISMA FORMULU
-    /// ------------------------------------------------------------------
+    ///
     /// Iki aralık [a1, a2] ve [b1, b2] cakisir ancak ve ancak:
     ///     a1 &lt; b2  VE  b1 &lt; a2
     ///
@@ -137,9 +135,8 @@ public class EventSession : ConcurrentEntity
     /// <summary>
     /// Fiziksel koltuklardan (Seat) bu oturuma ait EventSeat kayitlarini üretir.
     ///
-    /// ------------------------------------------------------------------
     /// BU METOT NEDEN BURADA? Neden bir servis değil?
-    /// ------------------------------------------------------------------
+    ///
     /// EventSeat'ler bu oturuma AITTIR. Onlari üretme yetkisi de oturumun
     /// kendisinde olmalı. Bir "SeatGeneratorService" yazsaydim, o servis
     /// EventSession'in ic durumunu (AreSeatsGenerated) disaridan
@@ -148,9 +145,8 @@ public class EventSession : ConcurrentEntity
     /// Bu, "Tell, Don't Ask" ilkesidir: nesneye durumunu SORUP disarida
     /// karar vermek yerine, ona ne yapmasi gerektigini SOYLE.
     ///
-    /// ------------------------------------------------------------------
     /// NEDEN TEK FIYAT DEĞİL DE ESLESTIRME FONKSIYONU ALIYOR?
-    /// ------------------------------------------------------------------
+    ///
     /// İlk yazisimda tek bir ticketTypeId ve price aliyordu. Ama gerçek
     /// salonlarda her BOLUM farklı fiyatlidir: "Orta Blok 450 TL",
     /// "Balkon 250 TL".

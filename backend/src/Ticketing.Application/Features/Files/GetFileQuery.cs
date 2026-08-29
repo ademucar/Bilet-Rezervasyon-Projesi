@@ -29,11 +29,10 @@ internal sealed class GetFileQueryHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // ==============================================================
         // DOSYA VERITABANINDAN BULUNUYOR, YOLDAN DEĞİL
-        // ==============================================================
-        // Istemci bize bir Guid veriyor; biz o Guid ile veritabanina
-        // bakip GERCEK yolu oradan okuyoruz.
+        //
+        // Istemci bana bir Guid veriyor; biz o Guid ile veritabanina
+        // bakip GERCEK yolu oradan okuyorum.
         //
         // Alternatif -- istemcinin gonderdigi dosya adiyla doğrudan
         // diske bakmak -- klasik bir dizin gecisi acigidir:
@@ -41,8 +40,7 @@ internal sealed class GetFileQueryHandler
         //
         // Veritabani araya girince bu saldiri sinifi tamamen ortadan
         // kalkiyor: kullanicidan gelen deger bir YOL değil, bir
-        // ANAHTAR. Yol bizim kendi kaydimizdan geliyor.
-        // ==============================================================
+        // ANAHTAR. Yol benim kendi kaydimizdan geliyor.
         var kayit = await _context.UploadedFiles
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == request.Id, cancellationToken)

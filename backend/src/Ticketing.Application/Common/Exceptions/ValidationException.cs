@@ -19,7 +19,7 @@ namespace Ticketing.Application.Common.Exceptions;
 ///     }
 ///
 /// Bu biçim, frontend'in her form alanini kendi hatalariyla
-/// eslestirmesini saglar. Duz bir liste donseydik frontend hangi
+/// eslestirmesini saglar. Duz bir liste donseydim frontend hangi
 /// mesajin hangi alana ait olduğunu bilemezdi.
 /// </summary>
 public sealed class ValidationException : Exception

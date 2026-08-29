@@ -3,9 +3,8 @@ using Ticketing.Application.Abstractions.Caching;
 namespace Ticketing.Infrastructure.Caching;
 
 /// <summary>
-/// ==================================================================
 /// ONBELLEKSIZ UYGULAMA -- PDF Sprint 11
-/// ==================================================================
+///
 /// PDF kuralı: "Cache kapalı olduğunda sistem calismaya devam
 /// edebilmelidir."
 ///
@@ -13,9 +12,8 @@ namespace Ticketing.Infrastructure.Caching;
 /// Redis kapaliysa (veya hiç adres verilmemisse) DI konteynerine
 /// bu kaydediliyor ve her sorgu doğrudan veritabanina gidiyor.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN "if (cache != null)" KONTROLU YERINE BOŞ BIR SINIF?
-/// ------------------------------------------------------------------
+///
 /// Alternatif su olurdu: ICacheService'i nullable yapip her cagirim
 /// yerinde kontrol etmek.
 ///
@@ -32,7 +30,6 @@ namespace Ticketing.Infrastructure.Caching;
 ///
 /// Yan fayda: testlerde de bunu kullanabiliyoruz -- Redis kurmadan
 /// handler'lari calistirmak mumkun.
-/// ==================================================================
 /// </summary>
 internal sealed class NullCacheService : ICacheService
 {

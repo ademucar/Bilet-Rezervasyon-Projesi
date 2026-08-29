@@ -30,9 +30,8 @@ internal sealed class GetCurrentUserQueryHandler
             return Result.Failure<UserSummary>(AuthErrors.UserNotFound);
         }
 
-        // ------------------------------------------------------------------
         // TOKEN'DAKI BILGIYI DEĞİL VERITABANINI OKUYORUM
-        // ------------------------------------------------------------------
+        //
         // ICurrentUser'da Email ve Roles zaten var (token'dan geliyor).
         // Onlari dondurmek daha hizli olurdu -- veritabanina hiç gitmezdik.
         //

@@ -5,10 +5,9 @@ namespace Ticketing.Application.Common.Logging;
 /// PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN MERKEZI BIR KAYIT?
-/// ==================================================================
-/// EventId'leri her dosyada elle yazsaydık iki sey olurdu:
+///
+/// EventId'leri her dosyada elle yazsaydım iki sey olurdu:
 ///
 ///   1) CAKISMA. Iki farklı olay aynı numarayi alır ve izleme
 ///      sisteminde "9101 alarmi" dedigimizde hangisi olduğu belli
@@ -21,9 +20,8 @@ namespace Ticketing.Application.Common.Logging;
 /// Numara BLOKLARI kullanıyorum ki bir alarm kuralini aralık olarak
 /// yazabilelim: "1000-1999 arasi = kimlik olaylari".
 ///
-/// ------------------------------------------------------------------
 /// BLOK HARITASI
-/// ------------------------------------------------------------------
+///
 ///   1000-1099   Kimlik doğrulama    (bu dosya)
 ///   1100-1199   Etkinlik yasam dongusu
 ///   1200-1299   Rezervasyon ve koltuk
@@ -35,7 +33,6 @@ namespace Ticketing.Application.Common.Logging;
 ///   9201-9299   SignalR
 ///   9301-9399   Onbellek
 ///   9401-9499   E-posta
-/// ------------------------------------------------------------------
 ///
 /// 4000/5000 ve 9xxx bloklari Sprint 9-15 arasında zaten kullaniliyordu;
 /// onlari TASIMADIM. Calisan bir sistemde EventId degistirmek, o
@@ -44,9 +41,7 @@ namespace Ticketing.Application.Common.Logging;
 /// </remarks>
 public static class LogEvents
 {
-    // ==============================================================
     // KIMLIK DOGRULAMA -- PDF: "Login", "Başarısız login"
-    // ==============================================================
 
     /// <summary>Başarılı giriş.</summary>
     public const int LoginBasarili = 1001;
@@ -71,9 +66,7 @@ public static class LogEvents
     /// <summary>Yeni kullanıcı kaydı.</summary>
     public const int KullaniciKaydi = 1004;
 
-    // ==============================================================
     // ETKİNLİK -- PDF: "Etkinlik oluşturma", "Etkinlik yayinlama"
-    // ==============================================================
 
     /// <summary>Etkinlik oluşturuldu (taslak).</summary>
     public const int EtkinlikOlusturuldu = 1101;
@@ -105,9 +98,7 @@ public static class LogEvents
     /// </remarks>
     public const int EtkinlikSilindi = 1105;
 
-    // ==============================================================
     // REZERVASYON -- PDF: "Rezervasyon oluşturma", "Koltuk kilitleme"
-    // ==============================================================
 
     /// <summary>Rezervasyon oluşturuldu.</summary>
     public const int RezervasyonOlusturuldu = 1201;
@@ -132,9 +123,7 @@ public static class LogEvents
     /// <summary>Rezervasyon iptal edildi.</summary>
     public const int RezervasyonIptalEdildi = 1204;
 
-    // ==============================================================
     // ÖDEME -- PDF: "Ödeme", "İade"
-    // ==============================================================
 
     /// <summary>Ödeme baslatildi.</summary>
     public const int OdemeBaslatildi = 1301;

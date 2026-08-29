@@ -5,7 +5,7 @@ namespace Ticketing.Domain.Enums;
 ///
 /// Neden Event'ten ayrı bir durum? Çünkü çok oturumlu etkinliklerde
 /// (örneğin 3 günlük festival) bir oturum iptal olabilir ama digerleri
-/// devam edebilir. Tek durum olsaydı tüm etkinligi iptal etmek zorunda kalirdik.
+/// devam edebilir. Tek durum olsaydı tüm etkinligi iptal etmek zorunda kalirdim.
 /// </summary>
 public enum EventSessionStatus
 {

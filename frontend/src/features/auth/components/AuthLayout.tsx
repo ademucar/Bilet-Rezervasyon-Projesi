@@ -18,16 +18,15 @@ interface AuthLayoutProps {
 }
 
 /**
- * ==================================================================
+ *
  * KİMLİK DOĞRULAMA EKRANLARININ ORTAK ÇERÇEVESİ
- * ==================================================================
+ *
  * Beş ekran (giriş, kayıt, şifremi unuttum, şifre sıfırla,
  * yetkisiz) aynı düzeni paylaşıyor. Her birinde tekrar yazsaydım,
  * birinde başlık boyutunu değiştirdiğimde diğerleri geride kalırdı.
  *
- * ------------------------------------------------------------------
  * NEDEN ORTALANMIŞ KART DEĞİL DE İKİ SÜTUN?
- * ------------------------------------------------------------------
+ *
  * Önceki hâl ekranın ortasında yüzen dar beyaz bir karttı. Sorun
  * şu: kullanıcı buraya çoğu zaman bir AKIŞIN ORTASINDA düşüyor --
  * koltuk seçerken, rezervasyona devam ederken. Ortalanmış kart o
@@ -40,7 +39,7 @@ interface AuthLayoutProps {
  *
  * Mobilde sütun gizleniyor (hidden md:flex): 375px genişlikte iki
  * sütun ikisini de okunmaz yapardı; orada zaten tek iş var, form.
- * ==================================================================
+ *
  */
 export function AuthLayout({ title, subtitle, children, footer, aside }: AuthLayoutProps) {
   return (

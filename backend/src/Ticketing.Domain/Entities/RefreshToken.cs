@@ -40,7 +40,7 @@ public class RefreshToken : Entity
     /// hash'lemeliyiz. Çok sik atlanan bir noktadir.
     ///
     /// Not: Burada BCrypt gibi yavas bir algoritma DEĞİL, SHA-256 gibi
-    /// hizli bir algoritma kullanacagiz. Sebep: refresh token zaten
+    /// hizli bir algoritma kullanacagim. Sebep: refresh token zaten
     /// yüksek entropili rastgele bir degerdir, sozluk saldirisina açık
     /// degildir. Şifreler tahmin edilebilir olduğu için yavas algoritma
     /// gerektirir; token'lar gerektirmez.
@@ -84,9 +84,7 @@ public class RefreshToken : Entity
 
     public User User { get; private set; } = null!;
 
-    // ---------------------------------------------------------------
     // Hesaplanan durumlar
-    // ---------------------------------------------------------------
 
     public bool IsExpired() => DateTimeOffset.UtcNow >= ExpiresAt;
 
@@ -98,9 +96,7 @@ public class RefreshToken : Entity
     /// </summary>
     public bool IsActive() => !IsRevoked() && !IsExpired();
 
-    // ---------------------------------------------------------------
     // Davranislar
-    // ---------------------------------------------------------------
 
     public static RefreshToken Create(
         Guid userId,

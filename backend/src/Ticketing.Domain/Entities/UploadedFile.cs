@@ -6,7 +6,7 @@ namespace Ticketing.Domain.Entities;
 /// Yuklenen dosya kaydı. PDF Sprint 15'in dosya guvenligi maddelerini
 /// (file type kontrolü, MIME type kontrolü, güvenli dosya adı) destekler.
 ///
-/// Neden dosya bilgilerini ayrı bir tabloda tutuyoruz?
+/// Neden dosya bilgilerini ayrı bir tabloda tutuyorum?
 ///
 /// 1) Sahipsiz dosyalari (orphan) temizleyebilmek için. Kullanıcı afis
 ///    yukleyip etkinligi kaydetmezse dosya diskte kalır. Bu tablo
@@ -34,12 +34,12 @@ public class UploadedFile : AuditableEntity
     /// <summary>
     /// Diskte kullandigimiz GUVENLI dosya adı (Guid + uzanti).
     ///
-    /// Neden orijinal adı kullanmiyoruz?
+    /// Neden orijinal adı kullanmiyorum?
     /// Kullanıcı "../../appsettings.json" veya "afis.jpg.exe" gibi bir ad
     /// gonderebilir. Ilki dizin gecisi (path traversal) saldirisidir,
     /// ikincisi calistirilabilir dosya gizlemedir.
     ///
-    /// Uretilen bir ad kullanarak bu sinifin tamamini ortadan kaldiriyoruz.
+    /// Uretilen bir ad kullanarak bu sinifin tamamini ortadan kaldiriyorum.
     /// Kullanicidan gelen HICBIR metin dosya yolunda kullanılmıyor.
     /// </summary>
     public string StoredFileName { get; private set; }

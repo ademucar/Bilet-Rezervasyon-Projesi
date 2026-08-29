@@ -37,9 +37,7 @@ public class EventTests
         return evt;
     }
 
-    // ---------------------------------------------------------------
     // Olusturma ve tarih kurallari (PDF sayfa 13)
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_YeniEtkinlik_DraftDurumundaBaslamali()
@@ -82,9 +80,7 @@ public class EventTests
              .Which.ErrorCode.Should().Be("event.sales_end_after_event");
     }
 
-    // ---------------------------------------------------------------
     // DURUM MAKINESI -- projenin en kritik testleri
-    // ---------------------------------------------------------------
 
     [Fact]
     public void SubmitForApproval_OturumYoksa_HataFirlatmali()
@@ -200,9 +196,7 @@ public class EventTests
         evt.Invoking(e => e.Suspend()).Should().Throw<DomainException>();
     }
 
-    // ---------------------------------------------------------------
     // Guncelleme kisitlari (PDF sayfa 13)
-    // ---------------------------------------------------------------
 
     [Fact]
     public void UpdateDates_SatisBaslamissa_HataFirlatmali()
@@ -265,9 +259,7 @@ public class EventTests
              .Which.ErrorCode.Should().Be("event.sales_started");
     }
 
-    // ---------------------------------------------------------------
     // Oturum çakışması
-    // ---------------------------------------------------------------
 
     [Fact]
     public void AddSession_AyniSalondaCakisanSaat_HataFirlatmali()

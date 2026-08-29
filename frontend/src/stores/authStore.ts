@@ -3,9 +3,9 @@ import { persist } from 'zustand/middleware'
 import type { AuthResponse, UserSummary } from '../types/auth'
 
 /**
- * ==================================================================
+ *
  * TOKEN NEREDE SAKLANMALI? -- DURUSTCE ANLATIYORUM
- * ==================================================================
+ *
  * Uc seçenek var ve HICBIRI kusursuz değil:
  *
  * 1) httpOnly çerez  -- EN GUVENLI
@@ -28,18 +28,19 @@ import type { AuthResponse, UserSummary } from '../types/auth'
  * (PDF'in ongordugu klasik JWT akışı). Cerez yaklasimina gecmek
  * backend'i değiştirmeyi gerektirirdi.
  *
- * RISKI NASIL AZALTIYORUZ?
+ * RISKI NASIL AZALTIYORUM?
  *   - Access token yalnızca 15 DAKIKA geçerli -> calinsa bile pencere dar
  *   - Refresh token rotation var -> calinma tespit edilince tüm
  *     oturumlar kapaniyor (backend'de dogrulandi)
  *   - React JSX'i varsayılan olarak kacisla yazar (XSS'in en yaygin
  *     kaynagini kapatır)
- *   - dangerouslySetInnerHTML KULLANMIYORUZ
- *   - Sprint 15'te Content-Security-Policy eklenecek
+ *   - dangerouslySetInnerHTML KULLANMIYORUM
+ *   - Content-Security-Policy Sprint 15'te eklendi
+ *     (SecurityHeadersMiddleware)
  *
- * Yani riski kabul edip AZALTIYORUZ, gormezden gelmiyoruz.
+ * Yani riski kabul edip AZALTIYORUM, gormezden gelmiyorum.
  * Uretime cikan gerçek bir urunde httpOnly çerez tercih edilmeliydi.
- * ==================================================================
+ *
  */
 
 interface AuthState {
@@ -115,7 +116,7 @@ export const useAuthStore = create<AuthState>()(
        * Metotlari (setSession, hasRole...) DISARIDA birakiyorum.
        * Fonksiyonlar JSON'a serilestirilemez; yazmaya calisirsak
        * sessizce kaybolur ve sayfa yenilendiginde "hasRole is not a
-       * function" hatası alırdık.
+       * function" hatası alırdım.
        */
       partialize: (state) => ({
         accessToken: state.accessToken,

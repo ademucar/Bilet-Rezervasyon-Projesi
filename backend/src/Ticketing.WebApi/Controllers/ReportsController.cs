@@ -10,9 +10,8 @@ namespace Ticketing.WebApi.Controllers;
 /// Raporlama uclari. PDF Sprint 13.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// YETKI: [Authorize] YETERLI, ROL KONTROLU HANDLER'DA
-/// ==================================================================
+///
 /// İlk aklima gelen [Authorize(Policy = OrganizerOnly)] koymakti.
 /// Yapmadim, çünkü raporlari IKI FARKLI ROL kullaniyor:
 ///
@@ -23,13 +22,12 @@ namespace Ticketing.WebApi.Controllers;
 /// mumkun ama asil is kapsamin BELIRLENMESI ve o zaten handler'da
 /// yapiliyor (ReportScopeResolver).
 ///
-/// Iki yerde rol kontrolü yapsaydik, birini guncelleyip digerini
+/// Iki yerde rol kontrolü yapsaydim, birini guncelleyip digerini
 /// unutmak riski dogardi. Tek yerde tutuyorum: uc "giriş yapmış
 /// olmalı" der, handler "ne gorebilirsin" der.
 ///
 /// Sonuç: normal bir kullanıcı bu uclara 403 aliyor
 /// (report.forbidden).
-/// ==================================================================
 /// </remarks>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/reports")]
@@ -89,7 +87,7 @@ public sealed class ReportsController : ApiControllerBase
     /// GET /reports/exports/{id} adresinden indiriliyor.
     ///
     /// 202 Accepted, "kabul ettim ama henüz tamamlamadim" demenin
-    /// standart yolu. 200 donseydik istemci isin bittigini sanardi.
+    /// standart yolu. 200 donseydim istemci isin bittigini sanardi.
     /// </remarks>
     [HttpPost("export")]
     [ProducesResponseType<Guid>(StatusCodes.Status202Accepted)]
@@ -125,9 +123,8 @@ public sealed class ReportsController : ApiControllerBase
     {
         ArgumentNullException.ThrowIfNull(store);
 
-        // ==============================================================
         // SAHIPLIK KONTROLU: BILDIRIM UZERINDEN
-        // ==============================================================
+        //
         // exportId bir Guid v7 -- tahmin edilmesi pratikte imkansiz.
         // Ama "tahmin edilemez kimlik" tek başına yetki DEĞİLDİR
         // (güvenlik literaturunde "security through obscurity").
@@ -136,12 +133,11 @@ public sealed class ReportsController : ApiControllerBase
         // paylasilan ekran goruntusu) baskasinin gelir raporunu
         // indirebilirdi.
         //
-        // Bu yüzden bildirim tablosuna bakiyoruz: rapor hazır
+        // Bu yüzden bildirim tablosuna bakiyorum: rapor hazır
         // olduğunda SAHIBINE bir bildirim yaziliyor ve o bildirimin
         // RelatedEntityId'si exportId. Yani "bu raporun bildirimi bu
         // kullanıcıya mi yazilmis?" sorusu, sahiplik sorusunun ta
         // kendisi.
-        // ==============================================================
         var sahiplikResult = await Sender
             .Send(new VerifyReportOwnershipQuery(exportId), cancellationToken)
             .ConfigureAwait(false);

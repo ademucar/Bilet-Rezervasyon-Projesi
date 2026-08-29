@@ -7,22 +7,20 @@ namespace Ticketing.WebApi.Middleware;
 /// Bu deger: Response header, Application log, Exception log,
 /// Background job log, Outbox kaydı icerisinde kullanılmalıdır."
 ///
-/// ==================================================================
 /// NEDEN GEREKLI?
-/// ==================================================================
+///
 /// Uretimde bir kullanıcı arayip "biletim gelmedi" diyor. Loglara
 /// bakiyorsun: saniyede yuzlerce satır akiyor, hangileri BU kullanıcıya
 /// ait?
 ///
 /// Correlation ID olmadan bunu bulmak neredeyse imkansiz. Ozellikle
-/// bizim sistemimizde zincir uzun:
+/// benim sistemimizde zincir uzun:
 ///
 ///   HTTP isteği -> Handler -> Outbox kaydı -> Background job -> E-posta
 ///
 /// Bu adimlar FARKLI ZAMANLARDA ve farklı process'lerde çalışıyor.
 /// Correlation ID hepsini tek bir ipe diziyor. Kullanicidan ID'yi
 /// alip tek bir sorguyla tüm hikayeyi gorebiliyorsun.
-/// ==================================================================
 /// </summary>
 public sealed class CorrelationIdMiddleware
 {
@@ -39,9 +37,8 @@ public sealed class CorrelationIdMiddleware
 
         var correlationId = GetOrCreateCorrelationId(context);
 
-        // ==============================================================
         // DEGERI ONCE HttpContext.Items'A KOY -- SPRINT 16'DA BULUNAN HATA
-        // ==============================================================
+        //
         // Bu satır olmadan sistemin yarisi correlation ID'yi GOREMIYORDU.
         //
         // Sebep: ICurrentUser.CorrelationId, değeri RESPONSE HEADER'INDAN
@@ -63,7 +60,6 @@ public sealed class CorrelationIdMiddleware
         //
         // HttpContext.Items, istek boyunca yasayan ve HEMEN yazilabilen
         // bir sozluk. Deger artık handler calismadan önce hazır.
-        // ==============================================================
         context.Items[HeaderName] = correlationId;
 
         // Response'a ekliyorum ki istemci de gorebilsin.
@@ -84,7 +80,7 @@ public sealed class CorrelationIdMiddleware
 
         // BeginScope: bu blok içinde atilan TÜM loglara CorrelationId
         // otomatik olarak eklenir. Her log satirinda elle yazmamiza
-        // gerek kalmaz -- ki yazsaydık yarisini unuturduk.
+        // gerek kalmaz -- ki yazsaydım yarisini unuturdum.
         using (logger.BeginScope(new Dictionary<string, object>
         {
             ["CorrelationId"] = correlationId
@@ -102,7 +98,7 @@ public sealed class CorrelationIdMiddleware
         // yapabilir (önce rezervasyon, sonra ödeme). Aynı ID'yi gondererek
         // bu cagrilari birbirine baglayabilir.
         //
-        // GÜVENLİK NOTU: Istemciden gelen değeri OLDUGU GIBI kullanmiyoruz.
+        // GÜVENLİK NOTU: Istemciden gelen değeri OLDUGU GIBI kullanmiyorum.
         // Uzunlugu sinirliyorum, çünkü bu deger loglara ve response
         // header'ina yaziliyor. Sinirsiz uzunlukta bir deger log
         // dosyalarini sisirebilir veya header limitlerini asabilir.

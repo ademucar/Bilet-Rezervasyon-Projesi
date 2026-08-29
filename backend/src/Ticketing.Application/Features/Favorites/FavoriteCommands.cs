@@ -15,9 +15,7 @@ internal static class FavoriteErrors
         "favorite.event_not_found", "Etkinlik bulunamadı.");
 }
 
-// ===================================================================
 // EKLE -- PDF: POST /api/v1/events/{eventId}/favorite
-// ===================================================================
 
 public sealed record AddFavoriteCommand(Guid EventId) : IRequest<Result>;
 
@@ -39,21 +37,19 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
             return Result.Failure(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // ETKİNLİK VAR MI VE GORULEBILIR MI?
-        // ==============================================================
+        //
         // Yalnızca "var mi" diye bakmak YETMEZ. Gorunurluk filtresi de
         // sart: aksi halde kullanıcı bir Id tahmin edip TASLAK bir
         // etkinligi favorileyebilirdi.
         //
         // Tek başına zararsiz görünüyor ama "favorilerim" listesi o
         // etkinliğin BASLIGINI gosteriyor. Yani yayinlanmamis bir
-        // etkinliğin adını sizdirmis olurduk.
+        // etkinliğin adını sizdirmis olurdum.
         //
         // Bu, Sprint 11'de etkinlik detayinda kapattigimiz IDOR
         // acigina giden BASKA bir kapi. Aynı kontrolü burada da
         // uygulamak sart.
-        // ==============================================================
         var eventExists = await _context.Events
             .AsNoTracking()
             .AnyAsync(
@@ -67,19 +63,17 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
             return Result.Failure(FavoriteErrors.EventNotFound);
         }
 
-        // ==============================================================
         // IDEMPOTENT: ZATEN FAVORIDEYSE HATA DEĞİL
-        // ==============================================================
+        //
         // Kullanıcı kalp ikonuna iki kez basmis olabilir; ag isteği
         // tekrarlanmis olabilir.
         //
         // "Zaten favoride" diye 409 donmek teknik olarak doğru ama
         // kullanıcı acisindan anlamsiz: istedigi sey zaten olmuş
-        // durumda. Sessizce başarılı donuyoruz.
+        // durumda. Sessizce başarılı donuyorum.
         //
         // Aynı yaklasimi Sprint 8'de ödeme callback'inde de
-        // uygulamıştık.
-        // ==============================================================
+        // uygulamıştım.
         var alreadyFavorite = await _context.Favorites
             .AsNoTracking()
             .AnyAsync(f => f.UserId == userId && f.EventId == request.EventId, cancellationToken)
@@ -102,7 +96,7 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
             //
             // Yukaridaki kontrol yarisa açık: iki istek aynı anda
             // gelirse ikisi de "yok" görebilir. Veritabani ikincisini
-            // reddediyor ve biz bunu BASARI sayiyoruz -- çünkü
+            // reddediyor ve biz bunu BASARI sayiyorum -- çünkü
             // kullanıcının istedigi sonuç gerceklesti.
             return Result.Success();
         }
@@ -111,9 +105,7 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
     }
 }
 
-// ===================================================================
 // CIKAR -- PDF: DELETE /api/v1/events/{eventId}/favorite
-// ===================================================================
 
 public sealed record RemoveFavoriteCommand(Guid EventId) : IRequest<Result>;
 
@@ -167,9 +159,7 @@ internal sealed class RemoveFavoriteCommandHandler
     }
 }
 
-// ===================================================================
 // LISTELE -- PDF: GET /api/v1/users/me/favorites
-// ===================================================================
 
 public sealed record GetMyFavoritesQuery : IRequest<Result<IReadOnlyList<EventListItem>>>;
 
@@ -195,19 +185,17 @@ internal sealed class GetMyFavoritesQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // BU SORGU ASLA ONBELLEKLENMEZ
-        // ==============================================================
+        //
         // PDF Sprint 11 kuralı: "Kullanıcıya ozel hassas veriler ortak
         // cache içinde tutulmamalidir."
         //
         // Favori listesi tanim geregi kullanıcıya OZEL. Ortak onbellege
-        // koysaydık bir kullanıcının favorileri baskasina görünürdü.
+        // koysaydım bir kullanıcının favorileri baskasina görünürdü.
         //
         // "Anahtara userId eklerim" demek de çözüm değil: her kullanıcı
         // için ayrı anahtar demek, milyonlarca anahtar ve neredeyse
         // sifir isabet oranı. Onbellegin faydasi paylasilan veridedir.
-        // ==============================================================
         var favorites = await _context.Favorites
             .AsNoTracking()
             .Where(f => f.UserId == userId)
@@ -229,16 +217,14 @@ internal sealed class GetMyFavoritesQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // İPTAL EDILMIS ETKINLIKLER LISTEDE KALIYOR -- BILINCLI
-        // ==============================================================
+        //
         // Filtrelemeyi dusundum ama vazgectim: kullanıcı favoriledigi
         // etkinliğin İPTAL EDILDIGINI gormeli. Sessizce listeden
-        // kaldirsaydik "favorim nereye gitti?" diye sorardi.
+        // kaldirsaydim "favorim nereye gitti?" diye sorardi.
         //
         // Durum bilgisi zaten dönüyor (Status alanı); arayüz iptal
         // rozetini gosteriyor.
-        // ==============================================================
         return Result.Success<IReadOnlyList<EventListItem>>(favorites);
     }
 }

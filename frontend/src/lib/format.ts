@@ -1,7 +1,7 @@
 /**
- * ==================================================================
+ *
  * BICIMLENDIRME YARDIMCILARI
- * ==================================================================
+ *
  * Tarih ve para bicimlendirmesini TEK YERDE topluyorum.
  *
  * Neden? Çünkü bunlari her bileşende elle yazmak iki somut hataya
@@ -13,8 +13,8 @@
  *   2) Performans: Intl.NumberFormat NESNESI olusturmak pahalidir.
  *      Her render'da `new Intl.NumberFormat(...)` yazmak, 100
  *      biletlik listede 100 nesne üretir. Asagida bir kez olusturup
- *      yeniden kullanıyoruz.
- * ==================================================================
+ *      yeniden kullanıyorum.
+ *
  */
 
 // Modul yuklenirken BIR KEZ oluşturuluyor.
@@ -75,9 +75,8 @@ export function formatDate(isoString: string): string {
 /**
  * Tarihi PARCALARINA ayirir: takvim yirtmaci bileseni için.
  *
- * ================================================================
  * NEDEN AYRI BIR ISLEV?
- * ================================================================
+ *
  * formatDateTime "27 Ekim 2026 20:00" gibi TEK bir cumle dönüyor.
  * Kart tasariminda tarihi bir NESNE gibi göstermek istiyorum:
  * ay ustte küçük, gün ortada iri, saat altta.
@@ -88,7 +87,7 @@ export function formatDate(isoString: string): string {
  *
  * Ay adını KISALTIYORUM (Eki, Kas) çünkü yirtmac 72px genis --
  * "Aralik" oraya sigmiyor, "Ara" siğiyor.
- * ================================================================
+ *
  */
 const ayKisaFormatter = new Intl.DateTimeFormat('tr-TR', { month: 'short' })
 const gunFormatter = new Intl.DateTimeFormat('tr-TR', { day: 'numeric' })

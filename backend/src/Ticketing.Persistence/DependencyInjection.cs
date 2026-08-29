@@ -9,9 +9,8 @@ namespace Ticketing.Persistence;
 /// <summary>
 /// Persistence katmaninin DI kayitlari.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN HER KATMAN KENDİ KAYITLARINI YAPIYOR?
-/// ------------------------------------------------------------------
+///
 /// Alternatif, Program.cs'te her seyi tek tek kaydetmekti:
 ///     builder.Services.AddDbContext&lt;TicketingDbContext&gt;(...);
 ///     builder.Services.AddScoped&lt;IUserRepository, UserRepository&gt;();
@@ -57,18 +56,16 @@ public static class DependencyInjection
                 "degiskenini kontrol edin.");
         }
 
-        // ==============================================================
         // DENETIM ALANI INTERCEPTOR'I -- Sprint 12'de eklendi
-        // ==============================================================
+        //
         // CreatedAt / UpdatedAt / soft delete alanlarini otomatik
         // dolduruyor. Gerekcesi ve nasil bulundugu
         // AuditFieldsInterceptor içinde ayrintili yazili.
         //
         // Scoped: ICurrentUser scoped (HttpContext'e bağlı) ve
-        // interceptor önü kullaniyor. Singleton yapsaydik "captive
+        // interceptor önü kullaniyor. Singleton yapsaydim "captive
         // dependency" olusur, tüm istekler ILK istegin kullanicisini
         // gorurdu -- denetim izi tamamen yanlış olurdu.
-        // ==============================================================
         services.AddScoped<AuditFieldsInterceptor>();
 
         // Aynı gerekce (Scoped, çünkü ICurrentUser'a bağlı).

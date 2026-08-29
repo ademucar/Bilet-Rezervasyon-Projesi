@@ -78,7 +78,7 @@ export function SeatLayoutPage() {
       const problem = toProblem(e)
 
       // Alan bazlı doğrulama hatalarini da gösteriyorum.
-      // Yalnızca `detail` gosterseydik "Gonderilen veriler geçerli
+      // Yalnızca `detail` gosterseydim "Gonderilen veriler geçerli
       // değil" gibi hiçbir sey anlatmayan bir mesaj çıkardı.
       const fieldErrors = problem.errors ? Object.values(problem.errors).flat().join(' ') : null
 
@@ -266,7 +266,7 @@ export function SeatLayoutPage() {
  * KARISABILECEK HARFLERI ATLIYORUM: I, O, Q.
  * Sebep: gerçek salonlarda gorevli "I sırası mi 1 sırası mi?" diye
  * sorar; kullanıcı da bilette "O" mu "0" mi ayırt edemez. Bilet
- * numarasi uretiminde de aynı mantığı uygulamıştık.
+ * numarasi uretiminde de aynı mantığı uygulamıştım.
  */
 function buildRowLabels(count: number): string[] {
   const alphabet = 'ABCDEFGHJKLMNPRSTUVYZ'

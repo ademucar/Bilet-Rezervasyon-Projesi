@@ -14,9 +14,8 @@ namespace Ticketing.Application.Features.Auth;
 internal static class AuthErrors
 {
     /// <summary>
-    /// ==================================================================
     /// KRITIK GÜVENLİK KARARI: TEK VE BELIRSIZ HATA MESAJI
-    /// ==================================================================
+    ///
     /// "E-posta bulunamadı" ve "Şifre yanlış" diye AYRI mesajlar
     /// dondurmuyoruz. Ikisi de bu tek hatayi döner.
     ///
@@ -35,7 +34,6 @@ internal static class AuthErrors
     ///
     /// Aynı sebeple "forgot-password" endpoint'i de e-posta kayıtlı
     /// olsun olmasın AYNI cevabi donecek.
-    /// ==================================================================
     /// </summary>
     public static readonly Error InvalidCredentials = Error.Unauthorized(
         "auth.invalid_credentials",

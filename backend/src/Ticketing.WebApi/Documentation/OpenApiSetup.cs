@@ -8,9 +8,8 @@ namespace Ticketing.WebApi.Documentation;
 /// OpenAPI belgesi yapilandirmasi. PDF Sprint 18.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// PDF'IN ON MADDESI VE NEREDE KARSILANDIGI
-/// ==================================================================
+///
 ///   1. Endpoint aciklamalari   -> XmlDocumentationTransformer
 ///   2. Request ornekleri       -> RequestExampleTransformer
 ///   3. Response ornekleri      -> XmlDocumentationTransformer
@@ -23,9 +22,8 @@ namespace Ticketing.WebApi.Documentation;
 ///   9. Idempotency-Key         -> IdempotencyHeaderTransformer
 ///  10. API version bilgisi     -> DocumentInfoTransformer
 ///
-/// ------------------------------------------------------------------
-/// NEDEN TRANSFORMER? Neden her uca oznitelik yazmiyoruz?
-/// ------------------------------------------------------------------
+/// NEDEN TRANSFORMER? Neden her uca oznitelik yazmiyorum?
+///
 /// Yazabilirdik ama 60'tan fazla ucumuz var. Her birine
 /// [ProducesResponseType(401)] eklemek:
 ///   - Yuzlerce satır tekrar
@@ -34,7 +32,6 @@ namespace Ticketing.WebApi.Documentation;
 /// Transformer, kuralı TEK YERDEN uyguluyor: "kimlik dogrulamasi
 /// gerektiren her uca 401 ekle" gibi. Yeni bir uc eklendiginde
 /// hiçbir sey yapmak gerekmiyor.
-/// ==================================================================
 /// </remarks>
 internal static class OpenApiSetup
 {
@@ -84,17 +81,15 @@ internal sealed class DocumentInfoTransformer : IOpenApiDocumentTransformer
             Title = "Biletim API",
             Version = "v1",
 
-            // ==========================================================
             // ACIKLAMA, ARAYUZUN ILK EKRANI
-            // ==========================================================
+            //
             // Bir API'yi ilk kez kullanan kisinin cevabini aradigi
             // sorular burada: nasil kimlik dogrularim, hatalar hangi
             // bicimde gelir, sayfalama nasil çalışır.
             //
-            // Bu bilgileri ayrı bir README'ye koysaydık kimse
+            // Bu bilgileri ayrı bir README'ye koysaydım kimse
             // bulamazdi -- Swagger'i acan kişi zaten "deneyerek
             // ogrenmek" istiyor.
-            // ==========================================================
             Description = """
                 Etkinlik, biletleme ve koltuk rezervasyon sistemi.
 
@@ -226,17 +221,15 @@ internal sealed class SecuritySchemeTransformer : IOpenApiDocumentTransformer
 /// PDF: "Authentication gereksinimleri", "Yetkili roller".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU BILGI KODDAN OKUNUYOR, ELLE YAZILMIYOR
-/// ==================================================================
+///
 /// [Authorize] ozniteliklerini yansima (reflection) ile okuyup
 /// belgeye aktariyoruz.
 ///
-/// Elle yazsaydık: bir ucun yetkisi degistiginde belgeyi guncellemeyi
-/// unuturduk ve Swagger "herkese açık" derken uc 403 donerdi.
+/// Elle yazsaydım: bir ucun yetkisi degistiginde belgeyi guncellemeyi
+/// unuturdum ve Swagger "herkese açık" derken uc 403 donerdi.
 /// Yanlis dokumantasyon, hiç dokumantasyon olmamasindan kotudur --
 /// çünkü ona GUVENILIYOR.
-/// ==================================================================
 /// </remarks>
 internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
 {
@@ -284,13 +277,11 @@ internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
 
         operation.Security = [gereksinim];
 
-        // ==============================================================
         // ROL / POLITIKA BILGISI ACIKLAMAYA EKLENIYOR
-        // ==============================================================
+        //
         // Politika adları ("AdminOnly", "EventOwner") tek başına
         // anlasilir değil. Kisa bir açıklama ekliyorum ki Swagger'i
         // okuyan kişi 403 alınca sasirmasin.
-        // ==============================================================
         var roller = yetkiler
             .Select(y => y.Policy ?? y.Roles)
             .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -326,13 +317,11 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
         var korumali = !anonim
             && metadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any();
 
-        // ==============================================================
         // 429: HER UCA -- hiz sınırı genel limitleyiciyle tumune uygulaniyor
-        // ==============================================================
+        //
         // Sprint 15'te politikasi olmayan uclar için de genel bir sinir
         // koymustuk ("varsayılan olarak güvenli"). Yani 429 her uctan
         // gelebilir ve istemci buna hazır olmalı.
-        // ==============================================================
         Ekle(operation, "429", "Çok fazla istek. Retry-After basligina bakin.");
 
         Ekle(operation, "500", "Beklenmeyen sunucu hatası.");
@@ -343,13 +332,11 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
             Ekle(operation, "403", "Token geçerli ama bu işlem için yetkiniz yok.");
         }
 
-        // ==============================================================
         // 400: YALNIZCA GOVDE VEYA PARAMETRE ALAN UCLARA
-        // ==============================================================
+        //
         // Parametresiz bir GET ucunda doğrulama hatası olusamaz.
         // Kosulsuz ekleseydik belge, olmayan bir davranisi vaat
         // ederdi.
-        // ==============================================================
         if (context.Description.ParameterDescriptions.Count > 0)
         {
             Ekle(operation, "400",
@@ -365,7 +352,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
     /// Controller'da [ProducesResponseType] ile acikca yazilmis bir
     /// yanit, buradaki genel aciklamadan daha degerli: o uca ozgu.
     ///
-    /// Ustune yazsaydık, ozenle yazilmis aciklamalar genel
+    /// Ustune yazsaydım, ozenle yazilmis aciklamalar genel
     /// metinlerle degistirilirdi.
     /// </remarks>
     private static void Ekle(OpenApiOperation operation, string kod, string aciklama)
@@ -452,9 +439,8 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
 /// PDF: "Idempotency-Key açıklaması".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// HANGI UCLARA EKLENIYOR VE NEDEN YALNIZCA ONLARA?
-/// ==================================================================
+///
 /// Rezervasyon oluşturma, ödeme baslatma ve iade. Ucu de:
 ///   - Yeni bir kayıt URETIYOR
 ///   - Tekrari MALI veya operasyonel sonuç doguruyor
@@ -463,7 +449,6 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
 /// göstermek, o basligin bir etkisi varmis gibi dusundurur.
 /// Belgede olmayan bir davranisi vaat etmemek, eksik belgelemekten
 /// daha önemli.
-/// ==================================================================
 /// </remarks>
 internal sealed class IdempotencyHeaderTransformer : IOpenApiOperationTransformer
 {

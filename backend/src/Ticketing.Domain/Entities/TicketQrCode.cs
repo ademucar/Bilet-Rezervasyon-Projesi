@@ -6,9 +6,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Biletin QR kodu. PDF: "QR kod değeri benzersiz olmalıdır."
 ///
-/// ------------------------------------------------------------------
 /// NEDEN AYRI TABLO? Ticket'a bir sutun eklesek olmaz miydi?
-/// ------------------------------------------------------------------
+///
 /// PDF'in ER diyagraminda ayrı bir tablo olarak isteniyor ve bunun
 /// pratik gerekceleri var:
 ///

@@ -12,10 +12,8 @@ public class SeatLayoutTests
     private static SeatLayout GecerliPlan()
         => SeatLayout.Create(Guid.CreateVersion7(), "Konser Duzeni");
 
-    // ---------------------------------------------------------------
     // PDF: "Ayni salonda ayni isimde iki oturma plani bulunmamalidir."
     //      (bolum seviyesindeki karsiligi)
-    // ---------------------------------------------------------------
 
     [Fact]
     public void AddSection_AyniIsimdeIkinciBolum_DomainExceptionFirlatmali()
@@ -43,9 +41,7 @@ public class SeatLayoutTests
         eylem.Should().Throw<DomainException>();
     }
 
-    // ---------------------------------------------------------------
     // Koltuk uretimi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void GenerateSeats_SiraVeKoltukSayisiyla_DogruSayidaKoltukUretmeli()
@@ -77,7 +73,7 @@ public class SeatLayoutTests
     {
         // Bu kontrol olmasaydi IndexOutOfRangeException alirdik --
         // kullaniciya hicbir sey anlatmayan teknik bir hata.
-        // DomainException ile ne yapmasi gerektigini soyluyoruz.
+        // DomainException ile ne yapmasi gerektigini soyluyorum.
         var plan = GecerliPlan();
         var bolum = plan.AddSection("Balkon", 1);
 
@@ -101,9 +97,7 @@ public class SeatLayoutTests
              .Which.ErrorCode.Should().Be("seat_section.seats_already_generated");
     }
 
-    // ---------------------------------------------------------------
     // PDF: "Ayni bolumde ayni sira ve koltuk numarasi tekrar edemez."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void AddSeat_AyniSiraVeNumara_DomainExceptionFirlatmali()
@@ -118,9 +112,7 @@ public class SeatLayoutTests
              .Which.ErrorCode.Should().Be("seat_section.duplicate_seat");
     }
 
-    // ---------------------------------------------------------------
     // PDF: "Koltuk kapasitesi salon kapasitesini asmamalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void ValidateCapacity_KoltukSayisiKapasiteyiAsiyorsa_HataFirlatmali()

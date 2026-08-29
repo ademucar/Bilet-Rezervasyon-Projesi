@@ -8,12 +8,10 @@ namespace Ticketing.UnitTests.Application;
 /// </summary>
 public class SensitiveDataMaskerTests
 {
-    // ==============================================================
     // JWT
-    // ==============================================================
+    //
     // Loga dusen bir JWT, suresi dolana kadar o kullanicinin hesabina
     // giris yetkisidir. Maskeleme burada en kritik.
-    // ==============================================================
     [Fact]
     public void Jwt_maskelenir()
     {
@@ -43,13 +41,11 @@ public class SensitiveDataMaskerTests
         sonuc.Should().NotContain(gizliDeger);
     }
 
-    // ==============================================================
     // ALAN ADI KORUNUYOR, DEGERI GIDIYOR
-    // ==============================================================
-    // Alan adini da silseydik logdan "hangi alan vardi" bilgisi
+    //
+    // Alan adini da silseydim logdan "hangi alan vardi" bilgisi
     // kaybolur ve hata ayiklamak imkansizlasirdi. Amac logu
     // yok etmek degil, ZARARSIZ hale getirmek.
-    // ==============================================================
     [Fact]
     public void Maskelemede_alan_adi_korunur()
     {
@@ -83,9 +79,7 @@ public class SensitiveDataMaskerTests
         SensitiveDataMasker.Mask(girdi).Should().BeEmpty();
     }
 
-    // ==============================================================
     // E-POSTA: KISMEN MASKELENIYOR
-    // ==============================================================
     [Theory]
     [InlineData("adem@ornek.com", "ade***@ornek.com")]
     [InlineData("a@ornek.com", "a***@ornek.com")]
@@ -104,7 +98,7 @@ public class SensitiveDataMaskerTests
     }
 
     // Gecerli bir e-posta degilse kismi maskeleme mantigi calismaz.
-    // O durumda TAMAMEN maskeliyoruz -- yanlislikla tamamini
+    // O durumda TAMAMEN maskeliyorum -- yanlislikla tamamini
     // loglamaktansa hicbir sey loglamak daha guvenli.
     [Fact]
     public void Gecersiz_eposta_tamamen_maskelenir()

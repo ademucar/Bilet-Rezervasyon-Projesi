@@ -11,9 +11,8 @@ namespace Ticketing.Persistence.Interceptors;
 /// kullanılmalıdır."
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF SPRINT 16'DA, OLCEREK BULUNAN BIR BOSLUK ICIN YAZILDI
-/// ==================================================================
+///
 /// OutboxMessage.CorrelationId alanı Sprint 9'dan beri VARDI.
 /// Create() metodunda parametresi vardi. Veritabaninda sutunu ve
 /// hatta INDEKSI vardi. XML yorumunda "PDF Sprint 16" diye
@@ -33,9 +32,8 @@ namespace Ticketing.Persistence.Interceptors;
 /// Sekiz cagri yerinden YEDISI parametreyi hiç gecmiyordu. Alan
 /// vardi, indeks vardi, niyet vardi -- veri yoktu.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN 7 CAGRI YERINI TEK TEK DUZELTMEDIM?
-/// ------------------------------------------------------------------
+///
 /// Duzeltebilirdim; 7 satirlik bir is. Ama aynı hata YENIDEN olurdu:
 /// 9. cagri yerini yazan kişi (yani gelecekteki ben) parametreyi
 /// yine unuturdu ve bunu kimse fark etmezdi -- çünkü unutmanin
@@ -49,9 +47,8 @@ namespace Ticketing.Persistence.Interceptors;
 /// Bu, Sprint 12'deki AuditFieldsInterceptor kararinin aynisi ve aynı
 /// desende bir hatayi cozuyor: "alan tanimli ama kimse doldurmuyor".
 ///
-/// ------------------------------------------------------------------
 /// NEDEN AuditFieldsInterceptor'A EKLEMEDIM?
-/// ------------------------------------------------------------------
+///
 /// Ekleyebilirdim ve ChangeTracker'i bir kez yerine iki kez gezmekten
 /// kurtulurduk.
 ///
@@ -63,7 +60,6 @@ namespace Ticketing.Persistence.Interceptors;
 /// yani aynı doneceye sigmiyorlardi. Performans farki da olcusuz:
 /// ChangeTracker gezintisi bellekte ve tipik bir kaydetmede birkaç
 /// on giriş var.
-/// ==================================================================
 /// </remarks>
 internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
 {
@@ -89,7 +85,7 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
     /// </summary>
     /// <remarks>
     /// Ikisini de geçersiz kilmak ŞART. Yalnızca async surumu
-    /// yazsaydık, senkron SaveChanges() cagiran herhangi bir kod yolu
+    /// yazsaydım, senkron SaveChanges() cagiran herhangi bir kod yolu
     /// (seed islemi, migration, bir test) sessizce boş correlation ID
     /// üretirdi -- ve bu, duzeltmeye calistigimiz hatanin ta kendisi.
     /// </remarks>
@@ -111,20 +107,18 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
             return;
         }
 
-        // ==============================================================
         // ARKA PLAN ISLERINDE ICurrentUser BOŞ -- BU NORMAL
-        // ==============================================================
+        //
         // ICurrentUser degerini IHttpContextAccessor'dan okuyor. Hangfire
         // isinde HTTP baglami YOK, dolayisiyla CorrelationId de yok.
         //
-        // O durumda hiçbir sey yazmiyoruz ve alan null kaliyor. Bu
+        // O durumda hiçbir sey yazmiyorum ve alan null kaliyor. Bu
         // DOGRU davranis: arka plan isinin urettigi yeni bir Outbox
         // mesajini, alakasiz bir HTTP istegine baglamak yanlış bilgi
         // üretirdi.
         //
         // Arka plan isleri kendi correlation ID'lerini ISLEDIKLERI
         // mesajdan devraliyor (bkz. ProcessOutboxMessagesCommand).
-        // ==============================================================
         var correlationId = _currentUser.CorrelationId;
 
         if (string.IsNullOrWhiteSpace(correlationId))
@@ -137,7 +131,7 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
             // Yalnızca YENI eklenen kayitlar.
             //
             // Guncellenen bir mesaja (örneğin "islendi" isaretlenen)
-            // dokunmuyoruz: onun correlation ID'si önü OLUSTURAN
+            // dokunmuyorum: onun correlation ID'si önü OLUSTURAN
             // isteğe ait ve oyle kalmali. Isleyen isin ID'siyle
             // degistirmek, zinciri tam ters yonde koparirdi.
             if (entry.State == EntityState.Added)

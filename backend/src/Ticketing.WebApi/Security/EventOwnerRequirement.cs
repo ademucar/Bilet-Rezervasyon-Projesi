@@ -14,9 +14,8 @@ namespace Ticketing.WebApi.Security;
 public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 
 /// <summary>
-/// ==================================================================
 /// ROL BAZLI ile KAYNAK BAZLI YETKILENDIRME ARASINDAKI FARK
-/// ==================================================================
+///
 /// Rol bazlı:    "Organizatör musun?"        -> token'a bakar, DB'ye gitmez
 /// Kaynak bazlı: "BU etkinliğin sahibi misin?" -> DB'ye BAKMAK ZORUNDA
 ///
@@ -26,7 +25,6 @@ public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 ///
 /// [Authorize(Roles = "Organizer")] bunu ENGELLEYEMEZ -- çünkü token
 /// yalnızca "bu kişi organizatör" der, "bu etkinlik onun" demez.
-/// ==================================================================
 ///
 /// NEDEN Application katmaninda değil de BURADA?
 /// Handler içinde de kontrol edebilirdik. Ama o zaman her handler'da
@@ -78,16 +76,15 @@ internal sealed class EventOwnerAuthorizationHandler
             return;
         }
 
-        // Etkinlik Id'sini route'tan okuyoruz: /api/v1/events/{id}
+        // Etkinlik Id'sini route'tan okuyorum: /api/v1/events/{id}
         if (!httpContext.Request.RouteValues.TryGetValue("id", out var routeValue) ||
             !Guid.TryParse(routeValue?.ToString(), out var eventId))
         {
             return;
         }
 
-        // ==============================================================
         // KENDİ KAPSAMIMI (scope) OLUSTURUYORUM
-        // ==============================================================
+        //
         // AuthorizationHandler SINGLETON olarak kaydedilir; DbContext ise
         // SCOPED. Singleton bir servise scoped bagimlilik enjekte etmek
         // "captive dependency" hatasidir: DbContext uygulama omru boyunca
@@ -96,13 +93,12 @@ internal sealed class EventOwnerAuthorizationHandler
         // IServiceScopeFactory ile istek başına kendi kapsamimi acip
         // kapatiyorum. Bu, singleton'dan scoped servise erismenin
         // doğru yolu.
-        // ==============================================================
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
         // Kullanıcının organizatör profili -> etkinliğin sahibi mi?
         //
-        // Tek sorguda birlestiriyorum: iki ayrı sorgu yapsaydik
+        // Tek sorguda birlestiriyorum: iki ayrı sorgu yapsaydim
         // (önce profil, sonra etkinlik) her yetkilendirmede iki
         // gidis-donus olurdu.
         var isOwner = await dbContext.Events

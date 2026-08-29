@@ -2,9 +2,9 @@ import type { ReactNode } from 'react'
 import { formatCountdown } from '../hooks/useCountdown'
 
 /**
- * ==================================================================
+ *
  * ÖDEME GERİ SAYIMI -- ÜÇ AŞAMA
- * ==================================================================
+ *
  * Sayaç tek bir görünüme sahip olmamalı. Kalan süre azaldıkça
  * BİÇİMİ de değişmeli: kullanıcı saati okumadan, çevresel görüşüyle
  * aciliyeti sezmeli.
@@ -18,9 +18,8 @@ import { formatCountdown } from '../hooks/useCountdown'
  * uyarı rengi göstermek, uyarıyı anlamsızlaştırıyor: kullanıcı
  * sarıya alışıyor ve gerçekten acil olduğunda fark etmiyor.
  *
- * ------------------------------------------------------------------
  * NEDEN İLERLEME ÇUBUĞU YOK?
- * ------------------------------------------------------------------
+ *
  * Tasarım taslağında sayaçın altında bir dolu/boş çubuk vardı.
  * Çizmedim: çubuğun paydası "toplam tutma süresi" olmalı, ama
  * ReservationDto bunu döndürmüyor (yalnızca expiresAt ve
@@ -30,7 +29,7 @@ import { formatCountdown } from '../hooks/useCountdown'
  * backend tutma süresini değiştirdiğinde çubuk sessizce yalan
  * söylemeye başlardı ve kimse fark etmezdi. Renk zaten aynı bilgiyi
  * doğru veriyor.
- * ==================================================================
+ *
  */
 
 type Asama = 'normal' | 'uyari' | 'kritik'

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
 /**
- * ==================================================================
+ *
  * PAYLASILAN KOLTUK HARITASI
- * ==================================================================
+ *
  * Bu bileşen ONCE admin panelinde (Sprint 4) yazildi ve yalnızca
  * adminApi'nin SectionDetail tipini taniyordu.
  *
@@ -24,7 +24,7 @@ import { useMemo } from 'react'
  * Cagiran taraflar kendi verilerini bu sade modele CEVIRIYOR. Boylece
  * renk kurallari (admin: bölüm rengi / bilet alma: durum rengi) her
  * ekranin kendi isi oluyor -- ki zaten oyle olmalı.
- * ==================================================================
+ *
  */
 
 export interface SeatMapSeat {
@@ -64,9 +64,8 @@ interface SeatMapProps {
   /**
    * Haritanin zemini.
    *
-   * ================================================================
    * NEDEN İKİ TON VAR?
-   * ================================================================
+   *
    * Bilet alma ekranında harita KOYU zeminde duruyor: salon
    * karanlıktır, koltuklar ışıklı okunur. Koyu zemin ayrıca
    * koltukları sayfanın geri kalanından ayırıyor -- göz "burası
@@ -79,7 +78,7 @@ interface SeatMapProps {
    *
    * Varsayılan 'light' -- yani bu prop'u vermeyen mevcut çağrılar
    * (admin) hiç değişmiyor.
-   * ================================================================
+   *
    */
   tone?: 'light' | 'dark'
 }
@@ -97,9 +96,9 @@ const SECTION_GAP = 32
 const SECTION_TITLE_HEIGHT = 24
 
 /**
- * ------------------------------------------------------------------
+ *
  * NEDEN SVG? Neden div/CSS grid değil?
- * ------------------------------------------------------------------
+ *
  * 1) OLCEKLENEBILIRLIK: SVG vektoreldir. viewBox ile harita, kapsayici
  *    genisligine göre kendini olceklendirir -- mobilde de masaustunde
  *    de bozulmadan çalışır.
@@ -108,13 +107,12 @@ const SECTION_TITLE_HEIGHT = 24
  *    tam bir CSS kutu modeli hesaplamasi gerektirir. SVG <rect> çok
  *    daha hafiftir.
  *
- * ------------------------------------------------------------------
  * ERİŞİLEBİLİRLİK
- * ------------------------------------------------------------------
+ *
  * SVG varsayılan olarak ekran okuyuculara KAPALIDIR. Her koltuga
- * <title> ekliyoruz ve role="button" veriyoruz ki klavyeyle
+ * <title> ekliyorum ve role="button" veriyorum ki klavyeyle
  * gezilebilsin. PDF Sprint 18: "Keyboard navigation desteklenmelidir."
- * ------------------------------------------------------------------
+ *
  */
 export function SeatMap({
   sections,
@@ -147,9 +145,9 @@ export function SeatMap({
 
     // Duz `for` dongusu kullanıyorum, `.map()` değil.
     //
-    // Sebep: burada bir DONUSUM değil, BIRIKIM yapiyoruz -- her bölüm
+    // Sebep: burada bir DONUSUM değil, BIRIKIM yapiyorum -- her bölüm
     // bir oncekinin bittigi yerden başlıyor (currentY) ve en genis
-    // bolumu ariyoruz (maxWidth). `.map()` içinde disaridaki
+    // bolumu ariyorum (maxWidth). `.map()` içinde disaridaki
     // degiskenleri değiştirmek hem okuyucuyu yaniltir hem de
     // "render sırasında degisken atamasi" olarak lint uyarısı alır.
     for (const section of ordered) {
@@ -196,7 +194,7 @@ export function SeatMap({
 
   if (sections.length === 0) {
     // PDF Sprint 18: "Empty state" zorunlu.
-    // Boş bir alan göstermek yerine ne olduğunu soyluyoruz.
+    // Boş bir alan göstermek yerine ne olduğunu soyluyorum.
     return (
       <div className="rounded-[4px] border border-slate-300 bg-white p-10 text-center">
         <p className="text-sm text-slate-500">{emptyMessage}</p>
@@ -240,7 +238,7 @@ export function SeatMap({
       <svg
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         // width="100%" + viewBox = duyarli olcekleme.
-        // Sabit piksel genisligi verseydik mobilde tasardi.
+        // Sabit piksel genisligi verseydim mobilde tasardi.
         width="100%"
         style={{ height: 'auto', maxHeight: '70vh' }}
         role="group"
@@ -304,7 +302,7 @@ export function SeatMap({
                           clickable
                             ? (e) => {
                                 // Enter ve Space, buton davranisinin
-                                // standardi. Yalnızca onClick koysaydık
+                                // standardi. Yalnızca onClick koysaydım
                                 // klavye kullanicisi koltuk secemezdi.
                                 if (e.key === 'Enter' || e.key === ' ') {
                                   e.preventDefault()

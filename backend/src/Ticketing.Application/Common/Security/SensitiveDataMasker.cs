@@ -7,9 +7,8 @@ namespace Ticketing.Application.Common.Security;
 /// PDF Sprint 15: "Hassas veri maskeleme".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF NEDEN GEREKLI? -- SOMUT SIZINTI YOLLARI
-/// ==================================================================
+///
 /// Loglar çoğu zaman "güvenli" sanilir ama degildir:
 ///
 ///   - Log dosyalari yedeklenir ve yedekler başka yerde durur
@@ -21,23 +20,20 @@ namespace Ticketing.Application.Common.Security;
 /// Bir JWT veya şifre sıfırlama token'i loga duserse, ona erisen
 /// herkes o kullanıcının hesabina girebilir.
 ///
-/// ------------------------------------------------------------------
 /// NE MASKELENIYOR?
-/// ------------------------------------------------------------------
+///
 ///   JWT              -> oturum ele gecirme
 ///   Şifre alanlari   -> doğrudan hesap erişimi
 ///   Kart numarasi    -> PCI-DSS ihlali (simulasyonda yok ama
 ///                       gerçek entegrasyonda gelebilir)
 ///   E-posta          -> KISMEN maskeleniyor (aşağıda gerekce)
-/// ------------------------------------------------------------------
 /// </remarks>
 public static partial class SensitiveDataMasker
 {
     private const string Maske = "***MASKELENDI***";
 
-    // ==================================================================
     // NEDEN [GeneratedRegex]?
-    // ==================================================================
+    //
     // Regex'ler derleme zamaninda kaynak ureteci ile oluşturuluyor.
     //
     // new Regex(...) her cagrida yeniden ayristirir; static readonly
@@ -45,7 +41,6 @@ public static partial class SensitiveDataMasker
     // olarak URETILIYOR -- en hizlisi ve tahsis yapmiyor.
     //
     // Maskeleme HER LOG SATIRINDA calisabilecegi için bu önemli.
-    // ==================================================================
 
     /// <summary>JWT: uc bolumlu, nokta ile ayrilmis Base64.</summary>
     [GeneratedRegex(
@@ -88,9 +83,9 @@ public static partial class SensitiveDataMasker
 
         var sonuc = JwtRegex().Replace(input, Maske);
 
-        // $1 ile alan ADINI koruyor, yalnızca DEGERI maskeliyoruz.
+        // $1 ile alan ADINI koruyor, yalnızca DEGERI maskeliyorum.
         //
-        // Alan adını da silseydik logdan "hangi alan vardi" bilgisi
+        // Alan adını da silseydim logdan "hangi alan vardi" bilgisi
         // kaybolurdu ve hata ayiklamak imkansizlasirdi.
         sonuc = JsonSecretRegex().Replace(sonuc, @"$1""" + Maske + @"""");
 
@@ -103,9 +98,8 @@ public static partial class SensitiveDataMasker
     /// E-postayi KISMEN maskeler: "adem@ornek.com" -> "ade***@ornek.com"
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN TAMAMEN GIZLEMIYORUZ?
-    /// ==============================================================
+    ///
     /// E-posta kisisel veri (KVKK/GDPR kapsaminda) ama aynı zamanda
     /// destek ve hata ayiklama için GEREKLI: "hangi kullanıcı?"
     /// sorusunun en pratik cevabi.
@@ -117,7 +111,6 @@ public static partial class SensitiveDataMasker
     /// İlk uc harf + alan adı, destek için yeterli ipucu veriyor ama
     /// adresi TOPLU olarak toplamayi (spam listesi olusturmayi)
     /// engelliyor.
-    /// ==============================================================
     /// </remarks>
     public static string MaskEmail(string? email)
     {
@@ -141,7 +134,7 @@ public static partial class SensitiveDataMasker
         var alanAdi = email[atIndex..];
 
         // Çok kisa yerel kisimlarda (a@x.com) ilk uc harf zaten
-        // tamamini açık eder. O durumda tek harf birakiyoruz.
+        // tamamini açık eder. O durumda tek harf birakiyorum.
         var gorunenUzunluk = yerelKisim.Length <= 3 ? 1 : 3;
 
         return $"{yerelKisim[..gorunenUzunluk]}***{alanAdi}";

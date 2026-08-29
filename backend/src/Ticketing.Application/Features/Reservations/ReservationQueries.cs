@@ -8,9 +8,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reservations;
 
-// ===================================================================
 // DTO'lar
-// ===================================================================
 
 public sealed record ReservationItemDto(
     Guid Id,
@@ -37,9 +35,7 @@ public sealed record ReservationDto(
     int ExtensionCount,
     IReadOnlyList<ReservationItemDto> Items);
 
-// ===================================================================
 // ORTAK SORGU
-// ===================================================================
 
 internal static class ReservationQueries
 {
@@ -54,9 +50,8 @@ internal static class ReservationQueries
     /// <summary>
     /// Materyalize edilmiş DTO'ya kalan süreyi ekler.
     ///
-    /// ==================================================================
     /// NEDEN SORGUDA HESAPLAMIYORUZ? -- CALISTIRINCA OGRENDIK
-    /// ==================================================================
+    ///
     /// İlk yazisimda kalan süreyi SQL içinde hesapliyordum:
     ///
     ///     (int)(r.ExpiresAt > now ? (r.ExpiresAt - now).TotalSeconds : 0)
@@ -90,9 +85,8 @@ internal static class ReservationQueries
     /// <summary>
     /// Rezervasyon sorgusunu DTO'ya projelendirir.
     ///
-    /// ==================================================================
     /// FILTRE, PROJEKSIYONDAN ONCE UYGULANMALI
-    /// ==================================================================
+    ///
     /// İlk yazisimda bu metot doğrudan context.Reservations üzerinden
     /// baslayip IQueryable&lt;ReservationDto&gt; donuyordu ve cagiranlar
     /// sonucu filtreliyordu:
@@ -109,14 +103,13 @@ internal static class ReservationQueries
     /// ENTITY uzerinde olmasını gerekiyor.
     ///
     /// Cozum: filtrelenmis IQueryable&lt;Reservation&gt; ALMAK. Boylece
-    /// cagiran önce filtreliyor, sonra projelendiriyoruz:
+    /// cagiran önce filtreliyor, sonra projelendiriyorum:
     ///
     ///     context.Reservations.Where(r =&gt; r.Id == id).ToDto(context)
     ///
     /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti: 9 istek doğru
     /// şekilde 409 aldi, kazanan istek rezervasyonu OLUSTURDU ama
     /// yaniti hazirlarken 500 dondu. Cekirdek mantik dogruydu.
-    /// ==================================================================
     /// </summary>
     public static IQueryable<ReservationDto> ToDto(
         this IQueryable<Ticketing.Domain.Entities.Reservation> query,
@@ -155,9 +148,7 @@ internal static class ReservationQueries
                     .ToList()));
 }
 
-// ===================================================================
 // DETAY -- PDF: GET /api/v1/reservations/{id}
-// ===================================================================
 
 public sealed record GetReservationQuery(Guid Id) : IRequest<Result<ReservationDto>>;
 
@@ -188,22 +179,21 @@ internal sealed class GetReservationQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // SAHIPLIK KONTROLU -- SORGUNUN ICINDE
-        // ==============================================================
+        //
         // "Önce cek, sonra sahibi mi diye bak" da yapabilirdik. Ama o
         // zaman baskasinin rezervasyonu bir an için bellege gelirdi ve
         // bir loglama veya hata mesajinda sizabilirdi.
         //
         // Sorguya dahil etmek daha güvenli: veri hiç gelmiyor.
         //
-        // Sonuç bulunamazsa 404 donuyoruz (403 değil) -- var olan bir
+        // Sonuç bulunamazsa 404 donuyorum (403 değil) -- var olan bir
         // rezervasyonun varligini dogrulamamak için.
         // Filtreyi ENTITY uzerinde uyguluyorum, DTO uzerinde değil.
         //
         // Sahiplik kontrolü de burada: baskasinin rezervasyonu hiç
-        // bellege gelmiyor. Sonuç bulunamazsa 404 -- 403 deseydik
-        // rezervasyonun VAR olduğunu dogrulamis olurduk.
+        // bellege gelmiyor. Sonuç bulunamazsa 404 -- 403 deseydim
+        // rezervasyonun VAR olduğunu dogrulamis olurdum.
         var dto = await _context.Reservations
             .Where(r => r.Id == request.Id && r.UserId == userId)
             .ToDto(_context)
@@ -216,10 +206,8 @@ internal sealed class GetReservationQueryHandler
     }
 }
 
-// ===================================================================
 // KULLANICININ REZERVASYONLARI
 // PDF: GET /api/v1/users/me/reservations
-// ===================================================================
 
 public sealed record GetMyReservationsQuery(ReservationStatus? Status)
     : IRequest<Result<IReadOnlyList<ReservationDto>>>;

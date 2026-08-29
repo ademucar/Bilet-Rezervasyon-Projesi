@@ -27,7 +27,7 @@ export function VenueDetailPage() {
     // enabled: venueId yoksa sorguyu HİÇ calistirma.
     //
     // Bu olmasaydı `/venues/undefined` gibi anlamsiz bir istek gider
-    // ve 404 alırdık. Kullanıcı bunu "sayfa bozuk" olarak gorurdu.
+    // ve 404 alırdım. Kullanıcı bunu "sayfa bozuk" olarak gorurdu.
     enabled: Boolean(venueId),
   })
 
@@ -105,8 +105,8 @@ export function VenueDetailPage() {
             error={errors.capacity?.message}
             {...register('capacity', {
               // valueAsNumber ŞART: HTML input her zaman STRING döner.
-              // Bu olmasaydı backend'e "500" (metin) gonderirdik ve
-              // model binding hatası alırdık.
+              // Bu olmasaydı backend'e "500" (metin) gonderirdim ve
+              // model binding hatası alırdım.
               valueAsNumber: true,
               required: 'Kapasite zorunludur.',
               min: { value: 1, message: 'Kapasite sıfırdan büyük olmalıdır.' },

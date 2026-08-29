@@ -30,27 +30,24 @@ public sealed class FilesController : ApiControllerBase
     /// <response code="413">Dosya izin verilen boyutu asiyor.</response>
     [HttpPost]
 
-    // ==============================================================
     // KIMLIK DOGRULAMA ŞART -- ANONIM YUKLEMEYE ASLA IZIN YOK
-    // ==============================================================
+    //
     // Anonim dosya yukleme, sunucumuzu herkese açık bir depolama
-    // alanina cevirir. Saldirgan diski doldurabilir veya bizim alan
+    // alanina cevirir. Saldirgan diski doldurabilir veya benim alan
     // adimizi kullanarak zararli dosya dagitabilir -- ve iz surecek
     // bir kimlik olmaz.
     //
     // Kimlik zorunlu olunca her dosyanin bir sahibi oluyor
     // (AuditFieldsInterceptor CreatedBy alanini dolduruyor) ve
     // kotuye kullanim geriye doğru izlenebiliyor.
-    // ==============================================================
     [Authorize]
 
     // İşlem politikasi: dakikada 20. Yukleme pahali bir işlem
     // (disk yazma + doğrulama) ve kotuye kullanimi kolay.
     [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
 
-    // ==============================================================
     // UC BAZLI BOYUT SINIRI
-    // ==============================================================
+    //
     // Program.cs'te genel sinir 1 MB. Dosya yukleme için bu yetersiz
     // oldugundan burada 5 MB'a yukseltiyorum.
     //
@@ -60,12 +57,10 @@ public sealed class FilesController : ApiControllerBase
     //
     // Ilke: sinirlar ihtiyaci olan yerde GENISLETILIR, her yerde
     // birden değil.
-    // ==============================================================
     [RequestSizeLimit(FileUploadValidator.MaksimumBoyut)]
 
-    // ==============================================================
     // IKI SINIR ATTRIBUTE'U -- IKISI DE GEREKLI
-    // ==============================================================
+    //
     // [RequestSizeLimit] GERCEK sinirlayici: govdeyi Kestrel
     // seviyesinde kesiyor ve chunked isteklerde bile çalışıyor.
     // Ama tetiklendiginde MVC yanlış yanit uretiyor (400 + ic
@@ -78,7 +73,6 @@ public sealed class FilesController : ApiControllerBase
     // Biri korumayi, digeri iletisimi ustleniyor. Bunu ancak sınırı
     // GERCEKTEN asan bir istek gonderip yaniti okuyunca fark ettim --
     // ayar dogruydu, davranis yanlisti.
-    // ==============================================================
     [RequestSizeGuard(FileUploadValidator.MaksimumBoyut)]
     [ProducesResponseType<UploadedFileDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -140,15 +134,14 @@ public sealed class FilesController : ApiControllerBase
 
         var dosya = sonuc.Value;
 
-        // ==============================================================
         // NEDEN HER ZAMAN "attachment"?
-        // ==============================================================
+        //
         // Content-Disposition: attachment, tarayiciya "bu dosyayı
         // GOSTERME, INDIR" diyor.
         //
-        // "inline" olsaydı tarayıcı dosyayı bizim alan adimizda
+        // "inline" olsaydı tarayıcı dosyayı benim alan adimizda
         // acardi. Dogrulamayi gecmis ama içinde script barindiran bir
-        // dosya (örneğin polyglot bir PDF) o zaman BIZIM alan
+        // dosya (örneğin polyglot bir PDF) o zaman BENIM alan
         // adimizda çalışır ve kullanicilarin oturum cerezlerine
         // erisebilirdi.
         //
@@ -161,8 +154,7 @@ public sealed class FilesController : ApiControllerBase
         // alan adindan sunulur (örneğin cdn-örnek.com). Boylece dosya
         // bir şekilde calissa bile ana alan adimizin cerezlerine
         // erisemez. Bunu simdi yapmiyorum çünkü tek alan adiyla
-        // calisiyoruz -- ama olceklenirken ilk yapilacak sey bu.
-        // ==============================================================
+        // calisiyorum -- ama olceklenirken ilk yapilacak sey bu.
         return File(dosya.Content, dosya.ContentType, dosya.FileName);
     }
 }

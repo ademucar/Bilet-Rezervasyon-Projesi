@@ -23,13 +23,11 @@ public class Role : Entity
 
     public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
 
-    // ---------------------------------------------------------------
     // Sabit roller
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Rol isimleri. Kod içinde "Admin" diye metin yazmak yerine
-    /// RoleNames.Admin kullanacagiz.
+    /// RoleNames.Admin kullanacagim.
     ///
     /// Neden? Metin yazarsan yazım hatası derleme zamaninda YAKALANMAZ.
     /// [Authorize(Roles = "Adnim")] yazdiginda kod derlenir, çalışır ve

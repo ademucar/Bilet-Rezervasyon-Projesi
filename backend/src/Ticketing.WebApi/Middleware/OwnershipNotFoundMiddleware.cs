@@ -8,9 +8,8 @@ namespace Ticketing.WebApi.Middleware;
 /// Sahiplik politikalari reddettiginde 403 yerine 404 döndürür.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN 403 DEĞİL DE 404?
-/// ==================================================================
+///
 /// Sprint 19'da TicketOwner ve ReservationOwner politikalarini
 /// tamamladiktan sonra bir celiski fark ettim.
 ///
@@ -27,25 +26,22 @@ namespace Ticketing.WebApi.Middleware;
 /// Yani politikayi kosulsuz eklemek, daha güvenli olan bu davranisi
 /// BOZACAKTI: bir iyilestirme yaparken bir gerileme uretecektim.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN MIDDLEWARE, IAuthorizationMiddlewareResultHandler DEĞİL?
-/// ------------------------------------------------------------------
+///
 /// Önce o arayuzu uygulamayi denedim -- bu isin "resmi" yolu. Ama
 /// derleyici tipi cozemedi (CS0246): arayüz bu cerceve surumunde
 /// projeden erişilebilir değil.
 ///
 /// Middleware aynı sonucu veriyor ve daha az cerceve ic ayrintisina
 /// bağlı. Bedeli: yaniti DEĞİL, yalnızca durum kodunu ve govdeyi
-/// yeniden yazıyoruz -- ki zaten istedigimiz tam olarak bu.
+/// yeniden yazıyorum -- ki zaten istedigimiz tam olarak bu.
 ///
-/// ------------------------------------------------------------------
 /// KAPSAM: YALNIZCA SAHIPLIK POLITIKALARI
-/// ------------------------------------------------------------------
+///
 /// Rol bazlı reddetmelerde (AdminOnly, OrganizerOnly) 403 KALIYOR.
 /// Orada sizinti yok: "admin degilsin" bilgisi kullanıcının kendisi
 /// hakkında. Onu 404 ile karsilamak yanıltıcı olurdu -- kullanıcı
 /// "sayfa silinmis mi?" diye dusunurdu.
-/// ==================================================================
 /// </remarks>
 internal sealed class OwnershipNotFoundMiddleware
 {
@@ -66,13 +62,11 @@ internal sealed class OwnershipNotFoundMiddleware
 
         await _next(context).ConfigureAwait(false);
 
-        // ==============================================================
         // YALNIZCA 403 -- 401 DEĞİL
-        // ==============================================================
+        //
         // 401 "kim olduğunu bilmiyorum" demek; kullanıcı giriş
         // yapmamis. Ona "yok" demek yanlış olurdu: giriş yapmasi
         // gerektigini soylemeliyiz.
-        // ==============================================================
         if (context.Response.StatusCode != StatusCodes.Status403Forbidden)
         {
             return;
@@ -83,17 +77,15 @@ internal sealed class OwnershipNotFoundMiddleware
             return;
         }
 
-        // ==============================================================
         // YANIT BASLAMISSA DOKUNAMAYIZ
-        // ==============================================================
+        //
         // Yetkilendirme reddi govde YAZMADAN durum kodu ayarliyor, bu
         // yüzden pratikte buraya her zaman "baslamamis" olarak
-        // geliyoruz.
+        // geliyorum.
         //
         // Yine de kontrol ediyorum: aksi halde ilerde araya giren
         // başka bir middleware govde yazarsa burasi
         // InvalidOperationException firlatirdi.
-        // ==============================================================
         if (context.Response.HasStarted)
         {
             return;
@@ -127,8 +119,8 @@ internal sealed class OwnershipNotFoundMiddleware
     /// Bu ucun yetkilendirmesi bir SAHIPLIK politikasina mi dayaniyor?
     /// </summary>
     /// <remarks>
-    /// Endpoint metadata'sindan okuyoruz. Yol desenine göre karar
-    /// verseydik ("/reservations/ ile basliyorsa") yeni bir uc
+    /// Endpoint metadata'sindan okuyorum. Yol desenine göre karar
+    /// verseydim ("/reservations/ ile basliyorsa") yeni bir uc
     /// eklendiginde kural sessizce yanlış yere uygulanabilirdi.
     ///
     /// Metadata, ucun GERCEKTEN hangi politikayi kullandigini

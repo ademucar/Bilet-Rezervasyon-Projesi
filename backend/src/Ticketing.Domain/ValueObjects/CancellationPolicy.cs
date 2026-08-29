@@ -8,9 +8,8 @@ namespace Ticketing.Domain.ValueObjects;
 /// Etkinlik başına saklanir (Event.CancellationPolicy) çünkü her organizatör
 /// kendi politikasini belirleyebilmeli. Veritabaninda jsonb olarak tutulacak.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN AYRI BIR VALUE OBJECT?
-/// ------------------------------------------------------------------
+///
 /// Alternatif su olurdu: Event tablosuna uc ayrı sutun koymak
 ///     FullRefundHours, PartialRefundHours, PartialRefundPercentage
 ///
@@ -53,7 +52,7 @@ public sealed record CancellationPolicy
     ///     "No suitable constructor was found for entity type"
     ///
     /// (İlk yazisimda kisa adlar kullanmistim; migration uretirken tam da
-    /// bu hatayi aldik. Kisa adlar okunakli gorunuyordu ama EF'in
+    /// bu hatayi aldim. Kisa adlar okunakli gorunuyordu ama EF'in
     /// eslestirme kuralini bozuyordu.)
     /// </summary>
     private CancellationPolicy(
@@ -122,7 +121,7 @@ public sealed record CancellationPolicy
         //
         // Bu kalibin adı "dependency injection of time" veya kisaca
         // zamani disaridan almak. Sprint 3'te bunu tüm sisteme yaymak için
-        // bir ITimeProvider arayuzu ekleyecegiz.
+        // bir ITimeProvider arayuzu ekleyecegim.
         var kalanSaat = (eventStartsAt - cancelledAt).TotalHours;
 
         if (kalanSaat > FullRefundThresholdHours)

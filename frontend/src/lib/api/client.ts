@@ -20,9 +20,7 @@ function newCorrelationId(): string {
   return crypto.randomUUID().replace(/-/g, '')
 }
 
-// ===================================================================
 // ISTEK INTERCEPTOR'I -- token ekle
-// ===================================================================
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
 
@@ -38,20 +36,17 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// ===================================================================
 // YANIT INTERCEPTOR'I -- 401 alınca sessizce token yenile
-// ===================================================================
 //
-// ==================================================================
 // EN ONEMLI PROBLEM: ES ZAMANLI ISTEKLER
-// ==================================================================
+//
 // Sayfa acilirken 4 istek aynı anda gidiyor ve access token'in süresi
 // yeni dolmuş. Dordu de 401 aliyor.
 //
 // Naif bir çözüm her 401'de yenileme yapardi -> DORT yenileme isteği.
 //
-// Bu bizim backend'imizde FELAKET olurdu, çünkü refresh token
-// ROTATION uyguluyoruz:
+// Bu benim backend'imizde FELAKET olurdu, çünkü refresh token
+// ROTATION uyguluyorum:
 //   1. istek token'i yeniler -> eski token İPTAL olur
 //   2. istek AYNI eski token'i gönderir -> "iptal edilmiş token
 //      tekrar kullanıldı!" -> backend CALINMA SALDIRISI sanip
@@ -63,7 +58,6 @@ api.interceptors.request.use((config) => {
 //
 // COZUM: Aynı anda YALNIZCA BIR yenileme çalışır. Digerleri o
 // yenilemenin Promise'ini bekler ve sonucunu paylasir.
-// ==================================================================
 
 let refreshPromise: Promise<AuthResponse> | null = null
 
@@ -158,7 +152,7 @@ api.interceptors.response.use(
       // Yenileme başarısız: refresh token da geçersiz.
       //
       // Backend "refresh_token_reused" dondurduyse bu bir GÜVENLİK
-      // olayidir -- kullanıcıya farklı bir mesaj gosteriyoruz.
+      // olayidir -- kullanıcıya farklı bir mesaj gosteriyorum.
       const code = error.response?.data?.errorCode
       endSession(code === 'auth.refresh_token_reused' ? 'revoked' : 'expired')
 
@@ -199,22 +193,20 @@ export function toProblem(error: unknown): ProblemDetails {
   }
 }
 
-// ===================================================================
 // GELISTIRME YARDIMCISI
-// ===================================================================
+//
 // API istemcisini YALNIZCA gelistirme modunda window'a bagliyorum.
 //
 // Ne ise yariyor? Tarayici konsolundan
 //     await window.__api.get('/auth/me')
 // yazip interceptor'in davranisini (token yenileme, hata isleme)
-// doğrudan deneyebiliyoruz. Ozellikle "es zamanlı 401" senaryosunu
+// doğrudan deneyebiliyorum. Ozellikle "es zamanlı 401" senaryosunu
 // test etmenin en pratik yolu bu.
 //
 // import.meta.env.DEV, Vite tarafından üretim derlemesinde false'a
 // sabitlenir ve bu blok paketten TAMAMEN silinir (tree shaking).
 // Yani uretimde window.__api diye bir sey OLMAZ -- boyle bir kapiyi
 // açık birakmak istemeyiz.
-// ===================================================================
 if (import.meta.env.DEV) {
   ;(window as unknown as { __api: AxiosInstance }).__api = api
 }

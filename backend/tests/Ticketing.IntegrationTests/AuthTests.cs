@@ -16,9 +16,7 @@ public sealed class AuthTests : IntegrationTestBase
     {
     }
 
-    // ==============================================================
     // PDF: "Register ve Login"
-    // ==============================================================
 
     [Fact]
     public async Task Kayit_sonrasi_giris_yapilabilmeli()
@@ -35,9 +33,8 @@ public sealed class AuthTests : IntegrationTestBase
 
         kayit.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // ==========================================================
         // VERITABANINA DA BAKIYORUZ, YALNIZCA YANITA DEGIL
-        // ==========================================================
+        //
         // Yanit 200 dondugu halde kaydin yazilmamis olmasi
         // mumkun (ornegin SaveChanges unutulmus olsaydi).
         //
@@ -45,7 +42,6 @@ public sealed class AuthTests : IntegrationTestBase
         // her sey dogru gorunuyordu ama sutun bostu. O gunden beri
         // "yanit basarili" ile "veri yazildi" ayri iki sey olarak
         // dogruluyorum.
-        // ==========================================================
         using (var db = Db())
         {
             var kullanici = await db.Users
@@ -109,9 +105,8 @@ public sealed class AuthTests : IntegrationTestBase
     }
 
     /// <remarks>
-    /// ==============================================================
     /// HESAP SAYIMI (user enumeration) KORUMASI
-    /// ==============================================================
+    ///
     /// Var olmayan kullanici ile yanlis sifre AYNI yaniti vermeli.
     ///
     /// Farkli verseydi saldirgan hangi e-postalarin kayitli oldugunu
@@ -148,9 +143,7 @@ public sealed class AuthTests : IntegrationTestBase
         a.Should().Be(b);
     }
 
-    // ==============================================================
     // PDF: "Refresh Token"
-    // ==============================================================
 
     [Fact]
     public async Task Refresh_token_ile_yeni_access_token_alinabilmeli()
@@ -178,16 +171,14 @@ public sealed class AuthTests : IntegrationTestBase
         yeni.RootElement.GetProperty("accessToken").GetString()
             .Should().NotBeNullOrEmpty();
 
-        // ==========================================================
         // DONME (rotation): eski token artik gecersiz olmali
-        // ==========================================================
+        //
         // Yenilemede yeni bir refresh token uretiliyor ve eskisi
         // iptal ediliyor.
         //
         // Olmasaydi calinan bir refresh token SONSUZA KADAR
         // kullanilabilirdi -- sifre degistirmek bile onu
         // durdurmazdi.
-        // ==========================================================
         var tekrar = await Client.PostAsJsonAsync("/api/v1/auth/refresh-token", new
         {
             refreshToken,
@@ -197,9 +188,7 @@ public sealed class AuthTests : IntegrationTestBase
             "kullanilmis refresh token ikinci kez kabul edilmemeli");
     }
 
-    // ==============================================================
     // PDF: "Yetkisiz erisim"
-    // ==============================================================
 
     [Fact]
     public async Task Tokensiz_istek_401_donmeli()
@@ -226,7 +215,7 @@ public sealed class AuthTests : IntegrationTestBase
     ///
     /// Istemci ikisine farkli tepki vermeli: 401'de giris sayfasina
     /// yonlendirmeli, 403'te "yetkiniz yok" gostermeli. Ayni
-    /// yapsaydik, yetkisiz bir kullanici surekli giris sayfasina
+    /// yapsaydim, yetkisiz bir kullanici surekli giris sayfasina
     /// atilir ve zaten girisli oldugu icin donup dolasip ayni yere
     /// gelirdi.
     /// </remarks>

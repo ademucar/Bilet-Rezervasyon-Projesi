@@ -18,7 +18,7 @@ internal sealed partial class RedisCacheService : ICacheService
     /// başka bir uygulamanin "ref:cities" anahtari bizimkiyle carpisirdi
     /// ve ikisi de yanlış veri okurdu.
     ///
-    /// Ayrıca "ticketing:*" ile bizim tüm anahtarlarimizi tek seferde
+    /// Ayrıca "ticketing:*" ile benim tüm anahtarlarimizi tek seferde
     /// gormek/temizlemek mumkun oluyor.
     /// </remarks>
     private const string AppPrefix = "ticketing:";
@@ -54,21 +54,19 @@ internal sealed partial class RedisCacheService : ICacheService
 
         var fullKey = AppPrefix + key;
 
-        // ==============================================================
         // PDF KURALI: "Cache kapalı olduğunda sistem calismaya devam
         // edebilmelidir."
-        // ==============================================================
+        //
         // Bu kural bu dosyanin en önemli tasarım kisitidir ve iki yerde
         // uygulaniyor: OKUMA ve YAZMA.
         //
         // Onbellek bir HIZLANDIRICIDIR, veri kaynagi değil. Redis
         // coktugunde site YAVASLAMALI ama COKMEMELI.
         //
-        // Istisnayi yukari biraksaydik, Redis'in bir dakikalik kesintisi
+        // Istisnayi yukari biraksaydim, Redis'in bir dakikalik kesintisi
         // TÜM SITEYI 500 hatasina bogardi -- oysa veritabani gayet
         // sağlıklı çalışıyor olurdu. Onbellek eklemek, sistemi daha
         // KIRILGAN yapmış olurdu ki bu tam tersi bir sonuç.
-        // ==============================================================
         try
         {
             var db = _redis.GetDatabase();
@@ -95,8 +93,8 @@ internal sealed partial class RedisCacheService : ICacheService
         // Ve sayamadigimiz bir tanesi, önbellek yuzunden calisan bir
         // sorguyu hataya cevirirdi.
         //
-        // Hatayi YUTMUYORUZ, logluyoruz -- ama kullanıcıya
-        // yansitmiyoruz. Yukaridaki PDF kuralinin geregi budur.
+        // Hatayi YUTMUYORUZ, logluyorum -- ama kullanıcıya
+        // yansitmiyorum. Yukaridaki PDF kuralinin geregi budur.
         catch (Exception ex)
 #pragma warning restore CA1031
         {
@@ -106,7 +104,7 @@ internal sealed partial class RedisCacheService : ICacheService
         // Onbellekte yok (veya Redis erisilemedi): asil kaynaktan üret.
         var fresh = await factory(cancellationToken).ConfigureAwait(false);
 
-        // null'i onbelleklemiyoruz.
+        // null'i onbelleklemiyorum.
         //
         // Sebep: "bulunamadı" sonucunu saklamak, kayıt sonradan
         // olusturulsa bile süre dolana kadar "yok" demeye devam etmek
@@ -159,9 +157,8 @@ internal sealed partial class RedisCacheService : ICacheService
     /// Onekle eslesen tüm anahtarlari siler.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN KEYS DEĞİL SCAN?
-    /// ==============================================================
+    ///
     /// Redis'in KEYS komutu, eslesen anahtarlari bulmak için TÜM
     /// anahtar alanini tek seferde tarar ve bu sırada SUNUCUYU
     /// TAMAMEN BLOKE EDER. Redis tek is parcacikli olduğu için, o
@@ -177,7 +174,6 @@ internal sealed partial class RedisCacheService : ICacheService
     ///
     /// StackExchange.Redis'in Keys() metodu, sunucu destekliyorsa
     /// otomatik olarak SCAN kullaniyor (pageSize ile).
-    /// ==============================================================
     /// </remarks>
     public async Task RemoveByPrefixAsync(
         string prefix,
@@ -196,7 +192,7 @@ internal sealed partial class RedisCacheService : ICacheService
                 var server = _redis.GetServer(endpoint);
 
                 // Replika sunucularda anahtar silmek hatalı olur;
-                // yalnızca ana (primary) sunucularda calisiyoruz.
+                // yalnızca ana (primary) sunucularda calisiyorum.
                 if (server.IsReplica || !server.IsConnected)
                 {
                     continue;
@@ -222,9 +218,7 @@ internal sealed partial class RedisCacheService : ICacheService
         }
     }
 
-    // ==================================================================
     // LOGLAMA -- kaynak ureteci ile (CA1848)
-    // ==================================================================
 
     [LoggerMessage(
         EventId = 9301,

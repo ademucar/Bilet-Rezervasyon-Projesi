@@ -8,9 +8,8 @@ namespace Ticketing.WebApi.Security;
 /// PDF Sprint 15: "Request size limit".
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU SINIF, [RequestSizeLimit] YETMEDIGI ICIN VAR
-/// ==================================================================
+///
 /// Önce yalnızca [RequestSizeLimit(5 MB)] kullandim. Sinir DOGRU
 /// calisiyordu ama YANITI test edince iki sorun cikti:
 ///
@@ -25,9 +24,8 @@ namespace Ticketing.WebApi.Security;
 ///      Bu, ic yapilandirmamizi disariya acan gereksiz bir bilgi ve
 ///      uygulamanin geri kalaniyla tutarsiz bir hata bicimi.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN RESOURCE FILTER, ACTION FILTER DEĞİL?
-/// ------------------------------------------------------------------
+///
 /// Action filter, MODEL BAGLAMADAN SONRA çalışıyor -- yani govde
 /// coktan okunmus, hata coktan olusmus oluyor. Çok geç.
 ///
@@ -39,9 +37,8 @@ namespace Ticketing.WebApi.Security;
 /// kalmiyoruz. Reddedecegimiz veriyi almak için bant genisligi ve
 /// bellek harcamak, tam olarak saldirganin istedigi seydir.
 ///
-/// ------------------------------------------------------------------
 /// SINIRLAMA -- DURUSTCE
-/// ------------------------------------------------------------------
+///
 /// Content-Length OLMAYAN istekler (chunked transfer encoding) bu
 /// kontrolden gecer. O durumda [RequestSizeLimit] yine devreye
 /// giriyor ve istek durduruluyor -- ama yanit yine 400 oluyor.
@@ -50,7 +47,6 @@ namespace Ticketing.WebApi.Security;
 /// davranis geciyor. Ikisini birlikte kullanıyorum: bu filtre
 /// doğru yaniti verir, [RequestSizeLimit] ise gerçek sinirlayici
 /// olarak her kosulda korur.
-/// ==================================================================
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter

@@ -177,7 +177,7 @@ export function RegisterPage() {
           type="password"
           // "new-password": şifre yoneticisine "bu yeni bir şifre,
           // güçlü bir tane onerebilirsin" der. "current-password"
-          // yazsaydık kayıtlı sifreyi doldurmaya calisirdi.
+          // yazsaydım kayıtlı sifreyi doldurmaya calisirdi.
           autoComplete="new-password"
           error={errors.password?.message}
           {...register('password')}

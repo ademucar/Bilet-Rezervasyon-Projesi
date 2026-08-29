@@ -71,7 +71,7 @@ internal sealed class TokenService : ITokenService
             Audience = _options.Audience,
 
             // UtcDateTime kullanıyorum: JWT spec'i zamanlari Unix epoch
-            // (UTC) olarak saklar. DateTimeOffset'i doğrudan verseydik
+            // (UTC) olarak saklar. DateTimeOffset'i doğrudan verseydim
             // kutuphane yine cevirirdi ama acikca yazmak, saat dilimi
             // hatalarina karsi niyeti belgeliyor.
             NotBefore = _clock.UtcNow.UtcDateTime,
@@ -91,9 +91,8 @@ internal sealed class TokenService : ITokenService
 
     public RefreshTokenResult CreateRefreshToken()
     {
-        // ==================================================================
         // KRIPTOGRAFIK RASTGELELIK -- Random SINIFI KULLANILMAZ
-        // ==================================================================
+        //
         // System.Random tahmin edilebilir bir dizidir: tohumunu (seed)
         // bilen veya birkaç ciktisini goren biri sonraki değerleri
         // hesaplayabilir.
@@ -106,7 +105,6 @@ internal sealed class TokenService : ITokenService
         //
         // 64 byte = 512 bit entropi. Kaba kuvvetle tahmin edilmesi
         // fiziksel olarak imkansiz.
-        // ==================================================================
         var bytes = RandomNumberGenerator.GetBytes(64);
 
         // Base64Url: '+', '/' ve '=' karakterlerini kullanmaz.
@@ -122,10 +120,9 @@ internal sealed class TokenService : ITokenService
 
     public string HashRefreshToken(string refreshToken)
     {
-        // ==================================================================
         // NEDEN SHA-256, NEDEN BCrypt DEĞİL?
-        // ==================================================================
-        // Şifreler için BCrypt kullanıyoruz çünkü sifreler TAHMIN
+        //
+        // Şifreler için BCrypt kullanıyorum çünkü sifreler TAHMIN
         // EDILEBILIR ("123456", "şifre123"). Yavas algoritma, sozluk
         // saldirisini pratikte imkansiz kilar.
         //
@@ -136,12 +133,11 @@ internal sealed class TokenService : ITokenService
         //
         // SHA-256 burada doğru tercih: hizli ve geri cevrilemez.
         //
-        // Salt kullanmiyoruz çünkü aynı sebeple gereksiz: salt'in amaci
+        // Salt kullanmiyorum çünkü aynı sebeple gereksiz: salt'in amaci
         // aynı girdinin aynı hash'i uretmesini engellemektir; rastgele
         // token'larda zaten aynı girdi iki kez olusmaz.
         // Ayrıca salt'siz olmasını, gelen token'i doğrudan hash'leyip
         // veritabaninda ARAYABILMEMIZI sagliyor (index kullanilabiliyor).
-        // ==================================================================
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken));
 
         return Convert.ToHexString(bytes);

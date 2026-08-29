@@ -37,7 +37,7 @@ public abstract class AuditableEntity : Entity
     /// <summary>
     /// Soft delete isareti.
     ///
-    /// Bu alanı EF Core'un global query filter'i ile eslestirecegiz:
+    /// Bu alanı EF Core'un global query filter'i ile eslestirecegim:
     ///     modelBuilder.Entity&lt;Event&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);
     ///
     /// O satirdan sonra _context.Events.ToListAsync() yazdigimda EF sorguya
@@ -45,7 +45,7 @@ public abstract class AuditableEntity : Entity
     /// yazmayi unutma riski ortadan kalkar -- ki bu risk gercektir, 50 sorgudan
     /// birinde mutlaka unutulur ve silinmis kayitlar kullanıcıya görünür.
     ///
-    /// Admin'in silinmisleri gormesi gerektiginde IgnoreQueryFilters() kullanacagiz.
+    /// Admin'in silinmisleri gormesi gerektiginde IgnoreQueryFilters() kullanacagim.
     /// </summary>
     public bool IsDeleted { get; set; }
 

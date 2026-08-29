@@ -1,9 +1,8 @@
 /**
  * Bildirim tipleri ve DTO'lari.
  *
- * ==================================================================
  * NEDEN AYRI DOSYA?
- * ==================================================================
+ *
  * Önce bunlar NotificationBell.tsx icindeydi. Lint uyardi:
  *
  *   react(only-export-components): Fast refresh only works when a
@@ -15,7 +14,7 @@
  *
  * Gelistirme sırasında fark edilir bir yavaslama -- ve cozumu bir
  * dosya ayirmak kadar basit.
- * ==================================================================
+ *
  */
 
 /** Backend'deki NotificationType ile birebir aynı. */

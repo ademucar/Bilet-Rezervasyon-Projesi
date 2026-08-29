@@ -4,9 +4,8 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
  * Canlı bağlantı durumu göstergesi.
  * PDF Sprint 10 frontend gorevi: "Bağlantı durumu göstergesi".
  *
- * ==================================================================
  * NEDEN GEREKLI? "Çalışıyor görünen ama çalışmayan" ekran problemi
- * ==================================================================
+ *
  * Gosterge olmasaydı bağlantı koptugunda ekranda HICBIR SEY
  * degismezdi. Kullanıcı donmus bir koltuk haritasina bakip
  * "kimse bilet almiyor, acele etmeme gerek yok" diye dusunurdu.
@@ -15,9 +14,9 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
  * hiçbir sey anlamadan.
  *
  * Gosterge, sessiz basarisizligi GORUNUR kiliyor. Arka plan
- * islerinde de aynı ilkeyi uygulamıştık (Hangfire izleme ekrani):
+ * islerinde de aynı ilkeyi uygulamıştım (Hangfire izleme ekrani):
  * en tehlikeli durum, calismadigi halde çalışıyor gorunmektir.
- * ==================================================================
+ *
  */
 export function ConnectionIndicator({ status }: { status: ConnectionStatus }) {
   const durumlar = {
@@ -57,7 +56,7 @@ export function ConnectionIndicator({ status }: { status: ConnectionStatus }) {
     <span
       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${durum.kutu}`}
       // role="status" + aria-live="polite": ekran okuyucu, kullanıcı
-      // mola verdiginde durumu okur. "alert" kullansaydık her durum
+      // mola verdiginde durumu okur. "alert" kullansaydım her durum
       // degisiminde kullanıcıyı bolerdi -- yeniden baglanma sırasında
       // bu çok rahatsiz edici olurdu.
       role="status"

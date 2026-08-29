@@ -28,9 +28,7 @@ internal static class HallErrors
         "Yeni kapasite, mevcut oturma planlarindaki koltuk sayisindan az olamaz.");
 }
 
-// ===================================================================
 // OLUSTURMA -- PDF: POST /api/v1/venues/{venueId}/halls
-// ===================================================================
 
 public sealed record CreateHallCommand(Guid VenueId, string Name, int Capacity)
     : IRequest<Result<Guid>>;
@@ -95,9 +93,7 @@ internal sealed class CreateHallCommandHandler : IRequestHandler<CreateHallComma
     }
 }
 
-// ===================================================================
 // GUNCELLEME
-// ===================================================================
 
 public sealed record UpdateHallCommand(Guid Id, string Name, int Capacity) : IRequest<Result>;
 
@@ -127,9 +123,8 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             return Result.Failure(HallErrors.NotFound);
         }
 
-        // ==============================================================
         // KAPASITEYI DUSURURKEN MEVCUT KOLTUKLARI KONTROL ET
-        // ==============================================================
+        //
         // PDF is kuralı: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //
         // Bu kural genelde koltuk EKLERKEN dusunulur. Ama ters yonden
@@ -140,9 +135,8 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
         // hatayi ancak aylar sonra bir raporda fark ederdik.
         if (request.Capacity < hall.Capacity)
         {
-            // ==========================================================
             // BU SORGU ILK YAZISIMDA CALISMADI -- HIKAYESI
-            // ==========================================================
+            //
             // Önce soyle yazmistim:
             //
             //   _context.SeatLayouts
@@ -163,11 +157,10 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             // GELMEZ. IQueryable içinde yazdigin her sey bir SQL karşılığı
             // bulmak zorunda. Bu tur hatalar yalnızca gerçek veritabanina
             // karsi calistirinca ortaya çıkar -- birim testler yakalayamaz.
-            // (Sprint 17'de Testcontainers ile bunu koruyacagiz.)
+            // (Sprint 17'de Testcontainers ile bunu koruyacagim.)
             //
             // COZUM: Sorguyu KOLTUK tablosundan baslatip gruplamak.
             // Duz bir GROUP BY, EF'in rahatca cevirdigi bir yapi.
-            // ==========================================================
             var seatCountsPerLayout = await _context.Seats
                 .AsNoTracking()
                 .Where(s => s.SeatSection.SeatLayout.HallId == request.Id)
@@ -197,9 +190,7 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
     }
 }
 
-// ===================================================================
 // SILME
-// ===================================================================
 
 public sealed record DeleteHallCommand(Guid Id) : IRequest<Result>;
 
@@ -226,7 +217,7 @@ internal sealed class DeleteHallCommandHandler : IRequestHandler<DeleteHallComma
         //   - Event.HallId  -> etkinliğin ana salonu
         //   - EventSession.HallId -> oturumun salonu (farklı olabilir)
         //
-        // Yalnızca birini kontrol etseydik, çok salonlu bir festivalin
+        // Yalnızca birini kontrol etseydim, çok salonlu bir festivalin
         // yan sahnesi silinebilirdi.
         var hasActiveEvents = await _context.Events
             .AsNoTracking()

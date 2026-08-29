@@ -23,9 +23,7 @@ internal static class SeatLayoutErrors
         "Bu oturma planı bir etkinlik oturumunda kullanılıyor. Degistirilemez veya silinemez.");
 }
 
-// ===================================================================
 // PLAN OLUSTURMA -- PDF: POST /api/v1/halls/{hallId}/seat-layouts
-// ===================================================================
 
 public sealed record CreateSeatLayoutCommand(Guid HallId, string Name, string? Description)
     : IRequest<Result<Guid>>;
@@ -75,9 +73,8 @@ internal sealed class CreateSeatLayoutCommandHandler
         }
         catch (DbUpdateException)
         {
-            // ==========================================================
             // BURADA ONCEDEN KONTROL YAPMIYORUM, EXCEPTION YAKALIYORUM
-            // ==========================================================
+            //
             // Venue ve Hall'da "önce sorgula, sonra ekle" yaptım.
             // Burada bilerek farklı davraniyorum ve sebebini yazıyorum:
             //
@@ -107,9 +104,7 @@ internal sealed class CreateSeatLayoutCommandHandler
     }
 }
 
-// ===================================================================
 // BOLUM EKLEME -- PDF: POST /api/v1/seat-layouts/{id}/sections
-// ===================================================================
 
 public sealed record AddSectionCommand(
     Guid SeatLayoutId,
@@ -129,7 +124,7 @@ public sealed class AddSectionCommandValidator : AbstractValidator<AddSectionCom
             .GreaterThanOrEqualTo(0).WithMessage("Gosterim sırası negatif olamaz.");
 
         // #RRGGBB bicimi. Frontend renk secicisi zaten bu bicimi uretiyor
-        // ama API'ye doğrudan istek gonderilebilecegi için dogruluyoruz.
+        // ama API'ye doğrudan istek gonderilebilecegi için dogruluyorum.
         RuleFor(x => x.ColorHex)
             .Matches("^#[0-9A-Fa-f]{6}$")
             .WithMessage("Renk #RRGGBB biciminde olmalıdır. Ornek: #E63946")
@@ -187,7 +182,7 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
     ///
     /// PDF is kuralı: "Kullanılmış oturma planı fiziksel olarak
     /// silinmemelidir." Biz bir adim ileri gidip DEGISTIRILMESINI de
-    /// engelliyoruz.
+    /// engelliyorum.
     ///
     /// Neden? Plan degisirse o oturumun EventSeat kayitlari artık var
     /// olmayan koltuklara isaret eder. Bilet almis kullanıcının koltuğu
@@ -202,10 +197,8 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
             .AnyAsync(s => s.SeatLayoutId == seatLayoutId, cancellationToken);
 }
 
-// ===================================================================
 // KOLTUK URETIMI
 // PDF: POST /api/v1/seat-layouts/{id}/generate-seats
-// ===================================================================
 
 /// <summary>
 /// Bir bolume toplu koltuk üretir.
@@ -226,9 +219,8 @@ public sealed class GenerateSeatsCommandValidator : AbstractValidator<GenerateSe
     /// <summary>
     /// Tek seferde uretilebilecek maksimum koltuk sayısı.
     ///
-    /// ==================================================================
     /// BU SINIR NEDEN VAR? -- Bir DoS korumasi
-    /// ==================================================================
+    ///
     /// Sinir olmasaydı:
     ///     { "rowCount": 100000, "seatsPerRow": 100000 }
     /// isteği 10 MILYAR koltuk uretmeye calisirdi. Sunucu bellegi
@@ -236,7 +228,6 @@ public sealed class GenerateSeatsCommandValidator : AbstractValidator<GenerateSe
     ///
     /// 20.000, dunyanin en büyük kapalı salonlarindan bile büyük --
     /// mesru hiçbir kullanimi engellemiyor.
-    /// ==================================================================
     /// </summary>
     public const int MaxSeatsPerOperation = 20_000;
 
@@ -308,9 +299,8 @@ internal sealed class GenerateSeatsCommandHandler
         // Koltukları üret. Kural ihlallerinde DomainException firlar.
         section.GenerateSeats(request.RowCount, request.SeatsPerRow, request.RowLabels);
 
-        // ==============================================================
         // KAPASITE KONTROLU -- URETIMDEN SONRA, KAYITTAN ONCE
-        // ==============================================================
+        //
         // PDF: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //
         // Sirayi dikkatle sectim: koltuklar BELLEKTE üretildi ama henüz

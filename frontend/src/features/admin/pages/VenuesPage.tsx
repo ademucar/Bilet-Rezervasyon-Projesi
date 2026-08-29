@@ -34,7 +34,7 @@ export function VenuesPage() {
   const venuesQuery = useQuery({
     // queryKey'e `search` DAHIL: arama değiştiginde TanStack Query
     // bunu yeni bir sorgu sayar ve otomatik yeniden ceker.
-    // Dahil etmeseydik arama yazdikca sonuclar guncellenmezdi.
+    // Dahil etmeseydim arama yazdikca sonuclar guncellenmezdi.
     queryKey: ['venues', search],
     queryFn: () => adminApi.getVenues({ search: search || undefined }),
   })

@@ -47,7 +47,7 @@ public sealed class ReservationsController : ApiControllerBase
         //
         // Sebep: bu bir PROTOKOL detayidir, is verisi değil. Stripe,
         // AWS gibi saglayicilar da aynı yaklasimi kullaniyor.
-        // Govdeye koysaydık her istek modelinde tekrarlamamiz gerekirdi.
+        // Govdeye koysaydım her istek modelinde tekrarlamamiz gerekirdi.
         var command = new CreateReservationCommand(
             request.EventSessionId, request.EventSeatIds, idempotencyKey);
 
@@ -60,9 +60,8 @@ public sealed class ReservationsController : ApiControllerBase
 
     /// <summary>Rezervasyon detayı. Yalnızca sahibi görebilir.</summary>
     [HttpGet("{id:guid}")]
-    // ==============================================================
     // ReservationOwner -- SPRINT 19'DA BAGLANDI
-    // ==============================================================
+    //
     // Handler zaten sahiplik filtreliyordu (ve 404 donuyordu).
     // Politika IKINCI bir katman: birinin unutulmasi digerini
     // geçersiz kilmiyor.
@@ -70,7 +69,6 @@ public sealed class ReservationsController : ApiControllerBase
     // Politika reddi de 404 döner (ResourceOwnerResultHandler):
     // 403 "bu rezervasyon VAR ama senin değil" bilgisini
     // sizdirirdi.
-    // ==============================================================
     [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
     [ProducesResponseType<ReservationDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -127,7 +125,7 @@ public sealed class MyReservationsController : ApiControllerBase
     /// Yalnızca isteği yapan kullanıcının rezervasyonları döner;
     /// kullanıcı kimliği TOKEN'DAN okunuyor, istekten değil.
     ///
-    /// Adreste bir kullanıcı kimliği tasisaydik, birinin baskasinin
+    /// Adreste bir kullanıcı kimliği tasisaydim, birinin baskasinin
     /// kimligini yazip onun rezervasyonlarini gormesini engellemek
     /// için ayrıca kontrol yazmak gerekirdi.
     /// </remarks>

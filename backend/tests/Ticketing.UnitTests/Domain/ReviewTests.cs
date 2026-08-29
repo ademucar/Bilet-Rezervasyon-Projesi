@@ -23,9 +23,8 @@ public class ReviewTests
     }
 
     /// <remarks>
-    /// ==============================================================
     /// SINIR DEGERLER AYRICA TEST EDILIYOR
-    /// ==============================================================
+    ///
     /// 1 ve 5 GECERLI, 0 ve 6 GECERSIZ.
     ///
     /// Sinirlari ayrica yazmamin sebebi: bu tur kontrollerdeki en
@@ -33,7 +32,6 @@ public class ReviewTests
     /// "rating &gt; 1 &amp;&amp; rating &lt; 5" diye yazilsaydi, 1 ve 5 puanlarin
     /// ikisi de reddedilirdi -- ve yalnizca ortadaki degerlerle test
     /// edilseydi bu hata gorunmezdi.
-    /// ==============================================================
     /// </remarks>
     [Theory]
     [InlineData(1)]
@@ -88,21 +86,17 @@ public class ReviewTests
             .Which.ErrorCode.Should().Be("review.invalid_rating");
     }
 
-    // ==============================================================
     // MODERASYON
-    // ==============================================================
 
     /// <remarks>
-    /// ==============================================================
     /// GIZLEME, SILME DEGIL
-    /// ==============================================================
+    ///
     /// Uygunsuz bir yorum gizleniyor ama KAYIT duruyor.
     ///
-    /// Silseydik: kullanici "yorumum nerede?" diye sorunca elimizde
+    /// Silseydim: kullanici "yorumum nerede?" diye sorunca elimizde
     /// hicbir sey olmazdi ve moderasyon karari denetlenemezdi.
     /// Ayrica ayni kullanici tekrar yorum yazabilir hale gelirdi --
     /// oysa "her kullanici bir etkinlige bir yorum" kurali var.
-    /// ==============================================================
     /// </remarks>
     [Fact]
     public void Gizlenen_yorum_kayitta_kalmali()

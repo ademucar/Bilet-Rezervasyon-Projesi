@@ -10,9 +10,7 @@ namespace Ticketing.ArchitectureTests;
 /// </summary>
 public class ConventionTests
 {
-    // ---------------------------------------------------------------
     // GUVENLIK AGI
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Bu test, diger tum architecture testlerinin ANLAMLI olmasini garanti eder.
@@ -47,9 +45,7 @@ public class ConventionTests
         { Layers.WebApi,         Ticketing.WebApi.AssemblyReference.Assembly }
     };
 
-    // ---------------------------------------------------------------
     // PDF: "Controller dogrudan DbContext kullanmamalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Controller_DogrudanDbContextKullanmamali()
@@ -74,9 +70,7 @@ public class ConventionTests
             Ihlaller(sonuc));
     }
 
-    // ---------------------------------------------------------------
     // PDF: "Handler siniflari dogru namespace altinda bulunmalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Handler_SiniflariApplicationKatmanindaOlmali()
@@ -84,9 +78,8 @@ public class ConventionTests
         // Handler'lar CQRS'in is mantigini tasir. Bunlarin WebApi veya
         // Infrastructure'da olmasi, is mantiginin altyapiya sizmasi demektir.
         //
-        // ------------------------------------------------------------------
         // BU TEST BIR KEZ HAKLI OLARAK KIRMIZI YANDI -- VE KURAL DARALTILDI
-        // ------------------------------------------------------------------
+        //
         // Ilk yazisimda kural "adi 'Handler' ile biten HER sinif" seklindeydi.
         // WebApi'ye GlobalExceptionHandler eklendiginde test kirmizi yandi.
         //
@@ -107,13 +100,13 @@ public class ConventionTests
         //   Sprint 2'de -> IExceptionHandler       (GlobalExceptionHandler)
         //   Sprint 5'te -> IAuthorizationHandler   (EventOwnerAuthorizationHandler)
         //
-        // Her seferinde test kirmizi yaniyor, bakiyoruz, "bu bir CQRS
-        // handler'i degil, framework bileseni" diyip listeye ekliyoruz.
+        // Her seferinde test kirmizi yaniyor, bakiyorum, "bu bir CQRS
+        // handler'i degil, framework bileseni" diyip listeye ekliyorum.
         //
         // Bu dongu SAGLIKLI: test her yeni "Handler" sinifini onumuze
         // getiriyor ve bilincli bir karar vermemizi zorluyor. Kurali
         // bastan cok gevsek yazsaydik (ornegin yalnizca "CommandHandler"
-        // ile bitenlere baksaydik) yanlis yere konmus gercek bir CQRS
+        // ile bitenlere baksaydim) yanlis yere konmus gercek bir CQRS
         // handler'i gozden kacardi.
         var altyapiArayuzleri = new[]
         {
@@ -138,9 +131,7 @@ public class ConventionTests
             string.Join(", ", yanlisYerdekiHandlerlar.Select(t => t.FullName)));
     }
 
-    // ---------------------------------------------------------------
     // Ek kural: Sealed olmayan siniflar
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Handler_SiniflariSealedOlmali()
@@ -149,9 +140,8 @@ public class ConventionTests
         // hem niyeti acikca belirtir hem de JIT'in metod cagrilarini
         // devirtualize etmesine izin vererek kucuk bir performans kazandirir.
         //
-        // ------------------------------------------------------------------
         // BU TEST SPRINT 9'DA KIRMIZI YANDI -- YINE KURAL FAZLA GENISTI
-        // ------------------------------------------------------------------
+        //
         // Sprint 9'da IOutboxMessageHandler arayuzunu ekleyince test
         // basarisiz oldu: "IOutboxMessageHandler sealed degil".
         //

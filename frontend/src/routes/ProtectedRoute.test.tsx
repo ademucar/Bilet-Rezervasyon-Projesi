@@ -40,9 +40,8 @@ function oturumAc(roller: string[]) {
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    // ==============================================================
     // STORE HER TESTTE SIFIRLANIYOR
-    // ==============================================================
+    //
     // Zustand store'u modül seviyesinde yaşıyor, yani testler
     // arasında PAYLAŞILIYOR. Sıfırlamasaydık bir testte açılan
     // oturum sonrakine sızardı ve "giriş yapmamış kullanıcı
@@ -50,7 +49,6 @@ describe('ProtectedRoute', () => {
     //
     // Yani en kritik güvenlik testimiz, hiçbir şey doğrulamayan bir
     // teste dönüşürdü.
-    // ==============================================================
     useAuthStore.setState({ accessToken: null, refreshToken: null, user: null })
   })
 
@@ -70,9 +68,9 @@ describe('ProtectedRoute', () => {
   })
 
   /**
-   * ================================================================
+   *
    * 401 VE 403 AYRIMI ARAYÜZDE DE VAR
-   * ================================================================
+   *
    * Backend'de 401 "kim olduğunu bilmiyorum", 403 "biliyorum ama
    * yetkin yok" demek (Sprint 17 entegrasyon testinde doğrulandı).
    *
@@ -83,7 +81,7 @@ describe('ProtectedRoute', () => {
    * İkisini de /giriş'e yönlendirseydik, yetkisiz bir kullanıcı
    * giriş sayfasına atılır, zaten girişli olduğu için tekrar panele
    * yönlendirilir ve sonsuz bir döngüye girerdi.
-   * ================================================================
+   *
    */
   it('rolü yetersiz kullanıcıyı yetkisiz sayfasına yönlendirir', () => {
     oturumAc(['User'])

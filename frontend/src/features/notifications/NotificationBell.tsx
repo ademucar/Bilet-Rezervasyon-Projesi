@@ -28,15 +28,14 @@ const notificationsApi = {
 /**
  * Bildirim turune göre ikon ve renk.
  *
- * ==================================================================
  * NEDEN RENK + IKON, SADECE RENK DEĞİL?
- * ==================================================================
+ *
  * Renk korlugu olan kullanıcı "kırmızı = kötü haber" ayrimini
  * yapamaz. Ikon ikinci bir isaret veriyor.
  *
- * Aynı ilkeyi Sprint 7'de koltuk haritasında da uygulamıştık:
+ * Aynı ilkeyi Sprint 7'de koltuk haritasında da uygulamıştım:
  * durumu yalnızca renkle değil, metinle de anlatmak.
- * ==================================================================
+ *
  */
 function gorunum(type: number): { ikon: string; renk: string } {
   switch (type) {
@@ -66,11 +65,11 @@ function gorunum(type: number): { ikon: string; renk: string } {
 }
 
 /**
- * ==================================================================
+ *
  * BILDIRIM ZILI -- PDF Sprint 14
- * ==================================================================
+ *
  * Ust cubukta duruyor; rozet okunmamış sayisini gosteriyor.
- * ==================================================================
+ *
  */
 export function NotificationBell() {
   const [open, setOpen] = useState(false)
@@ -78,9 +77,8 @@ export function NotificationBell() {
   const navigate = useNavigate()
   const panelRef = useRef<HTMLDivElement>(null)
 
-  // ================================================================
   // SAYAC: DUZENLI YENILEME
-  // ================================================================
+  //
   // Bildirimler arka plan islerinden geliyor (süre uyarısı, rapor
   // hazır, etkinlik hatirlatmasi). Kullanıcı hiçbir sey yapmadan
   // yeni bildirim olusabiliyor.
@@ -92,7 +90,6 @@ export function NotificationBell() {
   // için de kurulabilirdi. Kurmadim: koltuk durumu SANIYELER içinde
   // değişiyor ve gecikme doğrudan 409'a yol aciyordu. Bildirimde
   // bir dakikalik gecikmenin somut bir zarari yok.
-  // ================================================================
   const countQuery = useQuery({
     queryKey: ['notifications', 'unread-count'],
     queryFn: notificationsApi.getUnreadCount,
@@ -123,14 +120,12 @@ export function NotificationBell() {
     },
   })
 
-  // ================================================================
   // DISARI TIKLAYINCA KAPAT
-  // ================================================================
+  //
   // Olmasaydı panel açık kalır ve kullanıcı sayfayla etkilesemezdi.
   //
   // Temizlik ŞART: bileşen kaldirildiginda dinleyici kalirsa her
   // tiklamada calismaya devam eder (bellek sizintisi).
-  // ================================================================
   useEffect(() => {
     if (!open) {
       return

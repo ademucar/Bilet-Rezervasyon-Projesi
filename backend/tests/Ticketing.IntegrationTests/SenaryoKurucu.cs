@@ -9,9 +9,8 @@ namespace Ticketing.IntegrationTests;
 /// Entegrasyon testleri icin satisa acik bir etkinlik kurar.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// NEDEN HTTP DEGIL, DOGRUDAN VERITABANI?
-/// ==================================================================
+///
 /// Satisa acik bir etkinlik icin su zincir gerekiyor:
 ///
 ///   Kategori -> Sehir -> Mekan -> Salon -> Koltuk plani -> Bolum
@@ -31,7 +30,6 @@ namespace Ticketing.IntegrationTests;
 /// Kurulumda da domain metotlari kullaniliyor (SQL degil): boylece
 /// kurdugumuz veri, uretimde olusabilecek bir veriyle ayni
 /// kurallardan geciyor.
-/// ==================================================================
 /// </remarks>
 internal static class SenaryoKurucu
 {
@@ -132,16 +130,14 @@ internal static class SenaryoKurucu
 
         // ---- Durum gecisleri ----
         //
-        // ==========================================================
         // SIRA ZORUNLU: Draft -> PendingApproval -> Published -> SalesOpen
-        // ==========================================================
+        //
         // Dogrudan SalesOpen'a gecmeyi denedim, durum makinesi
         // reddetti. Bu bir engel degil, tasarimin calistiginin
         // kaniti: onaydan gecmemis bir etkinlik satisa cikamiyor.
         //
         // Sprint 12'de de ayni makine beni bir hatadan korumustu
         // (SalesOpen -> Completed dogrudan gecilemiyordu).
-        // ==========================================================
         etkinlik.SubmitForApproval();
         etkinlik.Publish();
         etkinlik.OpenSales();
@@ -207,14 +203,13 @@ internal static class SenaryoKurucu
     /// Bir rezervasyonun suresini GECMISE ceker.
     /// </summary>
     /// <remarks>
-    /// ==============================================================
     /// NEDEN BEKLEMIYORUZ?
-    /// ==============================================================
+    ///
     /// Rezervasyon kilidi 10 dakika. "Suresi dolmus rezervasyonda
-    /// odeme" senaryosunu gercekten beklemeyle test etseydik tek bir
+    /// odeme" senaryosunu gercekten beklemeyle test etseydim tek bir
     /// test 10 dakika surerdi -- ve kimse o paketi calistirmazdi.
     ///
-    /// Bunun yerine ZAMANI degistiriyoruz: son kullanma tarihini
+    /// Bunun yerine ZAMANI degistiriyorum: son kullanma tarihini
     /// gecmise cekiyoruz. Sistem acisindan bu, gercekten suresi
     /// dolmus bir rezervasyonla AYNI durum.
     ///
@@ -222,7 +217,6 @@ internal static class SenaryoKurucu
     /// "suresini geriye al" diye bir metot YOK -- olmamali da.
     /// Uretim kodunun izin vermedigi bir seyi test kurulumu icin
     /// domain'e eklemek, korumayi delmek olurdu.
-    /// ==============================================================
     /// </remarks>
     public static async Task RezervasyonSuresiniDoldurAsync(
         TicketingDbContext db,

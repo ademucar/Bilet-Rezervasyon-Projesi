@@ -5,7 +5,7 @@ using Npgsql;
 using OpenTelemetry.Resources;
 // Kaynak ADI Application katmaninda tanimli: hem burasi
 // (dinleyici) hem de arka plan isleri (uretici) aynı sabiti
-// kullaniyor. Iki yerde elle yazsaydık ve biri degisirse
+// kullaniyor. Iki yerde elle yazsaydım ve biri degisirse
 // izleme SESSIZCE durur.
 using Ticketing.Application.Common.Observability;
 using OpenTelemetry.Trace;
@@ -17,9 +17,8 @@ namespace Ticketing.WebApi.Observability;
 /// OpenTelemetry izleme (tracing) yapilandirmasi. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// LOG VE TRACE AYNI SEY DEĞİL
-/// ==================================================================
+///
 /// Log "ne oldu" sorusunu cevapliyor:
 ///     "Rezervasyon oluşturuldu. Id: abc, Koltuk: 4"
 ///
@@ -38,7 +37,6 @@ namespace Ticketing.WebApi.Observability;
 /// -> Redis, -> Outbox -> Hangfire -> SMTP) ve halkalarin çoğu
 /// FARKLI process'lerde. Trace olmadan yavaslik teshisi tahmin
 /// yurutmekten ibaret olurdu.
-/// ==================================================================
 /// </remarks>
 internal static class OpenTelemetrySetup
 {
@@ -52,12 +50,11 @@ internal static class OpenTelemetrySetup
 
         services.AddOpenTelemetry()
             .ConfigureResource(resource => resource
-                // ==================================================
                 // SERVIS KIMLIGI
-                // ==================================================
+                //
                 // Trace'ler merkezi bir toplayiciya gidiyor ve orada
                 // BASKA servislerin trace'leriyle karisiyor. Servis
-                // adı olmadan hangi izin bize ait olduğu belli olmaz.
+                // adı olmadan hangi izin bana ait olduğu belli olmaz.
                 .AddService(
                     serviceName: "ticketing-api",
                     serviceVersion: typeof(OpenTelemetrySetup).Assembly
@@ -70,9 +67,7 @@ internal static class OpenTelemetrySetup
             .WithTracing(tracing =>
             {
                 tracing
-                    // ==============================================
                     // 1) HTTP ISTEK IZLERI -- PDF maddesi
-                    // ==============================================
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         // Saglik kontrolleri saniyede bir cagriliyor.
@@ -88,9 +83,8 @@ internal static class OpenTelemetrySetup
                         options.RecordException = true;
                     })
 
-                    // ==============================================
                     // 2) VERITABANI SORGULARI -- PDF maddesi
-                    // ==============================================
+                    //
                     // Npgsql'in KENDİ izleme kaynagi.
                     //
                     // EF Core instrumentation paketi yerine bunu
@@ -100,17 +94,15 @@ internal static class OpenTelemetrySetup
                     // GERCEKTE ne kadar surdugunu goruyoruz.
                     .AddNpgsql()
 
-                    // ==============================================
                     // 3) REDIS ISLEMLERI -- PDF maddesi
-                    // ==============================================
-                    // ==============================================
+                    //
                     // BURADA BIR SIRALAMA TUZAGI VAR
-                    // ==============================================
+                    //
                     // Redis instrumentation, IConnectionMultiplexer
                     // ornegine ihtiyac duyuyor. DI'dan cozmeye
                     // calisirsak, Redis kapaliyken uygulama
                     // ACILMAZ -- oysa Sprint 11'de önbelleği
-                    // BILINCLI olarak "yoksa da çalışır" yaptik
+                    // BILINCLI olarak "yoksa da çalışır" yaptim
                     // (Null Object Pattern).
                     //
                     // Bu yüzden multiplexer'i OPSIYONEL cozuyorum:
@@ -119,30 +111,26 @@ internal static class OpenTelemetrySetup
                     //
                     // Izlemenin, izledigi sistemi cokertmemesi
                     // gerekiyor.
-                    // ==============================================
                     .AddRedisInstrumentation()
 
-                    // ==============================================
                     // 4) ARKA PLAN ISLERI -- PDF maddesi
-                    // ==============================================
+                    //
                     // Hangfire'in hazır bir instrumentation'i yok.
-                    // Kendi ActivitySource'umuzu ekliyoruz; isler
+                    // Kendi ActivitySource'umuzu ekliyorum; isler
                     // TicketingJobs içinde bu kaynaktan Activity
                     // baslatiyor.
                     .AddSource(AppActivitySource.Name)
 
-                    // ==============================================
                     // 5) HARICI SERVIS CAGRILARI -- PDF maddesi
-                    // ==============================================
+                    //
                     // HttpClient üzerinden yapilan her cagri.
                     // Bizde ödeme sağlayıcısı simülasyonu ve ilerde
                     // eklenebilecek her dis entegrasyon.
                     .AddHttpClientInstrumentation(options =>
                         options.RecordException = true);
 
-                // ==================================================
                 // ORNEKLEME (sampling) VE DISA AKTARIM
-                // ==================================================
+                //
                 // Gelistirmede her izi konsola yazıyorum: ne
                 // uretildigini gormek için.
                 //
@@ -193,7 +181,7 @@ internal static class OpenTelemetrySetup
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        // Cozulemezse hiçbir sey yapmiyoruz. Izleme eksik kalır ama
+        // Cozulemezse hiçbir sey yapmiyorum. Izleme eksik kalır ama
         // uygulama çalışır -- doğru oncelik sırası bu.
         _ = services.GetService<IConnectionMultiplexer>();
     }

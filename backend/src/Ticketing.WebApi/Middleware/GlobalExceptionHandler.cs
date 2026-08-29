@@ -15,9 +15,8 @@ namespace Ticketing.WebApi.Middleware;
 ///   - "Global exception handling eklenmelidir."
 ///   - "Problem Details standardi kullanılmalıdır."
 ///
-/// ------------------------------------------------------------------
 /// NEDEN IExceptionHandler, NEDEN KLASIK MIDDLEWARE DEĞİL?
-/// ------------------------------------------------------------------
+///
 /// Eskiden bu is try/catch iceren bir middleware ile yapilirdi.
 /// .NET 8 ile gelen IExceptionHandler arayuzu daha iyi:
 ///
@@ -29,9 +28,8 @@ namespace Ticketing.WebApi.Middleware;
 /// </summary>
 internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 {
-    // ==================================================================
     // LoggerMessage KAYNAK URETECI
-    // ==================================================================
+    //
     // Analizci (CA1848) bizi buna yonlendirdi ve HAKLI. Bastirmak yerine
     // uyduk. Neden daha iyi:
     //
@@ -53,7 +51,6 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     //
     // Not: Bunun için sinifin "partial" olmasını sart -- uretilen kod
     // aynı sinifin ikinci yarisi olarak eklenir.
-    // ==================================================================
 
     [LoggerMessage(
         EventId = 5000,
@@ -85,9 +82,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     {
         var problem = exception switch
         {
-            // ==========================================================
             // 0. GIRDI DOGRULAMA HATASI -> 400 Bad Request
-            // ==========================================================
+            //
             // ValidationBehavior'in firlattigi hata.
             //
             // Bu daldan önce yoktu ve doğrulama hatalari 500 donuyordu --
@@ -98,13 +94,12 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // Ders: birim testler ve derleme, "parcalar doğru mu" sorusunu
             // cevaplar; "sistem doğru mu" sorusunu ancak calistirmak
             // (veya integration test) cevaplar. Sprint 17'de bu akislari
-            // integration testle koruyacagiz.
+            // integration testle koruyacagim.
             Application.Common.Exceptions.ValidationException validationEx
                 => CreateValidationProblem(validationEx),
 
-            // ==========================================================
             // 1. IS KURALI IHLALI -> 422 Unprocessable Entity
-            // ==========================================================
+            //
             // "Süresi dolmuş rezervasyonda ödeme baslatilamaz" gibi.
             // Bu bir HATA DEĞİL, beklenen bir durum. Gunde binlerce kez
             // olusabilir.
@@ -118,9 +113,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 detail: domainEx.Message,
                 errorCode: domainEx.ErrorCode),
 
-            // ==========================================================
             // 2. ES ZAMANLILIK CAKISMASI -> 409 Conflict
-            // ==========================================================
+            //
             // PROJENIN EN KRITIK HATA YOLU.
             //
             // Iki kullanıcı aynı koltuğu aynı anda almaya calisti;
@@ -137,9 +131,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                         "Lütfen sayfayı yenileyip tekrar deneyin.",
                 errorCode: "concurrency.conflict"),
 
-            // ==========================================================
             // 3. VERITABANI KISITI IHLALI -> 409 Conflict
-            // ==========================================================
+            //
             // Unique index ihlali buraya duser. Ornegin aynı koltuk için
             // ikinci bir EventSeat oluşturma girisimi.
             //
@@ -148,18 +141,17 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             //     "duplicate key value violates unique constraint
             //      ix_event_seats_session_seat"
             // Bu, saldirgana veritabani semasi hakkında bilgi verir.
-            // Kendi genel mesajimizi donup detayı yalnızca loga yazıyoruz.
+            // Kendi genel mesajimizi donup detayı yalnızca loga yazıyorum.
             DbUpdateException => CreateProblem(
                 statusCode: StatusCodes.Status409Conflict,
                 title: "Veri çakışması",
                 detail: "İşlem tamamlanamadi. Aynı kayıt zaten mevcut olabilir.",
                 errorCode: "database.constraint_violation"),
 
-            // ==========================================================
             // 4. ISTEK İPTAL EDILDI -> 499 (istemci baglantisini kesti)
-            // ==========================================================
+            //
             // Kullanıcı sayfayı kapatti veya yenilendi. Bu HİÇ hata değil.
-            // 500 olarak loglasaydik hata grafiklerimiz sahte artislarla
+            // 500 olarak loglasaydim hata grafiklerimiz sahte artislarla
             // dolardi.
             OperationCanceledException => CreateProblem(
                 statusCode: 499,
@@ -167,12 +159,10 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 detail: "İşlem istemci tarafından iptal edildi.",
                 errorCode: "request.cancelled"),
 
-            // ==========================================================
             // 5. ISTEK COK BUYUK / BOZUK -> 413 veya 400
-            // ==========================================================
-            // ==========================================================
+            //
             // BU DALI SPRINT 15'TE TESTLE BULDUM
-            // ==========================================================
+            //
             // Program.cs'te MaxRequestBodySize = 1 MB ayarladiktan sonra
             // 2 MB'lik bir istek gonderip dogruladim. Sonuç 500 dondu.
             //
@@ -194,7 +184,6 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // DERS: bir korumayi eklemek yetmiyor; TETIKLENDIGINDE ne
             // dondugunu de dogrulamak gerekiyor. Ayar dogruydu, yanit
             // yanlisti ve bunu yalnızca calistirinca gordum.
-            // ==========================================================
             BadHttpRequestException badRequestEx => CreateProblem(
                 statusCode: badRequestEx.StatusCode,
                 title: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
@@ -211,9 +200,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                     ? "request.too_large"
                     : "request.malformed"),
 
-            // ==========================================================
             // 6. GERCEK HATA -> 500
-            // ==========================================================
             _ => CreateProblem(
                 statusCode: StatusCodes.Status500InternalServerError,
                 title: "Sunucu hatası",
@@ -234,9 +221,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             problem.Extensions["correlationId"] = correlationId.ToString();
         }
 
-        // ==========================================================
         // GELISTIRME ORTAMI ISTISNASI
-        // ==========================================================
+        //
         // Stack trace'i YALNIZCA gelistirmede donuyorum.
         //
         // Uretimde stack trace dondurmek ciddi bir güvenlik acigidir:
@@ -279,9 +265,9 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     ///       }
     ///     }
     ///
-    /// Duz bir liste değil ALAN BAZINDA sozluk donuyoruz çünkü frontend
+    /// Duz bir liste değil ALAN BAZINDA sozluk donuyorum çünkü frontend
     /// her mesaji ilgili form alaninin altinda göstermek zorunda.
-    /// Liste donseydik hangi mesajin hangi alana ait olduğu bilinemezdi.
+    /// Liste donseydim hangi mesajin hangi alana ait olduğu bilinemezdi.
     /// </summary>
     private static ProblemDetails CreateValidationProblem(
         Application.Common.Exceptions.ValidationException exception)
@@ -329,9 +315,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
     private void LogException(Exception exception, int statusCode)
     {
-        // ------------------------------------------------------------------
         // LOG SEVIYESI KARARI
-        // ------------------------------------------------------------------
+        //
         // 4xx = istemci kaynakli, BEKLENEN durum   -> Warning
         // 5xx = sunucu kaynakli, GERCEK hata       -> Error
         //
@@ -351,9 +336,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // Stack trace GECMIYORUM: beklenen bir durum için 40 satirlik
             // stack trace yazmak log dosyalarini gereksiz sisirir.
             //
-            // ==========================================================
             // MESAJ MASKELENIYOR -- PDF Sprint 15: "Hassas veri maskeleme"
-            // ==========================================================
+            //
             // exception.Message KULLANICI GIRDISI ICEREBILIYOR. Somut
             // ornekler:
             //
@@ -367,7 +351,6 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // Loglar "güvenli" degildir: yedeklenir, merkezi sisteme
             // gonderilir, ekran goruntusu alinip paylasilir. Oraya
             // dusen bir JWT, o kullanıcının hesabi demektir.
-            // ==========================================================
             LogClientError(statusCode, SensitiveDataMasker.Mask(exception.Message));
         }
     }

@@ -12,9 +12,8 @@ namespace Ticketing.Application.Features.Events;
 /// Gecmis etkinlikleri "tamamlandı" olarak isaretler.
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// BU IS SPRINT 12'DE ORTAYA CIKAN BIR EKSIKTEN DOGDU
-/// ==================================================================
+///
 /// PDF Sprint 12 kuralı: "Etkinlik tamamlanmadan yorum yapılamaz."
 ///
 /// Kurali uygulamaya oturunca fark ettim ki Event.Complete() metodu
@@ -30,9 +29,8 @@ namespace Ticketing.Application.Features.Events;
 /// bu bosluk, PDF'i tek tek okuyup "bu gerçekten çalışır mi?" diye
 /// sormanin neden gerekli oldugunun iyi bir ornegi.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN "ETKİNLİK TARIHI GECTI" YETMIYOR?
-/// ------------------------------------------------------------------
+///
 /// Yorum kontrolunu "EventDate &lt; simdi" diye de yazabilirdim ve is
 /// gereksiz olurdu.
 ///
@@ -44,7 +42,6 @@ namespace Ticketing.Application.Features.Events;
 /// Durum makinesi bu ayrimi zaten tutuyor: Complete() yalnızca
 /// SalesOpen/SalesClosed durumundan cagrilabiliyor. İptal edilmiş
 /// etkinlik bu isten etkilenmiyor.
-/// ==================================================================
 /// </remarks>
 /// <param name="GracePeriodHours">
 /// Etkinlik bittikten kac saat sonra tamamlanmis sayilsin.
@@ -84,7 +81,7 @@ internal sealed class CompletePastEventsCommandHandler
         // Yalnızca Complete() cagrilabilir durumdakiler.
         //
         // Durum makinesi Draft veya Cancelled'dan Completed'a gecise
-        // izin vermiyor; onlari sorguya dahil etseydik DomainException
+        // izin vermiyor; onlari sorguya dahil etseydim DomainException
         // firlar ve TÜM parti başarısız olurdu.
         var tamamlanacaklar = await _context.Events
             .Where(e => e.EventDate < esik
@@ -102,9 +99,8 @@ internal sealed class CompletePastEventsCommandHandler
 
         foreach (var evt in tamamlanacaklar)
         {
-            // ==========================================================
             // IKI ADIM: ONCE SATISI KAPAT, SONRA TAMAMLA
-            // ==========================================================
+            //
             // İlk yazimimda doğrudan Complete() cagiriyordum ve is
             // calistiginda DomainException aldim:
             //

@@ -55,10 +55,9 @@ internal sealed class RegisterCommandHandler
 
         if (emailInUse)
         {
-            // ------------------------------------------------------------------
-            // BURADA "kullanıcı numaralandirma" RISKI VAR AMA KABUL EDIYORUZ
-            // ------------------------------------------------------------------
-            // Login'de bilerek belirsiz mesaj donuyoruz. Kayitta ise
+            // BURADA "kullanıcı numaralandirma" RISKI VAR AMA KABUL EDIYORUM
+            //
+            // Login'de bilerek belirsiz mesaj donuyorum. Kayitta ise
             // "bu e-posta kullanılıyor" demek zorundayız -- aksi halde
             // kullanıcı neden kayıt olamadigini anlayamaz.
             //
@@ -83,9 +82,9 @@ internal sealed class RegisterCommandHandler
         // Varsayılan rol: User.
         //
         // Role.Ids.User SABIT bir GUID olduğu için veritabanindan rol
-        // kaydini CEKMEME gerek yok -- bir sorgu tasarruf ediyoruz.
-        // Rastgele ID kullansaydık önce "User rolunu bul" sorgusu
-        // yapmak zorunda kalirdik.
+        // kaydini CEKMEME gerek yok -- bir sorgu tasarruf ediyorum.
+        // Rastgele ID kullansaydım önce "User rolunu bul" sorgusu
+        // yapmak zorunda kalirdim.
         var defaultRole = Role.Create(Role.Ids.User, Role.Names.User);
         user.AssignRole(defaultRole);
 

@@ -10,9 +10,8 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Events;
 
-// ===================================================================
 // ETKİNLİK GUNCELLEME VE SILME
-// ===================================================================
+//
 // PDF Sprint 5 acikca su iki ucu istiyor:
 //     PUT    /api/v1/events/{id}
 //     DELETE /api/v1/events/{id}
@@ -25,15 +24,13 @@ namespace Ticketing.Application.Features.Events;
 // Bu, projede tekrar eden desenin bir başkası: Sprint 12 (denetim
 // alanlari), 15 (maskeleyici), 16 (correlation ID), 17 (idempotency),
 // 18 (XML yorumlari), 19 (Docker imaji). Hepsi "var ama calismiyor".
-// ===================================================================
 
 /// <summary>
 /// Etkinligin duzenlenebilir alanlarini günceller. PDF: PUT /api/v1/events/{id}
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// IKI FARKLI KURAL SETI VAR VE DOMAIN BUNU ZATEN AYIRIYOR
-/// ==================================================================
+///
 /// PDF is kuralı: "Yayina alinmis etkinliğin kritik alanlari
 /// KONTROLSUZ degistirilemez."
 ///
@@ -51,7 +48,6 @@ namespace Ticketing.Application.Features.Events;
 ///
 /// Bu handler ikisini AYRI cagiriyor: kullanıcı yalnızca başlığı
 /// degistirmek istiyorsa, tarih kurallari devreye girmiyor.
-/// ==================================================================
 /// </remarks>
 public sealed record UpdateEventCommand(
     Guid EventId,
@@ -78,9 +74,8 @@ public sealed class UpdateEventCommandValidator : AbstractValidator<UpdateEventC
             .InclusiveBetween(0, 99)
             .When(x => x.MinimumAge.HasValue);
 
-        // ==========================================================
         // TARIHLER YA HEP YA HİÇ
-        // ==========================================================
+        //
         // Ucunden yalnızca birini gonderirsek diger ikisi eski
         // degerinde kalır ve tutarsiz bir kombinasyon olusabilir
         // (örneğin satış bitisi yeni etkinlik tarihinden sonra).
@@ -88,7 +83,6 @@ public sealed class UpdateEventCommandValidator : AbstractValidator<UpdateEventC
         // Domain zaten ValidateDates ile bunu yakalar ama hatayi
         // ISTEK seviyesinde vermek daha net: kullanıcı "eksik alan"
         // mesaji görüyor, "geçersiz tarih aralığı" değil.
-        // ==========================================================
         RuleFor(x => x)
             .Must(x =>
             {
@@ -153,14 +147,12 @@ internal sealed partial class UpdateEventCommandHandler
 
         LogEventUpdated(_logger, evt.Id, evt.Title);
 
-        // ==============================================================
         // ONBELLEK TEMIZLIGI ŞART
-        // ==============================================================
+        //
         // Etkinlik detayı ve popüler listesi onbellekte duruyor
         // (Sprint 11). Temizlemezsek kullanıcı başlığı değiştirir,
         // sayfayı yeniler ve ESKİ başlığı görür -- "kaydedilmedi mi?"
         // diye tekrar dener.
-        // ==============================================================
         await _cache.RemoveByPrefixAsync(CacheKeys.EventPrefix, cancellationToken)
             .ConfigureAwait(false);
 
@@ -178,9 +170,8 @@ internal sealed partial class UpdateEventCommandHandler
 /// Etkinligi siler (soft delete). PDF: DELETE /api/v1/events/{id}
 /// </summary>
 /// <remarks>
-/// ==================================================================
 /// FIZIKSEL SILME YOK -- SOFT DELETE
-/// ==================================================================
+///
 /// AuditableEntity uzerindeki IsDeleted alanı isaretleniyor ve global
 /// sorgu filtresi kaydı gizliyor.
 ///
@@ -191,9 +182,8 @@ internal sealed partial class UpdateEventCommandHandler
 ///   - Silme KARARININ kendisi bir denetim verisi: "kim, ne zaman
 ///     sildi" sorusu cevaplanabilmeli.
 ///
-/// ------------------------------------------------------------------
 /// HANGI ETKİNLİK SILINEBILIR?
-/// ------------------------------------------------------------------
+///
 /// Yalnızca HİÇ BİLET SATILMAMIS olanlar.
 ///
 /// Bileti olan bir etkinligi silmek, o bileti almis kullanicilarin
@@ -204,7 +194,6 @@ internal sealed partial class UpdateEventCommandHandler
 ///
 /// Bu ayrimi kod içinde net tutuyorum ki ilerde biri "silme neden
 /// calismiyor?" diye sordugunda cevap hazır olsun.
-/// ==================================================================
 /// </remarks>
 public sealed record DeleteEventCommand(Guid EventId) : IRequest<Result>;
 
@@ -241,15 +230,13 @@ internal sealed partial class DeleteEventCommandHandler
             return Result.Failure(EventErrors.NotFound);
         }
 
-        // ==============================================================
         // SATILMIS BİLET VAR MI?
-        // ==============================================================
+        //
         // Koltuk durumuna DEĞİL, bilet kaydina bakiyorum.
         //
         // Koltuk "Locked" olabilir (biri secmis ama odememis) --
         // o kilit 10 dakikada dusuyor ve silmeyi engellememeli.
         // Ama bir BİLET uretilmisse para alinmis demektir.
-        // ==============================================================
         var oturumIdleri = evt.Sessions.Select(s => s.Id).ToList();
 
         var biletVar = await _context.Tickets
@@ -283,9 +270,8 @@ internal sealed partial class DeleteEventCommandHandler
                 "Aktif rezervasyonu olan etkinlik silinemez."));
         }
 
-        // ==============================================================
         // AuditFieldsInterceptor SILMEYI SOFT DELETE'E CEVIRIYOR
-        // ==============================================================
+        //
         // Remove() cagiriyoruz ama kayıt FIZIKSEL olarak silinmiyor:
         // Sprint 12'de yazdigimiz interceptor EntityState.Deleted'i
         // yakalayip IsDeleted = true yapiyor.
@@ -293,7 +279,6 @@ internal sealed partial class DeleteEventCommandHandler
         // Burada Remove() yazmak, "silme niyeti"ni normal EF diliyle
         // ifade etmemizi sagliyor; soft delete davranisi tek yerde
         // (interceptor) duruyor ve her silme için tekrar edilmiyor.
-        // ==============================================================
         _context.Events.Remove(evt);
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

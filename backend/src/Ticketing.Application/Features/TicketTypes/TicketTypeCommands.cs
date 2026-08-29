@@ -40,9 +40,7 @@ internal static class TicketTypeErrors
         "Bu bilet turunden satış yapilmis. Silinemez, yalnızca pasife alinabilir.");
 }
 
-// ===================================================================
 // OLUSTURMA -- PDF: POST /api/v1/events/{eventId}/ticket-types
-// ===================================================================
 
 public sealed record CreateTicketTypeCommand(
     Guid EventId,
@@ -112,9 +110,7 @@ internal sealed class CreateTicketTypeCommandHandler
             return Result.Failure<Guid>(TicketTypeErrors.EventNotFound);
         }
 
-        // ==============================================================
         // PDF is kuralı: "Kontenjan salon kapasitesini aşamaz."
-        // ==============================================================
         if (request.Quota.HasValue)
         {
             var hallCapacity = await _context.Halls
@@ -150,9 +146,7 @@ internal sealed class CreateTicketTypeCommandHandler
     }
 }
 
-// ===================================================================
 // FIYAT DEGISTIRME -- PDF: denetim kaydı ZORUNLU
-// ===================================================================
 
 public sealed record ChangeTicketTypePriceCommand(Guid Id, decimal Price, string Currency)
     : IRequest<Result>;
@@ -211,11 +205,10 @@ internal sealed class ChangeTicketTypePriceCommandHandler
             return Result.Success();
         }
 
-        // ==============================================================
         // PDF is kuralı (Sprint 6):
         // "Satış baslamis bilet turunun fiyati degistirilirse
         //  degisiklik loglanmalidir."
-        // ==============================================================
+        //
         // Neden yalnızca satış baslamissa? Çünkü o noktadan sonra
         // fiyat degisikligi TICARI bir olaydir: bazi musteriler eski
         // fiyattan, bazilari yenisinden almis olur. Sikayet geldiğinde
@@ -238,7 +231,7 @@ internal sealed class ChangeTicketTypePriceCommandHandler
                 userId: _currentUser.UserId,
 
                 // Eski ve yeni değerleri JSON olarak sakliyorum.
-                // Duz metin ("250 TRY -> 300 TRY") yazsaydık sonradan
+                // Duz metin ("250 TRY -> 300 TRY") yazsaydım sonradan
                 // ayristirmak gerekirdi; jsonb ile PostgreSQL içinde
                 // sorgulanabilir kaliyor.
                 oldValues: JsonSerializer.Serialize(new
@@ -261,9 +254,7 @@ internal sealed class ChangeTicketTypePriceCommandHandler
     }
 }
 
-// ===================================================================
 // GUNCELLEME (fiyat HARIC)
-// ===================================================================
 
 public sealed record UpdateTicketTypeCommand(
     Guid Id,
@@ -309,9 +300,7 @@ internal sealed class UpdateTicketTypeCommandHandler
     }
 }
 
-// ===================================================================
 // BOLUM ATAMA -- PDF: POST /api/v1/ticket-types/{id}/assign-section
-// ===================================================================
 
 public sealed record AssignSectionCommand(Guid TicketTypeId, Guid SeatSectionId)
     : IRequest<Result>;
@@ -344,9 +333,8 @@ internal sealed class AssignSectionCommandHandler : IRequestHandler<AssignSectio
             return Result.Failure(TicketTypeErrors.SectionNotFound);
         }
 
-        // ==============================================================
         // PDF: "Aynı koltuk birden fazla aktif bilet turune atanamaz."
-        // ==============================================================
+        //
         // Bölüm BASKA bir bilet turune atanmis mi?
         //
         // Kesin garanti veritabanindaki UNIQUE (SeatSectionId)
@@ -375,9 +363,7 @@ internal sealed class AssignSectionCommandHandler : IRequestHandler<AssignSectio
     }
 }
 
-// ===================================================================
 // SILME
-// ===================================================================
 
 public sealed record DeleteTicketTypeCommand(Guid Id) : IRequest<Result>;
 
@@ -401,7 +387,7 @@ internal sealed class DeleteTicketTypeCommandHandler
 
         // Bu turden bilet satilmissa SILME.
         //
-        // Satılmış biletler bu bilet turune referans veriyor. Silseydik
+        // Satılmış biletler bu bilet turune referans veriyor. Silseydim
         // (soft delete bile olsa) kullanıcının biletinde "bilet türü:
         // bilinmiyor" yazardi ve iade hesabi yapilamazdi.
         //
@@ -428,9 +414,7 @@ internal sealed class DeleteTicketTypeCommandHandler
     }
 }
 
-// ===================================================================
 // LISTELEME -- PDF: GET /api/v1/events/{eventId}/ticket-types
-// ===================================================================
 
 public sealed record TicketTypeDto(
     Guid Id,
@@ -481,8 +465,8 @@ internal sealed class GetTicketTypesQueryHandler
         // Bicimlendirmeyi BELLEKTE yapıyorum, sorguda değil.
         //
         // Money.ToString() bir C# metodu; EF önü SQL'e ceviremez.
-        // Sorgu içinde cagirsaydik "could not be translated" hatası
-        // alırdık -- Sprint 4'te bu tuzaga dusmustuk.
+        // Sorgu içinde cagirsaydim "could not be translated" hatası
+        // alırdım -- Sprint 4'te bu tuzaga dusmustuk.
         var dtos = items
             .Select(t => new TicketTypeDto(
                 t.Id,

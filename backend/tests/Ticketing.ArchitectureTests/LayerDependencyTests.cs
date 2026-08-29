@@ -18,9 +18,7 @@ namespace Ticketing.ArchitectureTests;
 /// </summary>
 public class LayerDependencyTests
 {
-    // ---------------------------------------------------------------
     // 1. DOMAIN — Onion'in en ic halkasi. Hicbir seye bagli olamaz.
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Domain_DisKatmanlarinHicbirineBagliOlmamali()
@@ -63,9 +61,7 @@ public class LayerDependencyTests
             IhlalleriYazdir(sonuc));
     }
 
-    // ---------------------------------------------------------------
     // 2. APPLICATION — Domain'i bilir, disariyi bilmez.
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Application_WebApiKatmaniniReferansAlmamali()
@@ -98,9 +94,7 @@ public class LayerDependencyTests
             IhlalleriYazdir(sonuc));
     }
 
-    // ---------------------------------------------------------------
     // 3. PERSISTENCE / INFRASTRUCTURE — kardestirler, birbirini bilmezler.
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Persistence_WebApiKatmaniniReferansAlmamali()

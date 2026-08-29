@@ -12,9 +12,8 @@ interface ProtectedRouteProps {
 /**
  * Korumalı route sarmalayicisi.
  *
- * ==================================================================
  * BU BIR GÜVENLİK ONLEMI DEĞİLDİR -- KULLANICI DENEYIMIDIR
- * ==================================================================
+ *
  * Kullanıcı tarayıcı konsolunu acip localStorage'daki rolü "Admin"
  * yapabilir ve bu bileşen önü admin paneline sokar.
  *
@@ -27,7 +26,7 @@ interface ProtectedRouteProps {
  * Bu bilesenin isi, MESRU kullanicilari erisemeyecekleri sayfalara
  * gitmekten alikoymak ve onlara anlamlı bir mesaj göstermek.
  * Gerçek kapi her zaman sunucudadır.
- * ==================================================================
+ *
  */
 export function ProtectedRoute({ roles }: ProtectedRouteProps) {
   const location = useLocation()

@@ -31,7 +31,7 @@ public sealed class SecurityOptions
     /// <summary>
     /// Kilit süresi (dakika).
     ///
-    /// KALICI kilit YAPMIYORUZ. Kalici olsaydı saldirgan, hedefledigi
+    /// KALICI kilit YAPMIYORUM. Kalici olsaydı saldirgan, hedefledigi
     /// kullanıcının hesabini kasten 5 kez yanlış şifre girerek KALICI
     /// olarak kilitleyebilirdi. Bu, kullanıcıyı kendi hesabindan eden
     /// bir servis dışı birakma saldirisi olurdu.

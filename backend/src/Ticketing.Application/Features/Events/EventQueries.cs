@@ -11,9 +11,7 @@ using EventEntity = Ticketing.Domain.Entities.Event;
 
 namespace Ticketing.Application.Features.Events;
 
-// ===================================================================
 // DTO'lar
-// ===================================================================
 
 public sealed record EventListItem(
     Guid Id,
@@ -64,9 +62,7 @@ public sealed record EventSessionDto(
     EventSessionStatus Status,
     bool AreSeatsGenerated);
 
-// ===================================================================
 // LISTELEME -- PDF: GET /api/v1/events
-// ===================================================================
 
 public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedResult<EventListItem>>>
 {
@@ -98,9 +94,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// </summary>
     public Guid? OrganizerId { get; init; }
 
-    // ==============================================================
     // PDF Sprint 11'in istedigi kalan filtreler
-    // ==============================================================
 
     /// <summary>
     /// En düşük bilet fiyati. PDF filtresi: "Fiyat aralığı".
@@ -114,7 +108,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// altinda olanlar. VIP bileti 1000 TL olsa bile.
     ///
     /// Bu yüzden "herhangi bir bilet türü araliga giriyorsa" seklinde
-    /// filtreliyoruz. "Tüm bilet türleri araliga girmeli" deseydik
+    /// filtreliyoruz. "Tüm bilet türleri araliga girmeli" deseydim
     /// kullanıcı pahali bir VIP secenegi yuzunden uygun fiyatli
     /// etkinligi hiç goremezdi.
     /// </remarks>
@@ -129,12 +123,12 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// <remarks>
     /// Adi neden "MaxMinimumAge"? Kulaga garip geliyor ama doğru olan
     /// bu: etkinliğin MinimumAge alanı var ve biz onun EN FAZLA kac
-    /// olabilecegini soruyoruz.
+    /// olabilecegini soruyorum.
     ///
     /// Kullanıcı acisindan anlami: "18 yasindayim, girebilecegim
     /// etkinlikleri goster" -> maxMinimumAge=18.
     ///
-    /// Yalnızca "age" deseydik, "18 yaş sınırı OLAN etkinlikler" mi
+    /// Yalnızca "age" deseydim, "18 yaş sınırı OLAN etkinlikler" mi
     /// yoksa "18 yasindakinin girebilecegi etkinlikler" mi belirsiz
     /// kalırdı -- ve ikisi çok farklı sonuç verirdi.
     /// </remarks>
@@ -151,9 +145,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// </remarks>
     public EventStatus? Status { get; init; }
 
-    // ==============================================================
     // SIRALAMA -- PDF: GET /api/v1/events?sortBy=startDate&sortDirection=asc
-    // ==============================================================
 
     /// <summary>
     /// Sıralama alanı. Geçerli degerler: date, title, created.
@@ -198,9 +190,8 @@ internal sealed class GetEventsQueryHandler
     {
         var query = _context.Events.AsNoTracking();
 
-        // ==============================================================
         // GORUNURLUK FILTRESI -- BU DOSYANIN EN ONEMLI SATIRI
-        // ==============================================================
+        //
         // Bu filtre olmasaydı herkes Draft ve PendingApproval durumundaki
         // etkinlikleri gorurdu: organizatorun henüz yayinlamadigi,
         // fiyatlari belirlenmemis, belki de vazgecilecek etkinlikler.
@@ -208,7 +199,6 @@ internal sealed class GetEventsQueryHandler
         // Ayrıca Suspended (admin tarafından uygunsuz bulunup askiya
         // alinmis) etkinlikler de görünürdü -- askiya almanin hiçbir
         // anlami kalmazdi.
-        // ==============================================================
         if (!request.IncludeUnpublished)
         {
             query = query.Where(e => PublicStatuses.Contains(e.Status));
@@ -258,7 +248,7 @@ internal sealed class GetEventsQueryHandler
 
         // ---- PDF Sprint 11: Fiyat aralığı ----
         //
-        // Any(...) ile "en az bir bilet türü araliga giriyorsa" diyoruz.
+        // Any(...) ile "en az bir bilet türü araliga giriyorsa" diyorum.
         // EF bunu SQL'de EXISTS alt sorgusuna ceviriyor -- yani tüm
         // bilet turlerini bellege cekmiyoruz.
         //
@@ -319,9 +309,8 @@ internal sealed class GetEventsQueryHandler
     /// Siralamayi uygular. PDF Sprint 11: "Sorting".
     /// </summary>
     /// <remarks>
-    /// ==============================================================
-    /// NEDEN switch? Neden alan adını doğrudan kullanmiyoruz?
-    /// ==============================================================
+    /// NEDEN switch? Neden alan adını doğrudan kullanmiyorum?
+    ///
     /// Bazi kutuphaneler `OrderBy("Title")` gibi METİN alarak sıralama
     /// yapmayi mumkun kiliyor. Cazip ama TEHLIKELI.
     ///
@@ -340,7 +329,6 @@ internal sealed class GetEventsQueryHandler
     /// siralanabiliyor. Taninmayan deger sessizce varsayilana dusuyor:
     /// hata donmek yerine mantikli bir sonuç vermek, listeleme
     /// uclarinda daha iyi bir davranis.
-    /// ==============================================================
     /// </remarks>
     private static IQueryable<EventEntity> ApplySorting(
         IQueryable<EventEntity> query,
@@ -376,9 +364,7 @@ internal sealed class GetEventsQueryHandler
     }
 }
 
-// ===================================================================
 // DETAY -- PDF: GET /api/v1/events/{id}
-// ===================================================================
 
 public sealed record GetEventByIdQuery(Guid Id, bool IncludeUnpublished)
     : IRequest<Result<EventDetail>>;
@@ -388,7 +374,7 @@ public sealed record GetEventByIdQuery(Guid Id, bool IncludeUnpublished)
 /// </summary>
 /// <remarks>
 /// Iki handler da (liste ve detay) aynı listeyi kullaniyor. Ayrı ayrı
-/// yazsaydık, ilerde yeni bir durum eklendiginde birini guncelleyip
+/// yazsaydım, ilerde yeni bir durum eklendiginde birini guncelleyip
 /// digerini unutmak kacinilmazdi -- ve sonuç bir GÜVENLİK acigi olurdu:
 /// listede gorunmeyen bir etkinlik detayda görünür (veya tersi).
 /// </remarks>
@@ -419,9 +405,8 @@ internal sealed class GetEventByIdQueryHandler
         GetEventByIdQuery request,
         CancellationToken cancellationToken)
     {
-        // ==============================================================
         // PDF Sprint 11: "Etkinlik detaylari" cache edilebilir.
-        // ==============================================================
+        //
         // PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache
         // içinde tutulmamalidir."
         //
@@ -430,9 +415,8 @@ internal sealed class GetEventByIdQueryHandler
         // IncludeUnpublished. Admin için true, herkes için false.
         // Yani AYNI Id, ROLE GORE FARKLI sonuç veriyor.
         //
-        // ------------------------------------------------------------
         // ILK AKLIMA GELEN COZUM VE NEDEN VAZGECTIM
-        // ------------------------------------------------------------
+        //
         // "Anahtara rolü de ekleyeyim" diye dusundum:
         //
         //     event:detail:{id}:admin
@@ -444,9 +428,8 @@ internal sealed class GetEventByIdQueryHandler
         // dosyasi) organizatorun henüz yayinlamadigi etkinlikleri
         // okuyabilirdi.
         //
-        // ------------------------------------------------------------
         // SECTIGIM COZUM: YAYINLANMAMIS ICERIK HİÇ ONBELLEKLENMEZ
-        // ------------------------------------------------------------
+        //
         // Admin gorunumu önbelleği TAMAMEN ATLIYOR ve doğrudan
         // veritabanina gidiyor. Onbellege giren sorgu ise YALNIZCA
         // yayinlanmis etkinlikleri donduren surum. Redis te hiçbir
@@ -457,7 +440,6 @@ internal sealed class GetEventByIdQueryHandler
         // değil ve önbellek zaten olcek için var.
         //
         // Yan fayda: anahtar sayısı ikiye katlanmiyor.
-        // ==============================================================
         var detail = request.IncludeUnpublished
             ? await LoadAsync(request.Id, includeUnpublished: true, cancellationToken)
                 .ConfigureAwait(false)
@@ -484,9 +466,8 @@ internal sealed class GetEventByIdQueryHandler
             .AsNoTracking()
             .Where(e => e.Id == eventId);
 
-        // ==============================================================
         // IDOR KORUMASI -- ARTIK SORGUNUN ICINDE
-        // ==============================================================
+        //
         // Onceden bu kontrol veriyi CEKTIKTEN SONRA yapiliyordu.
         // Onbellek eklerken sorgunun icine tasidim ve daha da güvenli
         // oldu.
@@ -504,7 +485,6 @@ internal sealed class GetEventByIdQueryHandler
         // Bulunamayan kayıt 404 dönüyor, 403 değil -- bilerek.
         // 403 "bu kayıt VAR ama goremezsin" der ve varligini DOGRULAR.
         // 404 hiçbir sey sizdirmaz.
-        // ==============================================================
         if (!includeUnpublished)
         {
             query = query.Where(e => EventVisibility.PublicStatuses.Contains(e.Status));

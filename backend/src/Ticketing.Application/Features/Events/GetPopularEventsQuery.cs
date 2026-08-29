@@ -41,7 +41,7 @@ internal sealed class GetPopularEventsQueryHandler
     {
         // Önce sinirla, SONRA anahtar üret.
         //
-        // Ters sırada yapsaydik anahtar ham degerden uretilirdi ve
+        // Ters sırada yapsaydim anahtar ham degerden uretilirdi ve
         // count=999 ile count=1000 ayrı anahtarlar olurdu -- oysa
         // ikisi de aynı (50 elemanli) sonucu döner.
         var count = Math.Clamp(request.Count, 1, MaxCount);
@@ -56,16 +56,17 @@ internal sealed class GetPopularEventsQueryHandler
     }
 
     /// <summary>
-    /// ==============================================================
     /// "POPULER" NASIL OLCULUYOR?
-    /// ==============================================================
+    ///
     /// Satılan AKTIF bilet sayısına göre. Basit ama doğru bir olcut:
     /// insanlarin parasiyla oy verdiği sey.
     ///
     /// Alternatifleri elerken dusundugum:
     ///
-    ///   Goruntulenme sayısı -> henüz toplamiyoruz (Sprint 13)
-    ///   Favori sayısı       -> Sprint 12'de gelecek
+    ///   Goruntulenme sayısı -> hic toplamadim, veri yok
+    ///   Favori sayısı       -> Sprint 12'de geldi ama olcut olarak
+    ///                          kullanmadim: favori "ilgilendim"
+    ///                          demek, "aldim" demek degil
     ///   Doluluk oranı       -> küçük salonlari haksiz one cikarirdi
     ///                          (50 kisilik salon %100 dolu, 5000
     ///                          kisilik salon %80 -- ikincisi 4000
@@ -74,9 +75,8 @@ internal sealed class GetPopularEventsQueryHandler
     /// İptal/iade edilmiş biletleri SAYMIYORUZ: iade edilen bir
     /// etkinligi popüler göstermek yanıltıcı olurdu.
     ///
-    /// ==============================================================
     /// BU SORGU NEDEN ONBELLEKTEN EN COK KAZANAN SORGU?
-    /// ==============================================================
+    ///
     /// Icinde gruplama ve sayım var; veritabani her calismada
     /// Tickets tablosunu tarayip Events ile birlestiriyor. Bilet
     /// sayısı buyudukce maliyeti artiyor.
@@ -87,7 +87,6 @@ internal sealed class GetPopularEventsQueryHandler
     ///
     /// Sonuç kullanicidan bağımsız olduğu için ortak onbellekte
     /// tutulmasi güvenli.
-    /// ==============================================================
     /// </summary>
     private async Task<IReadOnlyList<EventListItem>> LoadAsync(
         int count,

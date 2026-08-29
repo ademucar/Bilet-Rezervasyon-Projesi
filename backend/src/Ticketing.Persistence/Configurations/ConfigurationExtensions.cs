@@ -20,19 +20,18 @@ internal static class ConfigurationExtensions
     /// PostgreSQL'in "xmin" sistem sutununu optimistic concurrency
     /// token'i olarak esler.
     ///
-    /// ------------------------------------------------------------------
     /// BU DORT SATIR NE YAPIYOR?
-    /// ------------------------------------------------------------------
+    ///
     /// HasColumnName("xmin")        -> PostgreSQL'in gizli sistem sutunu.
     ///                                 Her satirda zaten var; biz sadece
-    ///                                 ona bir ad veriyoruz.
+    ///                                 ona bir ad veriyorum.
     ///
     /// HasColumnType("xid")         -> xmin'in veri tipi. 32 bit isaretsiz.
     ///
-    /// ValueGeneratedOnAddOrUpdate  -> Bu değeri BIZ yazmiyoruz;
+    /// ValueGeneratedOnAddOrUpdate  -> Bu değeri BIZ yazmiyorum;
     ///                                 PostgreSQL her INSERT ve UPDATE'te
     ///                                 kendisi guncelliyor. EF'e "sen
-    ///                                 dokunma, okuduktan sonra geri al" diyoruz.
+    ///                                 dokunma, okuduktan sonra geri al" diyorum.
     ///
     /// IsConcurrencyToken()         -> KRITIK OLAN BU. Bu satirdan sonra
     ///                                 EF her UPDATE sorgusuna

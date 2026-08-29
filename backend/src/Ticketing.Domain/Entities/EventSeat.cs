@@ -5,9 +5,7 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// ==================================================================
 /// PROJENIN KALBI
-/// ==================================================================
 ///
 /// Bir koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
 /// PDF'in "es zamanlı rezervasyon" problemi tam olarak bu satirlarda cozuluyor.
@@ -21,9 +19,8 @@ namespace Ticketing.Domain.Entities;
 /// Bu kasitli bir veri cogaltmasidir: her satirin BAGIMSIZ olarak
 /// kilitlenebilmesi gerekiyor.
 ///
-/// ------------------------------------------------------------------
 /// UC KATMANLI SAVUNMA
-/// ------------------------------------------------------------------
+///
 /// Aynı koltuğun iki kisiye satilmasini uc ayrı katman engelliyor:
 ///
 ///   1. Bu sinifin metotlari (Lock/MarkAsSold) durum kontrolü yapar.
@@ -38,7 +35,6 @@ namespace Ticketing.Domain.Entities;
 ///
 /// Uc katmanin da olmasını gerekiyor. Biri "gereksiz" değil: her biri
 /// farklı bir hata sinifini yakaliyor.
-/// ==================================================================
 /// </summary>
 public class EventSeat : ConcurrentEntity
 {
@@ -105,9 +101,7 @@ public class EventSeat : ConcurrentEntity
     internal static EventSeat Create(Guid eventSessionId, Guid seatId, Guid ticketTypeId, Money price)
         => new(eventSessionId, seatId, ticketTypeId, price);
 
-    // ---------------------------------------------------------------
     // Durum sorgulari
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Koltuk su an satin alinabilir mi?
@@ -137,9 +131,7 @@ public class EventSeat : ConcurrentEntity
     public bool IsLockExpiredAt(DateTimeOffset moment)
         => Status == EventSeatStatus.Locked && LockedUntil.HasValue && LockedUntil.Value <= moment;
 
-    // ---------------------------------------------------------------
     // Kilitleme
-    // ---------------------------------------------------------------
 
     /// <summary>
     /// Koltugu bir rezervasyon için kilitler.

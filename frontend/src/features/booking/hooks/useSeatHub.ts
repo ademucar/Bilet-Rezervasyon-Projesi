@@ -7,9 +7,9 @@ import {
 } from '@microsoft/signalr'
 
 /**
- * ==================================================================
+ *
  * GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
- * ==================================================================
+ *
  * Sprint 7'de koltuk haritasini 10 saniyede bir yokluyorduk
  * (refetchInterval). O zaman koda su notu birakmistim:
  *
@@ -17,7 +17,7 @@ import {
  *    sunucu değişiklikleri ANINDA itecek."
  *
  * Bu kanca o notun karşılığı.
- * ==================================================================
+ *
  */
 
 /** Sunucudan gelen olaylar. Adlar backend'deki sabitlerle birebir aynı. */
@@ -45,12 +45,12 @@ export function useSeatHub(
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
 
   /**
-   * ----------------------------------------------------------------
+   *
    * HANDLER'LARI REF'TE TUTMANIN SEBEBI
-   * ----------------------------------------------------------------
+   *
    * Bu kancayi cagiran bileşen her render'da YENI bir handlers
    * nesnesi olusturuyor (nesne literali). Eger handlers'i aşağıdaki
-   * useEffect'in bagimlilik dizisine koysaydık, effect HER RENDER'DA
+   * useEffect'in bagimlilik dizisine koysaydım, effect HER RENDER'DA
    * yeniden calisirdi.
    *
    * Sonuç: saniyede birkaç kez bağlantı kurulup kapatilirdi. Sunucu
@@ -60,7 +60,7 @@ export function useSeatHub(
    *
    * Ref ile: effect YALNIZCA eventSessionId değişince çalışıyor,
    * ama olay geldiğinde her zaman EN GUNCEL handler'lar cagriliyor.
-   * ----------------------------------------------------------------
+   *
    */
   const handlersRef = useRef(handlers)
 
@@ -86,14 +86,13 @@ export function useSeatHub(
 
     const connection = new HubConnectionBuilder()
       // Gorece adres: Vite proxy'si /hubs'i backend'e yonlendiriyor.
-      // Mutlak adres yazsaydık uretimde ortam bazlı yapilandirma
-      // gerekirdi -- API istemcisinde de aynı yaklasimi kullanıyoruz.
+      // Mutlak adres yazsaydım uretimde ortam bazlı yapilandirma
+      // gerekirdi -- API istemcisinde de aynı yaklasimi kullanıyorum.
       .withUrl('/hubs/seats')
 
-      // ==========================================================
       // OTOMATIK YENIDEN BAGLANMA -- PDF: "SignalR bağlantısı
       // kesildiginde frontend yeniden baglanmalidir."
-      // ==========================================================
+      //
       // Varsayılan withAutomaticReconnect() yalnızca DORT kez dener
       // (0, 2, 10, 30 sn) ve sonra PES EDER.
       //
@@ -110,7 +109,6 @@ export function useSeatHub(
       // duruyor? Daha uzun beklemek, sunucu geri geldiğinde
       // kullanıcının yarim dakikadan fazla eski veri gormesi
       // demek olurdu.
-      // ==========================================================
       .withAutomaticReconnect({
         nextRetryDelayInMilliseconds: (context) => {
           const gecikmeler = [0, 2000, 5000, 10000, 30000]
@@ -127,16 +125,14 @@ export function useSeatHub(
 
     connectionRef.current = connection
 
-    // ==============================================================
     // OLAY DINLEYICILERI -- adlar backend ile BIREBIR
-    // ==============================================================
+    //
     // SignalR eslesmeyen bir olay adını HATA SAYMAZ; mesaj sessizce
     // hiçbir yere gitmez. Yani "SeatLocked" yerine "seatLocked"
-    // yazsaydık hiçbir uyarı almadan calismaz olurdu.
+    // yazsaydım hiçbir uyarı almadan calismaz olurdu.
     //
     // Bu yuzden adları kopyala-yapistir ile alıyorum, elle
     // yazmiyorum.
-    // ==============================================================
     connection.on('SeatLocked', (payload: SeatEventPayload) => {
       handlersRef.current.onSeatsLocked(payload.eventSeatIds)
     })
@@ -163,14 +159,13 @@ export function useSeatHub(
     connection.onreconnected(() => {
       setStatus('connected')
 
-      // ==========================================================
       // YENIDEN BAGLANINCA LISTEYI BASTAN CEK
       // PDF Frontend gorevi: "Güncel koltuk listesini yeniden çekme"
-      // ==========================================================
+      //
       // Bu satır, kancanin en kritik yeri.
       //
       // Bağlantı kopukken gecen surede sunucu onlarca olay
-      // gondermis olabilir ve HICBIRI bize ulasmadi. SignalR
+      // gondermis olabilir ve HICBIRI bana ulasmadi. SignalR
       // kacirilan mesajlari BIRIKTIRMEZ.
       //
       // Yani yeniden bağlantı tek başına yetmez: elimizdeki
@@ -180,7 +175,6 @@ export function useSeatHub(
       // Bu aynı zamanda SignalR'a neden "kaybolursa olur"
       // diyebildigimizin sebebi: her zaman guvenilir bir
       // toparlanma yolumuz var.
-      // ==========================================================
       void connection.invoke('JoinSession', eventSessionId).catch(() => {
         // Gruba yeniden katilma başarısız olursa da liste
         // çekiliyor; kullanıcı en azindan güncel veriyi görüyor.
@@ -193,9 +187,8 @@ export function useSeatHub(
 
     // ---- Baglan ----
     //
-    // ==============================================================
     // LINT: react/set-state-in-effect -- GEREKCEYLE SUSTURULDU
-    // ==============================================================
+    //
     // Kural, effect içinde senkron setState cagirmaya karsi uyariyor
     // ve çoğu durumda haklı. Ama kuralin KENDİ açıklaması istisnayi
     // söylüyor: "Use an effect only when synchronizing with an
@@ -235,9 +228,8 @@ export function useSeatHub(
         setStatus('disconnected')
       })
 
-    // ==============================================================
     // TEMIZLIK -- ŞART
-    // ==============================================================
+    //
     // Kullanıcı sayfadan ayrilinca baglantiyi kapatmazsak:
     //   - Sunucu tarafında açık bağlantı birikir
     //   - Gruptan cikilmadigi için mesaj gonderilmeye devam eder
@@ -245,7 +237,6 @@ export function useSeatHub(
     //
     // stop() zaten gruptan da cikariyor; yine de LeaveSession
     // cagiriyorum ki sunucu tarafında niyet açık olsun.
-    // ==============================================================
     return () => {
       if (connection.state === HubConnectionState.Connected) {
         void connection.invoke('LeaveSession', eventSessionId).catch(() => {

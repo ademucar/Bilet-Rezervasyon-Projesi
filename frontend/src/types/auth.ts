@@ -33,7 +33,7 @@ export interface AuthResponse {
 /**
  * Backend'in RFC 7807 Problem Details yaniti.
  *
- * `errorCode` ve `errors` alanlarini BIZ ekledik (RFC uzantisi).
+ * `errorCode` ve `errors` alanlarini BIZ ekledim (RFC uzantisi).
  * Frontend hata kontrolunu `detail` metnine göre DEĞİL `errorCode`e
  * göre yapmali -- metin değişince kod bozulmasin.
  */

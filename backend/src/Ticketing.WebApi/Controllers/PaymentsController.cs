@@ -62,9 +62,8 @@ public sealed class PaymentsController : ApiControllerBase
     /// üretir, koltukları satıldı olarak isaretler.
     /// </summary>
     /// <remarks>
-    /// ==================================================================
     /// BU ENDPOINT BIR ÖDEME CALLBACK'IDIR
-    /// ==================================================================
+    ///
     /// Gerçek entegrasyonda ödeme sağlayıcısı burayi cagirir.
     ///
     /// GÜVENLİK: Callback'e KORU KORUNE GUVENILMEZ. Handler, islemi
@@ -88,9 +87,8 @@ public sealed class PaymentsController : ApiControllerBase
         Guid id,
         [FromBody] CompletePaymentRequest? request,
         CancellationToken cancellationToken)
-        // ==============================================================
         // PDF Sprint 15 idempotency listesi: "Ödeme callback"
-        // ==============================================================
+        //
         // Bu uc için AYRI bir Idempotency-Key GEREKMIYOR ve bilinçli
         // olarak eklemedim.
         //
@@ -107,7 +105,6 @@ public sealed class PaymentsController : ApiControllerBase
         // Odemenin KENDİ DURUMU en guvenilir idempotency anahtaridir.
         // Sprint 8'de bunu ucten uca dogrulamistim: callback 3 kez
         // cagrildi, bilet sayısı 2'de kaldı.
-        // ==============================================================
         => HandleResult(await Sender
             .Send(new CompletePaymentCommand(id, request?.ProviderReference), cancellationToken)
             .ConfigureAwait(false));
@@ -146,9 +143,8 @@ public sealed class PaymentsController : ApiControllerBase
         [FromBody] RefundPaymentRequest? request,
         [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         CancellationToken cancellationToken)
-        // ==============================================================
         // PDF Sprint 15 idempotency listesi: "İade baslatma"
-        // ==============================================================
+        //
         // İade, cift calistirilmasi EN TEHLIKELI işlem: aynı parayi iki
         // kez geri gondermek doğrudan mali kayip.
         //
@@ -163,7 +159,6 @@ public sealed class PaymentsController : ApiControllerBase
         // Idempotency anahtari bu ikisini AYIRIYOR:
         //   aynı anahtar  -> "bu isteği zaten isledim", basari döner
         //   farklı anahtar -> gerçekten ikinci iade, kurallar isler
-        // ==============================================================
         => HandleResult(await Sender
             .Send(
                 new RefundPaymentCommand(id, request?.Amount, request?.Reason, idempotencyKey),

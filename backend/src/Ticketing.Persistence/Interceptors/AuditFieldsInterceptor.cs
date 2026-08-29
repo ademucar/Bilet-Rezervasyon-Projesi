@@ -8,15 +8,13 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Persistence.Interceptors;
 
 /// <summary>
-/// ==================================================================
 /// DENETIM ALANLARINI OTOMATIK DOLDURAN INTERCEPTOR
-/// ==================================================================
+///
 /// AuditableEntity uzerindeki CreatedAt / CreatedBy / UpdatedAt /
 /// UpdatedBy alanlarini kaydetme anında dolduruyor.
 ///
-/// ------------------------------------------------------------------
 /// BU SINIF SPRINT 12'DE, GERCEK BIR HATA BULUNCA YAZILDI
-/// ------------------------------------------------------------------
+///
 /// Yorum ozelligini tarayıcıda denerken yorum tarihi "01 Ocak 1"
 /// gorundu. Veritabanina bakinca sebebi cikti:
 ///
@@ -31,9 +29,8 @@ namespace Ticketing.Persistence.Interceptors;
 ///     Payments      0 / 3  dolu
 ///     Reviews       0 / 2  dolu
 ///
-/// ------------------------------------------------------------------
 /// DAHA ONCE FARK EDEMEDIM -- ÇÜNKÜ BELIRTISINI YANLIS YORUMLADIM
-/// ------------------------------------------------------------------
+///
 /// Sprint 11'de günlük satış özeti isini test ederken rapor "0 bilet,
 /// 0 rezervasyon" dondu. O sorgu tam olarak su filtreyi kullaniyor:
 ///
@@ -47,9 +44,8 @@ namespace Ticketing.Persistence.Interceptors;
 /// "0 dondu ve bu makul" ile "0 dondu çünkü sorgu bozuk" aynı
 /// gorunuyordu.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN ENTITY ICINDE DEĞİL DE INTERCEPTOR?
-/// ------------------------------------------------------------------
+///
 /// Her Create() metoduna "CreatedAt = DateTimeOffset.UtcNow" satiri
 /// eklemek de mumkundu. Yapmadim:
 ///
@@ -63,7 +59,6 @@ namespace Ticketing.Persistence.Interceptors;
 ///
 /// Interceptor TEK YERDE ve otomatik. Yeni bir entity eklendiginde
 /// hiçbir sey yapmaya gerek yok.
-/// ==================================================================
 /// </summary>
 internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
 {
@@ -95,7 +90,7 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
     /// Senkron yol.
     /// </summary>
     /// <remarks>
-    /// Uygulamada senkron SaveChanges KULLANMIYORUZ ama bu metodu
+    /// Uygulamada senkron SaveChanges KULLANMIYORUM ama bu metodu
     /// yine de yazıyorum.
     ///
     /// Sebep: birisi ilerde (test kodunda, bir seed scriptinde,
@@ -139,9 +134,8 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     entry.Entity.UpdatedAt = now;
                     entry.Entity.UpdatedBy = userId;
 
-                    // ==================================================
                     // CreatedAt UZERINE YAZILMASINI ENGELLE
-                    // ==================================================
+                    //
                     // EF, bir entity Modified durumundayken TÜM
                     // ozelliklerini UPDATE cumlesine dahil edebilir.
                     // CreatedAt'e dokunmasak bile, bellekteki deger
@@ -151,15 +145,13 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     // IsModified = false demek "bu sutunu UPDATE'e
                     // hiç koyma" demek. Oluşturulma bilgisi bir kez
                     // yazilir ve bir daha degismez.
-                    // ==================================================
                     entry.Property(nameof(AuditableEntity.CreatedAt)).IsModified = false;
                     entry.Property(nameof(AuditableEntity.CreatedBy)).IsModified = false;
                     break;
 
                 case EntityState.Deleted:
-                    // ==================================================
                     // SOFT DELETE: SILME ISLEMINI GUNCELLEMEYE CEVIR
-                    // ==================================================
+                    //
                     // AuditableEntity soft delete destekliyor
                     // (IsDeleted alanı ve global query filter).
                     //
@@ -175,7 +167,6 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     // NOT: Favorite bir AuditableEntity DEĞİL, bu
                     // yüzden gerçekten siliniyor -- Sprint 12'de
                     // bilinçli olarak boyle tasarlandi.
-                    // ==================================================
                     entry.State = EntityState.Modified;
                     entry.Entity.IsDeleted = true;
                     entry.Entity.DeletedAt = now;
@@ -189,7 +180,7 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                 case EntityState.Unchanged:
                 default:
                     // Degismemis veya takip edilmeyen kayitlara
-                    // dokunmuyoruz.
+                    // dokunmuyorum.
                     break;
             }
         }

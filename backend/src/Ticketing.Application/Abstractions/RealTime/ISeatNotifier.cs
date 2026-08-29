@@ -4,11 +4,10 @@ namespace Ticketing.Application.Abstractions.RealTime;
 /// Koltuk durumu degisikliklerini bağlı istemcilere ANINDA bildirir.
 /// PDF Sprint 10.
 ///
-/// ==================================================================
 /// NEDEN ARAYUZ? Application neden SignalR'i tanimiyor?
-/// ==================================================================
+///
 /// SignalR bir ASP.NET Core teknolojisi. Application katmanina
-/// IHubContext enjekte etseydik:
+/// IHubContext enjekte etseydim:
 ///
 ///   - Application, Microsoft.AspNetCore.SignalR paketine baglanirdi
 ///   - Mimari testimiz (Application_AltyapiKatmanlariniReferansAlmamali)
@@ -19,13 +18,11 @@ namespace Ticketing.Application.Abstractions.RealTime;
 /// Bu arayüz sayesinde Application yalnızca "koltuk kilitlendi, ilgili
 /// herkese haber ver" diyor. Nasil haber verildigi (SignalR, WebSocket,
 /// SSE, hatta hiçbir sey) WebApi katmaninin isi.
-/// ==================================================================
 ///
-/// ------------------------------------------------------------------
 /// BU BILDIRIMLER NEDEN OUTBOX'A YAZILMIYOR?
-/// ------------------------------------------------------------------
-/// Sprint 9'da e-posta ve bildirimleri Outbox'a yazdik. Burada AYNISINI
-/// YAPMIYORUZ ve bu bilinçli bir ayrim.
+///
+/// Sprint 9'da e-posta ve bildirimleri Outbox'a yazdim. Burada AYNISINI
+/// YAPMIYORUM ve bu bilinçli bir ayrim.
 ///
 /// Fark, "kaybolursa ne olur?" sorusunun cevabinda:
 ///
@@ -44,7 +41,6 @@ namespace Ticketing.Application.Abstractions.RealTime;
 ///
 /// Ozetle: Outbox DAYANIKLILIK için, SignalR HIZ için. Ikisi farklı
 /// problemleri cozuyor.
-/// ------------------------------------------------------------------
 /// </summary>
 public interface ISeatNotifier
 {
@@ -107,7 +103,7 @@ public interface ISeatNotifier
     ///   - Oturumu izleyen HERKES: koltuklar bosaldi (SeatReleased)
     ///   - Rezervasyonun SAHIBI: "süreniz doldu" uyarısı
     ///
-    /// Ikisini tek olayda birlestirseydik, sahibi kendi
+    /// Ikisini tek olayda birlestirseydim, sahibi kendi
     /// rezervasyonunun mu yoksa baskasininkinin mi bittigini
     /// anlayamazdi.
     /// </remarks>

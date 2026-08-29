@@ -4,9 +4,9 @@ import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 /**
- * ==================================================================
+ *
  * TESTLER İÇİN ORTAK SARMALAYICI
- * ==================================================================
+ *
  * Bileşenlerimizin çoğu iki bağlama ihtiyaç duyuyor:
  *   - React Router (Link, useNavigate, useLocation)
  *   - TanStack Query (useQuery, useMutation)
@@ -14,18 +14,18 @@ import { MemoryRouter } from 'react-router-dom'
  * Bunları her testte elle kurmak 15 satırlık tekrar demek olurdu ve
  * biri unutulduğunda hata mesajı ("useNavigate() may be used only in
  * the context of a Router") bileşende sorun varmış gibi görünürdü.
- * ==================================================================
+ *
  */
 
 /**
  * Her test için YENİ bir QueryClient üretir.
- * ================================================================
+ *
  * Tek bir istemciyi paylaşsaydık, bir testte önbelleğe alınan veri
  * sonraki teste sızardı ve "veri yükleniyor" durumunu test etmek
  * imkânsız olurdu — veri zaten önbellekte hazır olurdu.
  *
  * Backend'deki Respawn ile aynı mantık: her test temiz başlamalı.
- * ================================================================
+ *
  */
 function testQueryClient(): QueryClient {
   return new QueryClient({

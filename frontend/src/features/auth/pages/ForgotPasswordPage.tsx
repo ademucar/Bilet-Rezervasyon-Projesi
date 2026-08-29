@@ -23,21 +23,19 @@ export function ForgotPasswordPage() {
     mutationFn: (data: ForgotPasswordForm) => authApi.forgotPassword(data.email),
   })
 
-  // ==================================================================
   // BASARILI EKRANI -- GÜVENLİK ACISINDAN KRITIK METIN
-  // ==================================================================
+  //
   // "E-posta gönderildi" DEMIYORUZ.
-  // "EGER bu adres kayıtlıysa gönderildi" diyoruz.
+  // "EGER bu adres kayıtlıysa gönderildi" diyorum.
   //
   // Fark neden önemli? Backend, adres kayıtlı olsun olmasın AYNI
   // cevabi döner (kullanıcı numaralandirmayi engellemek için).
   // Frontend "gönderildi" deseydi, backend'deki tüm o ozeni bosa
-  // cikarmis olurduk -- kullanıcı mesaja bakip adresin kayıtlı
+  // cikarmis olurdum -- kullanıcı mesaja bakip adresin kayıtlı
   // olduğunu varsayardi.
   //
   // Güvenlik zinciri en zayif halkasi kadar güçlü. Arayuz metni de
   // o zincirin bir halkasi.
-  // ==================================================================
   if (mutation.isSuccess) {
     return (
       <AuthLayout

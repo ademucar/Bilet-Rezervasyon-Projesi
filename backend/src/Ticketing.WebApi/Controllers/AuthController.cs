@@ -16,9 +16,8 @@ namespace Ticketing.WebApi.Controllers;
 /// <summary>
 /// Kimlik doğrulama endpointleri. PDF Sprint 3.
 ///
-/// ==================================================================
 /// BU CONTROLLER'DA IS MANTIGI YOK -- BILINCLI
-/// ==================================================================
+///
 /// PDF zorunlu kurallari:
 ///   - "Controller içinde is kuralı yazilmamalidir."
 ///   - "Controller doğrudan DbContext kullanmamalidir."
@@ -30,13 +29,11 @@ namespace Ticketing.WebApi.Controllers;
 ///
 /// Tek bir "if" veya veritabani sorgusu yok. Architecture testimiz
 /// DbContext kullanimini zaten engelliyor.
-/// ==================================================================
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
-// ===================================================================
 // HIZ SINIRI -- PDF Sprint 15: "Login, Register, Şifre sıfırlama"
-// ===================================================================
+//
 // Politika SINIF duzeyinde: bu controller'daki TÜM uclar korunuyor.
 //
 // Uc uc tek tek isaretleseydik, ilerde eklenen bir uc (örneğin
@@ -44,7 +41,6 @@ namespace Ticketing.WebApi.Controllers;
 // bu tam olarak brute force'a açık bir uc olurdu.
 //
 // Sinif duzeyi "varsayılan olarak güvenli" davraniyor.
-// ===================================================================
 [EnableRateLimiting(RateLimitingSetup.Policies.Authentication)]
 public sealed class AuthController : ApiControllerBase
 {

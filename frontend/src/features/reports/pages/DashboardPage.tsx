@@ -24,25 +24,24 @@ import { Roles } from '../../../types/auth'
 import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
 
 /**
- * ==================================================================
+ *
  * TEK BİR METRİK KARTI
- * ==================================================================
+ *
  * Çıplak bir sayı hiçbir şey anlatmıyor. "Bugün 50 bilet satıldı"
  * iyi mi kötü mü? Dün 5 satıldıysa harika, 500 satıldıysa felaket.
  *
  * Bu yüzden karta ikinci bir satır ekledim: `hint`. Zaten vardı ama
  * yalnızca gri küçük yazıydı; şimdi yön bilgisi taşıyabiliyor.
  *
- * ------------------------------------------------------------------
  * RENK KUTUYU BOYAMIYOR
- * ------------------------------------------------------------------
+ *
  * Önceki hâlde uyarı tonundaki kartın TÜM zemini sarıya boyanıyordu.
  * Dört kartlık bir sırada biri sarı biri kırmızı olunca panel
  * alarm paneline dönüşüyordu -- oysa "%2 iade" normal bir sayı.
  *
  * Artık zemin her kartta beyaz; renk yalnızca SOL KENAR ÇİZGİSİNDE
  * ve sayının kendisinde. Aynı bilgi, onda bir gürültü.
- * ==================================================================
+ *
  */
 function MetricCard({
   label,
@@ -81,20 +80,20 @@ function MetricCard({
 const GRAFIK_RENKLERI = ['#2563eb', '#7c3aed', '#0891b2', '#ea580c', '#65a30d']
 
 /**
- * ==================================================================
+ *
  * ORGANİZATÖR VE ADMIN PANELİ -- PDF Sprint 13
- * ==================================================================
+ *
  * Iki panel TEK sayfada, sekmeli.
  *
  * Neden ayrı iki sayfa değil? Çünkü admin olan bir kullanıcı çoğu
- * zaman AYNI ZAMANDA organizatör (bizim demo kullanicimiz gibi) ve
+ * zaman AYNI ZAMANDA organizatör (benim demo kullanicimiz gibi) ve
  * iki panel arasında gidip gelmek istiyor. Ayrı adresler olsaydı
  * her gecis tam sayfa yuklemesi olurdu.
  *
  * Admin sekmesi YALNIZCA admin rolunde görünüyor. Bu bir güvenlik
  * önlemi DEĞİL, kullanıcı deneyimi -- gerçek kontrol backend'deki
  * AdminOnly policy'sinde (dogrulandi: normal kullanıcı 403 aliyor).
- * ==================================================================
+ *
  */
 export function DashboardPage() {
   const user = useAuthStore((s) => s.user)
@@ -137,9 +136,7 @@ export function DashboardPage() {
   )
 }
 
-// ===================================================================
 // ORGANİZATÖR PANELİ -- PDF'in 10 metriği
-// ===================================================================
 
 function OrganizerPanel() {
   const q = useQuery({
@@ -289,9 +286,7 @@ function OrganizerPanel() {
   )
 }
 
-// ===================================================================
 // ADMIN PANELİ -- PDF'in 10 metriği
-// ===================================================================
 
 function AdminPanel() {
   const q = useQuery({
@@ -408,9 +403,7 @@ function AdminPanel() {
   )
 }
 
-// ===================================================================
 // RAPOR DISA AKTARMA -- PDF Sprint 13
-// ===================================================================
 
 function ReportExportPanel() {
   const [type, setType] = useState<number>(ReportType.SalesSummary)

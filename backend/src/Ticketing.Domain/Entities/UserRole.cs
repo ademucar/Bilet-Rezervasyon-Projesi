@@ -3,17 +3,16 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// User ile Role arasindaki çok-a-çok iliskinin ara tablosu.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN Entity'DEN TUREMIYOR? NEDEN Id ALANI YOK?
-/// ------------------------------------------------------------------
+///
 /// Bu tablonun kendine ait bir kimliği yok. "3 numarali kullanıcı-rol
 /// iliskisi" diye bir sey anlamsiz. Kimligi, iliskilendirdigi iki
 /// varligin birlesimidir: (UserId, RoleId).
 ///
-/// Bu yüzden COMPOSITE KEY kullanıyoruz. EF konfigurasyonunda:
+/// Bu yüzden COMPOSITE KEY kullanıyorum. EF konfigurasyonunda:
 ///     builder.HasKey(ur =&gt; new { ur.UserId, ur.RoleId });
 ///
-/// Bunun bize kazandirdiklari:
+/// Bunun bana kazandirdiklari:
 ///
 /// 1) Aynı kullanıcıya aynı rol IKI KEZ atanamaz -- veritabani seviyesinde
 ///    garanti. Ayrı bir Id sutunu olsaydı (Guid Id, UserId, RoleId),

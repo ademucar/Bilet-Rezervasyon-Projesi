@@ -3,9 +3,9 @@ import { bookingApi, EventStatus, type EventFilters } from '../api/bookingApi'
 import { formatDate } from '../../../lib/format'
 
 /**
- * ==================================================================
+ *
  * AKTİF FİLTRE ROZETLERİ
- * ==================================================================
+ *
  * Yan paneldeki filtreler sayfayı aşağı doğru uzatıyor ve kullanıcı
  * sonuçlara baktığında hangi filtrelerin açık olduğunu göremiyor --
  * özellikle mobilde, panel yukarıda kaldığında.
@@ -19,9 +19,8 @@ import { formatDate } from '../../../lib/format'
  *   2. Her filtreyi TEK TIKLA kaldırılabilir yapıyor -- yan panelde
  *      doğru açılır listeyi bulup "Farketmez"e çekmek gerekmiyor
  *
- * ------------------------------------------------------------------
  * NEDEN ŞEHİR/KATEGORİ İSİMLERİNİ AYRICA ÇEKİYORUM?
- * ------------------------------------------------------------------
+ *
  * Filtrede yalnızca cityId var (bir GUID). Rozette "Şehir:
  * 3fa85f64-..." yazamam. Listeler zaten EventFilterPanel tarafından
  * çekiliyor ve TanStack Query aynı queryKey ile ONBELLEKTEN
@@ -29,7 +28,7 @@ import { formatDate } from '../../../lib/format'
  *
  * staleTime'ı da orayla aynı tuttum; farklı verseydim iki bileşen
  * sırayla birbirinin önbelleğini bayatlatırdı.
- * ==================================================================
+ *
  */
 
 interface ActiveFilterChipsProps {

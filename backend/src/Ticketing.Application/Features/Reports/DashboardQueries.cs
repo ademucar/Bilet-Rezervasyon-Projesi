@@ -9,9 +9,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reports;
 
-// ===================================================================
 // ORTAK TIPLER
-// ===================================================================
 
 /// <summary>Günlük satış grafigi noktasi.</summary>
 public sealed record DailySalesPoint(DateOnly Date, int TicketCount, decimal Revenue);
@@ -27,9 +25,7 @@ public sealed record SectionOccupancy(
     int SoldSeats,
     double OccupancyRate);
 
-// ===================================================================
 // ORGANİZATÖR DASHBOARD -- PDF Sprint 13 (10 metrik)
-// ===================================================================
 
 public sealed record OrganizerDashboard(
     int TotalEvents,
@@ -76,12 +72,11 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ==============================================================
         // BU PANELIN EN KRITIK SATIRI: KAPSAM SINIRI
-        // ==============================================================
+        //
         // Organizatör YALNIZCA kendi etkinliklerinin verisini görebilir.
         //
-        // Bu filtreyi unutsaydik, herhangi bir organizatör RAKIPLERININ
+        // Bu filtreyi unutsaydim, herhangi bir organizatör RAKIPLERININ
         // gelir rakamlarini, bilet satislarini ve doluluk oranlarini
         // gorurdu. Ticari acidan felaket bir sizinti olurdu -- ve
         // arayüzde hiçbir hata gorunmezdi, sadece "çok fazla veri".
@@ -89,7 +84,6 @@ internal sealed class GetOrganizerDashboardQueryHandler
         // Organizatör profili yoksa panel boş değil, HATA döner:
         // "verisi olmayan bir panel" ile "yetkisiz erişim" farklı
         // şeyler ve kullanıcıya dogrusunu söylemek gerekiyor.
-        // ==============================================================
         var organizerId = await _context.OrganizerProfiles
             .AsNoTracking()
             .Where(p => p.UserId == userId)
@@ -153,7 +147,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
         // Payda olarak SALON KAPASITESINI değil URETILMIS KOLTUK
         // sayisini alıyorum. Fark önemli: organizatör salonun bir
         // bolumunu satışa hiç acmamis olabilir. Kapasiteyi payda
-        // yapsaydik doluluk haksiz yere düşük görünürdü.
+        // yapsaydim doluluk haksiz yere düşük görünürdü.
         var totalSeats = await _context.EventSeats
             .AsNoTracking()
             .CountAsync(
@@ -175,9 +169,9 @@ internal sealed class GetOrganizerDashboardQueryHandler
             : Math.Round((double)soldSeats / totalSeats * 100, 1);
 
         // ---- 7: en çok satan bilet türü ----
-        // NOT: GroupBy sonucunu ANONIM tipe projelendiriyoruz.
+        // NOT: GroupBy sonucunu ANONIM tipe projelendiriyorum.
         //
-        // Dogrudan "new NamedCount(...)" yazsaydık EF Core bunu SQL'e
+        // Dogrudan "new NamedCount(...)" yazsaydım EF Core bunu SQL'e
         // ceviremezdi (bkz. RevenueByEvent'teki ayrintili açıklama).
         // Bu dosyadaki dort gruplamada da aynı desen uygulaniyor.
         var topTicketType = await soldTickets
@@ -205,17 +199,15 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // BOŞ GUNLERI DOLDUR
-        // ==============================================================
+        //
         // Veritabani yalnızca satış OLAN gunleri döndürüyor. Grafige
-        // olduğu gibi verseydik, satış olmayan gunler ATLANIRDI ve
+        // olduğu gibi verseydim, satış olmayan gunler ATLANIRDI ve
         // cizgi grafik yanıltıcı olurdu: 1 Ocak ile 15 Ocak yan yana
         // cizilir, aradaki 13 günlük durgunluk gorunmezdi.
         //
         // Sifir degerli gunleri ekleyerek zaman eksenini gerçek
-        // kiliyoruz.
-        // ==============================================================
+        // kiliyorum.
         var bugun = DateOnly.FromDateTime(_clock.UtcNow.UtcDateTime);
 
         var dailySales = Enumerable.Range(0, request.Days)
@@ -238,9 +230,8 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 t.EventSeat.EventSession.Event.Title,
             })
 
-            // ==========================================================
             // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
-            // ==========================================================
+            //
             // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:
             //
@@ -258,7 +249,6 @@ internal sealed class GetOrganizerDashboardQueryHandler
             // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
             // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
-            // ==========================================================
             .Select(g => new
             {
                 g.Key.Id,
@@ -290,7 +280,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
 
         // Orani BELLEKTE hesapliyorum.
         //
-        // SQL'de yapsaydik tam sayi bolmesi tuzagina duserdik:
+        // SQL'de yapsaydim tam sayi bolmesi tuzagina duserdik:
         // PostgreSQL'de 3/4 = 0 (integer division). Cast eklemek
         // mumkun ama okunakli değil ve satır sayısı zaten az.
         var sections = sectionOccupancies
@@ -328,9 +318,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
     }
 }
 
-// ===================================================================
 // ADMIN DASHBOARD -- PDF Sprint 13 (10 metrik)
-// ===================================================================
 
 public sealed record AdminDashboard(
     int TotalUsers,
@@ -412,7 +400,7 @@ internal sealed class GetAdminDashboardQueryHandler
         //
         // Pending ve Processing durumundakileri HARIC tutuyorum:
         // henüz sonuclanmamis bir ödeme "başarısız" sayilamaz.
-        // Dahil etseydik oran, o anda islemde olan ödeme sayısına
+        // Dahil etseydim oran, o anda islemde olan ödeme sayısına
         // göre dalgalanirdi ve hiçbir sey ifade etmezdi.
         var finalizedPayments = await _context.Payments
             .AsNoTracking()
@@ -459,9 +447,8 @@ internal sealed class GetAdminDashboardQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // ==============================================================
         // "SISTEM HATA SAYISI" -- PDF'in TANIMLAMADIGI METRIK
-        // ==============================================================
+        //
         // PDF bu metriği istiyor ama neyin "sistem hatası" sayilacagini
         // soylemiyor. Tanimi ben veriyorum ve acikca yazıyorum:
         //
@@ -478,7 +465,7 @@ internal sealed class GetAdminDashboardQueryHandler
         //   için log toplama altyapisi gerekir (PDF Sprint 16).
         //
         //   Başarısız ödemeler -> bunlar SISTEM hatası değil, IS
-        //   sonucudur. Kart limiti yetmemesi bizim hatamiz değil.
+        //   sonucudur. Kart limiti yetmemesi benim hatamiz değil.
         //   Ayrıca zaten ayrı bir metrik olarak yukarida var.
         //
         //   Eszamanlilik cakismalari (409) -> bunlar sistemin DOGRU
@@ -486,7 +473,6 @@ internal sealed class GetAdminDashboardQueryHandler
         //
         // Yani bu sayi "operatorun bakmasi gereken is sayısı".
         // Sifirdan buyukse Hangfire panelinde islenecek bir sey var.
-        // ==============================================================
         var systemErrors = await _context.OutboxMessages
             .AsNoTracking()
             .CountAsync(m => m.IsDeadLettered, cancellationToken)

@@ -6,11 +6,10 @@ namespace Ticketing.Persistence;
 /// <summary>
 /// Uygulamanin EF Core veritabani baglami.
 ///
-/// ------------------------------------------------------------------
 /// NEDEN DbSet'ler VAR AMA IS MANTIGI YOK?
-/// ------------------------------------------------------------------
+///
 /// DbContext'in tek isi veri erisimidir. Icine "rezervasyon oluştur"
-/// gibi metotlar yazsaydık, is mantığı Persistence katmanina sizardi
+/// gibi metotlar yazsaydım, is mantığı Persistence katmanina sizardi
 /// ve architecture testimiz bunu yakalamasa bile tasarım bozulurdu.
 ///
 /// Ayrıca: Controller'lar bu sinifi DOGRUDAN kullanmayacak
@@ -92,10 +91,9 @@ public partial class TicketingDbContext : DbContext
     /// <summary>
     /// Tüm Guid birincil anahtarlari "istemci tarafında üretilir" olarak isaretler.
     ///
-    /// ==================================================================
     /// BU METOT GERCEK BIR HATAYI DUZELTIYOR -- HIKAYESI
-    /// ==================================================================
-    /// Sprint 4'te oturma planina bölüm eklerken su hatayi aldik:
+    ///
+    /// Sprint 4'te oturma planina bölüm eklerken su hatayi aldim:
     ///
     ///     DbUpdateConcurrencyException: 1 satır etkilenmesi bekleniyordu,
     ///     0 satır etkilendi.
@@ -116,7 +114,7 @@ public partial class TicketingDbContext : DbContext
     /// veritabaninda ZATEN VAR" diye dusunur ve Modified isaretler.
     ///
     /// NEDEN Venue ve Hall'da OLMADI?
-    /// Çünkü onlari _context.Venues.Add(...) ile ACIKCA ekledik --
+    /// Çünkü onlari _context.Venues.Add(...) ile ACIKCA ekledim --
     /// Add() her zaman Added isaretler. Hata yalnızca nesne bir
     /// KOLEKSIYON üzerinden eklendiginde ortaya cikiyor.
     ///
@@ -133,7 +131,6 @@ public partial class TicketingDbContext : DbContext
     ///
     /// Model uzerinde donerek toplu uygulamak, gelecekte eklenecek
     /// entity'leri de otomatik kapsiyor.
-    /// ==================================================================
     /// </summary>
     private static void ConfigureClientGeneratedKeys(ModelBuilder modelBuilder)
     {

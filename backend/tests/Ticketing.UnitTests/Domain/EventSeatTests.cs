@@ -16,9 +16,7 @@ public class EventSeatTests
 {
     private static readonly DateTimeOffset Simdi = TestVeriKurucu.Simdi;
 
-    // ---------------------------------------------------------------
     // Kilitleme
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Create_YeniKoltuk_AvailableDurumundaBaslamali()
@@ -46,11 +44,9 @@ public class EventSeatTests
     [Fact]
     public void Lock_ZatenKilitliKoltuk_HataFirlatmali()
     {
-        // ===============================================================
         // PROJENIN EN ONEMLI TESTI
         // "Ayni koltugu iki kullanici ayni anda secerse ne olmali?"
         // Cevap: ilk kilitleyen kazanir, ikinci 409 alir.
-        // ===============================================================
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);
         var koltuk = koltuklar[0];
 
@@ -84,7 +80,6 @@ public class EventSeatTests
     [Fact]
     public void Lock_SuresiDolmusKilitliKoltuk_YenidenKilitlenebilmeli()
     {
-        // ===============================================================
         // Bu davranis, "Status == Available" kontrolunun neden YETMEDIGINI
         // gosteriyor.
         //
@@ -94,7 +89,6 @@ public class EventSeatTests
         //
         // Populer bir konserde bu 1 dakika, yuzlerce kullanicinin bos
         // koltugu alamamasi demek.
-        // ===============================================================
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);
         var koltuk = koltuklar[0];
 
@@ -122,21 +116,17 @@ public class EventSeatTests
              .Which.ErrorCode.Should().Be("seat.invalid_lock_expiry");
     }
 
-    // ---------------------------------------------------------------
     // Satis
-    // ---------------------------------------------------------------
 
     [Fact]
     public void MarkAsSold_BaskaRezervasyonunKilidi_HataFirlatmali()
     {
-        // ===============================================================
         // Bu kontrol, odeme akisindaki bir mantik hatasinin baskasinin
         // koltugunu satmasini engelliyor.
         //
         // Senaryo: A rezervasyonu koltugu kilitledi. Bir hata sonucu
         // B rezervasyonunun odemesi bu koltugu satmaya calisti.
         // Bu kontrol olmasaydi A'nin koltugu B'ye satilirdi.
-        // ===============================================================
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);
         var koltuk = koltuklar[0];
 
@@ -179,21 +169,17 @@ public class EventSeatTests
         koltuk.IsAvailableAt(Simdi.AddYears(1)).Should().BeFalse("satilan koltuk asla musait olmaz");
     }
 
-    // ---------------------------------------------------------------
     // Serbest birakma ve iade
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Release_SatilmisKoltuk_HataFirlatmali()
     {
-        // ===============================================================
         // Bu, ciddi bir veri bozulmasini engelliyor: bileti olan
         // kullanicinin koltugunun baskasina satilmasi.
         //
         // Sure asimi job'i tum kilitli koltuklari serbest birakiyor.
         // Satılmış bir koltuk yanlislikla o listeye girerse, bu kontrol
         // job'i durdurur ve hata loglanir.
-        // ===============================================================
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);
         var koltuk = koltuklar[0];
         var rezervasyonId = Guid.CreateVersion7();
@@ -252,9 +238,7 @@ public class EventSeatTests
              .Which.ErrorCode.Should().Be("seat.already_sold");
     }
 
-    // ---------------------------------------------------------------
     // Koltuk uretimi
-    // ---------------------------------------------------------------
 
     [Fact]
     public void GenerateSeats_PasifKoltuklariAtlamali()

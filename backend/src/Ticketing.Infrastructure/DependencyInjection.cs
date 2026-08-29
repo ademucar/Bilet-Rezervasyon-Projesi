@@ -27,9 +27,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        // ------------------------------------------------------------------
         // JWT yapilandirmasi
-        // ------------------------------------------------------------------
         services.AddOptions<JwtOptions>()
                 .Bind(configuration.GetSection(JwtOptions.SectionName))
 
@@ -37,9 +35,8 @@ public static class DependencyInjection
                 // nitelikleri dogrular.
                 .ValidateDataAnnotations()
 
-                // ==============================================================
                 // ValidateOnStart -- KRITIK
-                // ==============================================================
+                //
                 // Bu satır olmasaydı, doğrulama ancak JwtOptions ILK KEZ
                 // ISTENDIGINDE calisirdi -- yani ilk login denemesinde.
                 //
@@ -52,9 +49,7 @@ public static class DependencyInjection
                 // Buna "fail fast" denir ve dagitim guvenliginin temelidir.
                 .ValidateOnStart();
 
-        // ------------------------------------------------------------------
         // Servisler
-        // ------------------------------------------------------------------
 
         // Singleton: durum tutmuyor, sadece DateTimeOffset.UtcNow dönüyor.
         // Her istekte yeni nesne uretmenin anlami yok.
@@ -106,7 +101,7 @@ public static class DependencyInjection
         //
         // Hangi sağlayıcının kullanilacagi YAPILANDIRMADAN seciliyor.
         // Boylece gelistirme ortaminda "Failed" seçip başarısız ödeme
-        // akisini deneyebiliyoruz -- kod degistirmeden.
+        // akisini deneyebiliyorum -- kod degistirmeden.
         //
         // PDF Sprint 8: "En az iki implementasyon hazirlanabilir:
         // MockPaymentProvider, FailedPaymentProvider."

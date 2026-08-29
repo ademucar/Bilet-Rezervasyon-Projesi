@@ -3,9 +3,8 @@ namespace Ticketing.Application.Abstractions.Time;
 /// <summary>
 /// Su anki zamani saglar.
 ///
-/// ==================================================================
 /// NEDEN DateTimeOffset.UtcNow'i DOGRUDAN CAGIRMIYORUZ?
-/// ==================================================================
+///
 /// Çünkü o zaman zamana bağlı mantığı TEST EDEMEYIZ.
 ///
 /// Ornek: "Rezervasyon süresi 10 dakika sonra dolar" kuralini test
@@ -15,7 +14,7 @@ namespace Ticketing.Application.Abstractions.Time;
 /// Bu arayuzle testte "su an 12:00" veya "su an 12:11" diyebiliyorum
 /// ve süre asimi senaryosunu milisaniyeler içinde test edebiliyorum.
 ///
-/// Domain entity'lerinde zamani PARAMETRE olarak aliyoruz
+/// Domain entity'lerinde zamani PARAMETRE olarak aliyorum
 /// (örneğin reservation.StartPayment(now)). Bu arayüz ise Application
 /// katmaninda o parametreyi saglamak için.
 ///
