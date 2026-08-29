@@ -23,7 +23,7 @@ export function UnauthorizedPage() {
         // derken aslında rolunun verilmedigini boylece gorebiliyor.
         // Destek talebi acmadan önce sorunu kendisi anlayabiliyor.
         <p className="mt-4 text-sm text-slate-500">
-          <strong>{user.email}</strong> hesabiyla giris yaptiniz. Mevcut rolleriniz:{' '}
+          <strong>{user.email}</strong> hesabıyla giriş yaptınız. Mevcut rolleriniz:{' '}
           {user.roles.join(', ') || 'yok'}
         </p>
       )}

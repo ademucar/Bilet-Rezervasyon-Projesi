@@ -272,7 +272,7 @@ export function NotificationBell() {
                                 className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-600"
                                 aria-hidden="true"
                               />
-                              <span className="sr-only">(okunmadi)</span>
+                              <span className="sr-only">(okunmadı)</span>
                             </>
                           )}
                         </span>

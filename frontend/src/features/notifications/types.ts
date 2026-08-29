@@ -11,7 +11,7 @@
  *
  * Kural haklı: Vite'in hizli yenileme (HMR) mekanizmasi, bir dosya
  * hem bileşen hem başka sey disa aktardiginda o dosyayı guvenle
- * degistiremiyor ve TAM SAYFA yenilemesi yapiyor.
+ * değiştiremiyor ve TAM SAYFA yenilemesi yapiyor.
  *
  * Gelistirme sırasında fark edilir bir yavaslama -- ve cozumu bir
  * dosya ayirmak kadar basit.

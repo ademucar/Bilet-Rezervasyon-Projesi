@@ -48,12 +48,12 @@ function testQueryClient(): QueryClient {
   })
 }
 
-interface Secenekler extends Omit<RenderOptions, 'wrapper'> {
+interface Seçenekler extends Omit<RenderOptions, 'wrapper'> {
   /** Başlangıç adresi. Yönlendirme testlerinde kullanılıyor. */
   route?: string
 }
 
-export function renderWithProviders(ui: ReactElement, secenekler: Secenekler = {}) {
+export function renderWithProviders(ui: ReactElement, secenekler: Seçenekler = {}) {
   const { route = '/', ...rest } = secenekler
 
   const client = testQueryClient()

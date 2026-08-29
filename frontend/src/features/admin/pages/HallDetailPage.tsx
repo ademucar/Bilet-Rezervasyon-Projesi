@@ -98,7 +98,7 @@ export function HallDetailPage() {
                 <div>
                   <p className="font-medium text-slate-900">{l.name}</p>
                   <p className="text-sm text-slate-500">
-                    {l.sectionCount} bolum &middot; {l.seatCount} koltuk
+                    {l.sectionCount} bölüm &middot; {l.seatCount} koltuk
                   </p>
                 </div>
 
@@ -108,7 +108,7 @@ export function HallDetailPage() {
                     sinirlenirdi. Onceden bildirmek daha iyi. */}
                 {l.isInUse && (
                   <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-                    Kullanımda &middot; degistirilemez
+                    Kullanımda &middot; değiştirilemez
                   </span>
                 )}
               </Link>

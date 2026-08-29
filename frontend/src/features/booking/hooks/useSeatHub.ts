@@ -134,7 +134,7 @@ export function useSeatHub(
     // hiçbir yere gitmez. Yani "SeatLocked" yerine "seatLocked"
     // yazsaydık hiçbir uyarı almadan calismaz olurdu.
     //
-    // Bu yüzden adları kopyala-yapistir ile alıyorum, elle
+    // Bu yuzden adları kopyala-yapistir ile alıyorum, elle
     // yazmiyorum.
     // ==============================================================
     connection.on('SeatLocked', (payload: SeatEventPayload) => {
@@ -206,7 +206,7 @@ export function useSeatHub(
     // "connecting" yapmak, dis sistemin durumunu ekrana yansitmak
     // demek.
     //
-    // Bu satiri silmeyi denedim: oturum degistirildiginde (kullanıcı
+    // Bu satiri silmeyi denedim: oturum değiştirildiginde (kullanıcı
     // başka bir oturuma gecince) eski bağlantı kapanip "disconnected"
     // yazıyor ve gosterge bir an KIRMIZI yaniyordu. Kullanıcıya
     // olmayan bir sorunu bildirmek, küçük bir lint uyarisindan

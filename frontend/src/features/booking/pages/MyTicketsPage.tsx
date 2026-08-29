@@ -59,7 +59,7 @@ export function MyTicketsPage() {
               type="button"
               onClick={() => setFilter(tab.value)}
               // aria-pressed: ekran okuyucuya hangi filtrenin açık
-              // olduğunu söyler. Yalnızca renk degistirseydik
+              // olduğunu söyler. Yalnızca renk değiştirseydik
               // görmeyen kullanıcı hangi sekmede olduğunu bilemezdi.
               aria-pressed={filter === tab.value}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -158,7 +158,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
 
         {ticket.usedAt && (
           <p className="mt-3 text-xs text-slate-500">
-            {formatDateTime(ticket.usedAt)} tarihinde giriste okutuldu.
+            {formatDateTime(ticket.usedAt)} tarihinde girişte okutuldu.
           </p>
         )}
       </div>
@@ -171,7 +171,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
           gondermenin faydasi yok ve hassas bir değeri gereksiz yere
           yaymak olurdu.
 
-          Bu yüzden burada `qrValue` null olabilir ve bunu bir HATA
+          Bu yuzden burada `qrValue` null olabilir ve bunu bir HATA
           gibi değil, beklenen bir durum gibi ele alıyorum.
 
           QRCodeSVG kullanıyorum, QRCodeCanvas değil:

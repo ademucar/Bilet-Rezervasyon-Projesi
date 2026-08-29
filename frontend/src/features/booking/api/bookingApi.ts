@@ -241,7 +241,7 @@ export function newIdempotencyKey(): string {
  *
  * Backend'deki GetEventsQuery ile birebir eşleyen alanlar. Alan adı
  * uyusmazsa filtre SESSIZCE calismaz -- ASP.NET taninmayan sorgu
- * parametresini yok sayar, hata dondurmez. Bu yüzden adları
+ * parametresini yok sayar, hata dondurmez. Bu yuzden adları
  * kopyalayarak alıyorum.
  */
 export interface EventFilters {
@@ -309,7 +309,7 @@ export const bookingApi = {
     // ==============================================================
     // BOŞ ALANLARI TEMIZLE
     // ==============================================================
-    // Axios, undefined değerleri zaten atliyor ama BOŞ METİN ('')
+    // Axios, undefined değerleri zaten atliyor ama BOŞ METIN ('')
     // gönderiyor: ?cityId=&categoryId=
     //
     // Backend tarafında Guid? alanina boş metin baglanmaya calisilinca

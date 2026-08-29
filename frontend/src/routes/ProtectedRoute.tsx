@@ -20,7 +20,7 @@ interface ProtectedRouteProps {
  *
  * PEKI SORUN OLMAZ MI? Hayir. Çünkü o panelde gösterilecek her veri
  * API'den geliyor ve API, JWT'nin ICINDEKI rollere bakiyor. Token
- * imzali olduğu için rol degistirilemez -- degistirilirse imza bozulur.
+ * imzali olduğu için rol değiştirilemez -- değiştirilirse imza bozulur.
  *
  * Yani sahte Admin, boş bir panel görür; tüm istekleri 403 döner.
  *

@@ -6,7 +6,8 @@ import { Alert } from '../../../components/ui/Alert'
 import { Button } from '../../../components/ui/Button'
 import { toProblem } from '../../../lib/api/client'
 import { formatDateTime, formatMoney } from '../../../lib/format'
-import { formatCountdown, useCountdown } from '../hooks/useCountdown'
+import { useCountdown } from '../hooks/useCountdown'
+import { ReservationCountdown } from '../components/ReservationCountdown'
 import {
   bookingApi,
   newIdempotencyKey,
@@ -83,7 +84,7 @@ export function ReservationPage() {
   // Sayac sıfıra dustugunde ekranda "süreniz doldu" yazıyoruz ama
   // bu YALNIZCA istemcinin tahmini. Gerçek karari veren sunucu.
   //
-  // Bu yüzden sıfıra dusunce bir kez daha soruyoruz. Ornegin
+  // Bu yuzden sıfıra dusunce bir kez daha soruyoruz. Ornegin
   // kullanıcı başka bir sekmede süreyi uzatmis olabilir; o zaman
   // sunucu yeni süreyi döner ve sayaç devam eder.
   //
@@ -161,7 +162,7 @@ export function ReservationPage() {
     mutationFn: () => bookingApi.extendReservation(reservationId),
     onSuccess: (updated) => {
       // Sunucudan gelen yeni remainingSeconds onbellege yaziliyor;
-      // useCountdown bagimliligi degistigi için sayaç kendiliginden
+      // useCountdown bagimliligi değiştigi için sayaç kendiliginden
       // yeni sureden başlar.
       queryClient.setQueryData(['reservation', reservationId], updated)
     },
@@ -189,71 +190,49 @@ export function ReservationPage() {
     )
   }
 
-  // Son 60 saniyede sayaci kirmiziya cevirip nabiz veriyorum.
-  // Renk degisimi, kullanıcının ekrandan gozunu ayirmisken bile
-  // cevresel gorusuyle fark edebilecegi bir uyarı.
-  const isUrgent = remaining > 0 && remaining <= 60
-
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Rezervasyon</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          Rezervasyon
+        </h1>
         <p className="mt-1 text-sm text-slate-500">
-          Kod: <span className="font-mono">{reservation.reservationCode}</span>
+          Kod: <span className="num text-slate-900">{reservation.reservationCode}</span>
         </p>
 
         {/* ---- GERİ SAYIM ----
-             Yalnızca rezervasyon HALA CANLIYKEN gösteriliyor.
-             İptal edilmiş bir rezervasyonun yaninda geri sayan bir
+             Yalnızca rezervasyon HÂLÂ CANLIYKEN gösteriliyor.
+             İptal edilmiş bir rezervasyonun yanında geri sayan bir
              sayaç, kullanıcıya "hâlâ vaktin var" diye yalan söyler. */}
         {!isConfirmed && !isDead && (
-          <div
-            className={`mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 ${
-              isUrgent ? 'border-red-200 bg-red-50' : 'border-amber-200 bg-amber-50'
-            }`}
-          >
-            <div>
-              <p className="text-sm font-medium text-slate-700">Ödeme için kalan süre</p>
+          <ReservationCountdown
+            remaining={remaining}
+            actions={
+              <>
+                <Button
+                  variant="secondary"
+                  // Uzatma bir KEZ yapılabiliyor (backend kuralı).
+                  // Butonu pasifleştirmek, kullanıcının deneyip hata
+                  // almasından iyi.
+                  disabled={reservation.extensionCount > 0}
+                  isLoading={extendReservation.isPending}
+                  onClick={() => extendReservation.mutate()}
+                >
+                  {reservation.extensionCount > 0 ? 'Süre uzatıldı' : '5 dakika uzat'}
+                </Button>
 
-              <p
-                className={`mt-1 font-mono text-3xl font-bold tabular-nums ${
-                  isUrgent ? 'text-red-600' : 'text-amber-700'
-                }`}
-                // role="timer" + aria-live="off": ekran okuyucu her
-                // saniye konusmasin. Saniyede bir okunan bir sayaç
-                // ekran okuyucu kullanicisi için kullanilamaz olurdu.
-                // Kritik uyariyi aşağıdaki metin veriyor.
-                role="timer"
-                aria-live="off"
-              >
-                {formatCountdown(remaining)}
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                // Uzatma bir KEZ yapilabiliyor (backend kuralı).
-                // Butonu pasiflestirmek, kullanıcının deneyip hata
-                // almasindan iyi.
-                disabled={reservation.extensionCount > 0}
-                isLoading={extendReservation.isPending}
-                onClick={() => extendReservation.mutate()}
-              >
-                {reservation.extensionCount > 0 ? 'Süre uzatıldı' : '5 dakika uzat'}
-              </Button>
-
-              <Button
-                variant="ghost"
-                isLoading={cancelReservation.isPending}
-                onClick={() => cancelReservation.mutate()}
-              >
-                Vazgeç
-              </Button>
-            </div>
-          </div>
+                <Button
+                  variant="ghost"
+                  isLoading={cancelReservation.isPending}
+                  onClick={() => cancelReservation.mutate()}
+                >
+                  Vazgeç
+                </Button>
+              </>
+            }
+          />
         )}
 
         {/* ---- OLU REZERVASYON ----
@@ -270,14 +249,14 @@ export function ReservationPage() {
               </p>
 
               <p className="mt-1">
-                Koltuklariniz serbest birakildi ve tekrar satisa cikti. Yeniden secim yapmak icin{' '}
+                Koltuklarınız serbest bırakıldı ve tekrar satışa çıktı. Yeniden seçim yapmak için{' '}
                 <Link
                   to={`/oturumlar/${reservation.eventSessionId}/koltuklar`}
                   className="font-medium underline"
                 >
-                  koltuk secim ekranina
+                  koltuk seçim ekranına
                 </Link>{' '}
-                donebilirsiniz.
+                dönebilirsiniz.
               </p>
             </Alert>
           </div>
@@ -316,7 +295,7 @@ export function ReservationPage() {
         {isConfirmed ? (
           <div className="mt-6">
             <Alert variant="success">
-              Odemeniz alindi ve biletleriniz olusturuldu.{' '}
+              Ödemeniz alındı ve biletleriniz oluşturuldu.{' '}
               <Link to="/biletlerim" className="font-medium underline">
                 Biletlerime git
               </Link>
@@ -427,7 +406,7 @@ function PaymentSimulation({
   if (payment.status === PaymentStatus.Failed) {
     return (
       <div className="mt-3">
-        <Alert variant="error">Odeme basarisiz oldu. {payment.failureReason}</Alert>
+        <Alert variant="error">Ödeme başarısız oldu. {payment.failureReason}</Alert>
       </div>
     )
   }

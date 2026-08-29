@@ -77,7 +77,7 @@ describe('LoginPage', () => {
 
     renderWithProviders(<LoginPage />)
 
-    await kullanici.type(screen.getByLabelText('E-posta'), 'bu-bir-eposta-degil')
+    await kullanici.type(screen.getByLabelText('E-posta'), 'bu-bir-eposta-değil')
     await kullanici.type(screen.getByLabelText('Şifre'), 'Test1234!')
     await kullanici.click(screen.getByRole('button', { name: /giriş yap/i }))
 

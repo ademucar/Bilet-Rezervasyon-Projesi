@@ -83,7 +83,7 @@ export function RegisterPage() {
       subtitle="Birkaç adımda hesabınızı oluşturun"
       footer={
         <>
-          Zaten hesabiniz var mi?{' '}
+          Zaten hesabınız var mi?{' '}
           <Link to="/giris" className="font-medium text-brand-600 hover:underline">
             Giriş yapın
           </Link>

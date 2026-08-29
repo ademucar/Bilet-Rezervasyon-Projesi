@@ -26,7 +26,7 @@ import type { AuthResponse, UserSummary } from '../types/auth'
  * NEDEN 3'U SECTIM?
  * Backend'imiz token'i YANIT GOVDESINDE dönüyor, çerez olarak değil
  * (PDF'in ongordugu klasik JWT akışı). Cerez yaklasimina gecmek
- * backend'i degistirmeyi gerektirirdi.
+ * backend'i değiştirmeyi gerektirirdi.
  *
  * RISKI NASIL AZALTIYORUZ?
  *   - Access token yalnızca 15 DAKIKA geçerli -> calinsa bile pencere dar
@@ -94,7 +94,7 @@ export const useAuthStore = create<AuthState>()(
        * NOT: Bu YALNIZCA arayüz icindir -- menuyu gizlemek, butonu
        * pasiflestirmek gibi. GÜVENLİK DEĞİLDİR.
        *
-       * Kullanıcı tarayıcı konsolundan bu store'u degistirip kendini
+       * Kullanıcı tarayıcı konsolundan bu store'u değiştirip kendini
        * Admin yapabilir. Ama backend token'daki ROLLERE bakar ve token
        * imzalidir; sahte rol ise yaramaz.
        *

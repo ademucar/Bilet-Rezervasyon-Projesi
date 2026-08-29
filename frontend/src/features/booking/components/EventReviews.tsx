@@ -305,7 +305,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
 
       {data && data.reviews.items.length === 0 && (
         <p className="mt-5 text-sm text-slate-500">
-          Henuz yorum yok. {yorumYapilabilir ? 'İlk yorumu siz yapın.' : ''}
+          Henüz yorum yok. {yorumYapilabilir ? 'İlk yorumu siz yapın.' : ''}
         </p>
       )}
 
@@ -328,7 +328,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
                     {formatDate(review.createdAt)}
                     {/* Duzenlenmis yorumlari isaretliyorum.
                         Seffaflik: okuyan kişi metnin sonradan
-                        degistirilmis olabilecegini bilmeli. */}
+                        değiştirilmis olabilecegini bilmeli. */}
                     {review.updatedAt && ' (duzenlendi)'}
                   </span>
                 </div>

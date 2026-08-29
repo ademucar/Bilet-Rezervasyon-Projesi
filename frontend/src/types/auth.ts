@@ -8,7 +8,7 @@
  * kurulumu (kod ureteci, npm script, CI adimi) simdi gereksiz
  * karmasiklik olurdu. Endpoint sayısı 30'u geçtiğinde -- ki Sprint 5'ten
  * sonra gececek -- Orval kurup bu dosyayı otomatik uretilene
- * degistirecegiz.
+ * değiştirecegiz.
  *
  * Bu bilinçli bir "şimdilik" karari; unutulmamasi için buraya yazıyorum.
  */

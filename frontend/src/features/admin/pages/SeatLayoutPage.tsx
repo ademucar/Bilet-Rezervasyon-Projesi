@@ -119,7 +119,7 @@ export function SeatLayoutPage() {
       {layout.isInUse && (
         <div className="mb-6">
           <Alert variant="info">
-            Bu plan bir etkinlik oturumunda kullanılıyor. Yapısı degistirilemez; yalnızca
+            Bu plan bir etkinlik oturumunda kullanılıyor. Yapısı değiştirilemez; yalnızca
             görüntüleyebilirsiniz.
           </Alert>
         </div>

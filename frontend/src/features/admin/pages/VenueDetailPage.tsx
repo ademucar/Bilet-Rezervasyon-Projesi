@@ -136,10 +136,10 @@ export function VenueDetailPage() {
               >
                 <div>
                   <p className="font-medium text-slate-900">{h.name}</p>
-                  <p className="text-sm text-slate-500">{h.capacity} kisilik</p>
+                  <p className="text-sm text-slate-500">{h.capacity} kişilik</p>
                 </div>
 
-                <span className="text-sm text-slate-500">{h.seatLayoutCount} oturma plani</span>
+                <span className="text-sm text-slate-500">{h.seatLayoutCount} oturma planı</span>
               </Link>
             </li>
           ))}

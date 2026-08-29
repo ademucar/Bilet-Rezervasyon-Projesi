@@ -6,7 +6,7 @@ import { SiteHeader } from '../../components/layout/SiteHeader'
  * Ana sayfa.
  *
  * Sprint 11'de one cikan etkinlikler, kategoriler ve arama ile
- * degistirilecek. Su an akisa giriş kapisi ve hesap özeti.
+ * değiştirilecek. Su an akisa giriş kapisi ve hesap özeti.
  *
  * Çıkış butonu artık burada DEĞİL, SiteHeader'da: her sayfada
  * ulasilabilir olması gerekiyordu.

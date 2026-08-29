@@ -24,7 +24,7 @@ export function ForgotPasswordPage() {
   })
 
   // ==================================================================
-  // BASARILI EKRANI -- GÜVENLİK ACISINDAN KRITIK METİN
+  // BASARILI EKRANI -- GÜVENLİK ACISINDAN KRITIK METIN
   // ==================================================================
   // "E-posta gönderildi" DEMIYORUZ.
   // "EGER bu adres kayıtlıysa gönderildi" diyoruz.
@@ -49,8 +49,8 @@ export function ForgotPasswordPage() {
         }
       >
         <Alert variant="success">
-          Girdiginiz adres sistemimizde kayitliysa, sifre sifirlama baglantisi gonderildi. Baglanti{' '}
-          <strong>1 saat</strong> gecerlidir.
+          Girdiğiniz adres sistemimizde kayıtlıysa, şifre sıfırlama bağlantısı gönderildi. Bağlantı{' '}
+          <strong>1 saat</strong> geçerlidir.
         </Alert>
 
         <p className="mt-4 text-sm text-slate-500">

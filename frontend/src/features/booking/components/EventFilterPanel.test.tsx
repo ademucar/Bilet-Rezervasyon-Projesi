@@ -141,7 +141,7 @@ describe('EventFilterPanel', () => {
     //
     // Fonksiyon eslestirici kullanıyorum: elemanin TOPLAM metnini
     // okuyor. Tam metni ("2 aktif") yazmak da calisirdi ama o zaman
-    // kelime degistiginde test kirilirdi -- oysa test edilen sey
+    // kelime değiştiginde test kirilirdi -- oysa test edilen sey
     // SAYININ görünmesi.
     expect(
       screen.getByText((_, element) => element?.textContent?.trim() === '2 aktif'),

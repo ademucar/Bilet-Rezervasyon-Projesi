@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'react'
  *
  * Çünkü kullanıcının bilgisayar saati YANLIS olabilir. `expiresAt`
  * mutlak bir zaman; saati 5 dakika geri olan bir kullanıcı
- * `expiresAt - Date.now()` hesabiyla süreyi 15 dakika sanirdi ve
+ * `expiresAt - Date.now()` hesabıyla süreyi 15 dakika sanirdi ve
  * ödemeye geçtiğinde beklenmedik bir "süreniz doldu" hatası alırdı.
  *
  * Kalan süreyi SANIYE olarak almak saat farkindan tamamen bağımsız.
@@ -61,7 +61,7 @@ export function useCountdown(initialSeconds: number | undefined): number {
   // "aslında bunu render sırasında hesaplayabilirdin" demektir.
   //
   // Önce kuralin dedigini YAPTIM: degisimi render sırasında fark
-  // edip orada sifirladim. Ama o zaman iki YENI uyarı cikti --
+  // edip orada sifirladim. Ama o zaman iki YENI uyarı çıktı --
   // `react(purity)` ve `react(refs)`. Hakliydilar: render sırasında
   // performance.now() okumak ve ref'e yazmak, React'in saf render
   // sozunu bozuyor.
@@ -71,7 +71,7 @@ export function useCountdown(initialSeconds: number | undefined): number {
   // olarak bu. Yani burada effect kullanmak kacamak değil, DOGRU
   // arac.
   //
-  // Bu yüzden kuralı dar kapsamda, gerekcesiyle susturuyorum.
+  // Bu yuzden kuralı dar kapsamda, gerekcesiyle susturuyorum.
   // Projede benimsedigim kural: uyariyi susturmak serbest değil,
   // yalnızca "neden" yazildiginda serbest.
   // ----------------------------------------------------------------

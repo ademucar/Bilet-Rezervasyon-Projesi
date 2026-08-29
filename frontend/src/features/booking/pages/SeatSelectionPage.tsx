@@ -22,7 +22,7 @@ import {
 // ===================================================================
 // Renkleri tek bir yerde topluyorum: hem harita hem de gosterge
 // (legend) aynı değeri kullansin. Ayrı ayrı yazsaydık birini
-// degistirip digerini unutmak kacinilmazdi.
+// değiştirip digerini unutmak kacinilmazdi.
 //
 // Renk seçimi keyfi değil:
 //   - Boş: notr gri-mavi. "Tıklanabilir" hissi verir.
@@ -31,7 +31,7 @@ import {
 //   - Satıldı: koyu gri. Kalici, umut yok.
 //
 // ERİŞİLEBİLİRLİK NOTU: Yalnızca RENGE guvenmiyoruz. Her koltuğun
-// <title> etiketinde durumu METİN olarak da yazıyor; renk korlugu
+// <title> etiketinde durumu METIN olarak da yazıyor; renk korlugu
 // olan kullanıcı fareyle uzerine gelince veya ekran okuyucuyla
 // durumu ogrenebiliyor.
 // ===================================================================
@@ -99,7 +99,7 @@ export function SeatSelectionPage() {
   // yalnızca o <rect>'i yeniden ciziyor.
   //
   // setQueryData ile YENI nesneler uretiyorum (yayma operatoru),
-  // mevcut diziyi degistirmiyorum. Yerinde degistirseydim React
+  // mevcut diziyi değiştirmiyorum. Yerinde değiştirseydim React
   // referansin aynı olduğunu gorup EKRANI HİÇ GUNCELLEMEZDI --
   // sessizce çalışmayan bir arayüz olurdu.
   // ================================================================
@@ -113,14 +113,14 @@ export function SeatSelectionPage() {
         }
 
         const hedef = new Set(eventSeatIds)
-        let degisti = false
+        let değişti = false
 
         const seats = previous.seats.map((seat) => {
           if (!hedef.has(seat.eventSeatId) || seat.status === newStatus) {
             return seat
           }
 
-          degisti = true
+          değişti = true
 
           return { ...seat, status: newStatus }
         })
@@ -130,7 +130,7 @@ export function SeatSelectionPage() {
         // Yeni nesne donseydik React "veri değişti" deyip tüm
         // koltuk haritasini yeniden hesaplardi -- 2000 koltuk
         // için boşuna bir is.
-        if (!degisti) {
+        if (!değişti) {
           return previous
         }
 
@@ -200,7 +200,7 @@ export function SeatSelectionPage() {
     //    o zaman bu satır KALDIRILACAK."
     //
     // Sprint 10 geldi ve satiri TAMAMEN KALDIRMADIM. Fikrimi
-    // degistiren sey su: SignalR bağlantısı HER ZAMAN kurulamiyor.
+    // değiştiren sey su: SignalR bağlantısı HER ZAMAN kurulamiyor.
     // Kurumsal aglar WebSocket'i engelleyebiliyor, vekil sunucular
     // uzun baglantilari kesebiliyor, kullanıcının interneti
     // gidebiliyor.
@@ -243,14 +243,14 @@ export function SeatSelectionPage() {
   // İlk yazimimda bunu bir effect içinde yapip kaybedilen koltukları
   // setSelected ile state'ten siliyordum. Calisiyordu ama yanlış
   // yontemdi: kullanıcı hiçbir sey YAPMADIGI halde state
-  // degistiriyordu ve React fazladan bir render türü doneyordu.
+  // değiştiriyordu ve React fazladan bir render türü doneyordu.
   //
   // Kaybedilen koltuk, `selected` ile `seats`in bir SONUCU --
   // bağımsız bir bilgi değil. Sonuç olan seyi state'te tutmak,
   // aynı gercegi iki yerde saklamak demek; ikisi kacinilmaz olarak
   // birbirinden ayrilir.
   //
-  // Bu yüzden render sırasında HESAPLIYORUM. `selected` içinde eski
+  // Bu yuzden render sırasında HESAPLIYORUM. `selected` içinde eski
   // kimlikler kalabilir ama hiçbir yerde doğrudan kullanılmıyor;
   // her tuketici aşağıdaki `activeSelected`i okuyor.
   // ================================================================
@@ -278,7 +278,7 @@ export function SeatSelectionPage() {
    * Ama kullanıcı seçimi DEGISTIRIRSE bu artık bambaska bir istek --
    * eski anahtarla gonderirsek backend "bunu zaten yaptım" deyip
    * ESKİ rezervasyonu dondururdu ve kullanıcı yanlış koltukları
-   * satin alırdı. Bu yüzden seçim değişince anahtari sifirliyorum.
+   * satin alırdı. Bu yuzden seçim değişince anahtari sifirliyorum.
    *
    * useRef kullanıyorum, useState değil: bu deger ekranda
    * gorunmuyor, degismesi yeniden cizim gerektirmiyor.
@@ -394,7 +394,7 @@ export function SeatSelectionPage() {
       name: section.name,
       // Backend bölüm sırasını bu uc noktada dondurmuyor; listedeki
       // gorulme sırasını kullanıyorum. Backend koltukları bölüm ve
-      // sıra etiketine göre sıralı döndürüyor, bu yüzden sonuç
+      // sıra etiketine göre sıralı döndürüyor, bu yuzden sonuç
       // tutarli.
       displayOrder: index,
       seats: section.seats.map((seat) => ({
@@ -459,8 +459,8 @@ export function SeatSelectionPage() {
         {cancelledTitle && (
           <div className="mt-4">
             <Alert variant="error">
-              <strong>{cancelledTitle}</strong> etkinligi az once iptal edildi. Bu oturum icin bilet
-              alinamaz.{' '}
+              <strong>{cancelledTitle}</strong> etkinliği az önce iptal edildi. Bu oturum için bilet
+              alınamaz.{' '}
               <button
                 type="button"
                 onClick={() => navigate('/etkinlikler')}
@@ -477,8 +477,8 @@ export function SeatSelectionPage() {
             <Alert variant="error">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span>
-                  {lostSeats.map((s) => s.displayLabel).join(', ')} koltugu siz secerken baska bir
-                  kullanici tarafindan alindi. Seciminizden cikardim.
+                  {lostSeats.map((s) => s.displayLabel).join(', ')} koltuğu siz seçerken başka bir
+                  kullanıcı tarafından alındı. Seçiminizden çıkardım.
                 </span>
 
                 <button

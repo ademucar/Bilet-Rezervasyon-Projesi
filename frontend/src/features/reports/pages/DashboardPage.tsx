@@ -330,7 +330,7 @@ function AdminPanel() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">En popüler şehirler</h2>
+          <h2 className="font-semibold text-slate-900">En popüler sehirler</h2>
           <p className="mt-0.5 text-xs text-slate-500">Satılan bilet sayısına göre</p>
 
           {d.topCities.length === 0 ? (
@@ -417,7 +417,7 @@ function ReportExportPanel() {
             <option value={ReportType.EventOccupancy}>Etkinlik doluluğu</option>
             <option value={ReportType.RevenueByEvent}>Etkinlik bazlı gelir</option>
             <option value={ReportType.TicketTypeSales}>Bilet türü satışları</option>
-            <option value={ReportType.PaymentStatuses}>Ödeme durumlari</option>
+            <option value={ReportType.PaymentStatuses}>Ödeme durumları</option>
           </select>
         </div>
 
@@ -462,7 +462,7 @@ function ReportExportPanel() {
         <div className="mt-4">
           <Alert variant="success">
             Rapor talebiniz alındı. Üretim arka planda sürüyor; hazır olduğunda size bildirim
-            gonderilecek.
+            gönderilecek.
           </Alert>
         </div>
       )}

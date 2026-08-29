@@ -52,7 +52,7 @@ export function LoginPage() {
       const problem = toProblem(error)
 
       // Hata kontrolunu METNE göre değil KODA göre yapıyorum.
-      // Backend mesaji degistirdiginde bu kod bozulmasin.
+      // Backend mesaji değiştirdiginde bu kod bozulmasin.
       const message =
         problem.errorCode === 'auth.account_locked'
           ? 'Çok fazla başarısız deneme yapıldı. Lütfen 15 dakika sonra tekrar deneyin.'

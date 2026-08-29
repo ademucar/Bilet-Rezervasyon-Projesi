@@ -7,7 +7,7 @@ import { useMemo } from 'react'
  * Bu bileşen ONCE admin panelinde (Sprint 4) yazildi ve yalnızca
  * adminApi'nin SectionDetail tipini taniyordu.
  *
- * Sprint 7'de bilet alma ekranini yazarken sorun cikti: oradaki veri
+ * Sprint 7'de bilet alma ekranini yazarken sorun çıktı: oradaki veri
  * SeatAvailabilityItem, alanlari bambaska ve koltuklarin 4 farklı
  * durumu var (boş / kilitli / satilmis / bloke).
  *
@@ -112,7 +112,7 @@ export function SeatMap({
    * kullanıcı bir koltuk sectiginde) arayüz gozle gorulur şekilde
    * takilirdi.
    *
-   * Bagimlilik yalnızca `sections`: seçim degistiginde yerlesim
+   * Bagimlilik yalnızca `sections`: seçim değiştiginde yerlesim
    * DEGISMEZ, yalnızca renkler degisir.
    */
   const layout = useMemo(() => {
@@ -128,7 +128,7 @@ export function SeatMap({
     // Sebep: burada bir DONUSUM değil, BIRIKIM yapiyoruz -- her bölüm
     // bir oncekinin bittigi yerden başlıyor (currentY) ve en genis
     // bolumu ariyoruz (maxWidth). `.map()` içinde disaridaki
-    // degiskenleri degistirmek hem okuyucuyu yaniltir hem de
+    // degiskenleri değiştirmek hem okuyucuyu yaniltir hem de
     // "render sırasında degisken atamasi" olarak lint uyarısı alır.
     for (const section of ordered) {
       // Koltukları SIRALARA grupla.

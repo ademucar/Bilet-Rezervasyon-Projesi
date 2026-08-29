@@ -139,7 +139,7 @@ export function EventFilterPanel({
               // Ham "2026-12-05" gonderseydik backend bunu yerel saat
               // sanabilir ve zaman dilimi farki yuzunden bir günlük
               // kayma olusabilirdi -- kullanıcı 5 Aralik seçip
-              // 4 Aralik'taki etkinligi gormezdi.
+              // 4 Aralik'taki etkinliği gormezdi.
               onChange={(e) =>
                 onChange({
                   dateFrom: e.target.value ? `${e.target.value}T00:00:00Z` : undefined,
@@ -217,12 +217,12 @@ export function EventFilterPanel({
             {/* Kullanıcıya "yaş sınırı" değil "yasim" soruyorum.
                 "Yaş sınırı 18" secenegi belirsiz olurdu: 18 sinirli
                 etkinlikleri mi, 18 yasindakinin girebileceklerini mi?
-                "18 yasindayim" hiçbir yoruma yer birakmiyor. */}
+                "18 yaşındayım" hiçbir yoruma yer birakmiyor. */}
             <option value="">Farketmez</option>
             <option value="0">Her yaş (sınırsız)</option>
-            <option value="15">15 yasindayim</option>
-            <option value="18">18 yasindayim</option>
-            <option value="21">21 yasindayim</option>
+            <option value="15">15 yaşındayım</option>
+            <option value="18">18 yaşındayım</option>
+            <option value="21">21 yaşındayım</option>
           </select>
         </div>
 

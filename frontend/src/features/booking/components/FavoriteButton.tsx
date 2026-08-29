@@ -18,7 +18,7 @@ import { bookingApi } from '../api/bookingApi'
  * 200 ms bile beklemek dugmenin bozuk olduğu izlenimi verir ve
  * kullanıcı tekrar tiklar.
  *
- * Risk: istek başarısız olursa ekran YALAN soylemis olur. Bu yüzden
+ * Risk: istek başarısız olursa ekran YALAN soylemis olur. Bu yuzden
  * onError'da eski duruma GERİ ALIYORUZ. Iyimser guncellemenin
  * vazgecilmez parcasi budur -- geri alma olmadan yapilirsa arayüz
  * ile sunucu sessizce ayrisir.
@@ -89,7 +89,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
       type="button"
       onClick={() => degistir.mutate()}
       // aria-pressed: ekran okuyucuya dugmenin ACIK/KAPALI olduğunu
-      // söyler. Yalnızca ikonu degistirseydik görmeyen kullanıcı
+      // söyler. Yalnızca ikonu değiştirseydik görmeyen kullanıcı
       // favoride olup olmadigini anlayamazdi.
       aria-pressed={favoriMi}
       aria-label={favoriMi ? 'Favorilerden çıkar' : 'Favorilere ekle'}

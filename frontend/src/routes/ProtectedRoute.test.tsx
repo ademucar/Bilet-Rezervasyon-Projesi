@@ -76,7 +76,7 @@ describe('ProtectedRoute', () => {
    * Backend'de 401 "kim olduğunu bilmiyorum", 403 "biliyorum ama
    * yetkin yok" demek (Sprint 17 entegrasyon testinde doğrulandı).
    *
-   * Arayüzde karşılığı:
+   * Arayuzde karşılığı:
    *   giriş yok      -> /giriş        (giriş yap, sonra dön)
    *   rol yetersiz   -> /yetkisiz     (giriş yapmak işe yaramaz)
    *

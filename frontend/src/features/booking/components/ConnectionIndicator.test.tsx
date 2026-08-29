@@ -49,7 +49,7 @@ describe('ConnectionIndicator', () => {
    * ================================================================
    * Bu göstergenin var olma sebebi Sprint 10'da somut bir hatayı
    * yakalamış olması: Vite proxy'sine /hubs girdisini eklemeyi
-   * unutmuştum.
+   * unutmuştüm.
    *
    * Gösterge olmasaydı harita yine çalışırdı (yoklama yedeği
    * devrede) ve SignalR'ın hiç bağlanmadığını fark etmezdim —

@@ -73,20 +73,20 @@ export function formatDate(isoString: string): string {
 }
 
 /**
- * Tarihi PARCALARINA ayirir: takvim yirtmaci bileseni icin.
+ * Tarihi PARCALARINA ayirir: takvim yirtmaci bileseni için.
  *
  * ================================================================
  * NEDEN AYRI BIR ISLEV?
  * ================================================================
- * formatDateTime "27 Ekim 2026 20:00" gibi TEK bir cumle donuyor.
- * Kart tasariminda tarihi bir NESNE gibi gostermek istiyorum:
- * ay ustte kucuk, gun ortada iri, saat altta.
+ * formatDateTime "27 Ekim 2026 20:00" gibi TEK bir cumle dönüyor.
+ * Kart tasariminda tarihi bir NESNE gibi göstermek istiyorum:
+ * ay ustte küçük, gün ortada iri, saat altta.
  *
  * Bunu tek metni parcalayarak yapsaydim ("27 Ekim 2026 20:00"
- * dizesini bosluktan bolerek) bicim degisince kirilirdi. Intl'e
- * her parcayi ayri ayri sordurmak daha saglam.
+ * dizesini bosluktan bolerek) biçim değişince kirilirdi. Intl'e
+ * her parcayi ayrı ayrı sordurmak daha saglam.
  *
- * Ay adini KISALTIYORUM (Eki, Kas) cunku yirtmac 72px genis --
+ * Ay adını KISALTIYORUM (Eki, Kas) çünkü yirtmac 72px genis --
  * "Aralik" oraya sigmiyor, "Ara" siğiyor.
  * ================================================================
  */

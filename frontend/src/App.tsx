@@ -131,7 +131,7 @@ const queryClient = new QueryClient({
         return failureCount < 2
       },
 
-      // Sekme degistirip geri geldiğinde otomatik yenileme.
+      // Sekme değiştirip geri geldiğinde otomatik yenileme.
       // Koltuk uygunlugu gibi hizli degisen veriler için degerli.
       refetchOnWindowFocus: true,
     },
