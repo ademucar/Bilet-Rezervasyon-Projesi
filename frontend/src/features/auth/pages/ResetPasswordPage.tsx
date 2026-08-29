@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { authApi } from '../api/authApi'
 import { resetPasswordSchema, type ResetPasswordForm } from '../api/schemas'
 import { toProblem } from '../../../lib/api/client'
-import { AuthLayout } from '../components/AuthLayout'
+import { AuthAsideNote, AuthLayout } from '../components/AuthLayout'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Alert } from '../../../components/ui/Alert'
@@ -66,6 +66,29 @@ export function ResetPasswordPage() {
     <AuthLayout
       title="Yeni şifre belirle"
       subtitle="Hesabınız için yeni bir şifre oluşturun."
+      aside={
+        /* Sprint 16: şifre değişince refresh token'lar iptal
+           ediliyor. Kullanıcı bunu telefonu elinden bırakmadan önce
+           bilmeli. */
+        <AuthAsideNote
+          icon={
+            <svg
+              className="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <rect x="4" y="10" width="16" height="10" rx="1" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+          }
+        >
+          Şifre değiştiğinde açık olan tüm oturumlar kapanır. Diğer cihazlarda tekrar giriş yapmanız
+          gerekir.
+        </AuthAsideNote>
+      }
       footer={
         <Link to="/giris" className="font-medium text-brand-600 hover:underline">
           Giriş ekranına dön

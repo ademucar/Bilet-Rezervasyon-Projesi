@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '../api/authApi'
 import { forgotPasswordSchema, type ForgotPasswordForm } from '../api/schemas'
-import { AuthLayout } from '../components/AuthLayout'
+import { AuthAsideNote, AuthLayout } from '../components/AuthLayout'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Alert } from '../../../components/ui/Alert'
@@ -64,6 +64,27 @@ export function ForgotPasswordPage() {
     <AuthLayout
       title="Şifremi unuttum"
       subtitle="E-posta adresinizi girin, size bir sıfırlama bağlantısı gönderelim."
+      aside={
+        /* Bağlantının ömrü kritik bilgi: kullanıcı e-postayı bir
+           saat sonra açıp "çalışmıyor" demesin. */
+        <AuthAsideNote
+          icon={
+            <svg
+              className="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+          }
+        >
+          Sıfırlama bağlantısı kısa süre geçerlidir ve yalnızca bir kez kullanılabilir.
+        </AuthAsideNote>
+      }
       footer={
         <Link to="/giris" className="font-medium text-brand-600 hover:underline">
           Giriş ekranına dön

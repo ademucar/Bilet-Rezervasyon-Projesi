@@ -88,7 +88,7 @@ export function AuthLayout({ title, subtitle, children, footer, aside }: AuthLay
               main: sayfanın ana içeriği. Ekran okuyucular "ana içeriğe
               atla" komutuyla doğrudan buraya gelebiliyor.
               ============================================================ */}
-          <main className="flex-grow p-7">
+          <main className="min-w-0 flex-grow p-7">
             {/* Mobilde sol sütun gizli olduğu için marka buraya taşınıyor.
                 Yoksa telefonda ekranda hiçbir yerde ad görünmezdi. */}
             <Link

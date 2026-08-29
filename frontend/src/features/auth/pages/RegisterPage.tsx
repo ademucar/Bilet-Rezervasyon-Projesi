@@ -7,7 +7,7 @@ import { authApi } from '../api/authApi'
 import { registerSchema, type RegisterForm } from '../api/schemas'
 import { useAuthStore } from '../../../stores/authStore'
 import { toProblem } from '../../../lib/api/client'
-import { AuthLayout } from '../components/AuthLayout'
+import { AuthAsideNote, AuthLayout } from '../components/AuthLayout'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Alert } from '../../../components/ui/Alert'
@@ -81,6 +81,30 @@ export function RegisterPage() {
     <AuthLayout
       title="Kayıt ol"
       subtitle="Birkaç adımda hesabınızı oluşturun"
+      aside={
+        /* Onay adımını ÖNCEDEN söylüyorum. Kullanıcı kayıt olup
+           "neden bilet alamıyorum" diye takılmasın -- o noktada gelen
+           kutusuna bakması gerektiğini bilmiyor. */
+        <AuthAsideNote
+          icon={
+            <svg
+              className="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="1" />
+              <path d="m3 7 9 6 9-6" />
+            </svg>
+          }
+        >
+          Kayıttan sonra e-posta adresinize bir onay bağlantısı gönderilir. Onaylamadan bilet
+          alamazsınız.
+        </AuthAsideNote>
+      }
       footer={
         <>
           Zaten hesabınız var mi?{' '}

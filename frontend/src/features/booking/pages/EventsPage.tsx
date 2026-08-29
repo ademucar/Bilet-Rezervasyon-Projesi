@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { toProblem } from '../../../lib/api/client'
 import { formatDateParts, formatDateTime } from '../../../lib/format'
+import { ActiveFilterChips } from '../components/ActiveFilterChips'
 import { EventFilterPanel } from '../components/EventFilterPanel'
 import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '../api/bookingApi'
 
@@ -208,6 +209,22 @@ export function EventsPage() {
 
           {/* ---- SONUCLAR ---- */}
           <div>
+            {/* Aktif filtreler sonuçların TEPESİNDE, çıkarılabilir
+                rozetler hâlinde. Yan panel mobilde yukarıda kalıyor
+                ve kullanıcı sonuçlara bakarken neyi filtrelediğini
+                göremiyordu. */}
+            <ActiveFilterChips
+              filters={filters}
+              onChange={updateFilters}
+              onReset={resetFilters}
+              search={filters.search ?? ''}
+              onClearSearch={() => {
+                setSearch('')
+                updateFilters({ search: undefined })
+              }}
+              totalCount={data?.totalCount}
+            />
+
             {eventsQuery.isError && (
               <Alert variant="error">{toProblem(eventsQuery.error).detail}</Alert>
             )}
@@ -315,11 +332,6 @@ export function EventsPage() {
 
             {data && data.items.length > 0 && (
               <>
-                <p className="mb-3 text-sm text-slate-500">
-                  <span className="num font-medium text-slate-900">{data.totalCount}</span> etkinlik
-                  bulundu
-                </p>
-
                 <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {data.items.map((ev) => (
                     <li key={ev.id}>

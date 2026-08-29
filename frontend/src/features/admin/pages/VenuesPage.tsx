@@ -74,7 +74,7 @@ export function VenuesPage() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Mekan ara..."
           aria-label="Mekan ara"
-          className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+          className="w-full max-w-xs rounded-[4px] border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
 
         <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgeç' : 'Yeni mekan'}</Button>
@@ -154,23 +154,72 @@ export function VenuesPage() {
       )}
 
       {venuesQuery.data && venuesQuery.data.items.length > 0 && (
-        <ul className="space-y-2">
-          {venuesQuery.data.items.map((v) => (
-            <li key={v.id}>
-              <Link
-                to={`/admin/mekanlar/${v.id}`}
-                className="flex items-center justify-between rounded-[4px] border border-slate-300 bg-white p-4 transition-colors hover:border-brand-300"
-              >
-                <div>
-                  <p className="font-medium text-slate-900">{v.name}</p>
-                  <p className="text-sm text-slate-500">{v.cityName}</p>
-                </div>
+        /* ==========================================================
+           LİSTE DEĞİL TABLO
+           ==========================================================
+           Önceki hâl, her mekân için ayrı çerçeveli bir kutuydu.
+           Yönetim ekranında asıl iş KARŞILAŞTIRMAK: hangi mekânda
+           kaç salon var, hangi şehirde yığılma var.
 
-                <span className="text-sm text-slate-500">{v.hallCount} salon</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+           Ayrı kutular bunu zorlaştırıyordu; her satır kendi
+           çerçevesi içinde yüzdüğü için gözün takip edeceği dikey
+           bir hiza yoktu. Tabloda "salon" sütunu tek bir sütunda
+           alt alta ve mono rakamlarla hizalı -- 3 ile 12 arasındaki
+           farkı okumadan görüyorsunuz.
+
+           <table> kullanıyorum, grid'li div'ler değil: ekran
+           okuyucu "3. satır, Salon sütunu: 12" diye okuyabiliyor.
+           Div'lerle bu ilişki kaybolurdu.
+           ========================================================== */
+        <div className="overflow-x-auto rounded-[4px] border border-slate-300 bg-white">
+          <div className="flex items-center gap-2.5 border-b border-slate-300 bg-slate-50 px-3.5 py-2.5">
+            <span className="font-display text-sm font-semibold text-slate-900">Mekânlar</span>
+            <span className="num border border-slate-300 bg-white px-1.5 py-px text-[11px] text-slate-600">
+              {venuesQuery.data.totalCount}
+            </span>
+          </div>
+
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th scope="col" className="label-xs px-3.5 py-2 text-left">
+                  Mekân
+                </th>
+                <th scope="col" className="label-xs px-3.5 py-2 text-left">
+                  Şehir
+                </th>
+                <th scope="col" className="label-xs px-3.5 py-2 text-right">
+                  Salon
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {venuesQuery.data.items.map((v) => (
+                <tr
+                  key={v.id}
+                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
+                >
+                  <td className="px-3.5 py-2.5">
+                    {/* Bağlantı hücrenin İÇİNDE, satırın tamamında
+                        değil. <tr> içine <a> koymak geçersiz HTML;
+                        onClick ile satırı tıklanabilir yapmak ise
+                        klavye ve "yeni sekmede aç" davranışını
+                        bozardı. */}
+                    <Link
+                      to={`/admin/mekanlar/${v.id}`}
+                      className="font-medium text-slate-900 hover:text-brand-600 hover:underline"
+                    >
+                      {v.name}
+                    </Link>
+                  </td>
+                  <td className="px-3.5 py-2.5 text-slate-600">{v.cityName}</td>
+                  <td className="num px-3.5 py-2.5 text-right text-slate-900">{v.hallCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </AdminLayout>
   )
