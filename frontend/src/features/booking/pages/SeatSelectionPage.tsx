@@ -57,13 +57,13 @@ const SEAT_COLORS = {
 function seatStatusLabel(status: number): string {
   switch (status) {
     case EventSeatStatus.Locked:
-      return 'baskasi tarafindan tutuluyor'
+      return 'başkası tarafından tutuluyor'
     case EventSeatStatus.Sold:
-      return 'satildi'
+      return 'satıldı'
     case EventSeatStatus.Blocked:
-      return 'satisa kapali'
+      return 'satışa kapalı'
     default:
-      return 'bos'
+      return 'boş'
   }
 }
 
@@ -462,7 +462,7 @@ export function SeatSelectionPage() {
         {availabilityQuery.data && (
           <p className="mt-1 text-sm text-slate-500">
             {formatDateTime(availabilityQuery.data.startDate)} &middot;{' '}
-            {availabilityQuery.data.availableSeats} / {availabilityQuery.data.totalSeats} koltuk bos
+            {availabilityQuery.data.availableSeats} / {availabilityQuery.data.totalSeats} koltuk boş
           </p>
         )}
 

@@ -1,15 +1,15 @@
 namespace Ticketing.Application.Abstractions.Security;
 
 /// <summary>
-/// Istegi yapan kullanicinin kimligi.
+/// Istegi yapan kullanıcının kimliği.
 ///
-/// Neden HttpContext'i dogrudan kullanmiyoruz?
-/// Cunku HttpContext ASP.NET Core'a aittir ve Application katmani
+/// Neden HttpContext'i doğrudan kullanmiyoruz?
+/// Çünkü HttpContext ASP.NET Core'a aittir ve Application katmani
 /// web'i bilmemelidir -- architecture testimiz bunu zaten engelliyor.
 ///
-/// Bu arayuz sayesinde handler'lar "su an kim istekte bulunuyor?"
-/// sorusunu HTTP'den bagimsiz olarak sorabiliyor. Testte de sahte
-/// bir kullanici vermek cok kolay oluyor.
+/// Bu arayüz sayesinde handler'lar "su an kim istekte bulunuyor?"
+/// sorusunu HTTP'den bağımsız olarak sorabiliyor. Testte de sahte
+/// bir kullanıcı vermek çok kolay oluyor.
 /// </summary>
 public interface ICurrentUser
 {
@@ -22,7 +22,7 @@ public interface ICurrentUser
 
     bool IsAuthenticated { get; }
 
-    /// <summary>Bu istegin izleme kimligi (Correlation ID).</summary>
+    /// <summary>Bu istegin izleme kimliği (Correlation ID).</summary>
     string? CorrelationId { get; }
 
     string? IpAddress { get; }

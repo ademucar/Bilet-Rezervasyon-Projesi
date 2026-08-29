@@ -111,6 +111,20 @@ services:
       # Yerel gelistirmede her acilista giris yapmayi zorunlu kilmiyoruz.
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      # pgAdmin, e-posta adresini DOGRULUYOR ve .local gibi ayrilmis
+      # ust duzey alan adlarini reddediyor:
+      #
+      #   'admin@ticketing.local' does not appear to be a valid
+      #   email address ... special-use or reserved name
+      #
+      # Container sonsuz restart dongusune giriyordu. Bu satir
+      # .local'i beyaz listeye aliyor.
+      #
+      # Alternatif, adresi gercek bir alan adiyla degistirmekti
+      # (admin@ticketing.com). Yapmadim: o alan adi baskasinin ve
+      # yanlislikla oraya e-posta gitmesini istemem. .local zaten
+      # RFC 6762 ile tam olarak bu is icin ayrilmis.
+      PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: "['local']"
     ports:
       - "5050:80"
     volumes:
@@ -191,6 +205,28 @@ services:
       Smtp__Host: ${SMTP_HOST}
       Smtp__Port: ${SMTP_PORT}
       Smtp__From: ${SMTP_FROM}
+      # ============================================================
+      # APPURLS -- API bunlar olmadan AYAGA KALKMIYOR
+      # ============================================================
+      # AppUrlOptions'ta iki alan da [Required] ve ValidateOnStart
+      # acik. Compose bunlari gecmedigi icin container su hatayla
+      # sonsuz restart donguse giriyordu:
+      #
+      #   DataAnnotation validation failed for 'AppUrlOptions'
+      #   members: 'Frontend' ... 'The Frontend field is required.'
+      #
+      # Yerelde calisiyordu cunku degerler
+      # appsettings.Development.json'da duruyor -- ve o dosya
+      # (dogru olarak) .gitignore'da, imaja da girmiyor.
+      # "Bende calisiyor"un ders kitabi ornegi.
+      #
+      # Bu adresler e-postalardaki baglantilarda kullaniliyor
+      # (e-posta onayi, sifre sifirlama). Container ICINDEN degil,
+      # KULLANICININ TARAYICISINDAN acilacaklari icin servis adi
+      # (http://frontend) degil, disaridan gorunen adres yaziliyor.
+      # ============================================================
+      AppUrls__Frontend: ${APP_URL_FRONTEND}
+      AppUrls__Api: ${APP_URL_API}
     ports:
       - "5000:8080"
     volumes:

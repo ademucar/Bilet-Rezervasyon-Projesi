@@ -1,24 +1,24 @@
 namespace Ticketing.Domain.Common;
 
 /// <summary>
-/// Tum entity'lerin ortak atasi. Kimlik (Id) ve domain event birikimi saglar.
+/// Tüm entity'lerin ortak atasi. Kimlik (Id) ve domain event birikimi saglar.
 /// </summary>
 public abstract class Entity
 {
     /// <summary>
-    /// Neden Guid, neden int degil?
+    /// Neden Guid, neden int değil?
     ///
-    /// 1) Bilet ve rezervasyon ID'leri URL'de goruluyor. int olsaydi kullanici
+    /// 1) Bilet ve rezervasyon ID'leri URL'de goruluyor. int olsaydı kullanıcı
     ///    /tickets/1234 adresini /tickets/1235 yapip baskasinin biletini
     ///    denemeye kalkardi. Yetkilendirme bunu zaten engelleyecek ama
     ///    savunma katmanlarini cogaltmak iyidir.
     ///
-    /// 2) Guid'i veritabanina gitmeden UYGULAMA tarafinda uretebiliyorum.
-    ///    Outbox pattern'de bu kritik: rezervasyonu kaydetmeden once ID'sini
-    ///    bilip outbox mesajinin icine yazabiliyorum. int olsaydi once INSERT
+    /// 2) Guid'i veritabanina gitmeden UYGULAMA tarafında uretebiliyorum.
+    ///    Outbox pattern'de bu kritik: rezervasyonu kaydetmeden önce ID'sini
+    ///    bilip outbox mesajinin icine yazabiliyorum. int olsaydı önce INSERT
     ///    yapip ID'yi geri okumam gerekirdi.
     ///
-    /// Neden Guid.CreateVersion7(), klasik Guid.NewGuid() degil?
+    /// Neden Guid.CreateVersion7(), klasik Guid.NewGuid() değil?
     ///
     /// Klasik GUID (v4) tamamen rastgeledir. Primary key olarak kullanildiginda
     /// yeni kayitlar B-tree index'in rastgele yerlerine girer, index surekli
@@ -34,12 +34,12 @@ public abstract class Entity
     private readonly List<IDomainEvent> _domainEvents = [];
 
     /// <summary>
-    /// Bu entity uzerinde biriken, henuz yayinlanmamis olaylar.
+    /// Bu entity uzerinde biriken, henüz yayinlanmamis olaylar.
     ///
-    /// IReadOnlyCollection donuyorum, List degil. Boylece disaridan
+    /// IReadOnlyCollection donuyorum, List değil. Boylece disaridan
     /// entity.DomainEvents.Add(...) yazilamaz. Olay ekleme yetkisi
-    /// sadece entity'nin kendisindedir (asagidaki protected metot).
-    /// Kapsullemeyi (encapsulation) bu sekilde koruyorum.
+    /// sadece entity'nin kendisindedir (aşağıdaki protected metot).
+    /// Kapsullemeyi (encapsulation) bu şekilde koruyorum.
     /// </summary>
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
@@ -48,9 +48,9 @@ public abstract class Entity
     /// <summary>
     /// Olaylar yayinlandiktan sonra temizlenir.
     ///
-    /// Cagrilma yeri: DbContext.SaveChangesAsync icinde, transaction commit
-    /// edildikten SONRA. Once commit, sonra yayin -- cunku commit basarisiz
-    /// olursa hic olmamis bir olayi duyurmus oluruz.
+    /// Cagrilma yeri: DbContext.SaveChangesAsync içinde, transaction commit
+    /// edildikten SONRA. Önce commit, sonra yayin -- çünkü commit başarısız
+    /// olursa hiç olmamış bir olayi duyurmus oluruz.
     /// </summary>
     public void ClearDomainEvents() => _domainEvents.Clear();
 }

@@ -7,7 +7,7 @@ using Ticketing.Application.Abstractions.Email;
 namespace Ticketing.Infrastructure.Email;
 
 /// <summary>
-/// PDF Sprint 14'un istedigi sekiz e-posta sablonunu uretir.
+/// PDF Sprint 14'un istedigi sekiz e-posta sablonunu üretir.
 /// </summary>
 internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
 {
@@ -40,30 +40,30 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     }
 
     // ==================================================================
-    // GUVENLIK: HTML KACISI
+    // GÜVENLİK: HTML KACISI
     // ==================================================================
     /// <summary>
-    /// Sablona giren her degeri HTML-kacisli dondurur.
+    /// Sablona giren her değeri HTML-kacisli döndürür.
     /// </summary>
     /// <remarks>
     /// ==============================================================
     /// BU METOT OLMASAYDI: E-POSTA UZERINDEN ICERIK ENJEKSIYONU
     /// ==============================================================
-    /// Sablon verilerinin cogu KULLANICIDAN geliyor: ad, soyad,
-    /// etkinlik basligi, iptal sebebi.
+    /// Sablon verilerinin çoğu KULLANICIDAN geliyor: ad, soyad,
+    /// etkinlik başlığı, iptal sebebi.
     ///
-    /// Kullanici adini "&lt;script&gt;..." veya
-    /// "&lt;a href='kotu-site'&gt;Hesabinizi dogrulayin&lt;/a&gt;"
+    /// Kullanıcı adını "&lt;script&gt;..." veya
+    /// "&lt;a href='kötü-site'&gt;Hesabinizi dogrulayin&lt;/a&gt;"
     /// olarak kaydederse, kacis olmadan bu HTML e-postaya OLDUGU GIBI
     /// girerdi.
     ///
     /// Cogu e-posta istemcisi script calistirmiyor ama BAGLANTI
-    /// calisiyor. Yani saldirgan, BIZIM alan adimizdan gonderilen
+    /// çalışıyor. Yani saldirgan, BIZIM alan adimizdan gonderilen
     /// bir e-postaya kendi kimlik avi baglantisini koyabilirdi --
-    /// alicinin gozunde tamamen guvenilir gorunen bir mesaj.
+    /// alicinin gozunde tamamen guvenilir görünen bir mesaj.
     ///
     /// Tek bir yerde kacis yapmak, sekiz sablonda tek tek dusunmekten
-    /// cok daha guvenli.
+    /// çok daha güvenli.
     /// ==============================================================
     /// </remarks>
     private static string H(IReadOnlyDictionary<string, string> data, string key)
@@ -74,17 +74,17 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     // ==================================================================
 
     /// <summary>
-    /// Tum e-postalarin ortak govdesi.
+    /// Tüm e-postalarin ortak govdesi.
     /// </summary>
     /// <remarks>
     /// ==============================================================
     /// NEDEN SATIR ICI (inline) CSS?
     /// ==============================================================
-    /// Web'de satir ici stil kotu bir aliskanliktir. E-postada ise
-    /// ZORUNLULUK: Gmail, Outlook ve cogu istemci &lt;style&gt;
+    /// Web'de satır ici stil kötü bir aliskanliktir. E-postada ise
+    /// ZORUNLULUK: Gmail, Outlook ve çoğu istemci &lt;style&gt;
     /// blogunu SILIYOR veya yok sayiyor.
     ///
-    /// Ayrica tablo yerine div kullaniyorum ama basit tutuyorum --
+    /// Ayrıca tablo yerine div kullanıyorum ama basit tutuyorum --
     /// eski Outlook surumleri karmasik flexbox/grid duzenlerini
     /// bozuyor.
     ///
@@ -113,12 +113,12 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
 
         // Alt bilgi
         //
-        // "Bu e-postayi neden aldiniz?" aciklamasi SART: aksi halde
-        // kullanici mesaji spam olarak isaretleyebilir ve bu tum
+        // "Bu e-postayi neden aldiniz?" açıklaması ŞART: aksi halde
+        // kullanıcı mesaji spam olarak isaretleyebilir ve bu tüm
         // gonderim itibarimizi dusurur.
         sb.Append("<div style=\"background:#f8fafc;padding:16px 24px;border-top:1px solid #e2e8f0;");
         sb.Append("color:#64748b;font-size:12px;line-height:1.5;\">");
-        sb.Append("Bu e-postayi, Biletim hesabinizla yaptiginiz bir islem sebebiyle aldiniz.<br>");
+        sb.Append("Bu e-postayi, Biletim hesabinizla yaptiginiz bir işlem sebebiyle aldiniz.<br>");
         sb.Append(CultureInfo.InvariantCulture, $"<a href=\"{_urls.FrontendUrl}\" style=\"color:#2563eb;\">Biletim</a>");
         sb.Append(" &middot; Bu adrese yanit vermeyin.");
         sb.Append("</div>");
@@ -163,7 +163,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     private (string, string) Welcome(IReadOnlyDictionary<string, string> d)
         => ("Biletim'e hos geldiniz",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
-            "<p>Biletim hesabiniz olusturuldu. Artik konser, tiyatro ve " +
+            "<p>Biletim hesabiniz oluşturuldu. Artık konser, tiyatro ve " +
             "daha bircok etkinlik icin bilet alabilirsiniz.</p>" +
             Buton($"{_urls.FrontendUrl}/etkinlikler", "Etkinlikleri kesfet"));
 
@@ -172,22 +172,22 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     // ==================================================================
     // Beklenen alanlar: FirstName, ResetUrl, ExpiryMinutes
     private (string, string) PasswordReset(IReadOnlyDictionary<string, string> d)
-        => ("Sifre sifirlama talebi",
+        => ("Şifre sıfırlama talebi",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
-            "<p>Hesabiniz icin sifre sifirlama talebinde bulunuldu. " +
+            "<p>Hesabınız için şifre sıfırlama talebinde bulunuldu. " +
             "Yeni sifrenizi belirlemek icin asagidaki dugmeye tiklayin.</p>" +
 
-            // Baglantiyi KACIRMADAN kullaniyorum: bu deger kullanicidan
+            // Baglantiyi KACIRMADAN kullanıyorum: bu deger kullanicidan
             // gelmiyor, sunucunun urettigi bir adres. Kacirsaydim
-            // "&amp;" gibi karakterler bozulur ve baglanti calismazdi.
+            // "&amp;" gibi karakterler bozulur ve bağlantı calismazdi.
             Buton(
                 d.TryGetValue("ResetUrl", out var url) ? url : _urls.FrontendUrl,
-                "Sifremi sifirla") +
+                "Şifremi sıfırla") +
 
-            $"<p style=\"color:#64748b;font-size:13px;\">Bu baglanti " +
+            $"<p style=\"color:#64748b;font-size:13px;\">Bu bağlantı " +
             $"{H(d, "ExpiryMinutes")} dakika gecerlidir.</p>" +
 
-            // Guvenlik uyarisi SART: talebi yapmayan biri bu e-postayi
+            // Güvenlik uyarısı ŞART: talebi yapmayan biri bu e-postayi
             // aldiysa hesabinin hedef alindigini bilmeli.
             "<p style=\"color:#64748b;font-size:13px;\">Bu talebi siz " +
             "yapmadiysaniz bu e-postayi yok sayabilirsiniz; sifreniz " +
@@ -199,9 +199,9 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     // Beklenen: FirstName, EventTitle, ReservationCode, SeatCount,
     //           TotalAmount, ExpiresInMinutes
     private (string, string) ReservationCreated(IReadOnlyDictionary<string, string> d)
-        => ($"Rezervasyonunuz olusturuldu - {H(d, "EventTitle")}",
+        => ($"Rezervasyonunuz oluşturuldu - {H(d, "EventTitle")}",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
-            "<p>Koltuklariniz sizin icin ayrildi. Odemeyi tamamlayarak " +
+            "<p>Koltuklariniz sizin için ayrildi. Ödemeyi tamamlayarak " +
             "biletlerinizi olusturabilirsiniz.</p>" +
             Kutu(
                 ("Etkinlik", H(d, "EventTitle")),
@@ -209,19 +209,19 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
                 ("Koltuk", H(d, "SeatCount")),
                 ("Tutar", H(d, "TotalAmount"))) +
 
-            // Sureyi VURGULU yaziyorum: bu e-postanin tek amaci
-            // kullaniciyi zamaninda odemeye yonlendirmek.
-            $"<p style=\"color:#b45309;\"><strong>Odeme icin " +
+            // Sureyi VURGULU yazıyorum: bu e-postanin tek amaci
+            // kullanıcıyı zamaninda ödemeye yonlendirmek.
+            $"<p style=\"color:#b45309;\"><strong>Ödeme için " +
             $"{H(d, "ExpiresInMinutes")} dakikaniz var.</strong> " +
             "Sure dolarsa koltuklar serbest birakilir.</p>" +
-            Buton($"{_urls.FrontendUrl}/rezervasyonlarim", "Odemeye devam et"));
+            Buton($"{_urls.FrontendUrl}/rezervasyonlarim", "Ödemeye devam et"));
 
     // ==================================================================
-    // 4) ODEME BASARILI
+    // 4) ÖDEME BASARILI
     // ==================================================================
     // Beklenen: FirstName, EventTitle, Amount, ReservationCode
     private (string, string) PaymentSucceeded(IReadOnlyDictionary<string, string> d)
-        => ("Odemeniz alindi",
+        => ("Ödemeniz alındı",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
             "<p>Odemeniz basariyla tamamlandi ve biletleriniz olusturuldu.</p>" +
             Kutu(
@@ -231,11 +231,11 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
 
     // ==================================================================
-    // 5) BILET BILGILERI
+    // 5) BİLET BILGILERI
     // ==================================================================
     // Beklenen: FirstName, EventTitle, EventDate, VenueName, TicketList
     private (string, string) TicketDetails(IReadOnlyDictionary<string, string> d)
-        => ($"Biletleriniz hazir - {H(d, "EventTitle")}",
+        => ($"Biletleriniz hazır - {H(d, "EventTitle")}",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
             "<p>Biletleriniz hazir. Girise QR kodunuzu okutmaniz yeterli.</p>" +
             Kutu(
@@ -245,7 +245,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
 
             // Bilet listesi ZATEN kacirilmis olarak geliyor (cagiran
             // taraf HTML uretiyor). Burada tekrar kacirmiyoruz --
-            // aksi halde "&lt;li&gt;" olarak gorunurdu.
+            // aksi halde "&lt;li&gt;" olarak görünürdü.
             "<div style=\"margin:16px 0;\">" +
             (d.TryGetValue("TicketList", out var liste) ? liste : string.Empty) +
             "</div>" +
@@ -253,17 +253,17 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             // ==========================================================
             // QR KODU E-POSTAYA GOMULMUYOR -- Sprint 8 karari
             // ==========================================================
-            // QR degeri bilet gecerliligini kanitlayan hassas bir veri.
+            // QR değeri bilet gecerliligini kanitlayan hassas bir veri.
             // E-posta kutusuna dusen bir goruntu, iletildiginde
             // baskasinin biletle girmesine yol acabilir.
             //
-            // Kullanicinin giris yapip kendi ekraninda gormesi daha
-            // guvenli.
+            // Kullanıcının giriş yapip kendi ekraninda gormesi daha
+            // güvenli.
             // ==========================================================
             Buton($"{_urls.FrontendUrl}/biletlerim", "QR kodlarimi gor"));
 
     // ==================================================================
-    // 6) ETKINLIK HATIRLATMA
+    // 6) ETKİNLİK HATIRLATMA
     // ==================================================================
     // Beklenen: FirstName, EventTitle, EventDate, VenueName
     private (string, string) EventReminder(IReadOnlyDictionary<string, string> d)
@@ -278,7 +278,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletimi ac"));
 
     // ==================================================================
-    // 7) ETKINLIK IPTALI
+    // 7) ETKİNLİK IPTALI
     // ==================================================================
     // Beklenen: FirstName, EventTitle, Reason
     private (string, string) EventCancelled(IReadOnlyDictionary<string, string> d)
@@ -287,7 +287,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
 
             // Kotu haberi BASTA ve NET veriyorum.
             //
-            // Uzun bir girisin ardindan soylemek, kullanicinin
+            // Uzun bir girisin ardindan söylemek, kullanıcının
             // e-postayi bastan sona okumasini gerektirirdi ve
             // "ne oldu?" belirsizligi yaratirdi.
             "<p style=\"color:#b91c1c;\"><strong>" +
@@ -295,8 +295,8 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             Kutu(("Sebep", H(d, "Reason"))) +
 
             // Paranin ne olacagi EN COK merak edilen sey; hemen
-            // soylemek destek taleplerini azaltiyor.
-            "<p>Odemeniz otomatik olarak iade edilecektir. Iade, " +
+            // söylemek destek taleplerini azaltiyor.
+            "<p>Ödemeniz otomatik olarak iade edilecektir. İade, " +
             "bankaniza bagli olarak 3-10 is gunu icinde hesabiniza " +
             "gecer.</p>" +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
@@ -305,16 +305,16 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     // 8) IADE TAMAMLANDI
     // ==================================================================
     // Beklenen: FirstName, ReservationCode, Amount
-    // static: bu sablon _urls kullanmiyor (icinde dugme yok).
-    // CA1822 bunu yakaladi ve hakli -- ornek verisine erismeyen bir
-    // metodu ornek metodu yapmak yaniltici.
+    // static: bu sablon _urls kullanmiyor (içinde dugme yok).
+    // CA1822 bunu yakaladi ve haklı -- örnek verisine erismeyen bir
+    // metodu örnek metodu yapmak yanıltıcı.
     private static (string, string) RefundCompleted(IReadOnlyDictionary<string, string> d)
-        => ("Iadeniz tamamlandi",
+        => ("Iadeniz tamamlandı",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
             "<p>Iade isleminiz tamamlandi.</p>" +
             Kutu(
                 ("Rezervasyon kodu", H(d, "ReservationCode")),
-                ("Iade tutari", H(d, "Amount"))) +
+                ("İade tutari", H(d, "Amount"))) +
             "<p style=\"color:#64748b;font-size:13px;\">Tutarin hesabiniza " +
             "gecmesi bankaniza bagli olarak 3-10 is gunu surebilir.</p>");
 }

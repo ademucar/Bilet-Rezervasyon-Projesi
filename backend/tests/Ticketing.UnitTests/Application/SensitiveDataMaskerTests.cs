@@ -95,7 +95,7 @@ public class SensitiveDataMaskerTests
         SensitiveDataMasker.MaskEmail(girdi).Should().Be(beklenen);
     }
 
-    // Alan adi KORUNUYOR: destek ekibi "kurumsal musteri mi?"
+    // Alan adi KORUNUYOR: destek ekibi "kurumsal müşteri mi?"
     // sorusunu cevaplayabilmeli.
     [Fact]
     public void Eposta_alan_adi_korunur()

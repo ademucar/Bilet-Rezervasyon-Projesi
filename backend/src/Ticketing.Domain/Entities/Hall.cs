@@ -4,8 +4,8 @@ namespace Ticketing.Domain.Entities;
 
 /// <summary>
 /// Salon. Bir mekanin icindeki fiziksel salon. Ornek: "Turkcell Sahnesi".
-/// Bir salonun birden fazla oturma plani (SeatLayout) olabilir --
-/// ornegin konser duzeni ve tiyatro duzeni farkli koltuk yerlesimleri kullanir.
+/// Bir salonun birden fazla oturma planı (SeatLayout) olabilir --
+/// örneğin konser düzeni ve tiyatro düzeni farklı koltuk yerlesimleri kullanir.
 /// </summary>
 public class Hall : AuditableEntity
 {
@@ -25,8 +25,8 @@ public class Hall : AuditableEntity
     /// <summary>
     /// Salonun fiziksel kapasitesi (itfaiye/ruhsat limiti).
     ///
-    /// PDF is kurali: "Koltuk kapasitesi salon kapasitesini asmamalidir."
-    /// Yani bir oturma planinda uretilen koltuk sayisi bu degeri gecemez.
+    /// PDF is kuralı: "Koltuk kapasitesi salon kapasitesini asmamalidir."
+    /// Yani bir oturma planinda uretilen koltuk sayısı bu değeri gecemez.
     /// Kontrolu SeatLayout.ValidateCapacity metodunda yapacagiz.
     /// </summary>
     public int Capacity { get; private set; }
@@ -41,17 +41,17 @@ public class Hall : AuditableEntity
     {
         if (venueId == Guid.Empty)
         {
-            throw new DomainException("Mekan secilmelidir.", "hall.venue_required");
+            throw new DomainException("Mekan seçilmelidir.", "hall.venue_required");
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Salon adi bos olamaz.", "hall.name_required");
+            throw new DomainException("Salon adı boş olamaz.", "hall.name_required");
         }
 
         if (capacity <= 0)
         {
-            throw new DomainException("Salon kapasitesi sifirdan buyuk olmalidir.", "hall.invalid_capacity");
+            throw new DomainException("Salon kapasitesi sıfırdan büyük olmalıdır.", "hall.invalid_capacity");
         }
 
         return new Hall(venueId, name.Trim(), capacity);
@@ -61,12 +61,12 @@ public class Hall : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Salon adi bos olamaz.", "hall.name_required");
+            throw new DomainException("Salon adı boş olamaz.", "hall.name_required");
         }
 
         if (capacity <= 0)
         {
-            throw new DomainException("Salon kapasitesi sifirdan buyuk olmalidir.", "hall.invalid_capacity");
+            throw new DomainException("Salon kapasitesi sıfırdan büyük olmalıdır.", "hall.invalid_capacity");
         }
 
         Name = name.Trim();

@@ -10,17 +10,17 @@ namespace Ticketing.Application.Features.SeatLayouts;
 internal static class SeatLayoutErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "seat_layout.not_found", "Oturma plani bulunamadi.");
+        "seat_layout.not_found", "Oturma planı bulunamadı.");
 
     public static readonly Error HallNotFound = Error.NotFound(
-        "seat_layout.hall_not_found", "Salon bulunamadi.");
+        "seat_layout.hall_not_found", "Salon bulunamadı.");
 
     public static readonly Error SectionNotFound = Error.NotFound(
-        "seat_layout.section_not_found", "Bolum bulunamadi.");
+        "seat_layout.section_not_found", "Bölüm bulunamadı.");
 
     public static readonly Error InUse = Error.Conflict(
         "seat_layout.in_use",
-        "Bu oturma plani bir etkinlik oturumunda kullaniliyor. Degistirilemez veya silinemez.");
+        "Bu oturma planı bir etkinlik oturumunda kullanılıyor. Degistirilemez veya silinemez.");
 }
 
 // ===================================================================
@@ -35,8 +35,8 @@ public sealed class CreateSeatLayoutCommandValidator : AbstractValidator<CreateS
     public CreateSeatLayoutCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Plan adi zorunludur.")
-            .MaximumLength(150).WithMessage("Plan adi en fazla 150 karakter olabilir.");
+            .NotEmpty().WithMessage("Plan adı zorunludur.")
+            .MaximumLength(150).WithMessage("Plan adı en fazla 150 karakter olabilir.");
 
         RuleFor(x => x.Description)
             .MaximumLength(1000)
@@ -78,29 +78,29 @@ internal sealed class CreateSeatLayoutCommandHandler
             // ==========================================================
             // BURADA ONCEDEN KONTROL YAPMIYORUM, EXCEPTION YAKALIYORUM
             // ==========================================================
-            // Venue ve Hall'da "once sorgula, sonra ekle" yaptim.
-            // Burada bilerek farkli davraniyorum ve sebebini yaziyorum:
+            // Venue ve Hall'da "önce sorgula, sonra ekle" yaptım.
+            // Burada bilerek farklı davraniyorum ve sebebini yazıyorum:
             //
-            // "Once sorgula sonra ekle" YARISA ACIKTIR. Iki istek ayni
-            // anda gelirse ikisi de "yok" gorur, ikisi de eklemeye
-            // calisir; biri unique index'e takilir ve kullanici
-            // anlamsiz bir "Veri cakismasi" hatasi alir.
+            // "Önce sorgula sonra ekle" YARISA ACIKTIR. Iki istek aynı
+            // anda gelirse ikisi de "yok" görür, ikisi de eklemeye
+            // çalışır; biri unique index'e takilir ve kullanıcı
+            // anlamsiz bir "Veri çakışması" hatası alır.
             //
             // Veritabani kisitina GUVENIP exception'i yakalamak hem
             // yarissiz hem de bir sorgu daha az. Buna "iyimser ekleme"
             // (optimistic insert) denir.
             //
-            // PDF is kurali: "Ayni salonda ayni isimde iki oturma plani
+            // PDF is kuralı: "Aynı salonda aynı isimde iki oturma planı
             // bulunmamalidir." -> UNIQUE (HallId, Name) index'i.
             //
             // NOT: DbUpdateException'in unique ihlali OLDUGUNU varsayiyorum.
-            // Baska bir kisit ihlali de ayni tipe duser. Daha kesin
-            // ayrim icin Npgsql'in PostgresException.SqlState degerine
+            // Baska bir kisit ihlali de aynı tipe duser. Daha kesin
+            // ayrim için Npgsql'in PostgresException.SqlState değerine
             // (23505 = unique_violation) bakilabilir; Sprint 15'te
             // bunu bir yardimci metoda tasiyacagim.
             return Result.Failure<Guid>(Error.Conflict(
                 "seat_layout.duplicate_name",
-                "Bu salonda ayni isimde bir oturma plani zaten var."));
+                "Bu salonda aynı isimde bir oturma planı zaten var."));
         }
 
         return Result.Success(layout.Id);
@@ -122,17 +122,17 @@ public sealed class AddSectionCommandValidator : AbstractValidator<AddSectionCom
     public AddSectionCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Bolum adi zorunludur.")
-            .MaximumLength(100).WithMessage("Bolum adi en fazla 100 karakter olabilir.");
+            .NotEmpty().WithMessage("Bölüm adı zorunludur.")
+            .MaximumLength(100).WithMessage("Bölüm adı en fazla 100 karakter olabilir.");
 
         RuleFor(x => x.DisplayOrder)
-            .GreaterThanOrEqualTo(0).WithMessage("Gosterim sirasi negatif olamaz.");
+            .GreaterThanOrEqualTo(0).WithMessage("Gosterim sırası negatif olamaz.");
 
         // #RRGGBB bicimi. Frontend renk secicisi zaten bu bicimi uretiyor
-        // ama API'ye dogrudan istek gonderilebilecegi icin dogruluyoruz.
+        // ama API'ye doğrudan istek gonderilebilecegi için dogruluyoruz.
         RuleFor(x => x.ColorHex)
             .Matches("^#[0-9A-Fa-f]{6}$")
-            .WithMessage("Renk #RRGGBB biciminde olmalidir. Ornek: #E63946")
+            .WithMessage("Renk #RRGGBB biciminde olmalıdır. Ornek: #E63946")
             .When(x => !string.IsNullOrWhiteSpace(x.ColorHex));
     }
 }
@@ -145,15 +145,15 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
 
     public async Task<Result<Guid>> Handle(AddSectionCommand request, CancellationToken cancellationToken)
     {
-        // Sections'i INCLUDE ediyorum -- bu SART.
+        // Sections'i INCLUDE ediyorum -- bu ŞART.
         //
-        // SeatLayout.AddSection metodu, ayni isimde bolum var mi diye
+        // SeatLayout.AddSection metodu, aynı isimde bölüm var mi diye
         // BELLEKTEKI _sections koleksiyonuna bakiyor. Include etmezsem
-        // koleksiyon BOS gelir, cakisma kontrolu hicbir sey yapmaz ve
-        // ayni isimde ikinci bolum eklenir.
+        // koleksiyon BOŞ gelir, çakışma kontrolü hiçbir sey yapmaz ve
+        // aynı isimde ikinci bölüm eklenir.
         //
         // Bu, EF ile calisirken en sik yapilan sessiz hatalardan biri:
-        // kod dogru gorunur, test bile gecebilir (bellekte olusturulmus
+        // kod doğru görünür, test bile gecebilir (bellekte olusturulmus
         // nesnede koleksiyon doludur), ama veritabanindan yuklenen
         // nesnede calismaz.
         var layout = await _context.SeatLayouts
@@ -166,13 +166,13 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
             return Result.Failure<Guid>(SeatLayoutErrors.NotFound);
         }
 
-        // Plan bir oturumda kullaniliyorsa yapisi degistirilemez.
+        // Plan bir oturumda kullaniliyorsa yapısı degistirilemez.
         if (await IsLayoutInUseAsync(_context, request.SeatLayoutId, cancellationToken).ConfigureAwait(false))
         {
             return Result.Failure<Guid>(SeatLayoutErrors.InUse);
         }
 
-        // AddSection cakisma kontrolunu kendi icinde yapiyor ve
+        // AddSection çakışma kontrolunu kendi içinde yapiyor ve
         // gerekirse DomainException firlatiyor. Global exception
         // handler bunu 422'ye ceviriyor.
         var section = layout.AddSection(request.Name, request.DisplayOrder, request.ColorHex);
@@ -183,15 +183,15 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
     }
 
     /// <summary>
-    /// Bu plan bir etkinlik oturumunda kullaniliyor mu?
+    /// Bu plan bir etkinlik oturumunda kullanılıyor mu?
     ///
-    /// PDF is kurali: "Kullanilmis oturma plani fiziksel olarak
+    /// PDF is kuralı: "Kullanılmış oturma planı fiziksel olarak
     /// silinmemelidir." Biz bir adim ileri gidip DEGISTIRILMESINI de
     /// engelliyoruz.
     ///
-    /// Neden? Plan degisirse o oturumun EventSeat kayitlari artik var
-    /// olmayan koltuklara isaret eder. Bilet almis kullanicinin koltugu
-    /// ortadan kalkar. Silmek kadar yikici bir sonuc.
+    /// Neden? Plan degisirse o oturumun EventSeat kayitlari artık var
+    /// olmayan koltuklara isaret eder. Bilet almis kullanıcının koltuğu
+    /// ortadan kalkar. Silmek kadar yikici bir sonuç.
     /// </summary>
     internal static Task<bool> IsLayoutInUseAsync(
         IApplicationDbContext context,
@@ -208,11 +208,11 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
 // ===================================================================
 
 /// <summary>
-/// Bir bolume toplu koltuk uretir.
+/// Bir bolume toplu koltuk üretir.
 /// </summary>
 /// <param name="RowLabels">
-/// Sira etiketleri. null ise "1, 2, 3..." kullanilir.
-/// Gercek salonlarda siralar genelde "A, B, C" diye adlandirilir.
+/// Sıra etiketleri. null ise "1, 2, 3..." kullanilir.
+/// Gerçek salonlarda siralar genelde "A, B, C" diye adlandirilir.
 /// </param>
 public sealed record GenerateSeatsCommand(
     Guid SeatLayoutId,
@@ -224,18 +224,18 @@ public sealed record GenerateSeatsCommand(
 public sealed class GenerateSeatsCommandValidator : AbstractValidator<GenerateSeatsCommand>
 {
     /// <summary>
-    /// Tek seferde uretilebilecek maksimum koltuk sayisi.
+    /// Tek seferde uretilebilecek maksimum koltuk sayısı.
     ///
     /// ==================================================================
     /// BU SINIR NEDEN VAR? -- Bir DoS korumasi
     /// ==================================================================
-    /// Sinir olmasaydi:
+    /// Sinir olmasaydı:
     ///     { "rowCount": 100000, "seatsPerRow": 100000 }
-    /// istegi 10 MILYAR koltuk uretmeye calisirdi. Sunucu bellegi
+    /// isteği 10 MILYAR koltuk uretmeye calisirdi. Sunucu bellegi
     /// tuketir, veritabani kilitlenir, sistem coker.
     ///
-    /// 20.000, dunyanin en buyuk kapali salonlarindan bile buyuk --
-    /// mesru hicbir kullanimi engellemiyor.
+    /// 20.000, dunyanin en büyük kapalı salonlarindan bile büyük --
+    /// mesru hiçbir kullanimi engellemiyor.
     /// ==================================================================
     /// </summary>
     public const int MaxSeatsPerOperation = 20_000;
@@ -243,23 +243,23 @@ public sealed class GenerateSeatsCommandValidator : AbstractValidator<GenerateSe
     public GenerateSeatsCommandValidator()
     {
         RuleFor(x => x.RowCount)
-            .GreaterThan(0).WithMessage("Sira sayisi sifirdan buyuk olmalidir.")
-            .LessThanOrEqualTo(500).WithMessage("Sira sayisi 500'u asamaz.");
+            .GreaterThan(0).WithMessage("Sıra sayısı sıfırdan büyük olmalıdır.")
+            .LessThanOrEqualTo(500).WithMessage("Sıra sayısı 500'u aşamaz.");
 
         RuleFor(x => x.SeatsPerRow)
-            .GreaterThan(0).WithMessage("Sira basina koltuk sayisi sifirdan buyuk olmalidir.")
-            .LessThanOrEqualTo(500).WithMessage("Sira basina koltuk sayisi 500'u asamaz.");
+            .GreaterThan(0).WithMessage("Sıra başına koltuk sayısı sıfırdan büyük olmalıdır.")
+            .LessThanOrEqualTo(500).WithMessage("Sıra başına koltuk sayısı 500'u aşamaz.");
 
         RuleFor(x => x)
             .Must(x => (long)x.RowCount * x.SeatsPerRow <= MaxSeatsPerOperation)
             .WithMessage($"Tek seferde en fazla {MaxSeatsPerOperation} koltuk uretilebilir.")
-            // Alan adini acikca veriyorum; yoksa hata bos anahtar altinda
-            // doner ve frontend hangi alani isaretleyecegini bilemez.
+            // Alan adını acikca veriyorum; yoksa hata boş anahtar altinda
+            // döner ve frontend hangi alanı isaretleyecegini bilemez.
             .WithName("SeatCount");
 
         RuleFor(x => x.RowLabels)
             .Must((cmd, labels) => labels is null || labels.Count == cmd.RowCount)
-            .WithMessage("Sira etiketi sayisi, sira sayisiyla eslesmelidir.");
+            .WithMessage("Sıra etiketi sayısı, sıra sayısıyla eşleşmelidir.");
     }
 }
 
@@ -274,11 +274,11 @@ internal sealed class GenerateSeatsCommandHandler
         GenerateSeatsCommand request,
         CancellationToken cancellationToken)
     {
-        // Sections VE Seats birlikte yukleniyor.
+        // Sections VE Seats birlikte yükleniyor.
         //
         // Seats'e neden ihtiyacim var? SeatSection.GenerateSeats,
         // "bu bolumde zaten koltuk var mi?" diye BELLEKTEKI koleksiyona
-        // bakiyor. Yuklemeseydim bos gorur ve ayni bolume ikinci kez
+        // bakiyor. Yuklemeseydim boş görür ve aynı bolume ikinci kez
         // koltuk uretilirdi -> unique index ihlali -> anlamsiz 409.
         var layout = await _context.SeatLayouts
             .Include(sl => sl.Sections)
@@ -305,7 +305,7 @@ internal sealed class GenerateSeatsCommandHandler
             return Result.Failure<int>(SeatLayoutErrors.SectionNotFound);
         }
 
-        // Koltuklari uret. Kural ihlallerinde DomainException firlar.
+        // Koltukları üret. Kural ihlallerinde DomainException firlar.
         section.GenerateSeats(request.RowCount, request.SeatsPerRow, request.RowLabels);
 
         // ==============================================================
@@ -313,11 +313,11 @@ internal sealed class GenerateSeatsCommandHandler
         // ==============================================================
         // PDF: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //
-        // Sirayi dikkatle sectim: koltuklar BELLEKTE uretildi ama henuz
-        // KAYDEDILMEDI. ValidateCapacity burada patlarsa hicbir sey
-        // veritabanina yazilmaz -- SaveChangesAsync'e hic gelmeyiz.
+        // Sirayi dikkatle sectim: koltuklar BELLEKTE üretildi ama henüz
+        // KAYDEDILMEDI. ValidateCapacity burada patlarsa hiçbir sey
+        // veritabanina yazilmaz -- SaveChangesAsync'e hiç gelmeyiz.
         //
-        // Tersini yapsaydim (once kaydet sonra kontrol et), gecersiz
+        // Tersini yapsaydim (önce kaydet sonra kontrol et), geçersiz
         // veriyi yazip sonra geri almam gerekirdi.
         var hallCapacity = await _context.Halls
             .AsNoTracking()

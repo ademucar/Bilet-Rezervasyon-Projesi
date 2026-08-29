@@ -3,11 +3,11 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Kullanicinin favori etkinligi. PDF Sprint 12.
+/// Kullanıcının favori etkinligi. PDF Sprint 12.
 ///
 /// UserRole gibi bu da COMPOSITE KEY kullaniyor: (UserId, EventId).
-/// PDF kurali: "Ayni kullanici ayni etkinligi bir kez favorileyebilmelidir."
-/// Composite key bunu yapisal olarak garanti eder -- ayri bir unique
+/// PDF kuralı: "Aynı kullanıcı aynı etkinligi bir kez favorileyebilmelidir."
+/// Composite key bunu yapisal olarak garanti eder -- ayrı bir unique
 /// index'e gerek kalmaz.
 /// </summary>
 public class Favorite

@@ -9,27 +9,27 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Odeme islemleri. PDF Sprint 8.
+/// Ödeme islemleri. PDF Sprint 8.
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/payments")]
-// PDF Sprint 15: "Odeme endpointi" hiz siniri.
-// Sinif duzeyinde -- odeme ile ilgili her uc korunuyor.
+// PDF Sprint 15: "Ödeme endpointi" hiz sınırı.
+// Sinif duzeyinde -- ödeme ile ilgili her uc korunuyor.
 [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
 public sealed class PaymentsController : ApiControllerBase
 {
     /// <summary>
-    /// Rezervasyon icin odeme baslatir.
+    /// Rezervasyon için ödeme baslatir.
     /// </summary>
     /// <remarks>
     /// TUTAR GONDERILMEZ -- rezervasyondan okunur.
-    /// PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
-    /// guvenilmemelidir."
+    /// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
+    /// güvenilmemelidir."
     ///
-    /// Idempotency-Key header'i ile cift odeme engellenir.
+    /// Idempotency-Key header'i ile cift ödeme engellenir.
     /// </remarks>
-    /// <response code="201">Odeme baslatildi.</response>
-    /// <response code="422">Rezervasyon odenebilir durumda degil veya zaten odenmis.</response>
+    /// <response code="201">Ödeme baslatildi.</response>
+    /// <response code="422">Rezervasyon odenebilir durumda değil veya zaten odenmis.</response>
     [HttpPost]
     [Authorize]
     [ProducesResponseType<PaymentDto>(StatusCodes.Status201Created)]
@@ -48,7 +48,7 @@ public sealed class PaymentsController : ApiControllerBase
             $"/api/v1/payments/{(result.IsSuccess ? result.Value.Id : Guid.Empty)}");
     }
 
-    /// <summary>Odeme detayi. Sahibi veya admin gorebilir.</summary>
+    /// <summary>Ödeme detayı. Sahibi veya admin görebilir.</summary>
     [HttpGet("{id:guid}")]
     [Authorize]
     [ProducesResponseType<PaymentDto>(StatusCodes.Status200OK)]
@@ -58,27 +58,27 @@ public sealed class PaymentsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Odemeyi tamamlar: rezervasyonu onaylar, biletleri ve QR kodlarini
-    /// uretir, koltuklari satildi olarak isaretler.
+    /// Ödemeyi tamamlar: rezervasyonu onaylar, biletleri ve QR kodlarini
+    /// üretir, koltukları satıldı olarak isaretler.
     /// </summary>
     /// <remarks>
     /// ==================================================================
-    /// BU ENDPOINT BIR ODEME CALLBACK'IDIR
+    /// BU ENDPOINT BIR ÖDEME CALLBACK'IDIR
     /// ==================================================================
-    /// Gercek entegrasyonda odeme saglayicisi burayi cagirir.
+    /// Gerçek entegrasyonda ödeme sağlayıcısı burayi cagirir.
     ///
-    /// GUVENLIK: Callback'e KORU KORUNE GUVENILMEZ. Handler, islemi
-    /// saglayiciya SORARAK dogruluyor (VerifyPaymentAsync). Dogrulama
-    /// olmasaydi saldirgan bu adrese istek gonderip bedava bilet
+    /// GÜVENLİK: Callback'e KORU KORUNE GUVENILMEZ. Handler, islemi
+    /// saglayiciya SORARAK dogruluyor (VerifyPaymentAsync). Doğrulama
+    /// olmasaydı saldirgan bu adrese istek gonderip bedava bilet
     /// alabilirdi.
     ///
-    /// IDEMPOTENT: Saglayicilar callback'i birden fazla kez gonderir.
-    /// Ikinci cagride yeni bilet URETILMEZ, mevcut odeme doner.
+    /// IDEMPOTENT: Saglayicilar callback'i birden fazla kez gönderir.
+    /// Ikinci cagride yeni bilet URETILMEZ, mevcut ödeme döner.
     ///
-    /// NOT (Sprint 15): Gercek saglayicilar callback'i imzalar ve biz
-    /// imzayi dogrularız. Simulasyonda imza yok; bu yuzden endpoint
-    /// simdilik [Authorize] ile korunuyor. Gercek entegrasyonda
-    /// [AllowAnonymous] + imza dogrulama olacak.
+    /// NOT (Sprint 15): Gerçek saglayicilar callback'i imzalar ve biz
+    /// imzayi dogrularız. Simulasyonda imza yok; bu yüzden endpoint
+    /// şimdilik [Authorize] ile korunuyor. Gerçek entegrasyonda
+    /// [AllowAnonymous] + imza doğrulama olacak.
     /// </remarks>
     [HttpPost("{id:guid}/complete")]
     [Authorize]
@@ -89,32 +89,32 @@ public sealed class PaymentsController : ApiControllerBase
         [FromBody] CompletePaymentRequest? request,
         CancellationToken cancellationToken)
         // ==============================================================
-        // PDF Sprint 15 idempotency listesi: "Odeme callback"
+        // PDF Sprint 15 idempotency listesi: "Ödeme callback"
         // ==============================================================
-        // Bu uc icin AYRI bir Idempotency-Key GEREKMIYOR ve bilincli
+        // Bu uc için AYRI bir Idempotency-Key GEREKMIYOR ve bilinçli
         // olarak eklemedim.
         //
-        // Sebep: idempotency zaten SAGLANIYOR ama farkli bir yoldan.
-        // Payment.Complete(), odeme zaten Successful ise false donuyor
-        // ve handler bilet URETMIYOR. Yani ayni callback yuz kez gelse
-        // de sonuc ayni: iki bilet, iki QR.
+        // Sebep: idempotency zaten SAGLANIYOR ama farklı bir yoldan.
+        // Payment.Complete(), ödeme zaten Successful ise false dönüyor
+        // ve handler bilet URETMIYOR. Yani aynı callback yuz kez gelse
+        // de sonuç aynı: iki bilet, iki QR.
         //
-        // Anahtar bazli idempotency burada YANLIS olurdu: anahtari
-        // SAGLAYICI uretecekti ve saglayicilar her denemede ayni
+        // Anahtar bazlı idempotency burada YANLIS olurdu: anahtari
+        // SAGLAYICI uretecekti ve saglayicilar her denemede aynı
         // anahtari gonderecegini GARANTI ETMIYOR. Anahtar degisirse
         // "yeni istek" sanip ikinci kez bilet uretirdik.
         //
-        // Odemenin KENDI DURUMU en guvenilir idempotency anahtaridir.
+        // Odemenin KENDİ DURUMU en guvenilir idempotency anahtaridir.
         // Sprint 8'de bunu ucten uca dogrulamistim: callback 3 kez
-        // cagrildi, bilet sayisi 2'de kaldi.
+        // cagrildi, bilet sayısı 2'de kaldı.
         // ==============================================================
         => HandleResult(await Sender
             .Send(new CompletePaymentCommand(id, request?.ProviderReference), cancellationToken)
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Odemeyi basarisiz olarak isaretler.
-    /// Rezervasyon iptal edilir ve koltuklar serbest birakilir.
+    /// Ödemeyi başarısız olarak isaretler.
+    /// Rezervasyon iptal edilir ve koltuklar serbest bırakılır.
     /// </summary>
     [HttpPost("{id:guid}/fail")]
     [Authorize]
@@ -128,14 +128,14 @@ public sealed class PaymentsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Iade yapar. Tutar belirtilmezse kalan tum tutar iade edilir.
-    /// Tam iadede biletler iptal edilir ve koltuklar tekrar satisa cikar.
+    /// İade yapar. Tutar belirtilmezse kalan tüm tutar iade edilir.
+    /// Tam iadede biletler iptal edilir ve koltuklar tekrar satışa çıkar.
     /// </summary>
     /// <remarks>
-    /// YALNIZCA ADMIN. Kullanicinin kendi kendine iade baslatmasi,
+    /// YALNIZCA ADMIN. Kullanıcının kendi kendine iade baslatmasi,
     /// iade politikasini (CancellationPolicy) atlatmasi anlamina
-    /// gelirdi. Kullanici tarafli iade akisi Sprint 12'de bilet
-    /// iptali uzerinden gelecek ve politikayi uygulayacak.
+    /// gelirdi. Kullanıcı tarafli iade akışı Sprint 12'de bilet
+    /// iptali üzerinden gelecek ve politikayi uygulayacak.
     /// </remarks>
     [HttpPost("{id:guid}/refund")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
@@ -147,22 +147,22 @@ public sealed class PaymentsController : ApiControllerBase
         [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         CancellationToken cancellationToken)
         // ==============================================================
-        // PDF Sprint 15 idempotency listesi: "Iade baslatma"
+        // PDF Sprint 15 idempotency listesi: "İade baslatma"
         // ==============================================================
-        // Iade, cift calistirilmasi EN TEHLIKELI islem: ayni parayi iki
-        // kez geri gondermek dogrudan mali kayip.
+        // İade, cift calistirilmasi EN TEHLIKELI işlem: aynı parayi iki
+        // kez geri gondermek doğrudan mali kayip.
         //
         // Domain katmani zaten koruyor: Payment.Refund(), toplam iadenin
-        // odenen tutari asmasini reddediyor (payment.refund_exceeds_amount).
+        // odenen tutarı asmasini reddediyor (payment.refund_exceeds_amount).
         // Yani ikinci tam iade denemesi HATA veriyor.
         //
-        // Ama bu, ag kopmasi yuzunden TEKRARLANAN bir istegi de hata
+        // Ama bu, ag kopmasi yuzunden TEKRARLANAN bir isteği de hata
         // yapiyor -- oysa admin tek bir iade yapmak istemisti ve
         // istegin ulasip ulasmadigini bilmiyor.
         //
         // Idempotency anahtari bu ikisini AYIRIYOR:
-        //   ayni anahtar  -> "bu istegi zaten isledim", basari doner
-        //   farkli anahtar -> gercekten ikinci iade, kurallar isler
+        //   aynı anahtar  -> "bu isteği zaten isledim", basari döner
+        //   farklı anahtar -> gerçekten ikinci iade, kurallar isler
         // ==============================================================
         => HandleResult(await Sender
             .Send(
@@ -171,14 +171,14 @@ public sealed class PaymentsController : ApiControllerBase
             .ConfigureAwait(false));
 }
 
-/// <summary>Kullanicinin biletleri. PDF sayfa 4.</summary>
+/// <summary>Kullanıcının biletleri. PDF sayfa 4.</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/users/me")]
 public sealed class MyTicketsController : ApiControllerBase
 {
     /// <summary>
-    /// Kullanicinin biletlerini dondurur.
-    /// QR degeri YALNIZCA aktif biletlerde doner.
+    /// Kullanıcının biletlerini döndürür.
+    /// QR değeri YALNIZCA aktif biletlerde döner.
     /// </summary>
     [HttpGet("tickets")]
     [Authorize]

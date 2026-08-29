@@ -8,7 +8,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Outbox;
 
-/// <summary>Bir Outbox turunun calisma sonucu. Loglama ve test icin.</summary>
+/// <summary>Bir Outbox turunun calisma sonucu. Loglama ve test için.</summary>
 public sealed record OutboxProcessingResult(
     int Processed,
     int Failed,
@@ -20,10 +20,10 @@ public sealed record OutboxProcessingResult(
 /// <param name="BatchSize">
 /// Tek calismada islenecek en fazla mesaj.
 ///
-/// Sinirsiz olsaydi, e-posta servisi bir gun kapali kalip 50.000
-/// mesaj biriktiginde job hepsini tek seferde islemeye calisir ve
-/// dakikalarca calisirdi. Bu sirada Hangfire bir sonraki calismayi
-/// baslatamaz, izleme ekrani "takildi" gorunur.
+/// Sinirsiz olsaydı, e-posta servisi bir gün kapalı kalip 50.000
+/// mesaj biriktiginde job hepsini tek seferde islemeye çalışır ve
+/// dakikalarca calisirdi. Bu sırada Hangfire bir sonraki calismayi
+/// baslatamaz, izleme ekrani "takildi" görünür.
 ///
 /// Parca parca islemek job'in her turda kisa surmesini saglar.
 /// </param>
@@ -35,12 +35,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 {
     /// <summary>
     /// Kalici basarisizlik esigi. PDF: "Belirli deneme sayisindan sonra
-    /// hata kaydi olusturulmalidir."
+    /// hata kaydı olusturulmalidir."
     ///
     /// Neden 5? Ustel geri cekilme ile 2+4+8+16 = 30 dakikaya karsilik
     /// geliyor. Gecici bir kesinti (servis yeniden baslatma, ag sorunu)
-    /// bu sure icinde neredeyse her zaman duzelir. Duzelmiyorsa sorun
-    /// gecici degildir ve sonsuza kadar denemek yalnizca kuyrugu tikar.
+    /// bu süre içinde neredeyse her zaman duzelir. Duzelmiyorsa sorun
+    /// geçici degildir ve sonsuza kadar denemek yalnızca kuyrugu tikar.
     /// </summary>
     private const int MaxRetries = 5;
 
@@ -49,11 +49,11 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     private readonly ILogger<ProcessOutboxMessagesCommandHandler> _logger;
 
     /// <summary>
-    /// Mesaj turu -> isleyici eslemesi.
+    /// Mesaj türü -> isleyici eslemesi.
     ///
-    /// DI konteyneri kayitli TUM IOutboxMessageHandler'lari enjekte
+    /// DI konteyneri kayıtlı TÜM IOutboxMessageHandler'lari enjekte
     /// ediyor; biz bunlari bir sozluge ceviriyoruz. Yeni bir isleyici
-    /// eklemek icin bu dosyaya dokunmaya gerek yok -- yalnizca
+    /// eklemek için bu dosyaya dokunmaya gerek yok -- yalnızca
     /// DI'ya kaydetmek yeterli.
     /// </summary>
     private readonly Dictionary<string, IOutboxMessageHandler> _handlers;
@@ -68,10 +68,10 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
         _clock = clock;
         _logger = logger;
 
-        // ToDictionary, ayni turu iki isleyici sahiplenirse
+        // ToDictionary, aynı türü iki isleyici sahiplenirse
         // ArgumentException firlatir. Bu ISTEDIGIMIZ davranis:
-        // boyle bir cakisma sessizce "biri kazanir" seklinde
-        // cozulseydi, hangi isleyicinin calistigi tesadufe kalirdi.
+        // boyle bir çakışma sessizce "biri kazanir" seklinde
+        // cozulseydi, hangi isleyicinin calistigi tesadufe kalırdı.
         _handlers = handlers.ToDictionary(h => h.MessageType, StringComparer.Ordinal);
     }
 
@@ -84,12 +84,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
         // ==============================================================
         // BEKLEYEN MESAJLARI SEC
         // ==============================================================
-        // Filtreyi ENTITY'deki IsReadyToProcess ile degil, SORGUDA
-        // yaziyorum. Sebep: IsReadyToProcess bir C# metodu; EF onu
+        // Filtreyi ENTITY'deki IsReadyToProcess ile değil, SORGUDA
+        // yazıyorum. Sebep: IsReadyToProcess bir C# metodu; EF önü
         // SQL'e ceviremez ve tabloyu KOMPLE bellege cekerdi.
         //
-        // Kural ayni, yeri farkli. Entity'deki metot birim testlerde
-        // ve tekil kontrollerde kullaniliyor.
+        // Kural aynı, yeri farklı. Entity'deki metot birim testlerde
+        // ve tekil kontrollerde kullanılıyor.
         //
         // ix_outbox_unprocessed index'i bu sorguyu karsiliyor.
         var messages = await _context.OutboxMessages
@@ -97,11 +97,11 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                      && !m.IsDeadLettered
                      && (m.NextRetryAt == null || m.NextRetryAt <= now))
 
-            // ESKI MESAJ ONCE.
+            // ESKİ MESAJ ONCE.
             //
-            // Sirali islemek sart: "rezervasyon olusturuldu" bildirimi
-            // "rezervasyon suresi doldu" bildiriminden SONRA gitseydi
-            // kullanici olaylari ters sirada gorurdu.
+            // Sirali islemek sart: "rezervasyon oluşturuldu" bildirimi
+            // "rezervasyon süresi doldu" bildiriminden SONRA gitseydi
+            // kullanıcı olaylari ters sırada gorurdu.
             .OrderBy(m => m.CreatedAt)
             .Take(request.BatchSize)
             .ToListAsync(cancellationToken)
@@ -121,25 +121,25 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // ==============================================================
             // CORRELATION ID'YI MESAJDAN DEVRAL -- PDF Sprint 16
             // ==============================================================
-            // PDF: correlation ID "Background job log" icinde de
-            // kullanilmalidir.
+            // PDF: correlation ID "Background job log" içinde de
+            // kullanılmalıdır.
             //
             // Arka plan isinin HTTP baglami yok, yani kendi correlation
-            // ID'sini uretemez. Ama ISLEDIGI mesaj, onu olusturan HTTP
+            // ID'sini uretemez. Ama ISLEDIGI mesaj, önü olusturan HTTP
             // isteginin ID'sini tasiyor (OutboxCorrelationInterceptor
-            // yaziyor).
+            // yazıyor).
             //
-            // Burada onu bir log kapsamina (scope) alarak zinciri
+            // Burada önü bir log kapsamina (scope) alarak zinciri
             // TAMAMLIYORUZ:
             //
-            //   HTTP istegi         CorrelationId = abc
-            //     -> Outbox kaydi   CorrelationId = abc
+            //   HTTP isteği         CorrelationId = abc
+            //     -> Outbox kaydı   CorrelationId = abc
             //        -> Bu is       CorrelationId = abc
             //           -> E-posta  CorrelationId = abc
             //
-            // Boylece "kullanicinin su istegi hangi e-postayi
+            // Boylece "kullanıcının su isteği hangi e-postayi
             // tetikledi?" sorusu tek bir sorguyla cevaplanabiliyor --
-            // adimlar farkli zamanlarda ve farkli process'lerde
+            // adimlar farklı zamanlarda ve farklı process'lerde
             // calismis olsa bile.
             //
             // Kapsam DONGUNUN ICINDE: her mesajin kendi ID'si var,
@@ -154,15 +154,15 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                 });
 
             // ==========================================================
-            // HER MESAJ KENDI BASINA -- BIRI DIGERINI DEVIRMESIN
+            // HER MESAJ KENDİ BASINA -- BIRI DIGERINI DEVIRMESIN
             // ==========================================================
-            // try/catch DONGUNUN ICINDE. Disinda olsaydi tek bir bozuk
-            // mesaj (ornegin gecersiz JSON) partinin geri kalanini da
-            // durdururdu ve o mesaj her turda ayni engeli olustururdu:
+            // try/catch DONGUNUN ICINDE. Disinda olsaydı tek bir bozuk
+            // mesaj (örneğin geçersiz JSON) partinin geri kalanini da
+            // durdururdu ve o mesaj her turda aynı engeli olustururdu:
             // kuyruk kalici olarak tikanirdi.
             //
-            // PDF: "Basarisiz islem yeniden denenmelidir." -- yeniden
-            // denenmesi gereken YALNIZCA basarisiz olan mesaj.
+            // PDF: "Başarısız işlem yeniden denenmelidir." -- yeniden
+            // denenmesi gereken YALNIZCA başarısız olan mesaj.
             // ==========================================================
             try
             {
@@ -170,18 +170,18 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                 {
                     // Isleyicisi olmayan mesaj.
                     //
-                    // Bu bir PROGRAMLAMA hatasi: birisi Outbox'a mesaj
+                    // Bu bir PROGRAMLAMA hatası: birisi Outbox'a mesaj
                     // yazmis ama isleyicisini kaydetmeyi unutmus.
-                    // Sessizce gecmek, bildirimlerin hic gitmemesine ve
+                    // Sessizce gecmek, bildirimlerin hiç gitmemesine ve
                     // kimsenin fark etmemesine yol acardi.
                     //
-                    // Basarisiz sayiyorum ki RetryCount artsin, esik
+                    // Başarısız sayiyorum ki RetryCount artsin, esik
                     // asilinca dead letter olsun ve izleme ekraninda
                     // gorunsun.
                     LogHandlerNotFound(_logger, message.Type, message.Id);
 
                     message.MarkAsFailed(
-                        $"'{message.Type}' turu icin kayitli isleyici yok.",
+                        $"'{message.Type}' türü için kayıtlı isleyici yok.",
                         MaxRetries,
                         now);
 
@@ -206,12 +206,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             }
             catch (OperationCanceledException)
             {
-                // Uygulama kapaniyor. Bu bir HATA DEGIL.
+                // Uygulama kapaniyor. Bu bir HATA DEĞİL.
                 //
                 // MarkAsFailed cagirsaydik, her yeniden baslatmada
-                // isleme sirasindaki mesajlarin RetryCount'u bosuna
+                // isleme sirasindaki mesajlarin RetryCount'u boşuna
                 // artardi ve saglam mesajlar zamanla dead letter
-                // olurdu. Mesaji oldugu gibi birakiyoruz; bir
+                // olurdu. Mesaji olduğu gibi birakiyoruz; bir
                 // sonraki calismada bastan denenecek.
                 throw;
             }
@@ -219,30 +219,30 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // ==========================================================
             // NEDEN GENEL catch? -- CA1031 BILINCLI OLARAK SUSTURULDU
             // ==========================================================
-            // Analiz kurali hakli: normalde yalnizca bekledigin
-            // istisnalari yakalamalisin, cunku beklenmedik bir hatayi
+            // Analiz kuralı haklı: normalde yalnızca bekledigin
+            // istisnalari yakalamalisin, çünkü beklenmedik bir hatayi
             // yutmak sorunu gizler.
             //
             // Ama burada durum tersine: bu bir ARKA PLAN ISLEYICISI ve
-            // isleyiciler cok cesitli istisnalar firlatabilir --
+            // isleyiciler çok cesitli istisnalar firlatabilir --
             // SmtpException, JsonException, HttpRequestException,
             // DbUpdateException, NullReferenceException...
             //
             // Hepsini tek tek saymak hem imkansiz hem de yeni bir
             // isleyici eklendiginde listeyi guncellemeyi unutmak
             // kacinilmaz. Sayilmayan bir istisna job'i tumden
-            // cokertirdi ve TUM kuyruk dururdu.
+            // cokertirdi ve TÜM kuyruk dururdu.
             //
             // Hatayi YUTMUYORUZ: veritabanina ErrorMessage olarak
-            // yaziyor, loga hata seviyesinde dusuyor ve izleme
-            // ekraninda gorunuyor. Yani gizlenmiyor, KAYIT ALTINA
+            // yazıyor, loga hata seviyesinde dusuyor ve izleme
+            // ekraninda görünüyor. Yani gizlenmiyor, KAYIT ALTINA
             // aliniyor -- bir arka plan islemcisinden beklenen tam
             // olarak budur.
             // ==========================================================
             catch (Exception ex)
 #pragma warning restore CA1031
             {
-                // Mesajin tamami degil, ilk 1000 karakteri.
+                // Mesajin tamami değil, ilk 1000 karakteri.
                 // Yigin izi (stack trace) bazen onbinlerce karakter
                 // olur; tabloyu sismekten koruyoruz. Tam ayrinti
                 // zaten logda.
@@ -266,14 +266,14 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
         }
 
         // ==============================================================
-        // TEK SaveChanges -- DONGUNUN ICINDE DEGIL
+        // TEK SaveChanges -- DONGUNUN ICINDE DEĞİL
         // ==============================================================
-        // Her mesajtan sonra kaydetseydik 20 ayri veritabani gidis
+        // Her mesajtan sonra kaydetseydik 20 ayrı veritabani gidis
         // donusu olurdu. Burada tek turda hepsi yaziliyor.
         //
-        // Riski kabul ediyoruz: kayit oncesi cokme olursa islenmis
+        // Riski kabul ediyoruz: kayıt oncesi cokme olursa islenmis
         // mesajlar tekrar islenir. Isleyiciler zaten idempotent
-        // olmak zorunda oldugu icin bu tolere edilebilir.
+        // olmak zorunda olduğu için bu tolere edilebilir.
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         // PDF: "Job sonuclari loglanmalidir."
@@ -286,12 +286,12 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     // KAYNAK URETECI ILE LOGLAMA ([LoggerMessage])
     // ==================================================================
     // logger.LogInformation("... {A} {B}", a, b) yazmak yerine bunu
-    // kullaniyorum cunku:
+    // kullanıyorum çünkü:
     //   - Kutu (boxing) ve dizi tahsisi olmuyor
-    //   - Log seviyesi kapaliysa parametreler hic degerlendirilmiyor
-    //   - CA1848 analiz kurali bunu zorunlu kiliyor
+    //   - Log seviyesi kapaliysa parametreler hiç degerlendirilmiyor
+    //   - CA1848 analiz kuralı bunu zorunlu kiliyor
     //
-    // Kod uretecinin metotlari doldurabilmesi icin sinif `partial`.
+    // Kod uretecinin metotlari doldurabilmesi için sinif `partial`.
     // ==================================================================
 
     [LoggerMessage(
@@ -303,27 +303,27 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     [LoggerMessage(
         EventId = 9002,
         Level = LogLevel.Warning,
-        Message = "Outbox mesaji basarisiz, yeniden denenecek. Tur: {Type}, Id: {MessageId}, Deneme: {RetryCount}")]
+        Message = "Outbox mesaji başarısız, yeniden denenecek. Tur: {Type}, Id: {MessageId}, Deneme: {RetryCount}")]
     private static partial void LogFailed(
         ILogger logger, string type, Guid messageId, int retryCount, Exception exception);
 
     [LoggerMessage(
         EventId = 9003,
         Level = LogLevel.Error,
-        Message = "Outbox mesaji KALICI OLARAK basarisiz (dead letter). Tur: {Type}, Id: {MessageId}, Deneme: {RetryCount}")]
+        Message = "Outbox mesaji KALICI OLARAK başarısız (dead letter). Tur: {Type}, Id: {MessageId}, Deneme: {RetryCount}")]
     private static partial void LogDeadLettered(
         ILogger logger, string type, Guid messageId, int retryCount, Exception exception);
 
     [LoggerMessage(
         EventId = 9004,
         Level = LogLevel.Error,
-        Message = "'{Type}' turu icin kayitli Outbox isleyicisi yok. Id: {MessageId}")]
+        Message = "'{Type}' türü için kayıtlı Outbox isleyicisi yok. Id: {MessageId}")]
     private static partial void LogHandlerNotFound(ILogger logger, string type, Guid messageId);
 
     [LoggerMessage(
         EventId = 9005,
         Level = LogLevel.Information,
-        Message = "Outbox partisi tamamlandi. Islenen: {Processed}, Basarisiz: {Failed}, Dead letter: {DeadLettered}")]
+        Message = "Outbox partisi tamamlandı. Islenen: {Processed}, Başarısız: {Failed}, Dead letter: {DeadLettered}")]
     private static partial void LogBatchCompleted(
         ILogger logger, int processed, int failed, int deadLettered);
 }

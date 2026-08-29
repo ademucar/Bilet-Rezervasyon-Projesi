@@ -1,8 +1,8 @@
 namespace Ticketing.Domain.Enums;
 
 /// <summary>
-/// Bildirim turu. PDF Sprint 14'teki "Bildirim Olusturulacak Islemler"
-/// listesinin birebir karsiligi.
+/// Bildirim türü. PDF Sprint 14'teki "Bildirim Olusturulacak Islemler"
+/// listesinin birebir karşılığı.
 /// </summary>
 public enum NotificationType
 {

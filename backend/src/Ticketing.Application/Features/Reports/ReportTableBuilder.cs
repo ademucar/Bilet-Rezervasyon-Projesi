@@ -5,17 +5,17 @@ using Ticketing.Application.Abstractions.Reporting;
 namespace Ticketing.Application.Features.Reports;
 
 /// <summary>
-/// Rapor verisini bicimden bagimsiz bir TABLOYA cevirir.
+/// Rapor verisini bicimden bağımsız bir TABLOYA cevirir.
 /// PDF Sprint 13 export akisinin ortasindaki parca.
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// BICIMLENDIRME NEDEN BURADA?
 /// ==================================================================
-/// Para, tarih ve yuzde bicimlendirmesini yaziciya (CSV/Excel/PDF)
-/// birakmadim. Sebep: uc yazici da ayni bicimlendirmeyi tekrar
-/// yazmak zorunda kalirdi ve birinde farkli yaparsak ayni rapor
-/// Excel'de baska, PDF'te baska gorunurdu.
+/// Para, tarih ve yüzde bicimlendirmesini yaziciya (CSV/Excel/PDF)
+/// birakmadim. Sebep: uc yazici da aynı bicimlendirmeyi tekrar
+/// yazmak zorunda kalırdı ve birinde farklı yaparsak aynı rapor
+/// Excel'de başka, PDF'te başka görünürdü.
 ///
 /// Burada bir kez bicimlendirip metin olarak veriyoruz.
 ///
@@ -23,14 +23,14 @@ namespace Ticketing.Application.Features.Reports;
 /// NEDEN InvariantCulture?
 /// ------------------------------------------------------------------
 /// Rapor dosyalari BASKA SISTEMLERE aktariliyor: muhasebe yazilimi,
-/// bir baska Excel, bir veri ambari.
+/// bir başka Excel, bir veri ambari.
 ///
 /// Turkce kulturde ondalik ayirici VIRGUL. "1.234,56" yazan bir CSV,
 /// virgulle ayrilmis bir dosyada SUTUN KAYMASINA yol acar -- alan
 /// tirnak icine alinsa bile karsi taraf sayiyi ayristiramaz.
 ///
-/// Nokta ayirici (1234.56) makineler icin evrensel. Ekranda Turkce
-/// gostermek arayuzun isi; disa aktarilan dosyanin isi degil.
+/// Nokta ayirici (1234.56) makineler için evrensel. Ekranda Turkce
+/// göstermek arayuzun isi; disa aktarilan dosyanin isi değil.
 /// ------------------------------------------------------------------
 /// </remarks>
 internal static class ReportTableBuilder
@@ -38,10 +38,10 @@ internal static class ReportTableBuilder
     // ==============================================================
     // BASLIK DIZILERI static readonly -- CA1861
     // ==============================================================
-    // Metot icinde "new[] { ... }" yazsaydik her cagirimda YENI bir
-    // dizi ayrilirdi. Analiz kurali bunu yakaladi.
+    // Metot içinde "new[] { ... }" yazsaydık her cagirimda YENI bir
+    // dizi ayrilirdi. Analiz kuralı bunu yakaladi.
     //
-    // Rapor uretimi zaten arka planda ve seyrek calisiyor, yani
+    // Rapor üretimi zaten arka planda ve seyrek çalışıyor, yani
     // performans farki onemsiz. Yine de kurala uyuyorum: basliklar
     // zaten sabit ve tek yerde durmalari okunakliligi da artiriyor.
     // ==============================================================
@@ -53,7 +53,7 @@ internal static class ReportTableBuilder
     private static readonly string[] RevenueHeaders = ["Etkinlik", "Bilet", "Gelir"];
 
     private static readonly string[] TicketTypeHeaders =
-        ["Bilet turu", "Satilan", "Iade", "Gelir", "Ortalama fiyat"];
+        ["Bilet türü", "Satilan", "Iade", "Gelir", "Ortalama fiyat"];
 
     private static readonly string[] PaymentStatusHeaders =
         ["Durum", "Adet", "Tutar", "Oran %"];
@@ -82,13 +82,13 @@ internal static class ReportTableBuilder
                 context, scope, data, cancellationToken).ConfigureAwait(false),
 
             // Bu dala DUSULMEMELI: ExportReportCommandValidator
-            // IsInEnum ile taniamayan degerleri zaten reddediyor.
+            // IsInEnum ile taniamayan değerleri zaten reddediyor.
             //
-            // Yine de yaziyorum: sessizce bos rapor uretmektense
+            // Yine de yazıyorum: sessizce boş rapor uretmektense
             // acikca patlamak iyi. Outbox bunu dead letter yapar ve
-            // izleme ekraninda gorunur.
+            // izleme ekraninda görünür.
             _ => throw new ArgumentOutOfRangeException(
-                nameof(data), data.Type, "Bilinmeyen rapor turu."),
+                nameof(data), data.Type, "Bilinmeyen rapor türü."),
         };
     }
 
@@ -123,29 +123,29 @@ internal static class ReportTableBuilder
         // ==============================================================
         // TEK SATIRLIK RAPORU DIKEY YAZIYORUM
         // ==============================================================
-        // Satis ozeti 8 metrikten olusan TEK bir kayit. Yatay yazsaydik
-        // 8 sutunlu ve 1 satirlik bir tablo cikardi -- Excel'de saga
-        // dogru kaydirilmasi gereken, PDF'te sigmayan bir sey.
+        // Satış özeti 8 metrikten olusan TEK bir kayıt. Yatay yazsaydık
+        // 8 sutunlu ve 1 satirlik bir tablo çıkardı -- Excel'de saga
+        // doğru kaydirilmasi gereken, PDF'te sigmayan bir sey.
         //
-        // Metrik/deger ciftleri halinde DIKEY yazmak, tek kayitli
-        // raporlar icin dogru bicim.
+        // Metrik/deger ciftleri halinde DIKEY yazmak, tek kayıtlı
+        // raporlar için doğru biçim.
         // ==============================================================
         var rows = new List<IReadOnlyList<string>>
         {
-            new[] { "Satilan bilet", S(r.TicketCount) },
-            new[] { "Brut gelir", $"{P(r.GrossRevenue)} {r.Currency}" },
-            new[] { "Iade tutari", $"{P(r.RefundedAmount)} {r.Currency}" },
+            new[] { "Satılan bilet", S(r.TicketCount) },
+            new[] { "Brüt gelir", $"{P(r.GrossRevenue)} {r.Currency}" },
+            new[] { "İade tutarı", $"{P(r.RefundedAmount)} {r.Currency}" },
             new[] { "Net gelir", $"{P(r.NetRevenue)} {r.Currency}" },
-            new[] { "Iade edilen bilet", S(r.RefundedTicketCount) },
+            new[] { "İade edilen bilet", S(r.RefundedTicketCount) },
             new[] { "Toplam rezervasyon", S(r.ReservationCount) },
-            new[] { "Suresi dolan rezervasyon", S(r.ExpiredReservationCount) },
+            new[] { "Süresi dolan rezervasyon", S(r.ExpiredReservationCount) },
         };
 
-        return new ReportTable("Satis Ozeti", SalesSummaryHeaders, rows);
+        return new ReportTable("Satış Özeti", SalesSummaryHeaders, rows);
     }
 
     // ==================================================================
-    // 2) ETKINLIK DOLULUGU
+    // 2) ETKİNLİK DOLULUGU
     // ==================================================================
 
     private static async Task<ReportTable> EventOccupancyAsync(
@@ -173,7 +173,7 @@ internal static class ReportTableBuilder
     }
 
     // ==================================================================
-    // 3) ETKINLIK BAZLI GELIR
+    // 3) ETKİNLİK BAZLI GELIR
     // ==================================================================
 
     private static async Task<ReportTable> RevenueByEventAsync(
@@ -198,7 +198,7 @@ internal static class ReportTableBuilder
     }
 
     // ==================================================================
-    // 4) BILET TURU SATISLARI
+    // 4) BİLET TURU SATISLARI
     // ==================================================================
 
     private static async Task<ReportTable> TicketTypeSalesAsync(
@@ -212,7 +212,7 @@ internal static class ReportTableBuilder
             .ConfigureAwait(false);
 
         return new ReportTable(
-            "Bilet Turu Satislari",
+            "Bilet Türü Satışları",
             TicketTypeHeaders,
             rows.Select(x => (IReadOnlyList<string>)new[]
             {
@@ -225,7 +225,7 @@ internal static class ReportTableBuilder
     }
 
     // ==================================================================
-    // 5) ODEME DURUMLARI
+    // 5) ÖDEME DURUMLARI
     // ==================================================================
 
     private static async Task<ReportTable> PaymentStatusesAsync(
@@ -239,7 +239,7 @@ internal static class ReportTableBuilder
             .ConfigureAwait(false);
 
         return new ReportTable(
-            "Odeme Durumlari",
+            "Ödeme Durumları",
             PaymentStatusHeaders,
             rows.Select(x => (IReadOnlyList<string>)new[]
             {

@@ -191,7 +191,7 @@ public class EventSeatTests
         // kullanicinin koltugunun baskasina satilmasi.
         //
         // Sure asimi job'i tum kilitli koltuklari serbest birakiyor.
-        // Satilmis bir koltuk yanlislikla o listeye girerse, bu kontrol
+        // Satılmış bir koltuk yanlislikla o listeye girerse, bu kontrol
         // job'i durdurur ve hata loglanir.
         // ===============================================================
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);

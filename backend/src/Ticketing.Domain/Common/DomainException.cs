@@ -3,29 +3,29 @@ namespace Ticketing.Domain.Common;
 /// <summary>
 /// Bir IS KURALI ihlal edildiginde firlatilir.
 ///
-/// Bu tipi ayri bir sinif yapmamin sebebi, hatalari iki gruba ayirabilmek:
+/// Bu tipi ayrı bir sinif yapmamin sebebi, hatalari iki gruba ayirabilmek:
 ///
-///   1. DomainException  -> "Suresi dolmus rezervasyonda odeme baslatilamaz."
-///      Bu bir HATA DEGIL, beklenen bir durumdur. Kullaniciya anlamli bir
+///   1. DomainException  -> "Süresi dolmuş rezervasyonda ödeme baslatilamaz."
+///      Bu bir HATA DEĞİL, beklenen bir durumdur. Kullanıcıya anlamlı bir
 ///      mesaj gostermeliyiz ve HTTP 400/409 donmeliyiz. Alarm calmamali.
 ///
-///   2. Diger exception'lar -> NullReferenceException, veritabani baglanti
-///      hatasi vb. Bunlar GERCEK hatalardir. HTTP 500 donmeli, tam stack
+///   2. Diger exception'lar -> NullReferenceException, veritabani bağlantı
+///      hatası vb. Bunlar GERCEK hatalardir. HTTP 500 donmeli, tam stack
 ///      trace loglanmali ve gelistiriciye bildirilmelidir.
 ///
 /// Sprint 2'de yazacagimiz global exception middleware bu ayrimi kullanacak.
-/// Ikisini ayirmasaydik ya kullaniciya "Sunucu hatasi" der ya da gercek
+/// Ikisini ayirmasaydik ya kullanıcıya "Sunucu hatası" der ya da gerçek
 /// hatalari 400 olarak gizleyip fark etmezdik.
 /// </summary>
 public class DomainException : Exception
 {
     /// <summary>
-    /// Makine tarafindan okunabilir hata kodu. Ornek: "reservation.expired".
+    /// Makine tarafından okunabilir hata kodu. Ornek: "reservation.expired".
     ///
-    /// Neden sadece mesaj yetmiyor? Frontend'in hataya gore farkli davranmasi
-    /// gerekiyor: sure dolduysa koltuk haritasini yenile, koltuk kapildiysa
-    /// baska bir sey yap. Mesaj metnine bakarak karar vermek kirilgan olur --
-    /// metni degistirdigimiz gun frontend bozulur. Kod sabit kalir.
+    /// Neden sadece mesaj yetmiyor? Frontend'in hataya göre farklı davranmasi
+    /// gerekiyor: süre dolduysa koltuk haritasini yenile, koltuk kapildiysa
+    /// başka bir sey yap. Mesaj metnine bakarak karar vermek kirilgan olur --
+    /// metni degistirdigimiz gün frontend bozulur. Kod sabit kalır.
     /// </summary>
     public string? ErrorCode { get; }
 

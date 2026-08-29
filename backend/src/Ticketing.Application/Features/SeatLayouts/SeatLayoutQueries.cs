@@ -69,18 +69,18 @@ internal sealed class GetSeatLayoutQueryHandler
         // Bu sorgu uc seviyeli bir koleksiyon zinciri iceriyor:
         //     SeatLayout -> Sections -> Seats
         //
-        // EF varsayilan olarak TEK sorgu uretir ve tablolari JOIN'ler.
-        // Sonuc: 5 bolum x 500 koltuk = 2500 satir dondurur ve
-        // SeatLayout'un tum sutunlari 2500 KEZ tekrarlanir. Buna
+        // EF varsayılan olarak TEK sorgu üretir ve tablolari JOIN'ler.
+        // Sonuç: 5 bölüm x 500 koltuk = 2500 satır döndürür ve
+        // SeatLayout'un tüm sutunlari 2500 KEZ tekrarlanir. Buna
         // "kartezyen patlama" (cartesian explosion) denir.
         //
-        // AsSplitQuery, EF'e "her koleksiyon icin AYRI sorgu calistir"
-        // der. Uc kucuk sorgu, tek dev sorgudan cok daha hizli ve
-        // cok daha az veri tasir.
+        // AsSplitQuery, EF'e "her koleksiyon için AYRI sorgu calistir"
+        // der. Uc küçük sorgu, tek dev sorgudan çok daha hizli ve
+        // çok daha az veri tasir.
         //
-        // Ne zaman kullanilmaz? Tek koleksiyon varsa veya kayit sayisi
+        // Ne zaman kullanilmaz? Tek koleksiyon varsa veya kayıt sayısı
         // azsa; o zaman ekstra gidis-donus maliyeti kazanci gecer.
-        // Burada koltuk sayisi binleri bulabilecegi icin acikca aciyorum.
+        // Burada koltuk sayısı binleri bulabilecegi için acikca aciyorum.
         // ==============================================================
         var layout = await _context.SeatLayouts
             .AsNoTracking()
@@ -152,11 +152,11 @@ internal sealed class GetSeatLayoutsByHallQueryHandler
         GetSeatLayoutsByHallQuery request,
         CancellationToken cancellationToken)
     {
-        // Listede KOLTUKLARI cekmiyorum, yalnizca SAYILARINI.
+        // Listede KOLTUKLARI cekmiyorum, yalnızca SAYILARINI.
         //
-        // Include kullansaydim 5 plan x 2000 koltuk = 10.000 satir
-        // bellege gelirdi; oysa ekranda yalnizca "2000 koltuk" yaziyor.
-        // Projeksiyon icindeki Count(), SQL'de COUNT(*) olarak calisir.
+        // Include kullansaydim 5 plan x 2000 koltuk = 10.000 satır
+        // bellege gelirdi; oysa ekranda yalnızca "2000 koltuk" yazıyor.
+        // Projeksiyon icindeki Count(), SQL'de COUNT(*) olarak çalışır.
         var layouts = await _context.SeatLayouts
             .AsNoTracking()
             .Where(sl => sl.HallId == request.HallId)

@@ -1,7 +1,7 @@
 namespace Ticketing.Application.Common.Pagination;
 
 /// <summary>
-/// Sayfalama istegi. Tum listeleme sorgulari bunu miras alacak.
+/// Sayfalama isteği. Tüm listeleme sorgulari bunu miras alacak.
 ///
 /// PDF Sprint 11 ornegi:
 ///     GET /api/v1/events?pageNumber=1&amp;pageSize=20
@@ -9,19 +9,19 @@ namespace Ticketing.Application.Common.Pagination;
 public abstract record PaginationRequest
 {
     /// <summary>
-    /// Izin verilen en buyuk sayfa boyutu.
+    /// Izin verilen en büyük sayfa boyutu.
     ///
     /// ------------------------------------------------------------------
-    /// BU SABIT NEDEN BIR GUVENLIK ONLEMI?
+    /// BU SABIT NEDEN BIR GÜVENLİK ONLEMI?
     /// ------------------------------------------------------------------
-    /// Ust sinir olmasaydi bir kullanici
+    /// Ust sinir olmasaydı bir kullanıcı
     ///     GET /api/v1/events?pageSize=999999999
-    /// isteyebilirdi. Sunucu tum tabloyu belege yukler, JSON'a cevirir
+    /// isteyebilirdi. Sunucu tüm tabloyu belege yukler, JSON'a cevirir
     /// ve muhtemelen OutOfMemoryException ile coker.
     ///
-    /// Bu, kod yazmayi bilen herkesin yapabilecegi en basit servis disi
-    /// birakma (DoS) saldirisidir ve sik atlanir. Ust siniri sunucu
-    /// tarafinda ZORLAMAK sart -- frontend'in dogru deger gonderecegine
+    /// Bu, kod yazmayi bilen herkesin yapabilecegi en basit servis dışı
+    /// birakma (DoS) saldirisidir ve sik atlanir. Ust sınırı sunucu
+    /// tarafında ZORLAMAK sart -- frontend'in doğru deger gonderecegine
     /// guvenemeyiz.
     /// </summary>
     public const int MaxPageSize = 100;
@@ -33,17 +33,17 @@ public abstract record PaginationRequest
     private readonly int _pageSize = DefaultPageSize;
 
     /// <summary>
-    /// Sayfa numarasi. 1'den baslar.
+    /// Sayfa numarasi. 1'den başlar.
     ///
-    /// Gecersiz deger gonderilirse HATA FIRLATMIYOR, duzeltiyorum.
+    /// Geçersiz deger gonderilirse HATA FIRLATMIYOR, duzeltiyorum.
     ///
-    /// Neden? Sayfalama kullanicinin veri talebinin OZU degil, sunum
+    /// Neden? Sayfalama kullanıcının veri talebinin OZU değil, sunum
     /// detayidir. "pageNumber=0" gonderen bir istemciye 400 donup
-    /// akisi kesmek yerine ilk sayfayi gostermek daha iyi bir deneyim.
+    /// akışı kesmek yerine ilk sayfayı göstermek daha iyi bir deneyim.
     ///
-    /// Ama bu esneklik SADECE sayfalama icin gecerli: is verisinde
+    /// Ama bu esneklik SADECE sayfalama için geçerli: is verisinde
     /// (tutar, tarih, koltuk) asla sessizce duzeltme yapmayiz --
-    /// orada yanlis veriyi kabul etmek gercek hasara yol acar.
+    /// orada yanlış veriyi kabul etmek gerçek hasara yol acar.
     /// </summary>
     public int PageNumber
     {
@@ -63,7 +63,7 @@ public abstract record PaginationRequest
     }
 
     /// <summary>
-    /// Veritabani sorgusunda Skip() icin kullanilacak deger.
+    /// Veritabani sorgusunda Skip() için kullanilacak deger.
     ///
     /// Bu hesabi burada yapmamin sebebi: her sorguda
     /// "(pageNumber - 1) * pageSize" yazarsak birinde mutlaka

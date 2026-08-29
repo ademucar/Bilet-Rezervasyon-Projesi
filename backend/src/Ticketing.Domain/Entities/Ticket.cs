@@ -7,10 +7,10 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Bilet. PDF Sprint 8: "Odeme basarili olmadan bilet olusturulamaz."
+/// Bilet. PDF Sprint 8: "Ödeme başarılı olmadan bilet oluşturulamaz."
 ///
 /// Bu kural yapisal olarak korunuyor: Ticket ancak Reservation Confirmed
-/// olduktan sonra, ReservationItem uzerinden uretilebiliyor.
+/// olduktan sonra, ReservationItem üzerinden uretilebiliyor.
 /// </summary>
 public class Ticket : AuditableEntity
 {
@@ -29,7 +29,7 @@ public class Ticket : AuditableEntity
     public Guid EventSeatId { get; private set; }
 
     /// <summary>
-    /// PDF: "Bilet numarasi benzersiz olmalidir."
+    /// PDF: "Bilet numarasi benzersiz olmalıdır."
     /// Format: TKT-20260315-A7B3C9D2
     /// Veritabaninda UNIQUE index ile korunuyor.
     /// </summary>
@@ -39,7 +39,7 @@ public class Ticket : AuditableEntity
 
     /// <summary>
     /// Biletin satildigi fiyat. ReservationItem.UnitPrice'tan kopyalanir.
-    /// Iade hesabi bu degere gore yapilir.
+    /// İade hesabi bu degere göre yapilir.
     /// </summary>
     public Money Price { get; private set; }
 
@@ -49,8 +49,8 @@ public class Ticket : AuditableEntity
     public DateTimeOffset? CancelledAt { get; private set; }
 
     /// <summary>
-    /// Ogrenci bileti icin dogrulama alani.
-    /// PDF Sprint 6: "Ogrenci bileti icin dogrulama alani tasarlanmalidir."
+    /// Ogrenci bileti için doğrulama alanı.
+    /// PDF Sprint 6: "Ogrenci bileti için doğrulama alanı tasarlanmalidir."
     /// </summary>
     public string? StudentVerificationCode { get; private set; }
 
@@ -63,12 +63,12 @@ public class Ticket : AuditableEntity
     public TicketQrCode? QrCode { get; private set; }
 
     /// <summary>
-    /// Bilet uretir.
+    /// Bilet üretir.
     ///
-    /// reservationItem parametresi uzerinden AttachTicket cagriliyor.
-    /// Boylece ayni kalem icin ikinci bir bilet uretilirse orada
+    /// reservationItem parametresi üzerinden AttachTicket cagriliyor.
+    /// Boylece aynı kalem için ikinci bir bilet uretilirse orada
     /// DomainException firlar. Bu, "koltuk bir ama bilet iki" hatasinin
-    /// (salona iki kisi girer) onune geciyor.
+    /// (salona iki kişi girer) onune geciyor.
     /// </summary>
     public static Ticket Create(
         ReservationItem reservationItem,
@@ -95,21 +95,21 @@ public class Ticket : AuditableEntity
     }
 
     /// <summary>
-    /// Benzersiz bilet numarasi uretir: TKT-20260315-A7B3C9D2
+    /// Benzersiz bilet numarasi üretir: TKT-20260315-A7B3C9D2
     ///
-    /// Rastgele kismi icin RandomNumberGenerator kullaniyorum, Random degil.
+    /// Rastgele kismi için RandomNumberGenerator kullanıyorum, Random değil.
     ///
-    /// Neden onemli? Random tahmin edilebilir bir dizidir; tohumu (seed)
-    /// bilen biri sonraki degerleri hesaplayabilir. Bilet numarasi
-    /// tahmin edilebilirse saldirgan gecerli bilet numaralari uretip
+    /// Neden önemli? Random tahmin edilebilir bir dizidir; tohumu (seed)
+    /// bilen biri sonraki değerleri hesaplayabilir. Bilet numarasi
+    /// tahmin edilebilirse saldirgan geçerli bilet numaralari uretip
     /// sistemi yoklayabilir. RandomNumberGenerator kriptografik olarak
     /// guvenlidir.
     ///
-    /// Bu yine de tek basina yeterli DEGIL: veritabanindaki UNIQUE index
+    /// Bu yine de tek başına yeterli DEĞİL: veritabanindaki UNIQUE index
     /// carpisma (collision) ihtimaline karsi son savunma hatti.
     /// 8 hex karakter = 4 milyar ihtimal; tarih onekiyle birlikte
-    /// carpisma pratikte imkansiza yakin ama "imkansiza yakin" ile
-    /// "imkansiz" ayni sey degildir.
+    /// carpisma pratikte imkansiza yakın ama "imkansiza yakın" ile
+    /// "imkansiz" aynı sey degildir.
     /// </summary>
     private static string GenerateTicketNumber(DateTimeOffset now)
     {
@@ -140,15 +140,15 @@ public class Ticket : AuditableEntity
     /// <summary>
     /// Bileti iptal eder.
     /// </summary>
-    /// <param name="withRefund">Para iadesi yapildi mi?</param>
+    /// <param name="withRefund">Para iadesi yapıldı mi?</param>
     public void Cancel(bool withRefund, DateTimeOffset now)
     {
         if (Status == TicketStatus.Used)
         {
-            // PDF: kullanilmis bilet iade edilemez.
-            // Kullanici etkinlige girdi; hizmeti aldi.
+            // PDF: kullanılmış bilet iade edilemez.
+            // Kullanıcı etkinlige girdi; hizmeti aldi.
             throw new DomainException(
-                "Kullanilmis bilet iptal edilemez.",
+                "Kullanılmış bilet iptal edilemez.",
                 "ticket.already_used");
         }
 
@@ -175,8 +175,8 @@ public class Ticket : AuditableEntity
     public void SetStudentVerificationCode(string? code) => StudentVerificationCode = code;
 
     /// <summary>
-    /// Iade edilebilir mi?
-    /// Iade orani hesabi CancellationPolicy'nin isi; burada sadece
+    /// İade edilebilir mi?
+    /// İade oranı hesabi CancellationPolicy'nin isi; burada sadece
     /// biletin durumuna bakiyoruz.
     /// </summary>
     public bool IsRefundable() => Status == TicketStatus.Active;

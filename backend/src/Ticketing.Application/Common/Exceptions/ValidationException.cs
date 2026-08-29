@@ -3,29 +3,29 @@ using Ticketing.Application.Behaviors;
 namespace Ticketing.Application.Common.Exceptions;
 
 /// <summary>
-/// Bir veya daha fazla girdi dogrulama hatasi.
+/// Bir veya daha fazla girdi doğrulama hatası.
 /// GlobalExceptionHandler bunu 400 Bad Request + Problem Details'a cevirir.
 ///
-/// Hatalari ALAN BAZINDA gruplandiriyoruz cunku RFC 7807'nin
-/// dogrulama uzantisi bu bicimi bekler:
+/// Hatalari ALAN BAZINDA gruplandiriyoruz çünkü RFC 7807'nin
+/// doğrulama uzantisi bu bicimi bekler:
 ///
 ///     {
-///       "type": "...", "title": "Dogrulama hatasi", "status": 400,
+///       "type": "...", "title": "Doğrulama hatası", "status": 400,
 ///       "errors": {
-///         "Email":    ["Gecerli bir e-posta adresi giriniz."],
-///         "Password": ["Sifre en az 8 karakter olmalidir.",
-///                      "Sifre en az bir rakam icermelidir."]
+///         "Email":    ["Geçerli bir e-posta adresi giriniz."],
+///         "Password": ["Şifre en az 8 karakter olmalıdır.",
+///                      "Şifre en az bir rakam içermelidir."]
 ///       }
 ///     }
 ///
-/// Bu bicim, frontend'in her form alanini kendi hatalariyla
+/// Bu biçim, frontend'in her form alanini kendi hatalariyla
 /// eslestirmesini saglar. Duz bir liste donseydik frontend hangi
-/// mesajin hangi alana ait oldugunu bilemezdi.
+/// mesajin hangi alana ait olduğunu bilemezdi.
 /// </summary>
 public sealed class ValidationException : Exception
 {
     public ValidationException()
-        : base("Bir veya daha fazla dogrulama hatasi olustu.")
+        : base("Bir veya daha fazla doğrulama hatası oluştu.")
         => Errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
     public ValidationException(string message)

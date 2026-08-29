@@ -62,7 +62,7 @@ public class FileUploadValidatorTests
     // Saldirgan "zararli.exe" dosyasini "afis.jpg" yapip yukluyor ve
     // Content-Type basligini da image/jpeg olarak elle yaziyor.
     //
-    // Uzanti kontrolu GECER. MIME kontrolu de GECER. Yalnizca icerik
+    // Uzanti kontrolu GECER. MIME kontrolu de GECER. Yalnizca içerik
     // imzasi bu saldiriyi yakaliyor.
     //
     // Bu test, imza kontrolunun neden vazgecilmez oldugunun kanitidir:
@@ -229,7 +229,7 @@ public class FileUploadValidatorTests
     [Fact]
     public void Riff_ile_baslayan_ama_webp_olmayan_dosya_reddedilir()
     {
-        // "RIFF....WAVE" -- gercek bir WAV basligi.
+        // "RIFF....WAVE" -- gercek bir WAV başlığı.
         byte[] wav = [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x41, 0x56, 0x45];
 
         var sonuc = FileUploadValidator.Dogrula("ses.webp", "image/webp", 1024, wav);

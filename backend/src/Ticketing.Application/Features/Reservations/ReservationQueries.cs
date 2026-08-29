@@ -21,7 +21,7 @@ public sealed record ReservationItemDto(
     decimal UnitPrice,
     string Currency);
 
-/// <param name="RemainingSeconds">Kalan sure (saniye). Neden SUNUCUDA hesapliyorum? Cunku istemcinin saati YANLIS olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati 5 dakika geri olan bir kullanici sureyi 15 dakika sanirdi ve odemeye gectiginde "sureniz doldu" hatasi alirdi. Saniye cinsinden gonderip frontend'in kendi icinde geri saymasi, saat farkindan bagimsiz calisir.</param>
+/// <param name="RemainingSeconds">Kalan süre (saniye). Neden SUNUCUDA hesapliyorum? Çünkü istemcinin saati YANLIS olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati 5 dakika geri olan bir kullanıcı süreyi 15 dakika sanirdi ve ödemeye geçtiğinde "süreniz doldu" hatası alırdı. Saniye cinsinden gonderip frontend'in kendi içinde geri saymasi, saat farkindan bağımsız çalışır.</param>
 public sealed record ReservationDto(
     Guid Id,
     string ReservationCode,
@@ -46,18 +46,18 @@ internal static class ReservationQueries
     /// <summary>
     /// Rezervasyon DTO sorgusu.
     ///
-    /// Ayri bir metotta topluyorum cunku UC yerde kullaniliyor:
-    /// olusturma sonucu, detay, kullanici listesi. Uc kez yazsaydim
-    /// birinde bir alani eklemeyi unutmam kacinilmazdi ve o ekranda
-    /// veri eksik gorunurdu.
+    /// Ayrı bir metotta topluyorum çünkü UC yerde kullanılıyor:
+    /// oluşturma sonucu, detay, kullanıcı listesi. Uc kez yazsaydim
+    /// birinde bir alanı eklemeyi unutmam kacinilmazdi ve o ekranda
+    /// veri eksik görünürdü.
     /// </summary>
     /// <summary>
-    /// Materyalize edilmis DTO'ya kalan sureyi ekler.
+    /// Materyalize edilmiş DTO'ya kalan süreyi ekler.
     ///
     /// ==================================================================
     /// NEDEN SORGUDA HESAPLAMIYORUZ? -- CALISTIRINCA OGRENDIK
     /// ==================================================================
-    /// Ilk yazisimda kalan sureyi SQL icinde hesapliyordum:
+    /// İlk yazisimda kalan süreyi SQL içinde hesapliyordum:
     ///
     ///     (int)(r.ExpiresAt > now ? (r.ExpiresAt - now).TotalSeconds : 0)
     ///
@@ -66,21 +66,21 @@ internal static class ReservationQueries
     ///     could not be translated
     ///
     /// Sebep: DateTimeOffset cikarmasi + TimeSpan.TotalSeconds +
-    /// int'e donusum zinciri Npgsql tarafindan SQL'e cevrilemiyor.
+    /// int'e donusum zinciri Npgsql tarafından SQL'e cevrilemiyor.
     ///
     /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti ve ogretici oldu:
-    /// 10 es zamanli istekten 9'u dogru sekilde 409 aldi, 1'i
+    /// 10 es zamanlı istekten 9'u doğru şekilde 409 aldi, 1'i
     /// rezervasyonu OLUSTURDU ama yaniti hazirlarken 500 dondu.
     /// Yani cekirdek mantik dogruydu, sunum katmani hatalıydı.
     ///
     /// Bellekte hesaplamak hem cevrilebilirlik sorununu cozuyor hem de
-    /// dogru: kalan sure bir GORUNUM bilgisi, veritabaninin isi degil.
+    /// doğru: kalan süre bir GORUNUM bilgisi, veritabaninin isi değil.
     /// </summary>
     public static ReservationDto WithRemainingSeconds(ReservationDto dto, DateTimeOffset now)
     {
         var remaining = dto.ExpiresAt - now;
 
-        // Negatif sure dondurmuyorum: frontend geri sayimda "-00:03"
+        // Negatif süre dondurmuyorum: frontend geri sayimda "-00:03"
         // gostermemeli.
         var seconds = remaining > TimeSpan.Zero ? (int)remaining.TotalSeconds : 0;
 
@@ -93,7 +93,7 @@ internal static class ReservationQueries
     /// ==================================================================
     /// FILTRE, PROJEKSIYONDAN ONCE UYGULANMALI
     /// ==================================================================
-    /// Ilk yazisimda bu metot dogrudan context.Reservations uzerinden
+    /// İlk yazisimda bu metot doğrudan context.Reservations üzerinden
     /// baslayip IQueryable&lt;ReservationDto&gt; donuyordu ve cagiranlar
     /// sonucu filtreliyordu:
     ///
@@ -104,17 +104,17 @@ internal static class ReservationQueries
     ///     "The LINQ expression ... .Where(r =&gt; new ReservationDto(...))
     ///      could not be translated"
     ///
-    /// Cunku EF, DTO nesnesini olusturup sonra uzerinde filtre
-    /// uygulayamiyor -- filtrenin WHERE cumlesine donusebilmesi icin
-    /// ENTITY uzerinde olmasi gerekiyor.
+    /// Çünkü EF, DTO nesnesini olusturup sonra uzerinde filtre
+    /// uygulayamiyor -- filtrenin WHERE cumlesine donusebilmesi için
+    /// ENTITY uzerinde olmasını gerekiyor.
     ///
     /// Cozum: filtrelenmis IQueryable&lt;Reservation&gt; ALMAK. Boylece
-    /// cagiran once filtreliyor, sonra projelendiriyoruz:
+    /// cagiran önce filtreliyor, sonra projelendiriyoruz:
     ///
     ///     context.Reservations.Where(r =&gt; r.Id == id).ToDto(context)
     ///
-    /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti: 9 istek dogru
-    /// sekilde 409 aldi, kazanan istek rezervasyonu OLUSTURDU ama
+    /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti: 9 istek doğru
+    /// şekilde 409 aldi, kazanan istek rezervasyonu OLUSTURDU ama
     /// yaniti hazirlarken 500 dondu. Cekirdek mantik dogruydu.
     /// ==================================================================
     /// </summary>
@@ -135,8 +135,8 @@ internal static class ReservationQueries
                 r.TotalAmount.Currency,
                 r.ExpiresAt,
 
-                // Kalan sure burada 0 olarak birakiliyor; SQL'e
-                // cevrilemedigi icin BELLEKTE, WithRemainingSeconds
+                // Kalan süre burada 0 olarak birakiliyor; SQL'e
+                // cevrilemedigi için BELLEKTE, WithRemainingSeconds
                 // ile hesaplaniyor. Gerekcesi yukarida yazili.
                 0,
 
@@ -185,25 +185,25 @@ internal sealed class GetReservationQueryHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<ReservationDto>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         // ==============================================================
         // SAHIPLIK KONTROLU -- SORGUNUN ICINDE
         // ==============================================================
-        // "Once cek, sonra sahibi mi diye bak" da yapabilirdik. Ama o
-        // zaman baskasinin rezervasyonu bir an icin bellege gelirdi ve
+        // "Önce cek, sonra sahibi mi diye bak" da yapabilirdik. Ama o
+        // zaman baskasinin rezervasyonu bir an için bellege gelirdi ve
         // bir loglama veya hata mesajinda sizabilirdi.
         //
-        // Sorguya dahil etmek daha guvenli: veri hic gelmiyor.
+        // Sorguya dahil etmek daha güvenli: veri hiç gelmiyor.
         //
-        // Sonuc bulunamazsa 404 donuyoruz (403 degil) -- var olan bir
-        // rezervasyonun varligini dogrulamamak icin.
-        // Filtreyi ENTITY uzerinde uyguluyorum, DTO uzerinde degil.
+        // Sonuç bulunamazsa 404 donuyoruz (403 değil) -- var olan bir
+        // rezervasyonun varligini dogrulamamak için.
+        // Filtreyi ENTITY uzerinde uyguluyorum, DTO uzerinde değil.
         //
-        // Sahiplik kontrolu de burada: baskasinin rezervasyonu hic
-        // bellege gelmiyor. Sonuc bulunamazsa 404 -- 403 deseydik
-        // rezervasyonun VAR oldugunu dogrulamis olurduk.
+        // Sahiplik kontrolü de burada: baskasinin rezervasyonu hiç
+        // bellege gelmiyor. Sonuç bulunamazsa 404 -- 403 deseydik
+        // rezervasyonun VAR olduğunu dogrulamis olurduk.
         var dto = await _context.Reservations
             .Where(r => r.Id == request.Id && r.UserId == userId)
             .ToDto(_context)
@@ -248,7 +248,7 @@ internal sealed class GetMyReservationsQueryHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<IReadOnlyList<ReservationDto>>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var query = _context.Reservations.AsNoTracking().Where(r => r.UserId == userId);
@@ -259,7 +259,7 @@ internal sealed class GetMyReservationsQueryHandler
         }
 
         var ids = await query
-            // En yeni rezervasyon en ustte: kullanici genelde en son
+            // En yeni rezervasyon en ustte: kullanıcı genelde en son
             // yaptigi islemi ariyor.
             .OrderByDescending(r => r.CreatedAt)
             .Select(r => r.Id)
@@ -274,9 +274,9 @@ internal sealed class GetMyReservationsQueryHandler
 
         // Siralamayi BELLEKTE koruyorum.
         //
-        // Contains ile filtreleme, ids listesinin sirasini KORUMAZ --
-        // PostgreSQL sonuclari istedigi sirada dondurebilir.
-        // Bu, kolayca gozden kacan ve "bazen sirali bazen degil"
+        // Contains ile filtreleme, ids listesinin sırasını KORUMAZ --
+        // PostgreSQL sonuclari istedigi sırada dondurebilir.
+        // Bu, kolayca gozden kacan ve "bazen sıralı bazen değil"
         // gibi kafa karistirici bir hataya yol acan bir ayrinti.
         var now = _clock.UtcNow;
 

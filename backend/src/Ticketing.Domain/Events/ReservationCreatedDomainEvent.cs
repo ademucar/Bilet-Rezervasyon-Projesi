@@ -4,7 +4,7 @@ namespace Ticketing.Domain.Events;
 
 /// <summary>
 /// Rezervasyon olusturuldugunda firlatilir.
-/// Dinleyenler: bildirim olusturma, e-posta gonderme, SignalR SeatLocked yayini.
+/// Dinleyenler: bildirim oluşturma, e-posta gonderme, SignalR SeatLocked yayini.
 /// </summary>
 public sealed record ReservationCreatedDomainEvent(
     Guid ReservationId,

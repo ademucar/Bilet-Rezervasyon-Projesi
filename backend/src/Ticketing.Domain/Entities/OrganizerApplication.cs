@@ -4,8 +4,8 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Organizator olma basvurusu. PDF sayfa 5:
-/// "Admin organizator basvurularini onaylayabilir."
+/// Organizatör olma basvurusu. PDF sayfa 5:
+/// "Admin organizatör basvurularini onaylayabilir."
 /// </summary>
 public class OrganizerApplication : AuditableEntity
 {
@@ -46,7 +46,7 @@ public class OrganizerApplication : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(companyName))
         {
-            throw new DomainException("Firma adi bos olamaz.", "organizer_application.company_required");
+            throw new DomainException("Firma adı boş olamaz.", "organizer_application.company_required");
         }
 
         return new OrganizerApplication
@@ -76,10 +76,10 @@ public class OrganizerApplication : AuditableEntity
         if (string.IsNullOrWhiteSpace(reason))
         {
             // Red gerekcesini ZORUNLU tutuyorum.
-            // Gerekcesiz red, kullanicinin ne duzeltecegini bilmemesi
-            // demektir; ayni eksik basvuruyu tekrar tekrar gonderir.
+            // Gerekcesiz red, kullanıcının ne duzeltecegini bilmemesi
+            // demektir; aynı eksik basvuruyu tekrar tekrar gönderir.
             throw new DomainException(
-                "Red gerekcesi belirtilmelidir.",
+                "Red gerekçesi belirtilmelidir.",
                 "organizer_application.reason_required");
         }
 

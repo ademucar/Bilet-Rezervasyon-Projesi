@@ -1,23 +1,23 @@
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// User ile Role arasindaki cok-a-cok iliskinin ara tablosu.
+/// User ile Role arasindaki çok-a-çok iliskinin ara tablosu.
 ///
 /// ------------------------------------------------------------------
 /// NEDEN Entity'DEN TUREMIYOR? NEDEN Id ALANI YOK?
 /// ------------------------------------------------------------------
-/// Bu tablonun kendine ait bir kimligi yok. "3 numarali kullanici-rol
+/// Bu tablonun kendine ait bir kimliği yok. "3 numarali kullanıcı-rol
 /// iliskisi" diye bir sey anlamsiz. Kimligi, iliskilendirdigi iki
 /// varligin birlesimidir: (UserId, RoleId).
 ///
-/// Bu yuzden COMPOSITE KEY kullaniyoruz. EF konfigurasyonunda:
+/// Bu yüzden COMPOSITE KEY kullanıyoruz. EF konfigurasyonunda:
 ///     builder.HasKey(ur =&gt; new { ur.UserId, ur.RoleId });
 ///
 /// Bunun bize kazandirdiklari:
 ///
-/// 1) Ayni kullaniciya ayni rol IKI KEZ atanamaz -- veritabani seviyesinde
-///    garanti. Ayri bir Id sutunu olsaydi (Guid Id, UserId, RoleId),
-///    ayni ciftten iki satir olusabilirdi ve bunu engellemek icin AYRICA
+/// 1) Aynı kullanıcıya aynı rol IKI KEZ atanamaz -- veritabani seviyesinde
+///    garanti. Ayrı bir Id sutunu olsaydı (Guid Id, UserId, RoleId),
+///    aynı ciftten iki satır olusabilirdi ve bunu engellemek için AYRICA
 ///    bir unique index eklemek gerekirdi.
 ///
 /// 2) Bir sutun ve bir index daha az. Milyonlarca satirda fark eder.
@@ -45,14 +45,14 @@ public class UserRole
 
     // Navigation property'ler.
     //
-    // null! yaziyorum cunku: nullable referans tipleri acik (Nullable=enable).
-    // Derleyici "bu alan hic atanmiyor, null olabilir" diye uyarir.
+    // null! yazıyorum çünkü: nullable referans tipleri açık (Nullable=enable).
+    // Derleyici "bu alan hiç atanmiyor, null olabilir" diye uyarir.
     // Ama bu alanlari EF Core dolduruyor -- Include() ile yuklendiginde
     // dolu olacaklar, yuklenmediginde null kalacaklar.
     //
-    // null! ile derleyiciye "bunun sorumlulugunu ben aliyorum" diyorum.
-    // Alternatif olarak User? yazabilirdim ama o zaman her kullanimda
-    // null kontrolu yapmam gerekirdi -- Include() ettigimi bildigim halde.
+    // null! ile derleyiciye "bunun sorumlulugunu ben alıyorum" diyorum.
+    // Alternatif olarak User? yazabilirdim ama o zaman her kullanımda
+    // null kontrolü yapmam gerekirdi -- Include() ettigimi bildigim halde.
     public User User { get; private set; } = null!;
 
     public Role Role { get; private set; } = null!;

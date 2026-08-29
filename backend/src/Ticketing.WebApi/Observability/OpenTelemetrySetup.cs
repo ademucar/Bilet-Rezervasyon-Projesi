@@ -1,11 +1,11 @@
 // Npgsql.OpenTelemetry'nin AddNpgsql() genisletme metodu BU ad
-// alaninda. Olmadan derleyici, ayni adli EF Core kaydini
+// alaninda. Olmadan derleyici, aynı adli EF Core kaydini
 // (IServiceCollection uzerindeki) bulup anlamsiz bir hata veriyor.
 using Npgsql;
 using OpenTelemetry.Resources;
 // Kaynak ADI Application katmaninda tanimli: hem burasi
-// (dinleyici) hem de arka plan isleri (uretici) ayni sabiti
-// kullaniyor. Iki yerde elle yazsaydik ve biri degisirse
+// (dinleyici) hem de arka plan isleri (uretici) aynı sabiti
+// kullaniyor. Iki yerde elle yazsaydık ve biri degisirse
 // izleme SESSIZCE durur.
 using Ticketing.Application.Common.Observability;
 using OpenTelemetry.Trace;
@@ -18,10 +18,10 @@ namespace Ticketing.WebApi.Observability;
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// LOG VE TRACE AYNI SEY DEGIL
+/// LOG VE TRACE AYNI SEY DEĞİL
 /// ==================================================================
 /// Log "ne oldu" sorusunu cevapliyor:
-///     "Rezervasyon olusturuldu. Id: abc, Koltuk: 4"
+///     "Rezervasyon oluşturuldu. Id: abc, Koltuk: 4"
 ///
 /// Trace "nerede ne kadar surdu" sorusunu:
 ///     POST /reservations                        820 ms
@@ -30,12 +30,12 @@ namespace Ticketing.WebApi.Observability;
 ///          +- INSERT Reservations                18 ms
 ///          +- Redis DEL event:123                 2 ms
 ///
-/// Loglar bu istegin 820 ms surdugunu soyler ama NEDEN uzun surdugunu
-/// soylemez. Trace, her halkayi ayri olcuyor ve suclu halkayi
-/// dogrudan gosteriyor.
+/// Loglar bu istegin 820 ms surdugunu söyler ama NEDEN uzun surdugunu
+/// soylemez. Trace, her halkayi ayrı olcuyor ve suclu halkayi
+/// doğrudan gosteriyor.
 ///
 /// Bizim zincirimiz uzun (HTTP -> MediatR -> EF -> PostgreSQL,
-/// -> Redis, -> Outbox -> Hangfire -> SMTP) ve halkalarin cogu
+/// -> Redis, -> Outbox -> Hangfire -> SMTP) ve halkalarin çoğu
 /// FARKLI process'lerde. Trace olmadan yavaslik teshisi tahmin
 /// yurutmekten ibaret olurdu.
 /// ==================================================================
@@ -57,7 +57,7 @@ internal static class OpenTelemetrySetup
                 // ==================================================
                 // Trace'ler merkezi bir toplayiciya gidiyor ve orada
                 // BASKA servislerin trace'leriyle karisiyor. Servis
-                // adi olmadan hangi izin bize ait oldugu belli olmaz.
+                // adı olmadan hangi izin bize ait olduğu belli olmaz.
                 .AddService(
                     serviceName: "ticketing-api",
                     serviceVersion: typeof(OpenTelemetrySetup).Assembly
@@ -76,27 +76,27 @@ internal static class OpenTelemetrySetup
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         // Saglik kontrolleri saniyede bir cagriliyor.
-                        // Izlemeseydik bile calisir ama trace
+                        // Izlemeseydik bile çalışır ama trace
                         // deposunun %90'i bu gurultu olurdu -- hem
-                        // maliyet hem de gercek izleri bulmayi
+                        // maliyet hem de gerçek izleri bulmayi
                         // zorlastiran bir yigin.
                         options.Filter = httpContext =>
                             !httpContext.Request.Path.StartsWithSegments("/health");
 
-                        // Istisna detayini ize ekle: hata hangi
-                        // adimda olustu, dogrudan gorulsun.
+                        // Istisna detayını ize ekle: hata hangi
+                        // adımda oluştu, doğrudan gorulsun.
                         options.RecordException = true;
                     })
 
                     // ==============================================
                     // 2) VERITABANI SORGULARI -- PDF maddesi
                     // ==============================================
-                    // Npgsql'in KENDI izleme kaynagi.
+                    // Npgsql'in KENDİ izleme kaynagi.
                     //
                     // EF Core instrumentation paketi yerine bunu
-                    // sectim: o paket yalnizca beta olarak var ve
-                    // Npgsql surucu seviyesinde olctugu icin daha
-                    // dogru -- EF'in urettigi SQL'in veritabaninda
+                    // sectim: o paket yalnızca beta olarak var ve
+                    // Npgsql surucu seviyesinde olctugu için daha
+                    // doğru -- EF'in urettigi SQL'in veritabaninda
                     // GERCEKTE ne kadar surdugunu goruyoruz.
                     .AddNpgsql()
 
@@ -109,11 +109,11 @@ internal static class OpenTelemetrySetup
                     // Redis instrumentation, IConnectionMultiplexer
                     // ornegine ihtiyac duyuyor. DI'dan cozmeye
                     // calisirsak, Redis kapaliyken uygulama
-                    // ACILMAZ -- oysa Sprint 11'de onbellegi
-                    // BILINCLI olarak "yoksa da calisir" yaptik
+                    // ACILMAZ -- oysa Sprint 11'de önbelleği
+                    // BILINCLI olarak "yoksa da çalışır" yaptik
                     // (Null Object Pattern).
                     //
-                    // Bu yuzden multiplexer'i OPSIYONEL cozuyorum:
+                    // Bu yüzden multiplexer'i OPSIYONEL cozuyorum:
                     // varsa izliyoruz, yoksa izleme atlanip
                     // uygulama normal aciliyor.
                     //
@@ -125,17 +125,17 @@ internal static class OpenTelemetrySetup
                     // ==============================================
                     // 4) ARKA PLAN ISLERI -- PDF maddesi
                     // ==============================================
-                    // Hangfire'in hazir bir instrumentation'i yok.
+                    // Hangfire'in hazır bir instrumentation'i yok.
                     // Kendi ActivitySource'umuzu ekliyoruz; isler
-                    // TicketingJobs icinde bu kaynaktan Activity
+                    // TicketingJobs içinde bu kaynaktan Activity
                     // baslatiyor.
                     .AddSource(AppActivitySource.Name)
 
                     // ==============================================
                     // 5) HARICI SERVIS CAGRILARI -- PDF maddesi
                     // ==============================================
-                    // HttpClient uzerinden yapilan her cagri.
-                    // Bizde odeme saglayicisi simulasyonu ve ilerde
+                    // HttpClient üzerinden yapilan her cagri.
+                    // Bizde ödeme sağlayıcısı simülasyonu ve ilerde
                     // eklenebilecek her dis entegrasyon.
                     .AddHttpClientInstrumentation(options =>
                         options.RecordException = true);
@@ -143,11 +143,11 @@ internal static class OpenTelemetrySetup
                 // ==================================================
                 // ORNEKLEME (sampling) VE DISA AKTARIM
                 // ==================================================
-                // Gelistirmede her izi konsola yaziyorum: ne
-                // uretildigini gormek icin.
+                // Gelistirmede her izi konsola yazıyorum: ne
+                // uretildigini gormek için.
                 //
                 // Uretimde konsola yazmak felaket olurdu -- her
-                // istek icin onlarca satir. Orada OTLP ile bir
+                // istek için onlarca satır. Orada OTLP ile bir
                 // toplayiciya (Jaeger, Tempo, Grafana) gonderiliyor.
                 var otlpEndpoint = configuration["OpenTelemetry:OtlpEndpoint"];
 
@@ -160,18 +160,18 @@ internal static class OpenTelemetrySetup
                 {
                     // Toplayici yapilandirilmamis ve gelistirmedeyiz.
                     //
-                    // Konsola yazmak, "trace gercekten uretiliyor mu?"
+                    // Konsola yazmak, "trace gerçekten uretiliyor mu?"
                     // sorusunu bir toplayici kurmadan cevaplamamizi
-                    // sagliyor. Bu sprintte tam olarak bunun icin
+                    // sagliyor. Bu sprintte tam olarak bunun için
                     // kullandim.
                     tracing.AddConsoleExporter();
                 }
 
-                // Toplayici da yoksa ve uretimdeysek: hicbir exporter
-                // eklenmiyor. Izleme calisir ama hicbir yere gitmez.
+                // Toplayici da yoksa ve uretimdeysek: hiçbir exporter
+                // eklenmiyor. Izleme çalışır ama hiçbir yere gitmez.
                 //
-                // Bu BILINCLI: yapilandirilmamis bir uretim ortaminda
-                // konsolu trace ile doldurmak, cozdugunden cok sorun
+                // Bu BILINCLI: yapilandirilmamis bir üretim ortaminda
+                // konsolu trace ile doldurmak, cozdugunden çok sorun
                 // yaratirdi.
             });
 
@@ -179,22 +179,22 @@ internal static class OpenTelemetrySetup
     }
 
     /// <summary>
-    /// Redis izlemesini, baglanti varsa devreye alir.
+    /// Redis izlemesini, bağlantı varsa devreye alır.
     /// </summary>
     /// <remarks>
     /// AddRedisInstrumentation() parametresiz cagrildiginda
-    /// multiplexer'i DI'dan cozuyor. Bizde Redis opsiyonel oldugu
-    /// icin (Sprint 11: Null Object Pattern) kayit YOKSA bu cozum
-    /// basarisiz olur.
+    /// multiplexer'i DI'dan cozuyor. Bizde Redis opsiyonel olduğu
+    /// için (Sprint 11: Null Object Pattern) kayıt YOKSA bu çözüm
+    /// başarısız olur.
     ///
-    /// Bu yardimci, kaydin var olup olmadigini once kontrol ediyor.
+    /// Bu yardimci, kaydin var olup olmadigini önce kontrol ediyor.
     /// </remarks>
     public static void ConfigureRedisTracing(this IServiceProvider services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        // Cozulemezse hicbir sey yapmiyoruz. Izleme eksik kalir ama
-        // uygulama calisir -- dogru oncelik sirasi bu.
+        // Cozulemezse hiçbir sey yapmiyoruz. Izleme eksik kalır ama
+        // uygulama çalışır -- doğru oncelik sırası bu.
         _ = services.GetService<IConnectionMultiplexer>();
     }
 }

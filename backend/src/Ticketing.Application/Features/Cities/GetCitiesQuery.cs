@@ -9,13 +9,13 @@ namespace Ticketing.Application.Features.Cities;
 public sealed record CityDto(Guid Id, string Name, int PlateCode);
 
 /// <summary>
-/// Sehir listesi. Etkinlik filtrelemede ve mekan olustururken kullanilir.
+/// Şehir listesi. Etkinlik filtrelemede ve mekan olustururken kullanilir.
 ///
-/// Sayfalama YOK -- bilerek. Turkiye'de 81 sehir var ve bu sayi
+/// Sayfalama YOK -- bilerek. Turkiye'de 81 şehir var ve bu sayi
 /// degismiyor. Sayfalama eklemek, frontend'i gereksiz yere "sonraki
-/// sayfa" mantigi yazmaya zorlardi.
+/// sayfa" mantığı yazmaya zorlardi.
 ///
-/// Sprint 11'de yapildi: Redis'te 24 saat onbellekleniyor
+/// Sprint 11'de yapıldı: Redis'te 24 saat onbellekleniyor
 /// (bkz. docs/01-is-analizi.md soru 12 ve docs/08).
 /// </summary>
 public sealed record GetCitiesQuery : IRequest<Result<IReadOnlyList<CityDto>>>;
@@ -37,16 +37,16 @@ internal sealed class GetCitiesQueryHandler
         CancellationToken cancellationToken)
     {
         // ==============================================================
-        // PDF Sprint 11: "Sehir listesi" cache edilebilir.
+        // PDF Sprint 11: "Şehir listesi" cache edilebilir.
         // ==============================================================
-        // Onbelleklemek icin en ideal veri: 81 satir, yillardir
+        // Onbelleklemek için en ideal veri: 81 satır, yillardir
         // degismiyor ve neredeyse her sayfada isteniyor (filtre
-        // acilir listesi).
+        // açılır listesi).
         //
-        // Sorgu tamamen ANONIM -- kullaniciya gore degismiyor. Bu
-        // yuzden ortak onbellekte tutulmasi guvenli.
-        // PDF kurali: "Kullaniciya ozel hassas veriler ortak cache
-        // icinde tutulmamalidir." Burada kullaniciya ozel hicbir sey yok.
+        // Sorgu tamamen ANONIM -- kullanıcıya göre degismiyor. Bu
+        // yüzden ortak onbellekte tutulmasi güvenli.
+        // PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache
+        // içinde tutulmamalidir." Burada kullanıcıya ozel hiçbir sey yok.
         // ==============================================================
         var cities = await _cache.GetOrCreateAsync(
             CacheKeys.Cities,
@@ -64,9 +64,9 @@ internal sealed class GetCitiesQueryHandler
             // yapmasina gerek yok; hem bellek hem CPU tasarrufu.
             .AsNoTracking()
             .OrderBy(c => c.Name)
-            // Projeksiyon: yalnizca 3 sutun cekiliyor.
+            // Projeksiyon: yalnızca 3 sutun çekiliyor.
             // Entity'nin tamamini yukleyip donusturseydik CreatedAt,
-            // UpdatedBy, IsDeleted gibi alanlari da bosuna tasirdik.
+            // UpdatedBy, IsDeleted gibi alanlari da boşuna tasirdik.
             .Select(c => new CityDto(c.Id, c.Name, c.PlateCode))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

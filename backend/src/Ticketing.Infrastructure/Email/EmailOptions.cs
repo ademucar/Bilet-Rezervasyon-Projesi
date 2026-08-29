@@ -24,8 +24,8 @@ public sealed class EmailOptions
 
     /// <summary>
     /// Yerel gelistirmede Mailpit TLS kullanmiyor.
-    /// Uretimde bu MUTLAKA true olmali -- aksi halde e-posta icerigi
-    /// (icinde sifre sifirlama linki var!) ag uzerinde duz metin gider.
+    /// Uretimde bu MUTLAKA true olmalı -- aksi halde e-posta içeriği
+    /// (içinde şifre sıfırlama linki var!) ag uzerinde duz metin gider.
     /// </summary>
     public bool UseSsl { get; set; }
 }

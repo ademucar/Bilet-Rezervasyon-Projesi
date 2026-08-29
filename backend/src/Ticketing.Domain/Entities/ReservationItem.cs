@@ -6,7 +6,7 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Rezervasyon kalemi. Bir koltuk = bir kalem.
 ///
-/// PDF Sprint 8: "Her rezervasyon kalemi icin bilet olusturulmalidir."
+/// PDF Sprint 8: "Her rezervasyon kalemi için bilet olusturulmalidir."
 /// Yani bu tablo, rezervasyon ile bilet arasindaki koprudur.
 /// </summary>
 public class ReservationItem : Entity
@@ -20,18 +20,18 @@ public class ReservationItem : Entity
     public Guid TicketTypeId { get; private set; }
 
     /// <summary>
-    /// Bu koltugun REZERVASYON ANINDAKI fiyati.
+    /// Bu koltuğun REZERVASYON ANINDAKI fiyati.
     ///
     /// EventSeat.Price'tan kopyalaniyor. Neden tekrar kopyaliyoruz?
-    /// Cunku EventSeat iade sonrasi tekrar satisa cikabilir ve o zaman
+    /// Çünkü EventSeat iade sonrası tekrar satışa cikabilir ve o zaman
     /// fiyati guncellenmis olabilir. Kalem, o anki fiyati kalici olarak
     /// saklamali -- fatura ve iade hesabi buna dayanacak.
     /// </summary>
     public Money UnitPrice { get; private set; }
 
     /// <summary>
-    /// Odeme basarili olunca uretilen bilet. Oncesinde null.
-    /// PDF: "Odeme basarili olmadan bilet olusturulamaz."
+    /// Ödeme başarılı olunca uretilen bilet. Oncesinde null.
+    /// PDF: "Ödeme başarılı olmadan bilet oluşturulamaz."
     /// </summary>
     public Guid? TicketId { get; private set; }
 
@@ -52,11 +52,11 @@ public class ReservationItem : Entity
     {
         if (TicketId.HasValue)
         {
-            // Ayni kalem icin iki bilet uretmek, kullaniciya iki bilet
+            // Aynı kalem için iki bilet uretmek, kullanıcıya iki bilet
             // vermek demektir -- koltuk bir ama bilet iki. Salona iki
-            // kisi girer. Bu yuzden acikca engelliyorum.
+            // kişi girer. Bu yüzden acikca engelliyorum.
             throw new DomainException(
-                "Bu rezervasyon kalemi icin zaten bilet uretilmis.",
+                "Bu rezervasyon kalemi için zaten bilet üretilmiş.",
                 "reservation_item.ticket_already_created");
         }
 

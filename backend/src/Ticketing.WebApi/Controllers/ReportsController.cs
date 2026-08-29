@@ -13,21 +13,21 @@ namespace Ticketing.WebApi.Controllers;
 /// ==================================================================
 /// YETKI: [Authorize] YETERLI, ROL KONTROLU HANDLER'DA
 /// ==================================================================
-/// Ilk aklima gelen [Authorize(Policy = OrganizerOnly)] koymakti.
-/// Yapmadim, cunku raporlari IKI FARKLI ROL kullaniyor:
+/// İlk aklima gelen [Authorize(Policy = OrganizerOnly)] koymakti.
+/// Yapmadim, çünkü raporlari IKI FARKLI ROL kullaniyor:
 ///
-///   ADMIN       -> tum sistemin verisi
-///   ORGANIZATOR -> yalnizca kendi etkinlikleri
+///   ADMIN       -> tüm sistemin verisi
+///   ORGANİZATÖR -> yalnızca kendi etkinlikleri
 ///
-/// Policy ile ikisini birden ifade etmek ("admin VEYA organizator")
+/// Policy ile ikisini birden ifade etmek ("admin VEYA organizatör")
 /// mumkun ama asil is kapsamin BELIRLENMESI ve o zaten handler'da
 /// yapiliyor (ReportScopeResolver).
 ///
-/// Iki yerde rol kontrolu yapsaydik, birini guncelleyip digerini
-/// unutmak riski dogardi. Tek yerde tutuyorum: uc "giris yapmis
-/// olmali" der, handler "ne gorebilirsin" der.
+/// Iki yerde rol kontrolü yapsaydik, birini guncelleyip digerini
+/// unutmak riski dogardi. Tek yerde tutuyorum: uc "giriş yapmış
+/// olmalı" der, handler "ne gorebilirsin" der.
 ///
-/// Sonuc: normal bir kullanici bu uclara 403 aliyor
+/// Sonuç: normal bir kullanıcı bu uclara 403 aliyor
 /// (report.forbidden).
 /// ==================================================================
 /// </remarks>
@@ -81,14 +81,14 @@ public sealed class ReportsController : ApiControllerBase
     /// Rapor disa aktarimi TALEP EDER. PDF: POST /api/v1/reports/export
     /// </summary>
     /// <remarks>
-    /// PDF: "Rapor uretimi background job olarak calistirilmali ve
-    /// tamamlandiginda kullaniciya bildirim gonderilmelidir."
+    /// PDF: "Rapor üretimi background job olarak calistirilmali ve
+    /// tamamlandiginda kullanıcıya bildirim gonderilmelidir."
     ///
-    /// Bu uc dosyayi DONDURMEZ -- talebi kuyruga alir ve 202 doner.
-    /// Rapor hazir olunca kullaniciya bildirim gidiyor ve dosya
+    /// Bu uc dosyayı DONDURMEZ -- talebi kuyruga alır ve 202 döner.
+    /// Rapor hazır olunca kullanıcıya bildirim gidiyor ve dosya
     /// GET /reports/exports/{id} adresinden indiriliyor.
     ///
-    /// 202 Accepted, "kabul ettim ama henuz tamamlamadim" demenin
+    /// 202 Accepted, "kabul ettim ama henüz tamamlamadim" demenin
     /// standart yolu. 200 donseydik istemci isin bittigini sanardi.
     /// </remarks>
     [HttpPost("export")]
@@ -112,7 +112,7 @@ public sealed class ReportsController : ApiControllerBase
 
     /// <summary>Uretilmis rapor dosyasini indirir.</summary>
     /// <remarks>
-    /// Rapor hazir degilse 404 doner. Kullanici bildirimi ALDIKTAN
+    /// Rapor hazır degilse 404 döner. Kullanıcı bildirimi ALDIKTAN
     /// sonra buraya geliyor, yani normal akista 404 gorulmez.
     /// </remarks>
     [HttpGet("exports/{exportId:guid}")]
@@ -129,17 +129,17 @@ public sealed class ReportsController : ApiControllerBase
         // SAHIPLIK KONTROLU: BILDIRIM UZERINDEN
         // ==============================================================
         // exportId bir Guid v7 -- tahmin edilmesi pratikte imkansiz.
-        // Ama "tahmin edilemez kimlik" tek basina yetki DEGILDIR
-        // (guvenlik literaturunde "security through obscurity").
+        // Ama "tahmin edilemez kimlik" tek başına yetki DEĞİLDİR
+        // (güvenlik literaturunde "security through obscurity").
         //
-        // Kimligi bir yerden ogrenen biri (log, tarayici gecmisi,
+        // Kimligi bir yerden ogrenen biri (log, tarayıcı gecmisi,
         // paylasilan ekran goruntusu) baskasinin gelir raporunu
         // indirebilirdi.
         //
-        // Bu yuzden bildirim tablosuna bakiyoruz: rapor hazir
-        // oldugunda SAHIBINE bir bildirim yaziliyor ve o bildirimin
+        // Bu yüzden bildirim tablosuna bakiyoruz: rapor hazır
+        // olduğunda SAHIBINE bir bildirim yaziliyor ve o bildirimin
         // RelatedEntityId'si exportId. Yani "bu raporun bildirimi bu
-        // kullaniciya mi yazilmis?" sorusu, sahiplik sorusunun ta
+        // kullanıcıya mi yazilmis?" sorusu, sahiplik sorusunun ta
         // kendisi.
         // ==============================================================
         var sahiplikResult = await Sender
@@ -148,7 +148,7 @@ public sealed class ReportsController : ApiControllerBase
 
         if (!sahiplikResult.IsSuccess || !sahiplikResult.Value)
         {
-            // 403 degil 404: raporun VARLIGINI dogrulamiyoruz.
+            // 403 değil 404: raporun VARLIGINI dogrulamiyoruz.
             return NotFound();
         }
 
@@ -163,13 +163,13 @@ public sealed class ReportsController : ApiControllerBase
     }
 }
 
-/// <summary>Organizator ve admin panelleri. PDF Sprint 13.</summary>
+/// <summary>Organizatör ve admin panelleri. PDF Sprint 13.</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/dashboard")]
 [Authorize]
 public sealed class DashboardController : ApiControllerBase
 {
-    /// <summary>Organizator paneli: PDF'in saydigi 10 metrik.</summary>
+    /// <summary>Organizatör paneli: PDF'in saydığı 10 metrik.</summary>
     [HttpGet("organizer")]
     [ProducesResponseType<OrganizerDashboard>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
@@ -181,14 +181,14 @@ public sealed class DashboardController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Admin paneli: PDF'in saydigi 10 metrik.
+    /// Admin paneli: PDF'in saydığı 10 metrik.
     /// </summary>
     /// <remarks>
-    /// Burada policy KULLANIYORUM (raporlardan farkli olarak).
+    /// Burada policy KULLANIYORUM (raporlardan farklı olarak).
     ///
-    /// Sebep: bu panelin kapsami yok -- ya TUM sistemi gorursun ya da
-    /// hicbir seyi. "Kismi admin" diye bir sey olmadigi icin kontrolu
-    /// en dista yapmak dogru ve handler'i sadelestiriyor.
+    /// Sebep: bu panelin kapsami yok -- ya TÜM sistemi gorursun ya da
+    /// hiçbir seyi. "Kismi admin" diye bir sey olmadığı için kontrolü
+    /// en dista yapmak doğru ve handler'i sadelestiriyor.
     /// </remarks>
     [HttpGet("admin")]
     [Authorize(Policy = Security.AuthenticationSetup.Policies.AdminOnly)]

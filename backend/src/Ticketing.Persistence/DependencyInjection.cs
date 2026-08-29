@@ -10,25 +10,25 @@ namespace Ticketing.Persistence;
 /// Persistence katmaninin DI kayitlari.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN HER KATMAN KENDI KAYITLARINI YAPIYOR?
+/// NEDEN HER KATMAN KENDİ KAYITLARINI YAPIYOR?
 /// ------------------------------------------------------------------
 /// Alternatif, Program.cs'te her seyi tek tek kaydetmekti:
 ///     builder.Services.AddDbContext&lt;TicketingDbContext&gt;(...);
 ///     builder.Services.AddScoped&lt;IUserRepository, UserRepository&gt;();
-///     ... 50 satir daha
+///     ... 50 satır daha
 ///
-/// Bunu yapmadim cunku:
+/// Bunu yapmadim çünkü:
 ///
-/// 1) Program.cs, Persistence'in IC DETAYLARINI bilmek zorunda kalirdi:
+/// 1) Program.cs, Persistence'in IC DETAYLARINI bilmek zorunda kalırdı:
 ///    hangi DbContext var, hangi repository'ler var. Yarin bir repository
 ///    eklersem Program.cs'i degistirmem gerekirdi -- WebApi katmani
 ///    Persistence'in degisikliginden etkilenirdi.
 ///
-/// 2) Bu metot Persistence icinde oldugu icin internal siniflari da
+/// 2) Bu metot Persistence içinde olduğu için internal siniflari da
 ///    kaydedebiliyor. Program.cs'ten internal bir sinifi kaydedemezdim,
 ///    hepsini public yapmak zorunda kalirdim.
 ///
-/// Sonuc: Program.cs'te tek satir -> services.AddPersistence(configuration)
+/// Sonuç: Program.cs'te tek satır -> services.AddPersistence(configuration)
 /// </summary>
 public static class DependencyInjection
 {
@@ -42,17 +42,17 @@ public static class DependencyInjection
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            // Uygulamayi BASLARKEN patlatiyorum, ilk istekte degil.
+            // Uygulamayi BASLARKEN patlatiyorum, ilk istekte değil.
             //
             // Neden? Yanlis yapilandirmayla ayaga kalkan bir servis,
             // saglik kontrollerinden gecer, yuk dengeleyiciye "hazirim"
-            // der ve gercek kullanici trafigi almaya baslar. Sonra her
-            // istek 500 doner.
+            // der ve gerçek kullanıcı trafigi almaya başlar. Sonra her
+            // istek 500 döner.
             //
-            // Baslangicta patlarsa deploy basarisiz olur ve eski surum
-            // ayakta kalir. Buna "fail fast" denir.
+            // Baslangicta patlarsa deploy başarısız olur ve eski surum
+            // ayakta kalır. Buna "fail fast" denir.
             throw new InvalidOperationException(
-                "'Postgres' connection string bulunamadi. " +
+                "'Postgres' connection string bulunamadı. " +
                 "appsettings.json veya ConnectionStrings__Postgres environment " +
                 "degiskenini kontrol edin.");
         }
@@ -62,17 +62,17 @@ public static class DependencyInjection
         // ==============================================================
         // CreatedAt / UpdatedAt / soft delete alanlarini otomatik
         // dolduruyor. Gerekcesi ve nasil bulundugu
-        // AuditFieldsInterceptor icinde ayrintili yazili.
+        // AuditFieldsInterceptor içinde ayrintili yazili.
         //
-        // Scoped: ICurrentUser scoped (HttpContext'e bagli) ve
-        // interceptor onu kullaniyor. Singleton yapsaydik "captive
-        // dependency" olusur, tum istekler ILK istegin kullanicisini
-        // gorurdu -- denetim izi tamamen yanlis olurdu.
+        // Scoped: ICurrentUser scoped (HttpContext'e bağlı) ve
+        // interceptor önü kullaniyor. Singleton yapsaydik "captive
+        // dependency" olusur, tüm istekler ILK istegin kullanicisini
+        // gorurdu -- denetim izi tamamen yanlış olurdu.
         // ==============================================================
         services.AddScoped<AuditFieldsInterceptor>();
 
-        // Ayni gerekce (Scoped, cunku ICurrentUser'a bagli).
-        // PDF Sprint 16: correlation ID Outbox kaydinda olmali.
+        // Aynı gerekce (Scoped, çünkü ICurrentUser'a bağlı).
+        // PDF Sprint 16: correlation ID Outbox kaydinda olmalı.
         services.AddScoped<OutboxCorrelationInterceptor>();
 
         services.AddDbContext<TicketingDbContext>((sp, options) =>
@@ -86,11 +86,11 @@ public static class DependencyInjection
                 // Migration'lar bu assembly'de aransin.
                 npgsql.MigrationsAssembly(typeof(TicketingDbContext).Assembly.FullName);
 
-                // Gecici baglanti hatalarinda otomatik yeniden dene.
+                // Gecici bağlantı hatalarinda otomatik yeniden dene.
                 //
-                // Docker Compose'da API, PostgreSQL'den once ayaga kalkabilir.
-                // Ayrica ag dalgalanmalari gercek hayatta olur. Bu ayar
-                // olmasaydi her gecici hata kullaniciya 500 olarak yansirdi.
+                // Docker Compose'da API, PostgreSQL'den önce ayaga kalkabilir.
+                // Ayrıca ag dalgalanmalari gerçek hayatta olur. Bu ayar
+                // olmasaydı her geçici hata kullanıcıya 500 olarak yansirdi.
                 npgsql.EnableRetryOnFailure(
                     maxRetryCount: 3,
                     maxRetryDelay: TimeSpan.FromSeconds(5),
@@ -98,15 +98,15 @@ public static class DependencyInjection
             });
         });
 
-        // Application katmani somut TicketingDbContext'i degil bu arayuzu
-        // goruyor. Boylece Application, Persistence'a bagimli olmuyor --
+        // Application katmani somut TicketingDbContext'i değil bu arayuzu
+        // görüyor. Boylece Application, Persistence'a bagimli olmuyor --
         // architecture testimiz bunu her derlemede dogruluyor.
         //
         // GetRequiredService ile AYNI ornegi cozumluyorum, yeni bir tane
-        // olusturmuyorum. Aksi halde tek bir HTTP istegi icinde IKI ayri
-        // DbContext olurdu: biri degisiklikleri takip eder, digeri
+        // olusturmuyorum. Aksi halde tek bir HTTP isteği içinde IKI ayrı
+        // DbContext olurdu: biri değişiklikleri takip eder, digeri
         // kaydeder ve kayitlar sessizce kaybolurdu. Bu, tespit edilmesi
-        // cok zor bir hata sinifidir.
+        // çok zor bir hata sinifidir.
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<TicketingDbContext>());
 

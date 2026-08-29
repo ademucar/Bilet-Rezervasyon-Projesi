@@ -17,22 +17,22 @@ namespace Ticketing.WebApi.Controllers;
 public sealed class ReservationsController : ApiControllerBase
 {
     /// <summary>
-    /// Koltuk secip rezervasyon olusturur. Koltuklar 10 dakika kilitlenir.
+    /// Koltuk seçip rezervasyon oluşturur. Koltuklar 10 dakika kilitlenir.
     /// </summary>
     /// <remarks>
     /// IDEMPOTENCY: Istegi "Idempotency-Key" header'i ile gonderin.
-    /// Ayni anahtarla ikinci kez gonderilirse YENI rezervasyon
-    /// olusmaz, ILK rezervasyon doner.
+    /// Aynı anahtarla ikinci kez gonderilirse YENI rezervasyon
+    /// olusmaz, ILK rezervasyon döner.
     ///
-    /// Bu, kullanicinin butona iki kez basmasi veya agin istegi
+    /// Bu, kullanıcının butona iki kez basmasi veya agin isteği
     /// tekrarlamasi durumunda cift rezervasyonu engeller.
     /// </remarks>
-    /// <response code="201">Rezervasyon olusturuldu, koltuklar kilitlendi.</response>
-    /// <response code="409">Koltuklardan biri az once baskasi tarafindan alindi.</response>
-    /// <response code="422">Satis kapali veya bilet limiti asildi.</response>
+    /// <response code="201">Rezervasyon oluşturuldu, koltuklar kilitlendi.</response>
+    /// <response code="409">Koltuklardan biri az önce başkası tarafından alındı.</response>
+    /// <response code="422">Satış kapalı veya bilet limiti aşıldı.</response>
     [HttpPost]
     [Authorize]
-    // PDF Sprint 15: "Rezervasyon olusturma endpointi" hiz siniri.
+    // PDF Sprint 15: "Rezervasyon oluşturma endpointi" hiz sınırı.
     // Bot ile koltuk kapatmayi (scalping) zorlastiriyor.
     [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
     [ProducesResponseType<ReservationDto>(StatusCodes.Status201Created)]
@@ -43,11 +43,11 @@ public sealed class ReservationsController : ApiControllerBase
         [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         CancellationToken cancellationToken)
     {
-        // Idempotency anahtarini HEADER'dan aliyorum, govdeden degil.
+        // Idempotency anahtarini HEADER'dan alıyorum, govdeden değil.
         //
-        // Sebep: bu bir PROTOKOL detayidir, is verisi degil. Stripe,
-        // AWS gibi saglayicilar da ayni yaklasimi kullaniyor.
-        // Govdeye koysaydik her istek modelinde tekrarlamamiz gerekirdi.
+        // Sebep: bu bir PROTOKOL detayidir, is verisi değil. Stripe,
+        // AWS gibi saglayicilar da aynı yaklasimi kullaniyor.
+        // Govdeye koysaydık her istek modelinde tekrarlamamiz gerekirdi.
         var command = new CreateReservationCommand(
             request.EventSessionId, request.EventSeatIds, idempotencyKey);
 
@@ -58,17 +58,17 @@ public sealed class ReservationsController : ApiControllerBase
             $"/api/v1/reservations/{(result.IsSuccess ? result.Value.Id : Guid.Empty)}");
     }
 
-    /// <summary>Rezervasyon detayi. Yalnizca sahibi gorebilir.</summary>
+    /// <summary>Rezervasyon detayı. Yalnızca sahibi görebilir.</summary>
     [HttpGet("{id:guid}")]
     // ==============================================================
     // ReservationOwner -- SPRINT 19'DA BAGLANDI
     // ==============================================================
     // Handler zaten sahiplik filtreliyordu (ve 404 donuyordu).
     // Politika IKINCI bir katman: birinin unutulmasi digerini
-    // gecersiz kilmiyor.
+    // geçersiz kilmiyor.
     //
-    // Politika reddi de 404 doner (ResourceOwnerResultHandler):
-    // 403 "bu rezervasyon VAR ama senin degil" bilgisini
+    // Politika reddi de 404 döner (ResourceOwnerResultHandler):
+    // 403 "bu rezervasyon VAR ama senin değil" bilgisini
     // sizdirirdi.
     // ==============================================================
     [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
@@ -78,7 +78,7 @@ public sealed class ReservationsController : ApiControllerBase
         => HandleResult(await Sender.Send(new GetReservationQuery(id), cancellationToken)
             .ConfigureAwait(false));
 
-    /// <summary>Rezervasyonu iptal eder ve koltuklari serbest birakir.</summary>
+    /// <summary>Rezervasyonu iptal eder ve koltukları serbest birakir.</summary>
     [HttpPost("{id:guid}/cancel")]
     [Authorize(Policy = AuthenticationSetup.Policies.ReservationOwner)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -103,9 +103,9 @@ public sealed class ReservationsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Suresi dolmus rezervasyonlari temizler.
+    /// Süresi dolmuş rezervasyonları temizler.
     /// Sprint 9'da Hangfire ile dakikada bir otomatik calisacak;
-    /// simdilik admin elle tetikleyebiliyor.
+    /// şimdilik admin elle tetikleyebiliyor.
     /// </summary>
     [HttpPost("expire-overdue")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
@@ -115,21 +115,21 @@ public sealed class ReservationsController : ApiControllerBase
             .ConfigureAwait(false));
 }
 
-/// <summary>Kullanicinin kendi rezervasyonlari. PDF: GET /api/v1/users/me/reservations</summary>
+/// <summary>Kullanıcının kendi rezervasyonları. PDF: GET /api/v1/users/me/reservations</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/users/me")]
 public sealed class MyReservationsController : ApiControllerBase
 {
     /// <summary>
-    /// Kullanicinin kendi rezervasyonlari.
+    /// Kullanıcının kendi rezervasyonları.
     /// </summary>
     /// <remarks>
-    /// Yalnizca istegi yapan kullanicinin rezervasyonlari doner;
-    /// kullanici kimligi TOKEN'DAN okunuyor, istekten degil.
+    /// Yalnızca isteği yapan kullanıcının rezervasyonları döner;
+    /// kullanıcı kimliği TOKEN'DAN okunuyor, istekten değil.
     ///
-    /// Adreste bir kullanici kimligi tasisaydik, birinin baskasinin
+    /// Adreste bir kullanıcı kimliği tasisaydik, birinin baskasinin
     /// kimligini yazip onun rezervasyonlarini gormesini engellemek
-    /// icin ayrica kontrol yazmak gerekirdi.
+    /// için ayrıca kontrol yazmak gerekirdi.
     /// </remarks>
     /// <response code="200">Rezervasyon listesi (en yeniden eskiye).</response>
     [HttpGet("reservations")]
@@ -148,14 +148,14 @@ public sealed class MyReservationsController : ApiControllerBase
 public sealed class EventSessionsController : ApiControllerBase
 {
     /// <summary>
-    /// Oturumun koltuk uygunlugunu dondurur.
+    /// Oturumun koltuk uygunlugunu döndürür.
     /// PDF: GET /api/v1/event-sessions/{id}/seat-availability
     ///
-    /// ANONIM erisime acik: kullanici bilet almadan once hangi
-    /// koltuklarin bos oldugunu gorebilmeli.
+    /// ANONIM erisime açık: kullanıcı bilet almadan önce hangi
+    /// koltuklarin boş olduğunu gorebilmeli.
     ///
-    /// Kimin kilitledigi bilgisi DONMUYOR -- yalnizca durum.
-    /// Aksi halde kullanici gizliligi ihlal edilirdi.
+    /// Kimin kilitledigi bilgisi DONMUYOR -- yalnızca durum.
+    /// Aksi halde kullanıcı gizliligi ihlal edilirdi.
     /// </summary>
     [HttpGet("{id:guid}/seat-availability")]
     [AllowAnonymous]
@@ -166,7 +166,7 @@ public sealed class EventSessionsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Oturum icin koltuk kayitlarini uretir.
+    /// Oturum için koltuk kayitlarini üretir.
     /// Rezervasyonun ON KOSULUDUR.
     /// </summary>
     [HttpPost("{id:guid}/generate-seats")]

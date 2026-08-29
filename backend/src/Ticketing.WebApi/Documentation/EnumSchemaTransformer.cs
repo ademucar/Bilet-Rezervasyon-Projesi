@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Models;
 namespace Ticketing.WebApi.Documentation;
 
 /// <summary>
-/// Enum semalarina degerleri ve ISIMLERINI ekler.
+/// Enum semalarina değerleri ve ISIMLERINI ekler.
 /// PDF Sprint 18: "Endpoint aciklamalari" ve OpenAPI client arastirmasi.
 /// </summary>
 /// <remarks>
@@ -18,15 +18,15 @@ namespace Ticketing.WebApi.Documentation;
 ///
 ///     export type ReservationStatus = number;
 ///
-/// Yani hicbir sey. Sebep belgede goruldu:
+/// Yani hiçbir sey. Sebep belgede goruldu:
 ///
 ///     "ReservationStatus": { "type": "integer" }
 ///
-/// Enum'un HANGI sayinin NE anlama geldigi belgede HIC YOKTU.
+/// Enum'un HANGI sayinin NE anlama geldigi belgede HİÇ YOKTU.
 ///
-/// Bunun sonucu yalnizca kod uretimiyle sinirli degil: Swagger'i
+/// Bunun sonucu yalnızca kod uretimiyle sinirli değil: Swagger'i
 /// acan bir istemci gelistiricisi `status: 3` gordugunde ne
-/// yapacagini bilemiyordu. Kaynak koda erisimi olmayan biri icin
+/// yapacagini bilemiyordu. Kaynak koda erişimi olmayan biri için
 /// bu alan tamamen anlamsizdi.
 ///
 /// ------------------------------------------------------------------
@@ -35,10 +35,10 @@ namespace Ticketing.WebApi.Documentation;
 /// JsonStringEnumConverter ekleyip enum'lari metin olarak
 /// gonderebilirdim ("Confirmed" gibi). Daha okunakli olurdu.
 ///
-/// YAPMADIM cunku bu KIRICI bir degisiklik: frontend'imiz sayilarla
+/// YAPMADIM çünkü bu KIRICI bir degisiklik: frontend'imiz sayilarla
 /// karsilastirma yapiyor (ReservationStatus.Confirmed === 4) ve
 /// Sprint 17'de yazdigim testler de oyle. Dokumantasyonu
-/// iyilestirmek icin calisan bir sozlesmeyi bozmak yanlis takas.
+/// iyilestirmek için calisan bir sozlesmeyi bozmak yanlış takas.
 ///
 /// Bunun yerine sayilari KORUYUP anlamlarini belgeye ekliyorum:
 ///
@@ -51,7 +51,7 @@ namespace Ticketing.WebApi.Documentation;
 ///
 /// x-enum-varnames, OpenAPI Generator ve NSwag'in tanidigi yaygin
 /// bir uzanti; description ise HER aracta ve insan gozunde
-/// calisiyor.
+/// çalışıyor.
 /// ==================================================================
 /// </remarks>
 internal sealed class EnumSchemaTransformer : IOpenApiSchemaTransformer
@@ -92,22 +92,22 @@ internal sealed class EnumSchemaTransformer : IOpenApiSchemaTransformer
         // ==============================================================
         // x-enum-varnames: KOD URETICILERI ICIN
         // ==============================================================
-        // OpenAPI standardinda enum degerleri var ama ISIMLERI yok.
-        // Bu uzanti, araclarin anlamli enum uretebilmesi icin
-        // toplulukta yaygınlasan cozum.
+        // OpenAPI standardinda enum değerleri var ama ISIMLERI yok.
+        // Bu uzanti, araclarin anlamlı enum uretebilmesi için
+        // toplulukta yaygınlasan çözüm.
         //
-        // Taniyamayan bir arac icin ZARARSIZ: bilinmeyen "x-" alanlari
+        // Taniyamayan bir arac için ZARARSIZ: bilinmeyen "x-" alanlari
         // yok sayiliyor.
         // ==============================================================
         // OpenApiArray, List<IOpenApiAny> turevi; koleksiyon
-        // baslatici yerine AddRange kullaniyorum (spread operatoru
+        // baslatici yerine AddRange kullanıyorum (spread operatoru
         // burada Index olarak yorumlanip derlenmiyor).
         var isimler = new OpenApiArray();
         isimler.AddRange(adlar.Select(a => new OpenApiString(a)));
 
         schema.Extensions["x-enum-varnames"] = isimler;
 
-        // Aciklama HER yerde calisiyor: insan da okuyor, arac da
+        // Açıklama HER yerde çalışıyor: insan da okuyor, arac da
         // gostermeye devam ediyor.
         var mevcut = string.IsNullOrWhiteSpace(schema.Description)
             ? string.Empty

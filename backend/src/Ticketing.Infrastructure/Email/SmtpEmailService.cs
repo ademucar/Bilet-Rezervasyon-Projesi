@@ -11,7 +11,7 @@ using Ticketing.Application.Common.Security;
 namespace Ticketing.Infrastructure.Email;
 
 /// <summary>
-/// SMTP uzerinden e-posta gonderir. Yerel gelistirmede Mailpit'e baglanir.
+/// SMTP üzerinden e-posta gönderir. Yerel gelistirmede Mailpit'e baglanir.
 ///
 /// ==================================================================
 /// SPRINT 3'TE BIRAKTIGIM NOTUN KARSILIGI
@@ -20,17 +20,17 @@ namespace Ticketing.Infrastructure.Email;
 /// e-posta kutuphanesi). Ama paket ekleme komutu su hatayi verdi:
 ///
 ///   NU1902: 'MailKit' paketinde onem derecesi ORTA olan bilinen bir
-///           guvenlik acigi var (GHSA-9j88-vvj5-vhgr)
+///           güvenlik acigi var (GHSA-9j88-vvj5-vhgr)
 ///
-/// Denedigim TUM surumlerde (4.9.0 - 4.14.0) ayni uyari cikti.
+/// Denedigim TÜM surumlerde (4.9.0 - 4.14.0) aynı uyarı cikti.
 /// Bilinen acigi olan bir paketi projeye almayi reddettim ve .NET'in
 /// yerlesik SmtpClient'ini kullandim -- eskimis (SYSLIB0014) ama
-/// guvenli.
+/// güvenli.
 ///
-/// O gun koda su notu birakmistim:
+/// O gün koda su notu birakmistim:
 ///
-///   "SPRINT 14 NOTU: Gercek bir e-posta saglayicisina gecerken bu
-///    sinif degisecek. O gun MailKit advisory'sinin kapanip
+///   "SPRINT 14 NOTU: Gerçek bir e-posta saglayicisina gecerken bu
+///    sinif degisecek. O gün MailKit advisory'sinin kapanip
 ///    kapanmadigi TEKRAR kontrol edilmeli."
 ///
 /// ------------------------------------------------------------------
@@ -39,17 +39,17 @@ namespace Ticketing.Infrastructure.Email;
 /// MailKit 4.17.0 ile tarama TEMIZ dondu:
 ///
 ///   dotnet list package -vulnerable -include-transitive
-///   -> 8 projenin hicbirinde guvenlik acigi olan paket yok
+///   -> 8 projenin hicbirinde güvenlik acigi olan paket yok
 ///
-/// Yani Sprint 3'teki gerekce artik gecerli degil. MailKit'e geciyorum:
+/// Yani Sprint 3'teki gerekce artık geçerli değil. MailKit'e geciyorum:
 ///
-///   - SYSLIB0014 bastirmasi KALKTI (artik eskimis API kullanmiyoruz)
+///   - SYSLIB0014 bastirmasi KALKTI (artık eskimis API kullanmiyoruz)
 ///   - Microsoft'un kendisi SmtpClient yerine MailKit'i oneriyor
-///   - Modern TLS ve kimlik dogrulama destegi var
+///   - Modern TLS ve kimlik doğrulama destegi var
 ///
 /// Bu, kodda birakilan bir "sonra bak" notunun neden degerli oldugunun
-/// somut ornegi: karar o gunun kosullarina gore verilmisti, kosullar
-/// degisti ve karar guncellendi.
+/// somut ornegi: karar o gunun kosullarina göre verilmisti, kosullar
+/// değişti ve karar güncellendi.
 /// ==================================================================
 /// </summary>
 internal sealed partial class SmtpEmailService : IEmailService
@@ -78,23 +78,23 @@ internal sealed partial class SmtpEmailService : IEmailService
         message.Subject = subject;
 
         // ==============================================================
-        // HTML GOVDE + DUZ METIN ALTERNATIFI
+        // HTML GOVDE + DUZ METİN ALTERNATIFI
         // ==============================================================
         // BodyBuilder ile hem HTML hem duz metin surumu gonderiyoruz
         // (multipart/alternative).
         //
         // Neden ikisi birden?
         //
-        //   1) Bazi e-posta istemcileri HTML'i kapatiyor (guvenlik
-        //      ayari). Duz metin olmasaydi kullanici BOS bir e-posta
+        //   1) Bazi e-posta istemcileri HTML'i kapatiyor (güvenlik
+        //      ayari). Duz metin olmasaydı kullanıcı BOŞ bir e-posta
         //      gorurdu.
         //
-        //   2) Spam filtreleri, yalnizca HTML iceren mesajlari daha
+        //   2) Spam filtreleri, yalnızca HTML iceren mesajlari daha
         //      supheli buluyor. Duz metin alternatifi teslim oranini
         //      artiriyor.
         //
         // Duz metni HTML'den TUREITIYORUM: etiketleri sokup metni
-        // biraktigimda ayri bir sablon yazmaya gerek kalmiyor ve
+        // biraktigimda ayrı bir sablon yazmaya gerek kalmiyor ve
         // ikisi birbirinden ayrisamiyor.
         // ==============================================================
         var builder = new BodyBuilder
@@ -112,7 +112,7 @@ internal sealed partial class SmtpEmailService : IEmailService
             // ==========================================================
             // TLS SECIMI
             // ==========================================================
-            // Mailpit (yerel gelistirme) TLS kullanmiyor; gercek
+            // Mailpit (yerel gelistirme) TLS kullanmiyor; gerçek
             // saglayicilar kullaniyor.
             //
             // SecureSocketOptions.Auto sectim: MailKit sunucunun
@@ -121,7 +121,7 @@ internal sealed partial class SmtpEmailService : IEmailService
             // yapilandirma ile ayrilmasi gerekirdi.
             //
             // UseSsl acikca true ise zorluyoruz -- yapilandirmayla
-            // "TLS SART" demek isteyen bir ortam icin.
+            // "TLS ŞART" demek isteyen bir ortam için.
             var secureOptions = _options.UseSsl
                 ? SecureSocketOptions.StartTlsWhenAvailable
                 : SecureSocketOptions.Auto;
@@ -131,13 +131,13 @@ internal sealed partial class SmtpEmailService : IEmailService
 
             // Kimlik bilgisi VARSA dogrula.
             //
-            // Mailpit kimlik dogrulama istemiyor; kosulsuz
+            // Mailpit kimlik doğrulama istemiyor; kosulsuz
             // AuthenticateAsync cagirsaydik yerelde patlardi.
             if (!string.IsNullOrWhiteSpace(_options.Username))
             {
-                // Parola null olabilir (yalnizca kullanici adiyla
-                // dogrulama yapan sunucular var). MailKit null kabul
-                // etmiyor; bos metne ceviriyoruz.
+                // Parola null olabilir (yalnızca kullanıcı adiyla
+                // doğrulama yapan sunucular var). MailKit null kabul
+                // etmiyor; boş metne ceviriyoruz.
                 await client.AuthenticateAsync(
                     _options.Username,
                     _options.Password ?? string.Empty,
@@ -150,22 +150,22 @@ internal sealed partial class SmtpEmailService : IEmailService
             // E-POSTA KISMEN MASKELENIYOR -- PDF Sprint 15
             // ==========================================================
             // E-posta adresi KVKK/GDPR kapsaminda kisisel veri. Her
-            // gonderimde acik acik loglamak, log dosyalarini bir
-            // kullanici listesine cevirir -- ve o dosyalar yedeklenip
+            // gonderimde açık açık loglamak, log dosyalarini bir
+            // kullanıcı listesine cevirir -- ve o dosyalar yedeklenip
             // merkezi sistemlere gidiyor.
             //
-            // Tamamen gizlemiyorum: destek talebinde "hangi kullanici?"
-            // sorusunu cevaplayabilmemiz gerekiyor. Ilk uc harf +
-            // alan adi bunun icin yeterli ipucu veriyor ama adresleri
+            // Tamamen gizlemiyorum: destek talebinde "hangi kullanıcı?"
+            // sorusunu cevaplayabilmemiz gerekiyor. İlk uc harf +
+            // alan adı bunun için yeterli ipucu veriyor ama adresleri
             // TOPLU olarak toplamayi engelliyor.
             //
             // IsEnabled KONTROLU (CA1873): bu log Debug seviyesinde ve
             // uretimde genellikle KAPALI. Kontrol olmadan MaskEmail her
-            // e-postada bosuna calisir ve bir string tahsis ederdi.
+            // e-postada boşuna çalışır ve bir string tahsis ederdi.
             //
-            // Kaynak ureteci normalde bu kontrolu KENDISI ekliyor -- ama
-            // yalnizca cagriya PARAMETRE OLARAK gecilen degerler icin.
-            // Burada parametreyi biz hesapliyoruz, o yuzden kontrolu de
+            // Kaynak ureteci normalde bu kontrolü KENDISI ekliyor -- ama
+            // yalnızca cagriya PARAMETRE OLARAK gecilen degerler için.
+            // Burada parametreyi biz hesapliyoruz, o yüzden kontrolü de
             // elle yazmamiz gerekiyor.
             // ==========================================================
             if (_logger.IsEnabled(LogLevel.Debug))
@@ -175,7 +175,7 @@ internal sealed partial class SmtpEmailService : IEmailService
                 // Dogrudan cagriyi parametre olarak yazsaydim CA1873
                 // yine uyarirdi: analizor, uretilen LoggerMessage
                 // metodunun IsEnabled kontrolunu taniyamiyor ve
-                // "parametre icinde metot cagrisi" gordugu her yerde
+                // "parametre içinde metot cagrisi" gordugu her yerde
                 // uyariyor. Yerel degiskene almak hem analizoru
                 // memnun ediyor hem de kodu okunur birakiyor.
                 var maskeliAlici = SensitiveDataMasker.MaskEmail(recipient);
@@ -188,14 +188,14 @@ internal sealed partial class SmtpEmailService : IEmailService
             // ==========================================================
             // BAGLANTIYI HER DURUMDA KAPAT
             // ==========================================================
-            // finally SART: gonderim istisna firlatirsa bile SMTP
-            // baglantisi kapanmali.
+            // finally ŞART: gonderim istisna firlatirsa bile SMTP
+            // bağlantısı kapanmali.
             //
-            // Kapanmazsa sunucu tarafinda acik baglanti birikir ve
+            // Kapanmazsa sunucu tarafında açık bağlantı birikir ve
             // saglayicilar bunu kotuye kullanim sayip IP'yi
             // engelleyebilir.
             //
-            // IsConnected kontrolu: baglanti hic kurulamadiysa
+            // IsConnected kontrolü: bağlantı hiç kurulamadiysa
             // DisconnectAsync istisna firlatirdi ve ASIL hatayi
             // gizlerdi.
             if (client.IsConnected)
@@ -206,18 +206,18 @@ internal sealed partial class SmtpEmailService : IEmailService
     }
 
     /// <summary>
-    /// HTML'den kaba bir duz metin uretir.
+    /// HTML'den kaba bir duz metin üretir.
     /// </summary>
     /// <remarks>
-    /// Tam bir HTML ayristiricisi DEGIL ve olmasi da gerekmiyor:
-    /// sablonlarimizi biz yaziyoruz ve yapilari basit.
+    /// Tam bir HTML ayristiricisi DEĞİL ve olmasını da gerekmiyor:
+    /// sablonlarimizi biz yazıyoruz ve yapilari basit.
     ///
-    /// AngleSharp gibi bir kutuphane eklemek, yalnizca yedek metin
-    /// uretmek icin cok agir olurdu.
+    /// AngleSharp gibi bir kutuphane eklemek, yalnızca yedek metin
+    /// uretmek için çok agir olurdu.
     /// </remarks>
     private static string HtmlToText(string html)
     {
-        // Blok etiketlerini satir sonuna cevir ki metin okunabilir kalsin.
+        // Blok etiketlerini satır sonuna cevir ki metin okunabilir kalsin.
         var metin = System.Text.RegularExpressions.Regex.Replace(
             html,
             @"<(br|/p|/div|/li|/h[1-6]|/tr)\s*/?>",
@@ -225,7 +225,7 @@ internal sealed partial class SmtpEmailService : IEmailService
             System.Text.RegularExpressions.RegexOptions.IgnoreCase,
             TimeSpan.FromSeconds(1));
 
-        // Kalan tum etiketleri kaldir.
+        // Kalan tüm etiketleri kaldir.
         metin = System.Text.RegularExpressions.Regex.Replace(
             metin, "<[^>]+>", string.Empty, System.Text.RegularExpressions.RegexOptions.None,
             TimeSpan.FromSeconds(1));
@@ -233,7 +233,7 @@ internal sealed partial class SmtpEmailService : IEmailService
         // HTML varliklarini coz.
         metin = System.Net.WebUtility.HtmlDecode(metin);
 
-        // Ardisik bos satirlari tekile indir.
+        // Ardisik boş satirlari tekile indir.
         metin = System.Text.RegularExpressions.Regex.Replace(
             metin, @"\n{3,}", "\n\n", System.Text.RegularExpressions.RegexOptions.None,
             TimeSpan.FromSeconds(1));
@@ -244,6 +244,6 @@ internal sealed partial class SmtpEmailService : IEmailService
     [LoggerMessage(
         EventId = 9401,
         Level = LogLevel.Debug,
-        Message = "E-posta gonderildi. Alici: {Recipient}, Konu: {Subject}")]
+        Message = "E-posta gönderildi. Alici: {Recipient}, Konu: {Subject}")]
     private static partial void LogSent(ILogger logger, string recipient, string subject);
 }

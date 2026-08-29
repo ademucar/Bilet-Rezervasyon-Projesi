@@ -12,9 +12,9 @@ public sealed record CategoryDto(Guid Id, string Name, string Slug, string? Icon
 /// Etkinlik kategorileri. PDF Sprint 11: "Etkinlik kategorileri" cache edilebilir.
 /// </summary>
 /// <remarks>
-/// Sayfalama YOK -- sehir listesindeki gerekcenin aynisi: kategori
-/// sayisi bir avuc ve filtre acilir listesinde tamaminin gorunmesi
-/// gerekiyor. Sayfalama, frontend'i "sonraki sayfa" mantigi yazmaya
+/// Sayfalama YOK -- şehir listesindeki gerekcenin aynisi: kategori
+/// sayısı bir avuc ve filtre açılır listesinde tamaminin görünmesi
+/// gerekiyor. Sayfalama, frontend'i "sonraki sayfa" mantığı yazmaya
 /// zorlardi.
 /// </remarks>
 public sealed record GetCategoriesQuery : IRequest<Result<IReadOnlyList<CategoryDto>>>;
@@ -35,8 +35,8 @@ internal sealed class GetCategoriesQueryHandler
         GetCategoriesQuery request,
         CancellationToken cancellationToken)
     {
-        // 24 saat: kategoriler admin tarafindan cok nadir eklenir.
-        // Sonuc kullanicidan bagimsiz -- ortak onbellekte guvenli.
+        // 24 saat: kategoriler admin tarafından çok nadir eklenir.
+        // Sonuç kullanicidan bağımsız -- ortak onbellekte güvenli.
         var categories = await _cache.GetOrCreateAsync(
             CacheKeys.Categories,
             LoadAsync,
@@ -49,10 +49,10 @@ internal sealed class GetCategoriesQueryHandler
     private async Task<IReadOnlyList<CategoryDto>> LoadAsync(CancellationToken cancellationToken)
         => await _context.EventCategories
             .AsNoTracking()
-            // DisplayOrder once: admin kategorileri istedigi sirada
-            // gostermek isteyebilir ("Konser" en ustte olsun gibi).
-            // Esitlik durumunda alfabetik -- yoksa sira veritabaninin
-            // keyfine kalir ve her sorguda degisebilir.
+            // DisplayOrder önce: admin kategorileri istedigi sırada
+            // göstermek isteyebilir ("Konser" en ustte olsun gibi).
+            // Esitlik durumunda alfabetik -- yoksa sıra veritabaninin
+            // keyfine kalır ve her sorguda degisebilir.
             .OrderBy(c => c.DisplayOrder)
             .ThenBy(c => c.Name)
             .Select(c => new CategoryDto(c.Id, c.Name, c.Slug, c.IconName))

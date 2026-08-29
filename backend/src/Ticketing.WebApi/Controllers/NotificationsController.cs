@@ -7,7 +7,7 @@ using Ticketing.Application.Features.Notifications;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Kullanici bildirimleri. PDF Sprint 14.
+/// Kullanıcı bildirimleri. PDF Sprint 14.
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/notifications")]
@@ -16,8 +16,8 @@ public sealed class NotificationsController : ApiControllerBase
 {
     /// <summary>PDF: GET /api/v1/notifications</summary>
     /// <remarks>
-    /// Sayfali. Kullanici yalnizca KENDI bildirimlerini goruyor --
-    /// filtre sorgunun icinde, handler'da.
+    /// Sayfali. Kullanıcı yalnızca KENDİ bildirimlerini görüyor --
+    /// filtre sorgunun içinde, handler'da.
     /// </remarks>
     [HttpGet]
     [ProducesResponseType<PagedResult<NotificationDto>>(StatusCodes.Status200OK)]
@@ -28,8 +28,8 @@ public sealed class NotificationsController : ApiControllerBase
 
     /// <summary>PDF: GET /api/v1/notifications/unread-count</summary>
     /// <remarks>
-    /// Zil rozetinin veri kaynagi. Yalnizca bir SAYI donuyor --
-    /// gerekcesi handler'da yazili.
+    /// Zil rozetinin veri kaynagi. Yalnızca bir SAYI dönüyor --
+    /// gerekçesi handler'da yazili.
     /// </remarks>
     [HttpGet("unread-count")]
     [ProducesResponseType<int>(StatusCodes.Status200OK)]
@@ -40,11 +40,11 @@ public sealed class NotificationsController : ApiControllerBase
 
     /// <summary>PDF: PATCH /api/v1/notifications/{id}/read</summary>
     /// <remarks>
-    /// PATCH kullaniyorum, PUT degil.
+    /// PATCH kullanıyorum, PUT değil.
     ///
-    /// PUT "kaynagin TAMAMINI degistir" demek; biz yalnizca tek bir
-    /// alani (IsRead) degistiriyoruz. PATCH kismi guncellemenin
-    /// dogru fiili -- ve PDF de PATCH yazmis.
+    /// PUT "kaynagin TAMAMINI degistir" demek; biz yalnızca tek bir
+    /// alanı (IsRead) degistiriyoruz. PATCH kismi guncellemenin
+    /// doğru fiili -- ve PDF de PATCH yazmis.
     /// </remarks>
     [HttpPatch("{id:guid}/read")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -55,7 +55,7 @@ public sealed class NotificationsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>PDF: PATCH /api/v1/notifications/read-all</summary>
-    /// <returns>Okundu isaretlenen bildirim sayisi.</returns>
+    /// <returns>Okundu isaretlenen bildirim sayısı.</returns>
     [HttpPatch("read-all")]
     [ProducesResponseType<int>(StatusCodes.Status200OK)]
     public async Task<IActionResult> MarkAllRead(CancellationToken cancellationToken)

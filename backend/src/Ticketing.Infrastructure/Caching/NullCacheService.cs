@@ -6,15 +6,15 @@ namespace Ticketing.Infrastructure.Caching;
 /// ==================================================================
 /// ONBELLEKSIZ UYGULAMA -- PDF Sprint 11
 /// ==================================================================
-/// PDF kurali: "Cache kapali oldugunda sistem calismaya devam
+/// PDF kuralı: "Cache kapalı olduğunda sistem calismaya devam
 /// edebilmelidir."
 ///
-/// Bu sinif o kurali EN NET sekilde karsiliyor: yapilandirmada
-/// Redis kapaliysa (veya hic adres verilmemisse) DI konteynerine
-/// bu kaydediliyor ve her sorgu dogrudan veritabanina gidiyor.
+/// Bu sinif o kuralı EN NET şekilde karsiliyor: yapilandirmada
+/// Redis kapaliysa (veya hiç adres verilmemisse) DI konteynerine
+/// bu kaydediliyor ve her sorgu doğrudan veritabanina gidiyor.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN "if (cache != null)" KONTROLU YERINE BOS BIR SINIF?
+/// NEDEN "if (cache != null)" KONTROLU YERINE BOŞ BIR SINIF?
 /// ------------------------------------------------------------------
 /// Alternatif su olurdu: ICacheService'i nullable yapip her cagirim
 /// yerinde kontrol etmek.
@@ -24,11 +24,11 @@ namespace Ticketing.Infrastructure.Caching;
 ///
 ///     return await SorguyuCalistir();
 ///
-/// Bu yaklasim her handler'da IKI KOD YOLU olusturur. Ve o iki yoldan
-/// yalnizca biri test edilir -- digeri uretimde ilk kez calisir.
+/// Bu yaklasim her handler'da IKI KOD YOLU oluşturur. Ve o iki yoldan
+/// yalnızca biri test edilir -- digeri uretimde ilk kez çalışır.
 ///
 /// Bu desene "Null Object Pattern" deniyor. Cagiran taraf onbellegin
-/// acik mi kapali mi oldugunu HIC BILMIYOR; kodu tek bir yol.
+/// açık mi kapalı mi olduğunu HİÇ BILMIYOR; kodu tek bir yol.
 ///
 /// Yan fayda: testlerde de bunu kullanabiliyoruz -- Redis kurmadan
 /// handler'lari calistirmak mumkun.
@@ -44,14 +44,14 @@ internal sealed class NullCacheService : ICacheService
     {
         ArgumentNullException.ThrowIfNull(factory);
 
-        // Onbellek yok: dogrudan asil kaynaga git.
+        // Onbellek yok: doğrudan asil kaynaga git.
         return factory(cancellationToken);
     }
 
     // Saklanmadi, silinecek bir sey de yok.
     //
-    // Burada istisna FIRLATMAK bir secenek degil: cagiran taraf
-    // temizleme cagrisini kosula baglamak zorunda kalirdi ve
+    // Burada istisna FIRLATMAK bir seçenek değil: cagiran taraf
+    // temizleme cagrisini kosula baglamak zorunda kalırdı ve
     // yukaridaki "tek kod yolu" faydasi kaybolurdu.
     public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         => Task.CompletedTask;

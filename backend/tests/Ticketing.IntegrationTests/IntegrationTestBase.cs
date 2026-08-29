@@ -46,7 +46,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         // HER TEST ICIN YENI HttpClient
         // ==========================================================
         // Ayni istemciyi paylassaydik, bir testte eklenen
-        // Authorization basligi sonraki teste sizardi ve
+        // Authorization başlığı sonraki teste sizardi ve
         // "yetkisiz erisim" testi yanlislikla GECERDI.
         //
         // Yani en kritik guvenlik testimiz, bir yan etki yuzunden

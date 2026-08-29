@@ -6,7 +6,7 @@ using Ticketing.Application.Features.Cities;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Sehir listesi. Etkinlik filtreleme ve mekan olusturma ekranlarinda kullanilir.
+/// Şehir listesi. Etkinlik filtreleme ve mekan oluşturma ekranlarinda kullanilir.
 /// Sprint 11'de Redis'te 24 saat cache'lenecek.
 /// </summary>
 [ApiVersion("1.0")]
@@ -14,18 +14,18 @@ namespace Ticketing.WebApi.Controllers;
 public sealed class CitiesController : ApiControllerBase
 {
     /// <summary>
-    /// Tum sehirleri doner. Filtre ve mekan formlarindaki acilir liste icin.
+    /// Tüm sehirleri döner. Filtre ve mekan formlarindaki açılır liste için.
     /// </summary>
     /// <remarks>
     /// Sayfalama YOK: 81 il var ve filtre listesinde tamaminin
-    /// gorunmesi gerekiyor. Sayfalasaydik frontend'i "sonraki sayfa"
-    /// mantigi yazmaya zorlardik -- hicbir kullanici sehir listesinde
+    /// görünmesi gerekiyor. Sayfalasaydik frontend'i "sonraki sayfa"
+    /// mantığı yazmaya zorlardik -- hiçbir kullanıcı şehir listesinde
     /// sayfa gezmek istemez.
     ///
-    /// Sonuc kullanicidan bagimsiz oldugu icin 24 saat onbellekte
+    /// Sonuç kullanicidan bağımsız olduğu için 24 saat onbellekte
     /// tutuluyor (Sprint 11).
     /// </remarks>
-    /// <response code="200">Sehir listesi.</response>
+    /// <response code="200">Şehir listesi.</response>
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType<IReadOnlyList<CityDto>>(StatusCodes.Status200OK)]

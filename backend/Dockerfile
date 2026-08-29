@@ -83,6 +83,33 @@ RUN dotnet publish src/Ticketing.WebApi/Ticketing.WebApi.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 WORKDIR /app
 
+# ==================================================================
+# ICU + TZDATA -- API'nin AYAGA KALKMASI ICIN SART
+# ==================================================================
+# Bu satir olmadan container ayaga kalkmiyordu; sureç daha ilk
+# WebApplication.CreateBuilder(args) cagrisinda oluyordu:
+#
+#   Process terminated. Couldn't find a valid ICU package installed
+#   on the system.  (exit 139, sonsuz restart dongusu)
+#
+# Sebep: alpine imajlari boyut icin ICU olmadan geliyor. Asagida
+# DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false yaziyoruz -- yani
+# ".NET, kultur destegini KULLAN" diyoruz -- ama kullanacagi
+# kutuphane imajda yok. .NET bu durumda uyarmiyor, FailFast ediyor.
+#
+# Invariant'i true yapmak sorunu "cozerdi" ama YANLIS cozerdi:
+# tr-TR tarih/para bicimlendirmesi ve Turkce buyuk/kucuk harf
+# donusumu (i -> İ) calismaz olurdu. Bu projede ikisi de
+# kullaniliyor.
+#
+# icu-data-full: yalnizca icu-libs yeterli degil; kultur VERISI
+# ayri paket. Ikisi birlikte ~30 MB, imaj 75 -> ~105 MB.
+#
+# tzdata: rezervasyon suresi ve etkinlik saatleri zaman dilimine
+# duyarli. Onsuz container UTC disinda hicbir dilimi tanimiyor.
+# ==================================================================
+RUN apk add --no-cache icu-libs icu-data-full tzdata
+
 # ---- ROOT OLMAYAN KULLANICI ----
 #
 # Container'lar varsayilan olarak root ile calisir. Bu tehlikelidir:

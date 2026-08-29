@@ -9,21 +9,21 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Application.Features.Notifications;
 
 /// <summary>
-/// Suresi dolmak uzere olan rezervasyonlar icin uyari bildirimi yazar.
-/// PDF Sprint 14: "Rezervasyon suresi dolmak uzereyken".
+/// Süresi dolmak uzere olan rezervasyonlar için uyarı bildirimi yazar.
+/// PDF Sprint 14: "Rezervasyon süresi dolmak uzereyken".
 /// </summary>
 /// <param name="WarnBeforeMinutes">
-/// Sure dolmasina kac dakika kala uyarilsin.
+/// Süre dolmasina kac dakika kala uyarilsin.
 ///
 /// 3 dakika sectim. Gerekce:
-///   - Kilit suresi toplam 10 dakika
-///   - 5 dakika kala uyarmak cok erken: kullanici zaten odeme
-///     ekraninda ve sayaci goruyor olabilir
-///   - 1 dakika kala uyarmak cok gec: odemeyi tamamlamaya vakit
-///     kalmaz, uyari yalnizca kaybi bildirmis olur
+///   - Kilit süresi toplam 10 dakika
+///   - 5 dakika kala uyarmak çok erken: kullanıcı zaten ödeme
+///     ekraninda ve sayaci görüyor olabilir
+///   - 1 dakika kala uyarmak çok geç: ödemeyi tamamlamaya vakit
+///     kalmaz, uyarı yalnızca kaybi bildirmis olur
 ///
-/// 3 dakika, kullanicinin baska sekmedeyse geri donup odemeyi
-/// bitirebilecegi bir sure.
+/// 3 dakika, kullanıcının başka sekmedeyse geri donup ödemeyi
+/// bitirebilecegi bir süre.
 /// </param>
 public sealed record NotifyExpiringReservationsCommand(
     int WarnBeforeMinutes = 3,
@@ -58,9 +58,9 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         //                           anlami yok, zaten "doldu"
         //                           bildirimi gidiyor)
         //   ExpiresAt <= esik    -> 3 dakikadan az kalmis
-        //   Status Locked/PaymentPending -> odeme bekliyor
+        //   Status Locked/PaymentPending -> ödeme bekliyor
         //
-        // Onaylanmis veya iptal edilmis rezervasyonlar disarida.
+        // Onaylanmis veya iptal edilmiş rezervasyonlar disarida.
         // ==============================================================
         var yaklasanlar = await _context.Reservations
             .AsNoTracking()
@@ -88,16 +88,16 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         // ==============================================================
         // IDEMPOTENCY: AYNI REZERVASYON ICIN IKINCI UYARI YOK
         // ==============================================================
-        // Bu is DAKIKADA BIR calisiyor ve uyari penceresi 3 dakika.
-        // Yani ayni rezervasyon UC KEZ secilir.
+        // Bu is DAKIKADA BIR çalışıyor ve uyarı penceresi 3 dakika.
+        // Yani aynı rezervasyon UC KEZ secilir.
         //
-        // Kontrol olmasaydi kullanici ust uste uc uyari alirdi -- ve
+        // Kontrol olmasaydı kullanıcı ust uste uc uyarı alırdı -- ve
         // uyarinin amaci (dikkat cekmek) tam tersine donerdi: art arda
-        // gelen bildirimler rahatsiz edici olur ve kullanici bildirimleri
-        // kapatir.
+        // gelen bildirimler rahatsiz edici olur ve kullanıcı bildirimleri
+        // kapatır.
         //
         // Zaten uyarilmis olanlari TEK sorguda cikariyorum; rezervasyon
-        // basina sorgu atsaydik 200 rezervasyon icin 200 gidis donus
+        // başına sorgu atsaydik 200 rezervasyon için 200 gidis donus
         // olurdu.
         // ==============================================================
         var ids = yaklasanlar.ConvertAll(r => r.Id);
@@ -122,21 +122,21 @@ internal sealed class NotifyExpiringReservationsCommandHandler
 
         foreach (var r in uyarilacaklar)
         {
-            // Kalan sureyi DAKIKA olarak hesapliyorum.
+            // Kalan süreyi DAKIKA olarak hesapliyorum.
             //
             // Yukari yuvarliyorum (Ceiling): 2.1 dakika kalmisken
-            // "2 dakika" demek, kullanicinin sandigi kadar vakti
-            // olmamasi demek olurdu. "3 dakika" demek daha guvenli
+            // "2 dakika" demek, kullanıcının sandigi kadar vakti
+            // olmamasi demek olurdu. "3 dakika" demek daha güvenli
             // -- ama asla oldugundan FAZLA gostermiyor.
             var kalanDakika = Math.Max(1, (int)Math.Ceiling((r.ExpiresAt - now).TotalMinutes));
 
             _context.Notifications.Add(Notification.Create(
                 r.UserId,
                 NotificationType.ReservationExpiring,
-                "Rezervasyon sureniz doluyor",
-                $"{r.EventTitle} icin olusturdugunuz {r.ReservationCode} numarali " +
-                $"rezervasyonun odeme suresine {kalanDakika} dakika kaldi. " +
-                "Odemeyi tamamlamazsaniz koltuklariniz serbest birakilacak.",
+                "Rezervasyon süreniz doluyor",
+                $"{r.EventTitle} için olusturdugunuz {r.ReservationCode} numarali " +
+                $"rezervasyonun ödeme suresine {kalanDakika} dakika kaldı. " +
+                "Ödemeyi tamamlamazsanız koltuklarınız serbest birakilacak.",
                 r.Id,
                 "/rezervasyonlarim"));
         }

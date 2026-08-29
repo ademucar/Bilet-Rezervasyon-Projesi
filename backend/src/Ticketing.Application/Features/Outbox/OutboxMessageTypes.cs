@@ -1,38 +1,38 @@
 namespace Ticketing.Application.Features.Outbox;
 
 /// <summary>
-/// Outbox mesaj turleri. PDF Sprint 9'un saydigi senaryolar.
+/// Outbox mesaj türleri. PDF Sprint 9'un saydığı senaryolar.
 ///
 /// ==================================================================
-/// NEDEN SABIT? Neden enum degil?
+/// NEDEN SABIT? Neden enum değil?
 /// ==================================================================
-/// Bu deger veritabaninda METIN olarak saklaniyor ve yillarca orada
-/// duracak. Enum kullansaydik iki sorun cikardi:
+/// Bu deger veritabaninda METİN olarak saklaniyor ve yillarca orada
+/// duracak. Enum kullansaydık iki sorun çıkardı:
 ///
 /// 1) Enum'u sayi olarak saklarsak, birinin enum siralamasini
-///    degistirmesi TABLODAKI ESKI KAYITLARIN ANLAMINI degistirirdi.
-///    "3 = EventCancelled" idi, araya bir deger eklendi, artik
-///    "3 = PaymentSucceeded". Islenmemis mesajlar yanlis isleyiciye
+///    degistirmesi TABLODAKI ESKİ KAYITLARIN ANLAMINI degistirirdi.
+///    "3 = EventCancelled" idi, araya bir deger eklendi, artık
+///    "3 = PaymentSucceeded". Islenmemis mesajlar yanlış isleyiciye
 ///    gider.
 ///
 /// 2) Enum'u metin olarak saklasak bile, bir uyeyi YENIDEN ADLANDIRMAK
-///    derleyici hatasi vermez ama tablodaki eski kayitlar artik
-///    hicbir isleyiciyle eslesmez -- sessizce olu mesaja donerler.
+///    derleyici hatası vermez ama tablodaki eski kayitlar artık
+///    hiçbir isleyiciyle eslesmez -- sessizce olu mesaja donerler.
 ///
-/// Sabit metinler bu riskleri gorunur kilar: degeri degistirmek
-/// bilincli bir karar gerektirir ve gecis (migration) yazilmasi
+/// Sabit metinler bu riskleri görünür kilar: değeri degistirmek
+/// bilinçli bir karar gerektirir ve gecis (migration) yazilmasi
 /// gerektigi bellidir.
 /// ==================================================================
 /// </summary>
 public static class OutboxMessageTypes
 {
-    /// <summary>Odeme tamamlandi, biletler uretildi. PDF: "Bilet satin alindi e-postasi".</summary>
+    /// <summary>Ödeme tamamlandı, biletler üretildi. PDF: "Bilet satin alındı e-postası".</summary>
     public const string TicketsIssued = "TicketsIssued";
 
-    /// <summary>PDF: "Odeme basari bildirimi".</summary>
+    /// <summary>PDF: "Ödeme basari bildirimi".</summary>
     public const string PaymentSucceeded = "PaymentSucceeded";
 
-    /// <summary>PDF: "Rezervasyon suresi doldu bildirimi".</summary>
+    /// <summary>PDF: "Rezervasyon süresi doldu bildirimi".</summary>
     public const string ReservationExpired = "ReservationExpired";
 
     /// <summary>PDF: "Etkinlik iptal bildirimi".</summary>
@@ -45,13 +45,13 @@ public static class OutboxMessageTypes
     public const string DailySalesSummary = "DailySalesSummary";
 
     /// <summary>
-    /// PDF Sprint 13: "Rapor uretimi background job olarak
-    /// calistirilmali ve tamamlandiginda kullaniciya bildirim
+    /// PDF Sprint 13: "Rapor üretimi background job olarak
+    /// calistirilmali ve tamamlandiginda kullanıcıya bildirim
     /// gonderilmelidir."
     /// </summary>
     public const string ReportExport = "ReportExport";
 
-    /// <summary>PDF Sprint 14 e-posta sablonu: "Rezervasyon olusturuldu".</summary>
+    /// <summary>PDF Sprint 14 e-posta sablonu: "Rezervasyon oluşturuldu".</summary>
     public const string ReservationCreated = "ReservationCreated";
 }
 
@@ -63,14 +63,14 @@ public static class OutboxMessageTypes
 //
 // Neden anonim nesne yerine record?
 //   - Yazan taraf (komut) ile okuyan taraf (isleyici) AYNI tipi
-//     kullaniyor. Alan adini birinde degistirip digerinde unutmak
-//     derleyici hatasi veriyor.
+//     kullaniyor. Alan adını birinde degistirip digerinde unutmak
+//     derleyici hatası veriyor.
 //   - Anonim nesneyle yazip elle okusaydik, uyusmazlik ancak
 //     CALISMA ZAMANINDA -- hem de arka planda, kimse bakmazken --
-//     ortaya cikardi.
+//     ortaya çıkardı.
 //
 // DIKKAT: Bu tiplere alan EKLEMEK guvenlidir (eski kayitlarda alan
-// olmaz, varsayilan deger gelir). Alan SILMEK veya YENIDEN ADLANDIRMAK
+// olmaz, varsayılan deger gelir). Alan SILMEK veya YENIDEN ADLANDIRMAK
 // tablodaki islenmemis eski mesajlari bozar.
 // ===================================================================
 

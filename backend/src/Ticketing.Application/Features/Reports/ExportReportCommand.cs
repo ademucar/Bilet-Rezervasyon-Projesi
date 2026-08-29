@@ -13,7 +13,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reports;
 
-/// <summary>Disa aktarilabilen rapor turleri. PDF Sprint 13.</summary>
+/// <summary>Disa aktarilabilen rapor türleri. PDF Sprint 13.</summary>
 public enum ReportType
 {
     SalesSummary = 1,
@@ -28,23 +28,23 @@ public enum ReportType
 // ===================================================================
 
 /// <summary>
-/// Rapor disa aktarimi TALEP EDER. Uretim arka planda yapilir.
+/// Rapor disa aktarimi TALEP EDER. Üretim arka planda yapilir.
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// PDF: "Rapor uretimi background job olarak calistirilmali ve
-/// tamamlandiginda kullaniciya bildirim gonderilmelidir."
+/// PDF: "Rapor üretimi background job olarak calistirilmali ve
+/// tamamlandiginda kullanıcıya bildirim gonderilmelidir."
 /// ==================================================================
-/// Bu kural neden var? Cunku rapor uretimi UZUN SUREBILIR:
-/// on binlerce satirlik bir Excel dosyasi olusturmak saniyeler alir.
+/// Bu kural neden var? Çünkü rapor üretimi UZUN SUREBILIR:
+/// on binlerce satirlik bir Excel dosyasi olusturmak saniyeler alır.
 ///
 /// Senkron yapsaydik:
-///   - Kullanicinin tarayicisi dakikalarca beklerdi
+///   - Kullanıcının tarayicisi dakikalarca beklerdi
 ///   - Ters vekil sunucu (nginx) zaman asimina ugratirdi
-///   - Istek yarida kesilse bile sunucu uretmeye devam ederdi
+///   - İstek yarida kesilse bile sunucu uretmeye devam ederdi
 ///
-/// Bu uc, yalnizca "talebi kuyruga aldim" der ve HEMEN doner.
-/// Kullanici baska isine bakar, rapor hazir olunca bildirim alir.
+/// Bu uc, yalnızca "talebi kuyruga aldim" der ve HEMEN döner.
+/// Kullanıcı başka isine bakar, rapor hazır olunca bildirim alır.
 ///
 /// ------------------------------------------------------------------
 /// KUYRUGA ALMA YOLU: OUTBOX
@@ -53,13 +53,13 @@ public enum ReportType
 /// Sprint 9'da kurdugumuz Outbox altyapisi zaten tam olarak bu isi
 /// yapiyor ve UC ONEMLI USTUNLUGU var:
 ///
-///   1) Talep, VERITABANI TRANSACTION'I icinde kaydediliyor. Sunucu
+///   1) Talep, VERITABANI TRANSACTION'I içinde kaydediliyor. Sunucu
 ///      tam o anda coksa bile talep kaybolmuyor.
-///   2) Basarisiz uretim ustel geri cekilme ile yeniden deneniyor.
+///   2) Başarısız üretim ustel geri cekilme ile yeniden deneniyor.
 ///   3) Bes denemeden sonra dead letter oluyor ve izleme ekraninda
-///      gorunuyor.
+///      görünüyor.
 ///
-/// Hangfire.Enqueue ile bunlarin hepsini ayrica kurmak gerekirdi.
+/// Hangfire.Enqueue ile bunlarin hepsini ayrıca kurmak gerekirdi.
 /// ==================================================================
 /// </remarks>
 public sealed record ExportReportCommand(
@@ -72,19 +72,19 @@ public sealed class ExportReportCommandValidator : AbstractValidator<ExportRepor
 {
     public ExportReportCommandValidator()
     {
-        // Enum'un TANIMLI bir degeri mi?
+        // Enum'un TANIMLI bir değeri mi?
         //
-        // IsInEnum SART: istemci Type=99 gonderirse C# bunu sessizce
-        // kabul eder (enum'lar aslinda int'tir) ve asagidaki switch
-        // varsayilan dala duserdi. Erken ve net hata daha iyi.
+        // IsInEnum ŞART: istemci Type=99 gonderirse C# bunu sessizce
+        // kabul eder (enum'lar aslında int'tir) ve aşağıdaki switch
+        // varsayılan dala duserdi. Erken ve net hata daha iyi.
         RuleFor(x => x.Type).IsInEnum();
         RuleFor(x => x.Format).IsInEnum();
 
-        // Tarih araligi mantikli mi?
+        // Tarih aralığı mantikli mi?
         RuleFor(x => x.To)
             .GreaterThanOrEqualTo(x => x.From!.Value)
             .When(x => x.From.HasValue && x.To.HasValue)
-            .WithMessage("Bitis tarihi baslangictan once olamaz.");
+            .WithMessage("Bitiş tarihi baslangictan önce olamaz.");
     }
 }
 
@@ -105,16 +105,16 @@ internal sealed class ExportReportCommandHandler
         CancellationToken cancellationToken)
     {
         // ==============================================================
-        // YETKI KONTROLU TALEP ANINDA -- ISLEME ANINDA DEGIL
+        // YETKI KONTROLU TALEP ANINDA -- ISLEME ANINDA DEĞİL
         // ==============================================================
-        // Bu cok onemli bir ayrim. Rapor arka planda uretilecek ve o
-        // sirada HTTP baglami OLMAYACAK: ICurrentUser bos donecek.
+        // Bu çok önemli bir ayrim. Rapor arka planda uretilecek ve o
+        // sırada HTTP baglami OLMAYACAK: ICurrentUser boş donecek.
         //
-        // Yetkiyi burada dogruluyor ve kullanici kimligini payload'a
-        // YAZIYORUZ. Isleyici o kimlikle uretim yapiyor.
+        // Yetkiyi burada dogruluyor ve kullanıcı kimligini payload'a
+        // YAZIYORUZ. Isleyici o kimlikle üretim yapiyor.
         //
         // Kontrolu isleyiciye biraksaydik ya yetkisiz rapor uretilirdi
-        // ya da hicbir rapor uretilemezdi.
+        // ya da hiçbir rapor uretilemezdi.
         // ==============================================================
         var scopeResult = await ReportScopeResolver
             .ResolveAsync(_context, _currentUser, cancellationToken)
@@ -143,7 +143,7 @@ internal sealed class ExportReportCommandHandler
 
         // Talep kimligini donuyoruz.
         //
-        // Kullanici bildirimi aldiginda bu kimlikle dosyaya
+        // Kullanıcı bildirimi aldiginda bu kimlikle dosyaya
         // ulasabiliyor (GET /reports/exports/{id}).
         return Result.Success(payload.ExportId);
     }
@@ -163,8 +163,8 @@ public sealed record ReportExportPayload(
     DateTimeOffset? To);
 
 /// <summary>
-/// Rapor dosyasini uretir ve kullaniciya bildirim yazar.
-/// PDF Sprint 13: "tamamlandiginda kullaniciya bildirim gonderilmelidir."
+/// Rapor dosyasini üretir ve kullanıcıya bildirim yazar.
+/// PDF Sprint 13: "tamamlandiginda kullanıcıya bildirim gonderilmelidir."
 /// </summary>
 internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
 {
@@ -191,10 +191,10 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
         // ==============================================================
         // IDEMPOTENCY: DOSYA ZATEN URETILDIYSE TEKRAR URETME
         // ==============================================================
-        // Outbox "en az bir kez" garantisi veriyor. Kontrol olmasaydi
-        // ayni rapor iki kez uretilir ve kullanici IKI bildirim alirdi.
+        // Outbox "en az bir kez" garantisi veriyor. Kontrol olmasaydı
+        // aynı rapor iki kez üretilir ve kullanıcı IKI bildirim alırdı.
         //
-        // Dosyanin varligi, isin tamamlandiginin en dogrudan kaniti.
+        // Dosyanin varligi, isin tamamlandiginin en doğrudan kaniti.
         // ==============================================================
         if (await _fileStore.ExistsAsync(data.ExportId, cancellationToken).ConfigureAwait(false))
         {
@@ -204,19 +204,19 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
         // ==============================================================
         // KULLANICI KIMLIGINI TASIYAN OZEL BIR BAGLAM
         // ==============================================================
-        // Rapor sorgulari ICurrentUser uzerinden kapsam belirliyor.
-        // Arka planda HTTP baglami yok -> ICurrentUser bos.
+        // Rapor sorgulari ICurrentUser üzerinden kapsam belirliyor.
+        // Arka planda HTTP baglami yok -> ICurrentUser boş.
         //
-        // Cozum: sorguyu, talebi yapan kullanicinin kimligiyle
-        // calistirmak. Bunu IReportDataProvider uzerinden yapiyorum
+        // Cozum: sorguyu, talebi yapan kullanıcının kimligiyle
+        // calistirmak. Bunu IReportDataProvider üzerinden yapıyorum
         // (bkz. ReportDataProvider). Boylece kapsam kurallari
         // AYNEN korunuyor -- arka planda "her seyi gor" gibi bir
         // ayricalik YOK.
         // ==============================================================
-        // Kapsami PAYLOAD'daki kullanici kimliginden cozuyoruz.
+        // Kapsami PAYLOAD'daki kullanıcı kimliginden cozuyoruz.
         //
-        // ICurrentUser burada bos -- arka planda HTTP baglami yok.
-        // Talep aninda dogrulanmis kimligi tasidigimiz icin yetki
+        // ICurrentUser burada boş -- arka planda HTTP baglami yok.
+        // Talep anında dogrulanmis kimliği tasidigimiz için yetki
         // kurallari aynen uygulanabiliyor.
         var scope = await ReportScopeResolver
             .ResolveForUserAsync(_context, data.UserId, cancellationToken)
@@ -230,13 +230,13 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
 
         await _fileStore.SaveAsync(data.ExportId, file, cancellationToken).ConfigureAwait(false);
 
-        // PDF: "tamamlandiginda kullaniciya bildirim gonderilmelidir."
+        // PDF: "tamamlandiginda kullanıcıya bildirim gonderilmelidir."
         _context.Notifications.Add(Notification.Create(
             data.UserId,
             NotificationType.ReportReady,
-            "Raporunuz hazir",
-            $"{table.Title} raporu {data.Format} biciminde olusturuldu. " +
-            $"{table.Rows.Count} satir iceriyor.",
+            "Raporunuz hazır",
+            $"{table.Title} raporu {data.Format} biciminde oluşturuldu. " +
+            $"{table.Rows.Count} satır iceriyor.",
             data.ExportId,
             $"/api/v1/reports/exports/{data.ExportId}"));
 
@@ -249,7 +249,7 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
 /// </summary>
 /// <remarks>
 /// Arayuz Application'da; dosya sisteminde mi, S3'te mi, veritabaninda
-/// mi saklandigini is mantigi bilmiyor.
+/// mi saklandigini is mantığı bilmiyor.
 /// </remarks>
 public interface IReportFileStore
 {
@@ -265,29 +265,29 @@ public interface IReportFileStore
 // ===================================================================
 
 /// <summary>
-/// Bu rapor dosyasi istegi yapan kullaniciya mi ait?
+/// Bu rapor dosyasi isteği yapan kullanıcıya mi ait?
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// TAHMIN EDILEMEZ KIMLIK, YETKI DEGILDIR
+/// TAHMIN EDILEMEZ KIMLIK, YETKI DEĞİLDİR
 /// ==================================================================
 /// exportId bir Guid v7 ve tahmin edilmesi pratikte imkansiz. Ama
-/// buna guvenip yetki kontrolunu atlamak "gizlilik yoluyla guvenlik"
+/// buna guvenip yetki kontrolunu atlamak "gizlilik yoluyla güvenlik"
 /// (security through obscurity) olurdu.
 ///
-/// Kimlik bir yerden sizabilir: sunucu erisim loglari, tarayici
-/// gecmisi, paylasilan bir ekran goruntusu, Referer basligi. Sizan
+/// Kimlik bir yerden sizabilir: sunucu erişim loglari, tarayıcı
+/// gecmisi, paylasilan bir ekran goruntusu, Referer başlığı. Sizan
 /// kimlikle baskasinin GELIR RAPORU indirilebilirdi.
 ///
 /// ------------------------------------------------------------------
 /// SAHIPLIGI NEREDEN BILIYORUZ?
 /// ------------------------------------------------------------------
-/// Ayri bir "raporlar" tablosu acmadim. Cunku bilgi ZATEN duruyor:
-/// rapor hazir oldugunda SAHIBINE bir bildirim yaziliyor ve o
-/// bildirimin RelatedEntityId alani exportId.
+/// Ayrı bir "raporlar" tablosu acmadim. Çünkü bilgi ZATEN duruyor:
+/// rapor hazır olduğunda SAHIBINE bir bildirim yaziliyor ve o
+/// bildirimin RelatedEntityId alanı exportId.
 ///
-/// Yani "bu raporun bildirimi bu kullaniciya mi yazilmis?" sorusu,
-/// sahiplik sorusunun ta kendisi. Var olan veriyi kullanmak, ayni
+/// Yani "bu raporun bildirimi bu kullanıcıya mi yazilmis?" sorusu,
+/// sahiplik sorusunun ta kendisi. Var olan veriyi kullanmak, aynı
 /// gercegi iki yerde tutmaktan iyi.
 /// ==================================================================
 /// </remarks>

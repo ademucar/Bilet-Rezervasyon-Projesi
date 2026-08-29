@@ -4,25 +4,25 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Biletin QR kodu. PDF: "QR kod degeri benzersiz olmalidir."
+/// Biletin QR kodu. PDF: "QR kod değeri benzersiz olmalıdır."
 ///
 /// ------------------------------------------------------------------
 /// NEDEN AYRI TABLO? Ticket'a bir sutun eklesek olmaz miydi?
 /// ------------------------------------------------------------------
-/// PDF'in ER diyagraminda ayri bir tablo olarak isteniyor ve bunun
+/// PDF'in ER diyagraminda ayrı bir tablo olarak isteniyor ve bunun
 /// pratik gerekceleri var:
 ///
-/// 1) QR uretimi bir OUTBOX isidir (PDF Sprint 9: "QR bilet olusturma
-///    islemi"). Odeme transaction'i icinde QR gorseli uretmek istemeyiz;
-///    bu is yavastir ve kullaniciyi bekletir. Bilet hemen olusur,
-///    QR arkadan gelir. Ayri tablo bu gecikmeyi dogal kilar --
-///    Ticket var ama QrCode henuz null olabilir.
+/// 1) QR üretimi bir OUTBOX isidir (PDF Sprint 9: "QR bilet oluşturma
+///    islemi"). Ödeme transaction'i içinde QR gorseli uretmek istemeyiz;
+///    bu is yavastir ve kullanıcıyı bekletir. Bilet hemen olusur,
+///    QR arkadan gelir. Ayrı tablo bu gecikmeyi dogal kilar --
+///    Ticket var ama QrCode henüz null olabilir.
 ///
-/// 2) QR yeniden uretilebilir olmali (kullanici "QR'im calismiyor" derse).
-///    Ayri kayit, eski QR'i gecersiz kilip yenisini uretmeyi kolaylastirir.
+/// 2) QR yeniden uretilebilir olmalı (kullanıcı "QR'im calismiyor" derse).
+///    Ayrı kayıt, eski QR'i geçersiz kilip yenisini uretmeyi kolaylastirir.
 ///
-/// 3) Guvenlik: QR degeri hassas bir bilgidir (bilete erisim saglar).
-///    Ayri tabloda olmasi, bilet listesi sorgularinda kazara
+/// 3) Güvenlik: QR değeri hassas bir bilgidir (bilete erişim saglar).
+///    Ayrı tabloda olmasını, bilet listesi sorgularinda kazara
 ///    donmesini engellememizi kolaylastirir.
 /// </summary>
 public class TicketQrCode : Entity
@@ -34,10 +34,10 @@ public class TicketQrCode : Entity
     /// <summary>
     /// QR icine gomulecek benzersiz deger.
     ///
-    /// KRIPTOGRAFIK olarak guvenli uretiliyor (RandomNumberGenerator).
-    /// Bu sart: tahmin edilebilir bir QR degeri, saldirganin gecerli
+    /// KRIPTOGRAFIK olarak güvenli uretiliyor (RandomNumberGenerator).
+    /// Bu sart: tahmin edilebilir bir QR değeri, saldirganin geçerli
     /// bilet uretebilmesi demektir. Girist gorevlisi sahte QR'i
-    /// gercekten ayirt edemez.
+    /// gerçekten ayırt edemez.
     ///
     /// 32 byte = 256 bit entropi. Kaba kuvvetle tahmin edilmesi
     /// pratikte imkansiz.
@@ -47,13 +47,13 @@ public class TicketQrCode : Entity
     public DateTimeOffset GeneratedAt { get; private set; }
 
     /// <summary>
-    /// QR gorselinin depolama yolu. Uretim arka planda yapilacagi icin
-    /// bir sure null kalabilir.
+    /// QR gorselinin depolama yolu. Üretim arka planda yapilacagi için
+    /// bir süre null kalabilir.
     /// </summary>
     public string? ImagePath { get; private set; }
 
     /// <summary>
-    /// QR gecersiz kilindi mi? Yeniden uretim durumunda eskisi iptal edilir.
+    /// QR geçersiz kilindi mi? Yeniden üretim durumunda eskisi iptal edilir.
     /// </summary>
     public bool IsRevoked { get; private set; }
 
@@ -68,11 +68,11 @@ public class TicketQrCode : Entity
         };
 
     /// <summary>
-    /// Base64Url kullaniyorum, duz Base64 degil.
+    /// Base64Url kullanıyorum, duz Base64 değil.
     ///
     /// Duz Base64'te '+', '/' ve '=' karakterleri bulunur. Bunlar URL'de
     /// ozel anlam tasir ve kacis (escaping) gerektirir. QR degerini bir
-    /// dogrulama linkine koyacaksak ("/api/tickets/verify?code=...")
+    /// doğrulama linkine koyacaksak ("/api/tickets/verify?code=...")
     /// bu karakterler sorun cikarir. Base64Url bu uc karakteri kullanmaz.
     /// </summary>
     private static string GenerateSecureValue()
@@ -87,13 +87,13 @@ public class TicketQrCode : Entity
     public void SetImagePath(string path) => ImagePath = path;
 
     /// <summary>
-    /// QR'i gecersiz kilar. Yeni bir QR uretilmeden once cagrilir.
+    /// QR'i geçersiz kilar. Yeni bir QR uretilmeden önce cagrilir.
     /// </summary>
     public void Revoke() => IsRevoked = true;
 
     /// <summary>
-    /// Bu QR giriste kabul edilebilir mi?
-    /// Sadece QR'in kendi durumuna bakar; biletin durumu ayrica
+    /// Bu QR girişte kabul edilebilir mi?
+    /// Sadece QR'in kendi durumuna bakar; biletin durumu ayrıca
     /// kontrol edilmelidir (Ticket.Status == Active).
     /// </summary>
     public bool IsValid() => !IsRevoked;

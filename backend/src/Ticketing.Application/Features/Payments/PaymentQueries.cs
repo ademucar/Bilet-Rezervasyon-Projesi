@@ -17,7 +17,7 @@ namespace Ticketing.Application.Features.Payments;
 // DTO'lar
 // ===================================================================
 
-/// <param name="ProviderReference">Saglayici islem referansi. Bu alani kullaniciya DONUYORUZ cunku destek talebinde "islem numaram su" diyebilmeli. Hassas bir bilgi degil -- tek basina hicbir islem yapilamaz.</param>
+/// <param name="ProviderReference">Sağlayıcı işlem referansı. Bu alanı kullanıcıya DONUYORUZ çünkü destek talebinde "işlem numaram su" diyebilmeli. Hassas bir bilgi değil -- tek başına hiçbir işlem yapılamaz.</param>
 public sealed record PaymentDto(
     Guid Id,
     Guid ReservationId,
@@ -41,11 +41,11 @@ public sealed record PaymentTransactionDto(
 internal static class PaymentProjections
 {
     /// <summary>
-    /// Odeme sorgusunu DTO'ya projelendirir.
+    /// Ödeme sorgusunu DTO'ya projelendirir.
     ///
     /// Filtre PROJEKSIYONDAN ONCE uygulanmali -- Sprint 7'de bu
     /// tuzaga dustuk: EF, olusturdugu DTO uzerinde WHERE calistiramiyor.
-    /// Bu yuzden metot IQueryable&lt;Payment&gt; aliyor.
+    /// Bu yüzden metot IQueryable&lt;Payment&gt; aliyor.
     /// </summary>
     public static IQueryable<PaymentDto> ToDto(this IQueryable<Payment> query)
         => query
@@ -93,15 +93,15 @@ internal sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, 
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<PaymentDto>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var isAdmin = _currentUser.Roles.Contains(Role.Names.Admin);
 
-        // Sahiplik kontrolu SORGUYA dahil.
+        // Sahiplik kontrolü SORGUYA dahil.
         //
-        // Admin destek islerini yapabilmek icin her odemeyi gorebilmeli;
-        // normal kullanici yalnizca kendisininkini.
+        // Admin destek islerini yapabilmek için her ödemeyi gorebilmeli;
+        // normal kullanıcı yalnızca kendisininkini.
         var dto = await _context.Payments
             .Where(p => p.Id == request.Id && (isAdmin || p.Reservation.UserId == userId))
             .ToDto()
@@ -119,19 +119,19 @@ internal sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, 
 // ===================================================================
 
 /// <summary>
-/// Iade islemi.
+/// İade islemi.
 /// </summary>
 /// <param name="Amount">
-/// Iade tutari. null ise KALAN TUM tutar iade edilir.
+/// İade tutarı. null ise KALAN TÜM tutar iade edilir.
 ///
-/// Kismi iade destegi var cunku bir rezervasyondaki 4 biletten
-/// yalnizca 2'si iade edilebilir.
+/// Kismi iade destegi var çünkü bir rezervasyondaki 4 biletten
+/// yalnızca 2'si iade edilebilir.
 /// </param>
 /// <param name="IdempotencyKey">
-/// PDF Sprint 15: "Iade baslatma" idempotency listesinde.
+/// PDF Sprint 15: "İade baslatma" idempotency listesinde.
 ///
-/// Ayni anahtarla gelen ikinci istek YENI iade yapmaz, mevcut
-/// odemenin durumunu doner.
+/// Aynı anahtarla gelen ikinci istek YENI iade yapmaz, mevcut
+/// ödemenin durumunu döner.
 /// </param>
 public sealed record RefundPaymentCommand(
     Guid PaymentId,
@@ -163,27 +163,27 @@ internal sealed partial class RefundPaymentCommandHandler
     }
 
     // ==============================================================
-    // PDF Sprint 16: "Iade" loglanmalidir.
+    // PDF Sprint 16: "İade" loglanmalidir.
     // ==============================================================
-    // WARNING seviyesi -- hata oldugu icin degil, GORULMESI
-    // gerektigi icin.
+    // WARNING seviyesi -- hata olduğu için değil, GORULMESI
+    // gerektigi için.
     //
-    // Iade, sistemdeki tek PARA CIKISI. Hacminde ani bir artis ya
+    // İade, sistemdeki tek PARA CIKISI. Hacminde ani bir artis ya
     // bir yazilim hatasinin ya da bir kotuye kullanimin isaretidir;
     // ikisi de hizli mudahale gerektirir.
     //
-    // Information yapsaydik uretim filtrelerinde kaybolurdu ve
-    // "gunluk iade tutari su esigi asti" alarmini besleyecek veri
-    // hic gelmezdi.
+    // Information yapsaydik üretim filtrelerinde kaybolurdu ve
+    // "günlük iade tutarı su esigi asti" alarmini besleyecek veri
+    // hiç gelmezdi.
     //
     // Tam/kismi ayrimini AYRI bir alan olarak veriyorum: tam iade
-    // koltuklari serbest birakiyor (satis kaybi), kismi iade
-    // birakmiyor. Ayni satirda toplanirsa bu ayrim sorgulanamaz.
+    // koltukları serbest birakiyor (satış kaybi), kismi iade
+    // birakmiyor. Aynı satirda toplanirsa bu ayrim sorgulanamaz.
     // ==============================================================
     [LoggerMessage(
         EventId = LogEvents.IadeYapildi,
         Level = LogLevel.Warning,
-        Message = "IADE yapildi. Odeme: {PaymentId}, Tutar: {Amount} {Currency}, Tam iade: {IsFull}, Sebep: {Reason}")]
+        Message = "IADE yapıldı. Ödeme: {PaymentId}, Tutar: {Amount} {Currency}, Tam iade: {IsFull}, Sebep: {Reason}")]
     private static partial void LogRefunded(
         ILogger logger, Guid paymentId, decimal amount, string currency, bool isFull, string? reason);
 
@@ -199,26 +199,26 @@ internal sealed partial class RefundPaymentCommandHandler
             // ==========================================================
             // BU Include SPRINT 17'DE, ENTEGRASYON TESTIYLE EKLENDI
             // ==========================================================
-            // Asagidaki idempotency kontrolu payment.Transactions
-            // uzerinde calisiyor. Ama bu koleksiyon YUKLENMIYORDU:
-            // lazy loading kapali oldugu icin her zaman BOS geliyordu.
+            // Aşağıdaki idempotency kontrolü payment.Transactions
+            // uzerinde çalışıyor. Ama bu koleksiyon YUKLENMIYORDU:
+            // lazy loading kapalı olduğu için her zaman BOŞ geliyordu.
             //
-            // Sonuc: kontrol her seferinde "daha once islenmemis"
-            // diyordu ve idempotency HIC calismiyordu. Sprint 15'te
-            // yazdim, dogru gorunuyordu, tek satiri bile calismiyordu.
+            // Sonuç: kontrol her seferinde "daha önce islenmemis"
+            // diyordu ve idempotency HİÇ calismiyordu. Sprint 15'te
+            // yazdim, doğru gorunuyordu, tek satiri bile calismiyordu.
             //
-            // Bunu ancak entegrasyon testi yakaladi: ayni
+            // Bunu ancak entegrasyon testi yakaladi: aynı
             // Idempotency-Key ile iki kismi iade gonderdim ve
-            // veritabaninda IKI iade kaydi buldum -- yani ayni para
+            // veritabaninda IKI iade kaydı buldum -- yani aynı para
             // iki kez geri gonderilmisti.
             //
             // NOT: tam iadede domain korumasi (toplam iade odenen
-            // tutari asamaz) ikinci istegi zaten reddediyordu. Hata
-            // yalnizca KISMI iadede gorunur oluyordu -- bu yuzden
+            // tutarı aşamaz) ikinci isteği zaten reddediyordu. Hata
+            // yalnızca KISMI iadede görünür oluyordu -- bu yüzden
             // fark edilmesi bu kadar zordu.
             //
             // Sprint 12 (denetim alanlari), Sprint 15 (baglanmamis
-            // maskeleyici), Sprint 16 (correlation ID) ile ayni
+            // maskeleyici), Sprint 16 (correlation ID) ile aynı
             // desen: yazilmis ama beslenmemis kod.
             // ==========================================================
             .Include(p => p.Transactions)
@@ -238,18 +238,18 @@ internal sealed partial class RefundPaymentCommandHandler
         // ==============================================================
         // IDEMPOTENCY -- PDF Sprint 15
         // ==============================================================
-        // Iade, cift calistirilmasi EN TEHLIKELI islem: ayni parayi
-        // iki kez geri gondermek dogrudan mali kayip.
+        // İade, cift calistirilmasi EN TEHLIKELI işlem: aynı parayi
+        // iki kez geri gondermek doğrudan mali kayip.
         //
-        // Anahtari islem kayitlarinda (PaymentTransaction) ariyoruz.
-        // Ayri bir tablo acmadim: bilgi zaten orada durmali, cunku
-        // "bu iade yapildi mi?" sorusunun dogal yeri islem gecmisi.
+        // Anahtari işlem kayitlarinda (PaymentTransaction) ariyoruz.
+        // Ayrı bir tablo acmadim: bilgi zaten orada durmali, çünkü
+        // "bu iade yapıldı mi?" sorusunun dogal yeri işlem gecmisi.
         //
-        // Bu kontrol yarisa acik (iki istek ayni anda gelirse ikisi de
-        // "yok" gorebilir). Kabul edilebilir cunku ASIL koruma
-        // Payment.Refund() icinde: toplam iade odenen tutari asamaz.
-        // Buradaki kontrol YAYGIN durumu (ag kopmasi sonrasi tekrar)
-        // temiz bir sekilde cozuyor.
+        // Bu kontrol yarisa açık (iki istek aynı anda gelirse ikisi de
+        // "yok" görebilir). Kabul edilebilir çünkü ASIL koruma
+        // Payment.Refund() içinde: toplam iade odenen tutarı aşamaz.
+        // Buradaki kontrol YAYGIN durumu (ag kopmasi sonrası tekrar)
+        // temiz bir şekilde cozuyor.
         // ==============================================================
         if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
         {
@@ -259,8 +259,8 @@ internal sealed partial class RefundPaymentCommandHandler
 
             if (zatenIslendi)
             {
-                // Ayni istek daha once islenmis: HATA DEGIL, mevcut
-                // durumu donuyoruz. Cagiran taraf icin sonuc ayni.
+                // Aynı istek daha önce islenmis: HATA DEĞİL, mevcut
+                // durumu donuyoruz. Cagiran taraf için sonuç aynı.
                 return await LoadDtoAsync(payment.Id, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -272,22 +272,22 @@ internal sealed partial class RefundPaymentCommandHandler
         {
             return Result.Failure<PaymentDto>(Error.Validation(
                 "payment.invalid_refund_amount",
-                $"Iade tutari 0 ile {refundable.Amount} arasinda olmalidir."));
+                $"İade tutari 0 ile {refundable.Amount} arasında olmalıdır."));
         }
 
         // ==============================================================
         // ONCE SAGLAYICI, SONRA VERITABANI
         // ==============================================================
-        // Odeme BASLATIRKEN once kaydediyorduk (para gidip izimizin
-        // kalmamasini onlemek icin). IADE'de sira TERS:
+        // Ödeme BASLATIRKEN önce kaydediyorduk (para gidip izimizin
+        // kalmamasini onlemek için). IADE'de sıra TERS:
         //
-        // Once veritabanina "iade edildi" yazip sonra saglayici
-        // reddetseydi, kullanici parasini almadan sistemde "iade
-        // edildi" gorunurdu. Bu daha kotu bir durum: musteri parasini
+        // Önce veritabanina "iade edildi" yazip sonra sağlayıcı
+        // reddetseydi, kullanıcı parasini almadan sistemde "iade
+        // edildi" görünürdü. Bu daha kötü bir durum: müşteri parasini
         // bekler, biz "iade ettik" deriz.
         //
-        // Once saglayiciya gidip onay alirsak, en kotu ihtimalle para
-        // gider ama bizde kayit olmaz -- mutabakatta yakalanabilir
+        // Önce saglayiciya gidip onay alirsak, en kötü ihtimalle para
+        // gider ama bizde kayıt olmaz -- mutabakatta yakalanabilir
         // ve duzeltilebilir bir durumdur.
         var providerResult = await _paymentService
             .RefundPaymentAsync(payment.ProviderReference ?? string.Empty, amount, cancellationToken)
@@ -297,12 +297,12 @@ internal sealed partial class RefundPaymentCommandHandler
         {
             return Result.Failure<PaymentDto>(Error.Conflict(
                 "payment.refund_rejected",
-                providerResult.ErrorMessage ?? "Iade saglayici tarafindan reddedildi."));
+                providerResult.ErrorMessage ?? "İade sağlayıcı tarafından reddedildi."));
         }
 
-        // Idempotency anahtarini islem kaydina yaziyoruz.
+        // Idempotency anahtarini işlem kaydina yazıyoruz.
         //
-        // Anahtar verilmediyse saglayicinin referansi kullaniliyor --
+        // Anahtar verilmediyse sağlayıcının referansı kullanılıyor --
         // yani davranis eskisi gibi kaliyor ve mevcut cagiranlar
         // etkilenmiyor.
         payment.Refund(
@@ -314,8 +314,8 @@ internal sealed partial class RefundPaymentCommandHandler
 
         // TAM iade ise rezervasyonu ve biletleri de iade et.
         //
-        // Kismi iadede rezervasyon Confirmed kaliyor: kullanicinin
-        // hala gecerli biletleri var.
+        // Kismi iadede rezervasyon Confirmed kaliyor: kullanıcının
+        // hâlâ geçerli biletleri var.
         if (payment.GetRefundableAmount().Amount == 0)
         {
             reservation.MarkAsRefunded();
@@ -331,10 +331,10 @@ internal sealed partial class RefundPaymentCommandHandler
                 ticket.Cancel(withRefund: true, now);
             }
 
-            // Koltuklari tekrar satisa ac.
+            // Koltukları tekrar satışa ac.
             //
-            // Bu adim atlanirsa koltuk kalici olarak "satilmis"
-            // kalir ve bir daha kimseye satilamaz -- gelir kaybi.
+            // Bu adim atlanirsa koltuk kalici olarak "satılmış"
+            // kalır ve bir daha kimseye satilamaz -- gelir kaybi.
             foreach (var item in reservation.Items)
             {
                 if (item.EventSeat.Status == EventSeatStatus.Sold)
@@ -346,20 +346,20 @@ internal sealed partial class RefundPaymentCommandHandler
             _context.Notifications.Add(Notification.Create(
                 reservation.UserId,
                 NotificationType.RefundCompleted,
-                "Iadeniz tamamlandi",
-                $"{reservation.ReservationCode} numarali rezervasyonunuz icin " +
+                "Iadeniz tamamlandı",
+                $"{reservation.ReservationCode} numarali rezervasyonunuz için " +
                 $"{amount} {payment.Amount.Currency} iade edildi.",
                 reservation.Id));
         }
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // PDF Sprint 16: "Iade" loglanmalidir.
+        // PDF Sprint 16: "İade" loglanmalidir.
         //
         // SaveChanges'ten SONRA: para hareketi ancak kaydedildiyse
-        // gercek. Bu, para iceren bir islemde ozellikle onemli --
+        // gerçek. Bu, para iceren bir islemde ozellikle önemli --
         // logda gorunup veritabaninda olmayan bir iade, mutabakat
-        // sirasinda saatler kaybettirir.
+        // sırasında saatler kaybettirir.
         LogRefunded(
             _logger,
             payment.Id,
@@ -371,11 +371,11 @@ internal sealed partial class RefundPaymentCommandHandler
         // PDF Sprint 10: "SeatReleased".
         //
         // YALNIZCA TAM IADEDE gonderiyorum. Kismi iadede koltuklar
-        // satilmis kaliyor -- kullanicinin hala gecerli biletleri var.
-        // Kosulsuz gonderseydik, kismi iade sonrasi herkesin
-        // ekraninda koltuklar bosalmis gorunur ama sunucu
-        // rezervasyonu reddederdi. Ekran ile gercek arasindaki bu
-        // ayrilik, kullanicinin sisteme guvenini bitirir.
+        // satılmış kaliyor -- kullanıcının hâlâ geçerli biletleri var.
+        // Kosulsuz gonderseydik, kismi iade sonrası herkesin
+        // ekraninda koltuklar bosalmis görünür ama sunucu
+        // rezervasyonu reddederdi. Ekran ile gerçek arasindaki bu
+        // ayrilik, kullanıcının sisteme guvenini bitirir.
         if (payment.GetRefundableAmount().Amount == 0)
         {
             await _seatNotifier.SeatsReleasedAsync(
@@ -444,7 +444,7 @@ internal sealed class GetMyTicketsQueryHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<IReadOnlyList<TicketDto>>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var query = _context.Tickets.AsNoTracking().Where(t => t.UserId == userId);
@@ -455,7 +455,7 @@ internal sealed class GetMyTicketsQueryHandler
         }
 
         var tickets = await query
-            // Yaklasan etkinlikler once.
+            // Yaklasan etkinlikler önce.
             .OrderBy(t => t.EventSeat.EventSession.StartDate)
             .Select(t => new TicketDto(
                 t.Id,
@@ -472,9 +472,9 @@ internal sealed class GetMyTicketsQueryHandler
 
                 // QR degerini YALNIZCA AKTIF biletlerde donuyorum.
                 //
-                // Iptal edilmis veya kullanilmis biletin QR'ini
+                // İptal edilmiş veya kullanılmış biletin QR'ini
                 // gondermenin bir faydasi yok; hassas bir deger
-                // oldugu icin gereksiz yere yaymiyoruz.
+                // olduğu için gereksiz yere yaymiyoruz.
                 t.Status == TicketStatus.Active && t.QrCode != null && !t.QrCode.IsRevoked
                     ? t.QrCode.QrValue
                     : null,

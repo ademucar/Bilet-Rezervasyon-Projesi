@@ -6,13 +6,13 @@ namespace Ticketing.Domain.Events;
 /// Bir etkinlik iptal edildiginde firlatilir.
 ///
 /// PDF Sprint 1, soru 9: Etkinlik iptal edildiginde aktif rezervasyonlar
-/// iptal edilmeli, satilmis biletler iade edilmeli, koltuklar serbest
+/// iptal edilmeli, satılmış biletler iade edilmeli, koltuklar serbest
 /// birakilmali, etkilenen kullanicilara bildirim gitmeli.
 ///
-/// Bu islerin HEPSINI Event.Cancel() metodunun icinde yapmak yanlis olurdu:
-/// Event sinifinin rezervasyonlari, odemeleri ve e-posta servisini bilmesi
+/// Bu islerin HEPSINI Event.Cancel() metodunun içinde yapmak yanlış olurdu:
+/// Event sinifinin rezervasyonları, ödemeleri ve e-posta servisini bilmesi
 /// gerekirdi. O zaman Domain katmani altyapiya bagimli hale gelirdi ve
-/// architecture testimiz kirmizi yanardi.
+/// architecture testimiz kırmızı yanardi.
 ///
 /// Bunun yerine Event sadece "iptal edildim" diyor; ne yapilacagina
 /// Application katmanindaki handler'lar karar veriyor.

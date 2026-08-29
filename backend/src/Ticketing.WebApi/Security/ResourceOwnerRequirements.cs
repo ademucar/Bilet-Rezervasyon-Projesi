@@ -9,8 +9,8 @@ namespace Ticketing.WebApi.Security;
 // KAYNAK BAZLI YETKILENDIRME -- PDF: "Resource based authorization"
 // ===================================================================
 // Sprint 3'te TicketOwner ve ReservationOwner politikalari
-// tanimlanmisti ama yalnizca RequireAuthenticatedUser() yapiyorlardi.
-// Koddaki not soyluyordu: "gercek sahiplik kontrollerini Sprint 7-8'de
+// tanimlanmisti ama yalnızca RequireAuthenticatedUser() yapiyorlardi.
+// Koddaki not soyluyordu: "gerçek sahiplik kontrollerini Sprint 7-8'de
 // yazacagiz."
 //
 // Sprint 19 denetiminde yazilmadiklarini buldum.
@@ -18,16 +18,16 @@ namespace Ticketing.WebApi.Security;
 // ------------------------------------------------------------------
 // PEKI SISTEM ACIK MIYDI? -- HAYIR, VE BUNU OLCTUM
 // ------------------------------------------------------------------
-// Iki kullanici olusturup birinin rezervasyonuna digerinin erismesini
+// Iki kullanıcı olusturup birinin rezervasyonuna digerinin erismesini
 // denedim:
 //
 //   Rezervasyonu OKU      -> 404
-//   Rezervasyonu IPTAL ET -> 404
+//   Rezervasyonu İPTAL ET -> 404
 //   Sureyi UZAT           -> 404
-//   Odeme AC              -> 404
+//   Ödeme AC              -> 404
 //
 // Yani handler'lar sahiplik kontrolunu ZATEN yapiyor (ve varligi
-// sizdirmamak icin 403 yerine 404 donuyorlar -- dogru davranis).
+// sizdirmamak için 403 yerine 404 donuyorlar -- doğru davranis).
 //
 // ------------------------------------------------------------------
 // O ZAMAN BU DOSYA NEDEN VAR?
@@ -35,32 +35,32 @@ namespace Ticketing.WebApi.Security;
 // Uc sebep:
 //
 // 1) POLITIKA YANILTICIYDI. Bir controller'a
-//    [Authorize(Policy = TicketOwner)] yazan kisi, sahiplik
-//    kontrolunun POLITIKA tarafindan yapildigini sanirdi. Oysa tek
+//    [Authorize(Policy = TicketOwner)] yazan kişi, sahiplik
+//    kontrolunun POLITIKA tarafından yapildigini sanirdi. Oysa tek
 //    koruma handler'in icindeki bir Where kosuluydu. Birisi o kosulu
-//    kaldirsa, politika hicbir sey fark etmezdi.
+//    kaldirsa, politika hiçbir sey fark etmezdi.
 //
-// 2) SAVUNMA TEK KATMANLIYDI. Simdi iki bagimsiz katman var:
-//    politika istegi kapida durduruyor, handler kendi sorgusunda
-//    yine filtreliyor. Birinin unutulmasi digerini gecersiz kilmiyor.
+// 2) SAVUNMA TEK KATMANLIYDI. Simdi iki bağımsız katman var:
+//    politika isteği kapida durduruyor, handler kendi sorgusunda
+//    yine filtreliyor. Birinin unutulmasi digerini geçersiz kilmiyor.
 //
 // 3) PDF ACIKCA ISTIYOR: "Resource based authorization
-//    uygulanmalidir" ve ornekler arasinda TicketOwner ile
+//    uygulanmalıdır" ve ornekler arasında TicketOwner ile
 //    ReservationOwner sayiliyor.
 //
-// Kalip EventOwnerRequirement ile birebir ayni -- bilincli: uc
-// politika ayni sekilde okunuyor ve ayni tuzaklardan (captive
-// dependency, admin muafiyeti) ayni sekilde korunuyor.
+// Kalip EventOwnerRequirement ile birebir aynı -- bilinçli: uc
+// politika aynı şekilde okunuyor ve aynı tuzaklardan (captive
+// dependency, admin muafiyeti) aynı şekilde korunuyor.
 // ===================================================================
 
-/// <summary>Kullanici bu bilete sahip mi? PDF: TicketOwner.</summary>
+/// <summary>Kullanıcı bu bilete sahip mi? PDF: TicketOwner.</summary>
 public sealed class TicketOwnerRequirement : IAuthorizationRequirement;
 
-/// <summary>Kullanici bu rezervasyona sahip mi? PDF: ReservationOwner.</summary>
+/// <summary>Kullanıcı bu rezervasyona sahip mi? PDF: ReservationOwner.</summary>
 public sealed class ReservationOwnerRequirement : IAuthorizationRequirement;
 
 /// <summary>
-/// Sahiplik kontrolu yapan handler'lar icin ortak temel.
+/// Sahiplik kontrolü yapan handler'lar için ortak temel.
 /// </summary>
 /// <remarks>
 /// ==================================================================
@@ -68,16 +68,16 @@ public sealed class ReservationOwnerRequirement : IAuthorizationRequirement;
 /// ==================================================================
 /// Iki handler da AYNI dort adimi yapiyor:
 ///   1) HttpContext var mi?
-///   2) Admin mi? (evetse gec)
-///   3) Kullanici kimligi nedir?
-///   4) Route'taki kaynak bu kullaniciya mi ait?
+///   2) Admin mi? (evetse geç)
+///   3) Kullanıcı kimliği nedir?
+///   4) Route'taki kaynak bu kullanıcıya mi ait?
 ///
-/// Yalnizca 4. adim farkli. Ikisini ayri ayri yazsaydik, ilk uc adim
+/// Yalnızca 4. adim farklı. Ikisini ayrı ayrı yazsaydık, ilk uc adim
 /// kopyalanirdi ve biri degistiginde digerini guncellemeyi unutmak
-/// cok kolay olurdu -- ozellikle admin muafiyetini.
+/// çok kolay olurdu -- ozellikle admin muafiyetini.
 ///
 /// Admin muafiyetinin unutulmasi somut bir hataya yol acardi: destek
-/// ekibi bir kullanicinin biletini inceleyemezdi.
+/// ekibi bir kullanıcının biletini inceleyemezdi.
 /// ==================================================================
 /// </remarks>
 internal abstract class ResourceOwnerHandlerBase<TRequirement>
@@ -95,10 +95,10 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
         _scopeFactory = scopeFactory;
     }
 
-    /// <summary>Route'ta aranan parametrenin adi.</summary>
+    /// <summary>Route'ta aranan parametrenin adı.</summary>
     protected abstract string RouteParameterName { get; }
 
-    /// <summary>Kaynak bu kullaniciya mi ait?</summary>
+    /// <summary>Kaynak bu kullanıcıya mi ait?</summary>
     protected abstract Task<bool> IsOwnerAsync(
         IApplicationDbContext context,
         Guid resourceId,
@@ -120,7 +120,7 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
 
         // ---- Admin muafiyeti ----
         //
-        // Destek ekibi bir kullanicinin biletini inceleyebilmeli;
+        // Destek ekibi bir kullanıcının biletini inceleyebilmeli;
         // iade islemini zaten admin yapiyor (Sprint 8).
         if (context.User.IsInRole(Role.Names.Admin))
         {
@@ -140,25 +140,25 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
             // ==========================================================
             // ROUTE PARAMETRESI YOKSA REDDEDIYORUZ
             // ==========================================================
-            // Bu politikayi parametresiz bir uca (ornegin liste ucuna)
+            // Bu politikayi parametresiz bir uca (örneğin liste ucuna)
             // yanlislikla eklersek, "kontrol edecek bir kaynak yok"
             // durumu olusuyor.
             //
-            // Sessizce GECIRSEYDIK o uc korumasiz kalirdi ve kimse
-            // fark etmezdi. Reddetmek, yanlis kullanimi HEMEN gorunur
-            // kiliyor: uc 403 doner ve gelistirici sebebini arar.
+            // Sessizce GECIRSEYDIK o uc korumasiz kalırdı ve kimse
+            // fark etmezdi. Reddetmek, yanlış kullanimi HEMEN görünür
+            // kiliyor: uc 403 döner ve gelistirici sebebini arar.
             // ==========================================================
             return;
         }
 
         // ==============================================================
-        // KENDI KAPSAMIM (scope) -- captive dependency'den kacinmak icin
+        // KENDİ KAPSAMIM (scope) -- captive dependency'den kacinmak için
         // ==============================================================
         // AuthorizationHandler singleton; DbContext scoped. Singleton'a
         // scoped enjekte etmek DbContext'i uygulama omru boyunca
-        // yasatir, baglantiyi tutar ve es zamanli isteklerde bozar.
+        // yasatir, baglantiyi tutar ve es zamanlı isteklerde bozar.
         //
-        // EventOwnerAuthorizationHandler ile ayni cozum.
+        // EventOwnerAuthorizationHandler ile aynı çözüm.
         // ==============================================================
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
@@ -201,7 +201,7 @@ internal sealed class TicketOwnerAuthorizationHandler
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        // Ticket.UserId dogrudan sahibi tutuyor; ek bir JOIN gerekmiyor.
+        // Ticket.UserId doğrudan sahibi tutuyor; ek bir JOIN gerekmiyor.
         return await context.Tickets
             .AsNoTracking()
             .AnyAsync(t => t.Id == resourceId && t.UserId == userId, cancellationToken)

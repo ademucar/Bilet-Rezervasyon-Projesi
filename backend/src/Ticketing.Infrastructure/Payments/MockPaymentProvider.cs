@@ -7,35 +7,35 @@ using Ticketing.Application.Abstractions.Time;
 namespace Ticketing.Infrastructure.Payments;
 
 /// <summary>
-/// Her zaman BASARILI donen simulasyon saglayicisi. PDF Sprint 8.
+/// Her zaman BASARILI donen simülasyon sağlayıcısı. PDF Sprint 8.
 ///
-/// Gercek bir saglayiciyla ayni ARAYUZU uyguluyor; yalnizca ic
-/// islemleri taklit. Boylece gercek saglayiciya gecerken Application
-/// katmaninda tek satir degismeyecek.
+/// Gerçek bir saglayiciyla aynı ARAYUZU uyguluyor; yalnızca ic
+/// islemleri taklit. Boylece gerçek saglayiciya gecerken Application
+/// katmaninda tek satır degismeyecek.
 /// </summary>
 internal sealed class MockPaymentProvider : IPaymentService
 {
     public string ProviderName => "MockPaymentProvider";
 
     /// <summary>
-    /// Uretilen islem referanslarini tutar.
+    /// Uretilen işlem referanslarini tutar.
     ///
     /// ==============================================================
     /// NEDEN BELLEKTE BIR SOZLUK?
     /// ==============================================================
-    /// VerifyPaymentAsync'in ANLAMLI olmasi icin. Sozluk olmasaydi
-    /// "her referansi dogrula" derdik ve dogrulama adimi hicbir sey
+    /// VerifyPaymentAsync'in ANLAMLI olmasını için. Sozluk olmasaydı
+    /// "her referansı dogrula" derdik ve doğrulama adimi hiçbir sey
     /// test etmezdi -- uydurma bir referans bile gecerdi.
     ///
-    /// Boylece gercek davranisi taklit ediyoruz: yalnizca BIZIM
+    /// Boylece gerçek davranisi taklit ediyoruz: yalnızca BIZIM
     /// urettigimiz referanslar dogrulanabiliyor. Sahte callback
     /// senaryosunu test edebiliyoruz.
     ///
-    /// ConcurrentDictionary: bu servis SINGLETON ve es zamanli
-    /// isteklerden erisilecek. Duz Dictionary kullansaydik es zamanli
+    /// ConcurrentDictionary: bu servis SINGLETON ve es zamanlı
+    /// isteklerden erisilecek. Duz Dictionary kullansaydık es zamanlı
     /// yazmada bozulabilir ve sonsuz donguye bile girebilirdi.
     ///
-    /// NOT: Bu yalnizca simulasyon icin. Uretimde saglayici bu bilgiyi
+    /// NOT: Bu yalnızca simülasyon için. Uretimde sağlayıcı bu bilgiyi
     /// kendi sisteminde tutar.
     /// </summary>
     private readonly ConcurrentDictionary<string, decimal> _issuedReferences =
@@ -63,14 +63,14 @@ internal sealed class MockPaymentProvider : IPaymentService
     {
         // Bizim uretmedigimiz bir referans -> DOGRULAMA BASARISIZ.
         //
-        // Gercek hayattaki karsiligi: saldirgan callback adresimize
-        // uydurma bir referansla "odeme basarili" istegi gonderdi.
-        // Saglayiciya sorunca "boyle bir islem yok" cevabi geliyor.
+        // Gerçek hayattaki karşılığı: saldirgan callback adresimize
+        // uydurma bir referansla "ödeme başarılı" isteği gonderdi.
+        // Saglayiciya sorunca "boyle bir işlem yok" cevabi geliyor.
         if (!_issuedReferences.ContainsKey(providerReference))
         {
             return Task.FromResult(PaymentResult.Failure(
                 "payment.reference_not_found",
-                "Odeme referansi saglayicida bulunamadi."));
+                "Ödeme referansı saglayicida bulunamadı."));
         }
 
         return Task.FromResult(PaymentResult.Success(providerReference));
@@ -85,20 +85,20 @@ internal sealed class MockPaymentProvider : IPaymentService
         {
             return Task.FromResult(PaymentResult.Failure(
                 "payment.reference_not_found",
-                "Odeme referansi bulunamadi."));
+                "Ödeme referansı bulunamadı."));
         }
 
-        // Saglayici da odenenden fazlasini iade etmeyi reddeder.
+        // Sağlayıcı da odenenden fazlasini iade etmeyi reddeder.
         //
-        // Payment entity'sinde de ayni kural var. Iki yerde olmasi
-        // tekrar degil: biri BIZIM tarafimizin butunlugunu korur,
-        // digeri saglayicinin davranisini taklit eder. Gercek
-        // hayatta ikisi ayri sistemlerdir ve ikisi de kontrol eder.
+        // Payment entity'sinde de aynı kural var. Iki yerde olmasını
+        // tekrar değil: biri BIZIM tarafimizin butunlugunu korur,
+        // digeri sağlayıcının davranisini taklit eder. Gerçek
+        // hayatta ikisi ayrı sistemlerdir ve ikisi de kontrol eder.
         if (amount > originalAmount)
         {
             return Task.FromResult(PaymentResult.Failure(
                 "payment.refund_exceeds_amount",
-                "Iade tutari odenen tutari asamaz."));
+                "İade tutari odenen tutari aşamaz."));
         }
 
         return Task.FromResult(PaymentResult.Success("REF-" + GenerateReference()));
@@ -114,10 +114,10 @@ internal sealed class MockPaymentProvider : IPaymentService
     }
 
     /// <summary>
-    /// Islem referansi uretir. Ornek: MOCK-20260827-A7B3C9D2
+    /// İşlem referansı üretir. Ornek: MOCK-20260827-A7B3C9D2
     ///
-    /// RandomNumberGenerator kullaniyorum, Random degil.
-    /// Simulasyon bile olsa aliskanligi dogru kurmak onemli: gercek
+    /// RandomNumberGenerator kullanıyorum, Random değil.
+    /// Simulasyon bile olsa aliskanligi doğru kurmak önemli: gerçek
     /// saglayicida tahmin edilebilir referanslar, saldirganin
     /// baskasinin islemini sorgulamasina zemin hazirlar.
     /// </summary>
@@ -131,14 +131,14 @@ internal sealed class MockPaymentProvider : IPaymentService
 }
 
 /// <summary>
-/// Her zaman BASARISIZ donen saglayici. PDF Sprint 8.
+/// Her zaman BASARISIZ donen sağlayıcı. PDF Sprint 8.
 ///
-/// Ne ise yarar? "Odeme basarisiz olursa ne olur?" akisini test
-/// etmek icin. Gercek bir karti reddettirmek zor ve guvenilmezdir;
-/// bu saglayici o senaryoyu deterministik hale getiriyor.
+/// Ne ise yarar? "Ödeme başarısız olursa ne olur?" akisini test
+/// etmek için. Gerçek bir karti reddettirmek zor ve guvenilmezdir;
+/// bu sağlayıcı o senaryoyu deterministik hale getiriyor.
 ///
 /// Yapilandirmadan secilebiliyor (Payment:Provider = "Failed"),
-/// boylece gelistirme ortaminda basarisiz odeme akisi kod
+/// boylece gelistirme ortaminda başarısız ödeme akışı kod
 /// degistirmeden denenebiliyor.
 /// </summary>
 internal sealed class FailedPaymentProvider : IPaymentService
@@ -150,14 +150,14 @@ internal sealed class FailedPaymentProvider : IPaymentService
         CancellationToken cancellationToken = default)
         => Task.FromResult(PaymentResult.Failure(
             "payment.declined",
-            "Odeme reddedildi. Kart limitiniz yetersiz olabilir."));
+            "Ödeme reddedildi. Kart limitiniz yetersiz olabilir."));
 
     public Task<PaymentResult> VerifyPaymentAsync(
         string providerReference,
         CancellationToken cancellationToken = default)
         => Task.FromResult(PaymentResult.Failure(
             "payment.declined",
-            "Odeme dogrulanamadi."));
+            "Ödeme dogrulanamadi."));
 
     public Task<PaymentResult> RefundPaymentAsync(
         string providerReference,
@@ -165,7 +165,7 @@ internal sealed class FailedPaymentProvider : IPaymentService
         CancellationToken cancellationToken = default)
         => Task.FromResult(PaymentResult.Failure(
             "payment.refund_failed",
-            "Iade islemi gerceklestirilemedi."));
+            "İade islemi gerceklestirilemedi."));
 
     public Task<PaymentResult> CancelPaymentAsync(
         string providerReference,

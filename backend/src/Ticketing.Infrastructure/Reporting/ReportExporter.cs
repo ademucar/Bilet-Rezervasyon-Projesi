@@ -18,17 +18,17 @@ internal sealed class ReportExporter : IReportExporter
     /// QUESTPDF LISANSI -- KODDA BELIRTILMEK ZORUNDA
     /// ==============================================================
     /// QuestPDF, "Community" lisansi altinda yillik geliri 1 milyon
-    /// USD altindaki kuruluslar icin UCRETSIZ. Bu proje icin uygun.
+    /// USD altindaki kuruluslar için UCRETSIZ. Bu proje için uygun.
     ///
     /// Ama kutuphane, lisans turunun ACIKCA belirtilmesini sart
     /// kosuyor. Belirtilmezse ilk PDF uretiminde istisna firlatiyor.
     ///
     /// Static kurucu: uygulama omrunde BIR KEZ ve ilk kullanimdan
-    /// once calisiyor. Her Export cagrisinda atama yapmak gereksiz
+    /// önce çalışıyor. Her Export cagrisinda atama yapmak gereksiz
     /// olurdu.
     ///
     /// NOT: Bu proje ticari bir urune donuserse lisans yeniden
-    /// degerlendirilmeli. Bunu buraya yaziyorum ki karar gorunur
+    /// degerlendirilmeli. Bunu buraya yazıyorum ki karar görünür
     /// kalsin.
     /// ==============================================================
     /// </summary>
@@ -43,8 +43,8 @@ internal sealed class ReportExporter : IReportExporter
 
         // Dosya adinda kullanilamayan karakterleri temizliyorum.
         //
-        // Rapor basligi kullanicidan gelmiyor ama tarih iceriyor ve
-        // ilerde ozellestirilebilir olabilir. Dosya adina dogrudan
+        // Rapor başlığı kullanicidan gelmiyor ama tarih iceriyor ve
+        // ilerde ozellestirilebilir olabilir. Dosya adina doğrudan
         // metin koymak, "../" gibi dizin gecisi denemelerine kapi
         // acar (path traversal).
         var guvenliAd = string.Concat(
@@ -81,34 +81,34 @@ internal sealed class ReportExporter : IReportExporter
     // ==================================================================
 
     /// <summary>
-    /// RFC 4180 uyumlu CSV uretir.
+    /// RFC 4180 uyumlu CSV üretir.
     /// </summary>
     /// <remarks>
     /// ==============================================================
     /// NEDEN KUTUPHANE KULLANMIYORUM?
     /// ==============================================================
     /// CsvHelper gibi paketler var ama CSV yazma kurallari toplam
-    /// uc satir:
-    ///   - Alan icinde virgul, tirnak veya satir sonu varsa tirnak ic
+    /// uc satır:
+    ///   - Alan içinde virgul, tirnak veya satır sonu varsa tirnak ic
     ///   - Icerideki tirnaklari ikiye katla
     ///   - Satirlari CRLF ile ayir
     ///
-    /// Ucuncu bir bagimlilik eklemek; guvenlik taramasi, surum takibi
-    /// ve gecisli bagimlilik maliyeti getirir. Bu kadar kucuk bir is
-    /// icin degmez.
+    /// Ucuncu bir bagimlilik eklemek; güvenlik taramasi, surum takibi
+    /// ve gecisli bagimlilik maliyeti getirir. Bu kadar küçük bir is
+    /// için degmez.
     ///
-    /// (OKUMA farkli olurdu: CSV ayristirmak cok daha zor ve orada
+    /// (OKUMA farklı olurdu: CSV ayristirmak çok daha zor ve orada
     /// kutuphane kullanirdim.)
     /// ==============================================================
     ///
     /// ==============================================================
-    /// UTF-8 BOM -- EXCEL ICIN SART
+    /// UTF-8 BOM -- EXCEL ICIN ŞART
     /// ==============================================================
     /// BOM olmadan Excel, CSV'yi sistem kod sayfasiyla acar ve
-    /// Turkce karakterler bozulur: "Istanbul" yerine "Ä°stanbul".
+    /// Turkce karakterler bozulur: "İstanbul" yerine "Ä°stanbul".
     ///
-    /// Kullanicinin gozunde bu "sizin raporunuz bozuk" demektir --
-    /// oysa dosya teknik olarak dogru. Uc baytlik BOM bu sorunu
+    /// Kullanıcının gozunde bu "sizin raporunuz bozuk" demektir --
+    /// oysa dosya teknik olarak doğru. Uc baytlik BOM bu sorunu
     /// tamamen cozuyor.
     /// ==============================================================
     /// </remarks>
@@ -126,23 +126,23 @@ internal sealed class ReportExporter : IReportExporter
         // ==============================================================
         // BOM'U ELLE EKLIYORUM -- YAKALADIGIM HATA
         // ==============================================================
-        // Once soyle yazmistim:
+        // Önce soyle yazmistim:
         //
         //     return new UTF8Encoding(true).GetBytes(...)
         //
         // "encoderShouldEmitUTF8Identifier: true" parametresi BOM
         // ekliyor SANDIM. EKLEMIYOR.
         //
-        // O bayrak yalnizca GetPreamble() metodunun ne donduregini
+        // O bayrak yalnızca GetPreamble() metodunun ne donduregini
         // belirliyor; GetBytes ONU KULLANMIYOR. BOM ancak StreamWriter
         // gibi preamble'i kendisi yazan siniflarla eklenir.
         //
-        // Uretilen dosyayi inceleyerek buldum: ilk baytlar EF BB BF
+        // Uretilen dosyayı inceleyerek buldum: ilk baytlar EF BB BF
         // yerine "Etki" (45 74 6B 69) idi.
         //
         // Yani yorumda "BOM ekliyoruz" yaziyordu ama EKLENMIYORDU --
         // ve Turkce karakterler Excel'de bozuk cikacakti. Kodun
-        // NIYETINI degil, URETTIGI CIKTIYI kontrol etmek gerekiyor.
+        // NIYETINI değil, URETTIGI CIKTIYI kontrol etmek gerekiyor.
         // ==============================================================
         var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
@@ -171,7 +171,7 @@ internal sealed class ReportExporter : IReportExporter
             return s;
         }
 
-        // Icerideki her tirnak ikiye katlanir, sonra tumu tirnak icine alinir.
+        // Icerideki her tirnak ikiye katlanir, sonra tümü tirnak icine alinir.
         return $"\"{s.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
     }
 
@@ -183,7 +183,7 @@ internal sealed class ReportExporter : IReportExporter
     {
         using var workbook = new XLWorkbook();
 
-        // Sayfa adi en fazla 31 karakter olabilir (Excel siniri).
+        // Sayfa adı en fazla 31 karakter olabilir (Excel sınırı).
         // Uzun basliklarda kirpmasaydik ClosedXML istisna firlatirdi.
         var sayfaAdi = table.Title.Length > 31 ? table.Title[..31] : table.Title;
 
@@ -201,21 +201,21 @@ internal sealed class ReportExporter : IReportExporter
         {
             for (var c = 0; c < table.Rows[r].Count; c++)
             {
-                // Hucreleri METIN olarak yaziyorum.
+                // Hucreleri METİN olarak yazıyorum.
                 //
-                // ClosedXML sayi gibi gorunen degerleri otomatik
-                // sayiya cevirebilir ve bu ISTEDIGIMIZ SEY DEGIL:
+                // ClosedXML sayi gibi görünen değerleri otomatik
+                // sayiya cevirebilir ve bu ISTEDIGIMIZ SEY DEĞİL:
                 // "01" gibi bir bilet numarasi "1"e donusur, uzun
                 // Guid'ler bilimsel gosterime kayar.
                 //
-                // Rapor bicimlendirmesi zaten uretim tarafinda
-                // yapildi; burada oldugu gibi aktarmak dogru.
+                // Rapor bicimlendirmesi zaten üretim tarafında
+                // yapıldı; burada olduğu gibi aktarmak doğru.
                 sheet.Cell(r + 2, c + 1).SetValue(table.Rows[r][c]);
             }
         }
 
-        // Baslik satirini dondur: uzun raporlarda asagi kaydirinca
-        // sutun adlari gorunur kalir.
+        // Başlık satirini dondur: uzun raporlarda asagi kaydirinca
+        // sutun adları görünür kalır.
         sheet.SheetView.FreezeRows(1);
 
         sheet.Columns().AdjustToContents();
@@ -239,11 +239,11 @@ internal sealed class ReportExporter : IReportExporter
                 // ==================================================
                 // YATAY (LANDSCAPE) SAYFA
                 // ==================================================
-                // Raporlarin cogu 5-8 sutunlu. Dikey A4'te sutunlar
+                // Raporlarin çoğu 5-8 sutunlu. Dikey A4'te sutunlar
                 // sikisip okunamaz hale gelir.
                 //
-                // Yatay cevirmek, tablo raporlari icin dogru
-                // varsayilan.
+                // Yatay cevirmek, tablo raporlari için doğru
+                // varsayılan.
                 // ==================================================
                 page.Size(PageSizes.A4.Landscape());
                 page.Margin(1.5f, Unit.Centimetre);
@@ -254,7 +254,7 @@ internal sealed class ReportExporter : IReportExporter
                     {
                         col.Item().Text(table.Title).FontSize(16).Bold();
                         col.Item().Text(
-                            $"Olusturulma: {DateTime.UtcNow:dd.MM.yyyy HH:mm} UTC")
+                            $"Oluşturulma: {DateTime.UtcNow:dd.MM.yyyy HH:mm} UTC")
                             .FontSize(8)
                             .FontColor(Colors.Grey.Darken1);
                     });
@@ -265,12 +265,12 @@ internal sealed class ReportExporter : IReportExporter
                     {
                         t.ColumnsDefinition(cols =>
                         {
-                            // Tum sutunlara esit genislik.
+                            // Tüm sutunlara esit genislik.
                             //
-                            // Icerige gore otomatik genislik daha
-                            // guzel olurdu ama QuestPDF'te bunun icin
+                            // Icerige göre otomatik genislik daha
+                            // guzel olurdu ama QuestPDF'te bunun için
                             // her sutunun icerigini onceden olcmek
-                            // gerekiyor. Rapor sayisi ve sutun
+                            // gerekiyor. Rapor sayısı ve sutun
                             // cesitliligi dusunuldugunde esit dagitim
                             // yeterince okunakli.
                             for (var i = 0; i < table.Headers.Count; i++)
@@ -303,7 +303,7 @@ internal sealed class ReportExporter : IReportExporter
                         }
                     });
 
-                // Sayfa numarasi: cok sayfali raporlarda ciktinin
+                // Sayfa numarasi: çok sayfali raporlarda ciktinin
                 // siralamasi kaybolmasin.
                 page.Footer()
                     .AlignCenter()

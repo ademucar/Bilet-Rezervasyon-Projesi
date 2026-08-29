@@ -19,31 +19,31 @@ namespace Ticketing.Application.Features.Events;
 internal static class EventErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "event.not_found", "Etkinlik bulunamadi.");
+        "event.not_found", "Etkinlik bulunamadı.");
 
     public static readonly Error NotOwner = Error.Forbidden(
-        "event.not_owner", "Bu etkinlik uzerinde islem yapma yetkiniz yok.");
+        "event.not_owner", "Bu etkinlik uzerinde işlem yapma yetkiniz yok.");
 
     public static readonly Error OrganizerProfileRequired = Error.Forbidden(
         "event.organizer_profile_required",
-        "Etkinlik olusturmak icin organizator profiliniz olmalidir.");
+        "Etkinlik olusturmak için organizatör profiliniz olmalıdır.");
 
     public static readonly Error HallNotInVenue = Error.Validation(
-        "event.hall_not_in_venue", "Secilen salon, secilen mekana ait degil.");
+        "event.hall_not_in_venue", "Secilen salon, secilen mekana ait değil.");
 
     public static readonly Error HallOccupied = Error.Conflict(
         "event.hall_occupied",
-        "Secilen salon bu tarih araliginda baska bir etkinlik tarafindan kullaniliyor.");
+        "Secilen salon bu tarih araliginda başka bir etkinlik tarafından kullanılıyor.");
 
     public static readonly Error LayoutNotInHall = Error.Validation(
-        "event.layout_not_in_hall", "Secilen oturma plani, secilen salona ait degil.");
+        "event.layout_not_in_hall", "Secilen oturma planı, secilen salona ait değil.");
 
     public static readonly Error CategoryNotFound = Error.Validation(
-        "event.category_not_found", "Secilen kategori bulunamadi.");
+        "event.category_not_found", "Secilen kategori bulunamadı.");
 }
 
 // ===================================================================
-// ETKINLIK OLUSTURMA -- PDF: POST /api/v1/events
+// ETKİNLİK OLUSTURMA -- PDF: POST /api/v1/events
 // ===================================================================
 
 public sealed record CreateEventCommand(
@@ -69,49 +69,49 @@ public sealed class CreateEventCommandValidator : AbstractValidator<CreateEventC
             .MaximumLength(250);
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("Aciklama zorunludur.")
+            .NotEmpty().WithMessage("Açıklama zorunludur.")
             .MaximumLength(5000);
 
         RuleFor(x => x.DurationMinutes)
-            .GreaterThan(0).WithMessage("Sure sifirdan buyuk olmalidir.")
-            .LessThanOrEqualTo(1440).WithMessage("Sure 24 saati asamaz.");
+            .GreaterThan(0).WithMessage("Süre sıfırdan büyük olmalıdır.")
+            .LessThanOrEqualTo(1440).WithMessage("Süre 24 saati aşamaz.");
 
         RuleFor(x => x.MaxTicketsPerUser)
             .InclusiveBetween(1, 50)
-            .WithMessage("Kullanici basina bilet limiti 1 ile 50 arasinda olmalidir.");
+            .WithMessage("Kullanıcı başına bilet limiti 1 ile 50 arasında olmalıdır.");
 
         RuleFor(x => x.MinimumAge)
-            .InclusiveBetween(0, 99).WithMessage("Yas siniri 0 ile 99 arasinda olmalidir.");
+            .InclusiveBetween(0, 99).WithMessage("Yaş sınırı 0 ile 99 arasında olmalıdır.");
 
         // ==============================================================
         // TARIH KURALLARI -- PDF sayfa 13
         // ==============================================================
         // Bu kurallar HEM burada HEM Event entity'sinde var.
         //
-        // Tekrar gibi gorunuyor ama amaclari farkli:
-        //   Validator -> kullaniciya ALAN BAZINDA anlasilir hata verir
-        //                ("Satis bitisi etkinlikten sonra olamaz")
-        //   Entity    -> koda hangi yoldan gelirse gelsin gecersiz bir
+        // Tekrar gibi görünüyor ama amaclari farklı:
+        //   Validator -> kullanıcıya ALAN BAZINDA anlasilir hata verir
+        //                ("Satış bitisi etkinlikten sonra olamaz")
+        //   Entity    -> koda hangi yoldan gelirse gelsin geçersiz bir
         //                Event olusmasini engeller (veri tasima scripti,
-        //                test kodu, gelecekteki baska bir handler...)
+        //                test kodu, gelecekteki başka bir handler...)
         // ==============================================================
         RuleFor(x => x.SalesStartDate)
             .LessThan(x => x.SalesEndDate)
-            .WithMessage("Satis baslangici, satis bitisinden once olmalidir.");
+            .WithMessage("Satış baslangici, satış bitisinden önce olmalıdır.");
 
         RuleFor(x => x.SalesEndDate)
             .LessThanOrEqualTo(x => x.EventDate)
-            .WithMessage("Satis bitis tarihi, etkinlik baslangicindan sonra olamaz.");
+            .WithMessage("Satış bitiş tarihi, etkinlik baslangicindan sonra olamaz.");
 
-        // Gecmise etkinlik olusturulamaz.
+        // Gecmise etkinlik oluşturulamaz.
         //
-        // Entity'de BU kural YOK -- bilerek. Veri tasima sirasinda
+        // Entity'de BU kural YOK -- bilerek. Veri tasima sırasında
         // gecmis etkinlikleri sisteme aktarmamiz gerekebilir.
-        // Kullanici arayuzunden ise gecmise etkinlik girmek her zaman
-        // hatadir, o yuzden yalnizca burada engelliyoruz.
+        // Kullanıcı arayuzunden ise gecmise etkinlik girmek her zaman
+        // hatadir, o yüzden yalnızca burada engelliyoruz.
         RuleFor(x => x.EventDate)
             .GreaterThan(DateTimeOffset.UtcNow)
-            .WithMessage("Etkinlik tarihi gelecekte olmalidir.");
+            .WithMessage("Etkinlik tarihi gelecekte olmalıdır.");
     }
 }
 
@@ -131,17 +131,17 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
         _logger = logger;
     }
 
-    // PDF Sprint 16: "Etkinlik olusturma" loglanmalidir.
+    // PDF Sprint 16: "Etkinlik oluşturma" loglanmalidir.
     //
-    // Etkinlik BASLIGINI logluyorum. Bu bir istisna: baska yerlerde
-    // kullanici metnini loglamaktan kaciniyorum. Burada guvenli
-    // cunku etkinlik basligi zaten HERKESE ACIK bir veri --
-    // yayinlandiginda ana sayfada gorunecek. Gizli bir sey degil ve
-    // destek icin en pratik tanimlayici.
+    // Etkinlik BASLIGINI logluyorum. Bu bir istisna: başka yerlerde
+    // kullanıcı metnini loglamaktan kaciniyorum. Burada güvenli
+    // çünkü etkinlik başlığı zaten HERKESE ACIK bir veri --
+    // yayinlandiginda ana sayfada gorunecek. Gizli bir sey değil ve
+    // destek için en pratik tanimlayici.
     [LoggerMessage(
         EventId = LogEvents.EtkinlikOlusturuldu,
         Level = LogLevel.Information,
-        Message = "Etkinlik olusturuldu. Id: {EventId}, Baslik: {Title}, Organizator: {OrganizerProfileId}")]
+        Message = "Etkinlik oluşturuldu. Id: {EventId}, Baslik: {Title}, Organizatör: {OrganizerProfileId}")]
     private static partial void LogEventCreated(
         ILogger logger, Guid eventId, string title, Guid organizerProfileId);
 
@@ -149,14 +149,14 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+            return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // Etkinligin sahibi ORGANIZATOR PROFILI'dir, kullanici degil.
+        // Etkinligin sahibi ORGANİZATÖR PROFILI'dir, kullanıcı değil.
         //
-        // Neden? Bir organizator sirketini temsil eder. Ileride bir
-        // sirkette birden fazla kullanici calisabilir; hepsi ayni
-        // profil uzerinden etkinlik yonetir. Event'i dogrudan User'a
+        // Neden? Bir organizatör sirketini temsil eder. Ileride bir
+        // sirkette birden fazla kullanıcı calisabilir; hepsi aynı
+        // profil üzerinden etkinlik yonetir. Event'i doğrudan User'a
         // baglasaydik bu genisleme imkansiz olurdu.
         var organizerProfileId = await _context.OrganizerProfiles
             .AsNoTracking()
@@ -182,12 +182,12 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
             return Result.Failure<Guid>(EventErrors.CategoryNotFound);
         }
 
-        // Salonun secilen MEKANA ait oldugunu dogruluyorum.
+        // Salonun secilen MEKANA ait olduğunu dogruluyorum.
         //
-        // Bu kontrol olmasaydi kullanici Istanbul'daki bir mekani,
-        // Ankara'daki bir salonla eslestirebilirdi. Iki FK de gecerli
-        // oldugu icin veritabani buna izin verirdi ve etkinlik
-        // "Istanbul'da, Ankara salonunda" gorunurdu.
+        // Bu kontrol olmasaydı kullanıcı İstanbul'daki bir mekani,
+        // Ankara'daki bir salonla eslestirebilirdi. Iki FK de geçerli
+        // olduğu için veritabani buna izin verirdi ve etkinlik
+        // "İstanbul'da, Ankara salonunda" görünürdü.
         var hallBelongsToVenue = await _context.Halls
             .AsNoTracking()
             .AnyAsync(h => h.Id == request.HallId && h.VenueId == request.VenueId, cancellationToken)
@@ -216,8 +216,8 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
         _context.Events.Add(evt);
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // PDF Sprint 16: "Etkinlik olusturma" loglanmalidir.
-        // SaveChanges'ten sonra: log ancak gercekten kaydedildiyse
+        // PDF Sprint 16: "Etkinlik oluşturma" loglanmalidir.
+        // SaveChanges'ten sonra: log ancak gerçekten kaydedildiyse
         // atiliyor.
         LogEventCreated(_logger, evt.Id, evt.Title, organizerProfileId.Value);
 
@@ -241,7 +241,7 @@ public sealed class AddEventSessionCommandValidator : AbstractValidator<AddEvent
     public AddEventSessionCommandValidator()
         => RuleFor(x => x.StartDate)
             .LessThan(x => x.EndDate)
-            .WithMessage("Oturum bitisi, baslangicindan sonra olmalidir.");
+            .WithMessage("Oturum bitisi, baslangicindan sonra olmalıdır.");
 }
 
 internal sealed class AddEventSessionCommandHandler
@@ -255,7 +255,7 @@ internal sealed class AddEventSessionCommandHandler
         AddEventSessionCommand request,
         CancellationToken cancellationToken)
     {
-        // Sessions'i Include ediyorum: Event.AddSession, AYNI ETKINLIK
+        // Sessions'i Include ediyorum: Event.AddSession, AYNI ETKİNLİK
         // icindeki cakismayi bellekteki koleksiyona bakarak kontrol ediyor.
         var evt = await _context.Events
             .Include(e => e.Sessions)
@@ -267,7 +267,7 @@ internal sealed class AddEventSessionCommandHandler
             return Result.Failure<Guid>(EventErrors.NotFound);
         }
 
-        // Oturma planinin secilen salona ait oldugunu dogrula.
+        // Oturma planinin secilen salona ait olduğunu dogrula.
         var layoutBelongsToHall = await _context.SeatLayouts
             .AsNoTracking()
             .AnyAsync(
@@ -281,24 +281,24 @@ internal sealed class AddEventSessionCommandHandler
         }
 
         // ==============================================================
-        // PDF is kurali (sayfa 13):
-        // "Ayni salon ayni zaman araliginda iki etkinlige atanamaz."
+        // PDF is kuralı (sayfa 13):
+        // "Aynı salon aynı zaman araliginda iki etkinlige atanamaz."
         // ==============================================================
-        // Event.AddSession, YALNIZCA bu etkinligin oturumlarini kontrol
-        // edebiliyor -- diger etkinliklerin oturumlari bellekte degil,
+        // Event.AddSession, YALNIZCA bu etkinliğin oturumlarini kontrol
+        // edebiliyor -- diger etkinliklerin oturumlari bellekte değil,
         // veritabaninda.
         //
-        // Bu yuzden BASKA etkinliklerle cakismayi burada kontrol ediyorum.
+        // Bu yüzden BASKA etkinliklerle cakismayi burada kontrol ediyorum.
         //
-        // Cakisma formulu (EventSession.OverlapsWith ile ayni):
+        // Çakışma formulu (EventSession.OverlapsWith ile aynı):
         //     a1 < b2 VE b1 < a2
         // Kati esitsizlik: 14:00-16:00 ile 16:00-18:00 CAKISMAZ.
         //
-        // Iptal edilmis oturumlari haric tutuyorum -- iptal edilmis bir
+        // İptal edilmiş oturumlari haric tutuyorum -- iptal edilmiş bir
         // oturum salonu isgal etmez.
         //
-        // YARIS DURUMU UYARISI: Bu kontrol ile INSERT arasinda baska bir
-        // istek ayni salonu alabilir. Kesin garanti icin PostgreSQL'in
+        // YARIS DURUMU UYARISI: Bu kontrol ile INSERT arasında başka bir
+        // istek aynı salonu alabilir. Kesin garanti için PostgreSQL'in
         // EXCLUDE constraint'i gerekiyor:
         //     EXCLUDE USING gist (
         //         "HallId" WITH =,
@@ -322,7 +322,7 @@ internal sealed class AddEventSessionCommandHandler
             return Result.Failure<Guid>(EventErrors.HallOccupied);
         }
 
-        // Ayni etkinlik icindeki cakismayi entity kontrol ediyor.
+        // Aynı etkinlik icindeki cakismayi entity kontrol ediyor.
         var session = evt.AddSession(
             request.StartDate, request.EndDate, request.HallId, request.SeatLayoutId);
 
@@ -336,7 +336,7 @@ internal sealed class AddEventSessionCommandHandler
 // DURUM GECISLERI
 // ===================================================================
 
-/// <summary>Organizator etkinligi onaya gonderir.</summary>
+/// <summary>Organizatör etkinligi onaya gönderir.</summary>
 public sealed record SubmitEventForApprovalCommand(Guid EventId) : IRequest<Result>;
 
 /// <summary>Admin onaylar ve etkinlik yayina alinir. PDF: POST /events/{id}/publish</summary>
@@ -361,11 +361,11 @@ internal sealed partial class EventStatusCommandHandler
     // NEDEN OLUSTURMADAN AYRI BIR OLAY?
     // ==============================================================
     // Yayinlama, is acisindan donusu olmayan bir esik: o an etkinlik
-    // herkese gorunur olur ve bilet satisi baslar. Taslak olusturmak
+    // herkese görünür olur ve bilet satışı başlar. Taslak olusturmak
     // ise sonucu olmayan bir hazirlik adimi.
     //
     // "Kim, ne zaman yayinladi?" bir DENETIM sorusudur ve cevabinin
-    // baska olaylarin arasinda kaybolmamasi gerekiyor.
+    // başka olaylarin arasında kaybolmamasi gerekiyor.
     // ==============================================================
     [LoggerMessage(
         EventId = LogEvents.EtkinlikYayinlandi,
@@ -373,17 +373,17 @@ internal sealed partial class EventStatusCommandHandler
         Message = "Etkinlik yayinlandi. Id: {EventId}, Baslik: {Title}")]
     private static partial void LogEventPublished(ILogger logger, Guid eventId, string title);
 
-    // Iptal, Warning seviyesinde -- hata oldugu icin degil,
-    // GORULMESI gerektigi icin.
+    // İptal, Warning seviyesinde -- hata olduğu için değil,
+    // GORULMESI gerektigi için.
     //
-    // Bir etkinligin iptali para iadesi zinciri baslatiyor ve
-    // yuzlerce kullaniciya bildirim gidiyor. Sprint 15'te iade icin
-    // verdigimiz kararin aynisi: is etkisi buyuk olan olaylar,
-    // normal trafigin arasinda kaybolmamali.
+    // Bir etkinliğin iptali para iadesi zinciri baslatiyor ve
+    // yuzlerce kullanıcıya bildirim gidiyor. Sprint 15'te iade için
+    // verdigimiz kararin aynisi: is etkisi büyük olan olaylar,
+    // normal trafigin arasında kaybolmamali.
     [LoggerMessage(
         EventId = LogEvents.EtkinlikIptalEdildi,
         Level = LogLevel.Warning,
-        Message = "Etkinlik IPTAL edildi. Id: {EventId}, Baslik: {Title}, Sebep: {Reason}")]
+        Message = "Etkinlik İPTAL edildi. Id: {EventId}, Baslik: {Title}, Sebep: {Reason}")]
     private static partial void LogEventCancelled(
         ILogger logger, Guid eventId, string title, string? reason);
 
@@ -400,20 +400,20 @@ internal sealed partial class EventStatusCommandHandler
     }
 
     /// <summary>
-    /// Etkinlik degistiginde ilgili onbellek kayitlarini temizler.
+    /// Etkinlik degistiginde ilgili önbellek kayitlarini temizler.
     /// </summary>
     /// <remarks>
     /// ==============================================================
     /// PDF KURALI: "Veri guncellendiginde ilgili cache temizlenmelidir."
     /// ==============================================================
-    /// Neden ONEK ile siliyorum, tek anahtarla degil?
+    /// Neden ONEK ile siliyorum, tek anahtarla değil?
     ///
-    /// Bir etkinligin durumu degistiginde BIRDEN FAZLA anahtar
+    /// Bir etkinliğin durumu degistiginde BIRDEN FAZLA anahtar
     /// bayatliyor:
     ///
-    ///     event:detail:{id}     -> bu etkinligin detayi
-    ///     event:popular:10      -> populer listesi (artik yayinda degil)
-    ///     event:popular:20      -> ayni listenin baska boyutu
+    ///     event:detail:{id}     -> bu etkinliğin detayı
+    ///     event:popular:10      -> popüler listesi (artık yayında değil)
+    ///     event:popular:20      -> aynı listenin başka boyutu
     ///
     /// "popular:{n}" anahtarlarinin hangi n degerleriyle uretildigini
     /// onceden BILEMEYIZ -- istemci 10 da isteyebilir 25 de. Tek tek
@@ -425,12 +425,12 @@ internal sealed partial class EventStatusCommandHandler
     /// FAZLA SILMEK, EKSIK SILMEKTEN IYIDIR
     /// ------------------------------------------------------------
     /// Bu yaklasim BASKA etkinliklerin detay anahtarlarini da siliyor.
-    /// Israf gibi gorunuyor ama dogru tercih:
+    /// Israf gibi görünüyor ama doğru tercih:
     ///
-    ///   Fazla silmenin bedeli  -> birkac sorgu tekrar veritabanina
+    ///   Fazla silmenin bedeli  -> birkaç sorgu tekrar veritabanina
     ///                             gider (milisaniyeler)
-    ///   Eksik silmenin bedeli  -> kullanici IPTAL EDILMIS etkinlige
-    ///                             bilet almaya calisir
+    ///   Eksik silmenin bedeli  -> kullanıcı İPTAL EDILMIS etkinlige
+    ///                             bilet almaya çalışır
     ///
     /// Ikisi kiyaslanamaz. Onbellekte "bayat veri" her zaman
     /// "gereksiz sorgu"dan pahalidir.
@@ -442,8 +442,8 @@ internal sealed partial class EventStatusCommandHandler
     public async Task<Result> Handle(SubmitEventForApprovalCommand request, CancellationToken cancellationToken)
     {
         // Sessions VE TicketTypes gerekli: SubmitForApproval ikisinin de
-        // bos olmadigini kontrol ediyor. Include etmezsem koleksiyonlar
-        // bos gorunur ve "en az bir oturum ekleyin" hatasi alirdik --
+        // boş olmadigini kontrol ediyor. Include etmezsem koleksiyonlar
+        // boş görünür ve "en az bir oturum ekleyin" hatası alırdık --
         // oysa oturum var. Sessiz ve kafa karistirici bir hata olurdu.
         var evt = await _context.Events
             .Include(e => e.Sessions)
@@ -482,18 +482,18 @@ internal sealed partial class EventStatusCommandHandler
 
         // Log, SaveChanges'ten SONRA.
         //
-        // Once loglasaydik ve kaydetme basarisiz olsaydi, logda
+        // Önce loglasaydik ve kaydetme başarısız olsaydı, logda
         // "yayinlandi" yazardi ama veritabaninda yayinlanmamis
-        // olurdu. Loglarin gercekle celismesi, hic log olmamasindan
-        // daha kotudur: sorun arastiran kisi yanlis yone gider.
+        // olurdu. Loglarin gercekle celismesi, hiç log olmamasindan
+        // daha kotudur: sorun arastiran kişi yanlış yone gider.
         LogEventPublished(_logger, evt.Id, evt.Title);
 
-        // Yayinlanan etkinlik artik herkese gorunur olmali.
+        // Yayinlanan etkinlik artık herkese görünür olmalı.
         //
-        // Temizlemeseydik, daha once 404 alan bir istek yuzunden
-        // onbellekte "yok" kaydi olusmus olabilirdi... aslinda
-        // olmazdi: null degerleri bilerek onbelleklemiyoruz
-        // (bkz. RedisCacheService). Yine de populer listesi ve
+        // Temizlemeseydik, daha önce 404 alan bir istek yuzunden
+        // onbellekte "yok" kaydı olusmus olabilirdi... aslında
+        // olmazdi: null değerleri bilerek onbelleklemiyoruz
+        // (bkz. RedisCacheService). Yine de popüler listesi ve
         // detay anahtarlari tazelenmeli.
         await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
 
@@ -503,7 +503,7 @@ internal sealed partial class EventStatusCommandHandler
     public async Task<Result> Handle(CancelEventCommand request, CancellationToken cancellationToken)
     {
         // Oturumlari da yukluyorum: iptal bildirimini oturum GRUPLARINA
-        // gonderecegiz ve bunun icin kimliklerine ihtiyacimiz var.
+        // gonderecegiz ve bunun için kimliklerine ihtiyacimiz var.
         var evt = await _context.Events
             .Include(e => e.Sessions)
             .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)
@@ -519,18 +519,18 @@ internal sealed partial class EventStatusCommandHandler
         // ==============================================================
         // BILDIRIM OUTBOX'A -- PDF Sprint 9: "Etkinlik iptal bildirimi"
         // ==============================================================
-        // Iptali AYNI transaction icinde kuyruga aliyoruz.
+        // Iptali AYNI transaction içinde kuyruga aliyoruz.
         //
-        // Bunu tek basina onemli kilan sey olcek: 2000 kisilik bir
+        // Bunu tek başına önemli kilan sey olcek: 2000 kisilik bir
         // konser iptal edildiginde 2000 bildirim yazilacak. Bunu
         // burada yapsaydik, admin "iptal et" butonuna bastiktan sonra
-        // tarayici dakikalarca beklerdi -- ve zaman asimina ugrarsa
+        // tarayıcı dakikalarca beklerdi -- ve zaman asimina ugrarsa
         // iptal islemi geri alinir, etkinlik iptal edilmemis olurdu.
         //
-        // Outbox'a tek satir yazmak ise aninda. Bildirimlerin
+        // Outbox'a tek satır yazmak ise anında. Bildirimlerin
         // dagitimini arka plan job'i, kimseyi bekletmeden yapiyor.
         //
-        // PDF: "Job islemleri kullanici istegini gereksiz yere
+        // PDF: "Job islemleri kullanıcı istegini gereksiz yere
         // bekletmemelidir."
         // ==============================================================
         _context.OutboxMessages.Add(OutboxMessage.Create(
@@ -545,19 +545,19 @@ internal sealed partial class EventStatusCommandHandler
         // ==============================================================
         // PDF Sprint 10: "EventCancelled"
         // ==============================================================
-        // Sprint 9'da AYNI olay icin Outbox'a da yaziyoruz. Ikisi
-        // birden gereksiz gorunebilir; degil, cunku farkli hedefleri
+        // Sprint 9'da AYNI olay için Outbox'a da yazıyoruz. Ikisi
+        // birden gereksiz gorunebilir; değil, çünkü farklı hedefleri
         // var:
         //
         //   SignalR -> SU AN o oturumun koltuk haritasina bakan
-        //              kisiler. Bilet almak uzereler; bosuna koltuk
+        //              kisiler. Bilet almak uzereler; boşuna koltuk
         //              secmelerini engelliyoruz.
         //
-        //   Outbox  -> BILETI OLAN herkes. Ekranda olsun olmasin,
+        //   Outbox  -> BILETI OLAN herkes. Ekranda olsun olmasın,
         //              kalici bir bildirim ve e-posta aliyorlar.
         //
         // SignalR kaybolursa telafisi var (yeniden baglantida liste
-        // cekiliyor); Outbox kaybolamaz. Sprint 9 belgesinde
+        // çekiliyor); Outbox kaybolamaz. Sprint 9 belgesinde
         // ayrintili yazdim.
         await _seatNotifier.EventCancelledAsync(
             evt.Sessions.Select(x => x.Id).ToList(),
@@ -566,22 +566,22 @@ internal sealed partial class EventStatusCommandHandler
             cancellationToken).ConfigureAwait(false);
 
         // PDF Sprint 16: etkinlik iptali. Warning seviyesinde --
-        // yuzlerce kullaniciyi ve para iadesi zincirini etkiliyor.
+        // yuzlerce kullanıcıyı ve para iadesi zincirini etkiliyor.
         LogEventCancelled(_logger, evt.Id, evt.Title, request.Reason);
 
         // Onbellek temizligi BURADA en kritik.
         //
-        // Iptal edilen bir etkinlik onbellekte "SalesOpen" olarak
-        // kalirsa, kullanicilar 5 dakika boyunca satista goruntuler
+        // İptal edilen bir etkinlik onbellekte "SalesOpen" olarak
+        // kalirsa, kullanıcılar 5 dakika boyunca satışta goruntuler
         // ve koltuk secmeye calisirdi. Rezervasyon sunucuda
-        // reddedilir -- ama kullanici neden reddedildigini anlamaz.
+        // reddedilir -- ama kullanıcı neden reddedildigini anlamaz.
         await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
 
-        // NOT (Sprint 8): Iptal edilen etkinligin aktif rezervasyonlarinin
+        // NOT (Sprint 8): İptal edilen etkinliğin aktif rezervasyonlarinin
         // iptali ve biletlerin iadesi BURADA yapilmiyor.
         //
         // Event.Cancel bir EventCancelledDomainEvent firlatiyor; o olayi
-        // isleyen handler bu isleri yapacak. Boylece Event sinifi odeme
+        // isleyen handler bu isleri yapacak. Boylece Event sinifi ödeme
         // ve bildirim servislerini bilmek zorunda kalmiyor.
         //
         // Domain event dagitimi Sprint 9'da (Outbox) kurulacak.

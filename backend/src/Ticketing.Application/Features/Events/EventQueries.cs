@@ -85,16 +85,16 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// <summary>
     /// Taslak ve onay bekleyen etkinlikleri de getir.
     ///
-    /// Controller bu alani, kullanicinin ROLUNE gore SUNUCUDA set ediyor --
+    /// Controller bu alanı, kullanıcının ROLUNE göre SUNUCUDA set ediyor --
     /// istemciden gelen degere GUVENMIYORUZ. Guvenseydik, herhangi bir
-    /// kullanici sorguya includeUnpublished=true ekleyip yayinlanmamis
+    /// kullanıcı sorguya includeUnpublished=true ekleyip yayinlanmamis
     /// etkinlikleri gorurdu.
     /// </summary>
     public bool IncludeUnpublished { get; init; }
 
     /// <summary>
-    /// Yalnizca bu organizatorun etkinlikleri.
-    /// PDF Sprint 11 filtresi: "Organizator".
+    /// Yalnızca bu organizatorun etkinlikleri.
+    /// PDF Sprint 11 filtresi: "Organizatör".
     /// </summary>
     public Guid? OrganizerId { get; init; }
 
@@ -103,51 +103,51 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     // ==============================================================
 
     /// <summary>
-    /// En dusuk bilet fiyati. PDF filtresi: "Fiyat araligi".
+    /// En düşük bilet fiyati. PDF filtresi: "Fiyat aralığı".
     /// </summary>
     /// <remarks>
-    /// Etkinligin BIRDEN FAZLA bilet turu var (Tam, Ogrenci, VIP...)
-    /// ve her birinin fiyati farkli.
+    /// Etkinligin BIRDEN FAZLA bilet türü var (Tam, Ogrenci, VIP...)
+    /// ve her birinin fiyati farklı.
     ///
-    /// Kullanici "en fazla 300 TL" dediginde ne bekler? "300 TL'ye
+    /// Kullanıcı "en fazla 300 TL" dediginde ne bekler? "300 TL'ye
     /// girebilecegim etkinlikler" -- yani EN UCUZ bileti 300'un
     /// altinda olanlar. VIP bileti 1000 TL olsa bile.
     ///
-    /// Bu yuzden "herhangi bir bilet turu araliga giriyorsa" seklinde
-    /// filtreliyoruz. "Tum bilet turleri araliga girmeli" deseydik
-    /// kullanici pahali bir VIP secenegi yuzunden uygun fiyatli
-    /// etkinligi hic goremezdi.
+    /// Bu yüzden "herhangi bir bilet türü araliga giriyorsa" seklinde
+    /// filtreliyoruz. "Tüm bilet türleri araliga girmeli" deseydik
+    /// kullanıcı pahali bir VIP secenegi yuzunden uygun fiyatli
+    /// etkinligi hiç goremezdi.
     /// </remarks>
     public decimal? MinPrice { get; init; }
 
-    /// <summary>En yuksek bilet fiyati. Bkz. MinPrice.</summary>
+    /// <summary>En yüksek bilet fiyati. Bkz. MinPrice.</summary>
     public decimal? MaxPrice { get; init; }
 
     /// <summary>
-    /// Yas sinirinin ust degeri. PDF filtresi: "Yas siniri".
+    /// Yaş sinirinin ust değeri. PDF filtresi: "Yaş sınırı".
     /// </summary>
     /// <remarks>
-    /// Adi neden "MaxMinimumAge"? Kulaga garip geliyor ama dogru olan
-    /// bu: etkinligin MinimumAge alani var ve biz onun EN FAZLA kac
+    /// Adi neden "MaxMinimumAge"? Kulaga garip geliyor ama doğru olan
+    /// bu: etkinliğin MinimumAge alanı var ve biz onun EN FAZLA kac
     /// olabilecegini soruyoruz.
     ///
-    /// Kullanici acisindan anlami: "18 yasindayim, girebilecegim
+    /// Kullanıcı acisindan anlami: "18 yasindayim, girebilecegim
     /// etkinlikleri goster" -> maxMinimumAge=18.
     ///
-    /// Yalnizca "age" deseydik, "18 yas siniri OLAN etkinlikler" mi
+    /// Yalnızca "age" deseydik, "18 yaş sınırı OLAN etkinlikler" mi
     /// yoksa "18 yasindakinin girebilecegi etkinlikler" mi belirsiz
-    /// kalirdi -- ve ikisi cok farkli sonuc verirdi.
+    /// kalırdı -- ve ikisi çok farklı sonuç verirdi.
     /// </remarks>
     public int? MaxMinimumAge { get; init; }
 
     /// <summary>
-    /// Etkinlik durumu. PDF filtresi: "Satis durumu".
+    /// Etkinlik durumu. PDF filtresi: "Satış durumu".
     /// </summary>
     /// <remarks>
     /// Istemci buraya Draft veya PendingApproval gonderebilir. Sorun
-    /// degil: gorunurluk filtresi (PublicStatuses) DAHA SONRA
-    /// uygulaniyor ve yetkisiz kullanici icin sonuc yine bos doner.
-    /// Iki filtre birlikte calisiyor, biri digerini gecersiz kilmiyor.
+    /// değil: gorunurluk filtresi (PublicStatuses) DAHA SONRA
+    /// uygulaniyor ve yetkisiz kullanıcı için sonuç yine boş döner.
+    /// Iki filtre birlikte çalışıyor, biri digerini geçersiz kilmiyor.
     /// </remarks>
     public EventStatus? Status { get; init; }
 
@@ -156,12 +156,12 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     // ==============================================================
 
     /// <summary>
-    /// Siralama alani. Gecerli degerler: date, title, created.
-    /// Bos veya taninmayan bir deger verilirse tarihe gore siralanir.
+    /// Sıralama alanı. Geçerli degerler: date, title, created.
+    /// Boş veya taninmayan bir deger verilirse tarihe göre siralanir.
     /// </summary>
     public string? SortBy { get; init; }
 
-    /// <summary>Siralama yonu: "asc" veya "desc". Varsayilan: asc.</summary>
+    /// <summary>Sıralama yonu: "asc" veya "desc". Varsayılan: asc.</summary>
     public string? SortDirection { get; init; }
 }
 
@@ -169,7 +169,7 @@ internal sealed class GetEventsQueryHandler
     : IRequestHandler<GetEventsQuery, Result<PagedResult<EventListItem>>>
 {
     /// <summary>
-    /// Anonim kullanicinin gorebilecegi durumlar.
+    /// Anonim kullanıcının gorebilecegi durumlar.
     ///
     /// static readonly: her istekte yeni dizi ayirmiyoruz. Bu, sitenin
     /// en sik calisan sorgusu olacak.
@@ -184,14 +184,14 @@ internal sealed class GetEventsQueryHandler
         "Globalization",
         "CA1304:Specify CultureInfo",
         Justification =
-            "ToLower() bir IFADE AGACI icinde ve .NET'te calismiyor; EF Core " +
-            "onu SQL'deki LOWER() fonksiyonuna ceviriyor. Kultur ayarinin " +
-            "sonuca etkisi yok. ToLowerInvariant() ise EF tarafindan SQL'e " +
+            "ToLower() bir IFADE AGACI içinde ve .NET'te calismiyor; EF Core " +
+            "önü SQL'deki LOWER() fonksiyonuna ceviriyor. Kultur ayarinin " +
+            "sonuca etkisi yok. ToLowerInvariant() ise EF tarafından SQL'e " +
             "cevrilemedigi icin kullanilamaz.")]
     [SuppressMessage(
         "Globalization",
         "CA1311:Specify a culture or use an invariant version",
-        Justification = "Bkz. CA1304 aciklamasi.")]
+        Justification = "Bkz. CA1304 açıklaması.")]
     public async Task<Result<PagedResult<EventListItem>>> Handle(
         GetEventsQuery request,
         CancellationToken cancellationToken)
@@ -201,12 +201,12 @@ internal sealed class GetEventsQueryHandler
         // ==============================================================
         // GORUNURLUK FILTRESI -- BU DOSYANIN EN ONEMLI SATIRI
         // ==============================================================
-        // Bu filtre olmasaydi herkes Draft ve PendingApproval durumundaki
-        // etkinlikleri gorurdu: organizatorun henuz yayinlamadigi,
+        // Bu filtre olmasaydı herkes Draft ve PendingApproval durumundaki
+        // etkinlikleri gorurdu: organizatorun henüz yayinlamadigi,
         // fiyatlari belirlenmemis, belki de vazgecilecek etkinlikler.
         //
-        // Ayrica Suspended (admin tarafindan uygunsuz bulunup askiya
-        // alinmis) etkinlikler de gorunurdu -- askiya almanin hicbir
+        // Ayrıca Suspended (admin tarafından uygunsuz bulunup askiya
+        // alinmis) etkinlikler de görünürdü -- askiya almanin hiçbir
         // anlami kalmazdi.
         // ==============================================================
         if (!request.IncludeUnpublished)
@@ -244,28 +244,28 @@ internal sealed class GetEventsQueryHandler
             query = query.Where(e => e.EventDate <= request.DateTo.Value);
         }
 
-        // ---- PDF Sprint 11: Satis durumu ----
+        // ---- PDF Sprint 11: Satış durumu ----
         if (request.Status.HasValue)
         {
             query = query.Where(e => e.Status == request.Status.Value);
         }
 
-        // ---- PDF Sprint 11: Yas siniri ----
+        // ---- PDF Sprint 11: Yaş sınırı ----
         if (request.MaxMinimumAge.HasValue)
         {
             query = query.Where(e => e.MinimumAge <= request.MaxMinimumAge.Value);
         }
 
-        // ---- PDF Sprint 11: Fiyat araligi ----
+        // ---- PDF Sprint 11: Fiyat aralığı ----
         //
-        // Any(...) ile "en az bir bilet turu araliga giriyorsa" diyoruz.
-        // EF bunu SQL'de EXISTS alt sorgusuna ceviriyor -- yani tum
+        // Any(...) ile "en az bir bilet türü araliga giriyorsa" diyoruz.
+        // EF bunu SQL'de EXISTS alt sorgusuna ceviriyor -- yani tüm
         // bilet turlerini bellege cekmiyoruz.
         //
-        // Silinmis bilet turleri icin AYRICA filtre YAZMIYORUM: EF
+        // Silinmis bilet türleri için AYRICA filtre YAZMIYORUM: EF
         // global query filter (HasQueryFilter) zaten navigation
         // koleksiyonlarina da WHERE "IsDeleted" = false ekliyor.
-        // Elle tekrar yazmak, ayni kurali iki yerde tutmak olurdu.
+        // Elle tekrar yazmak, aynı kuralı iki yerde tutmak olurdu.
         if (request.MinPrice.HasValue)
         {
             query = query.Where(e => e.TicketTypes.Any(
@@ -282,11 +282,11 @@ internal sealed class GetEventsQueryHandler
         {
             var pattern = $"%{request.Search.Trim().ToLowerInvariant()}%";
 
-            // Baslik VE aciklamada ariyorum.
+            // Başlık VE aciklamada ariyorum.
             //
-            // Kullanici "rock" yazdiginda, baslikta gecmese bile
-            // aciklamasinda gecen konserleri de bulmali. Yalnizca
-            // baslikta arasaydik arama sonuclari fakir kalirdi.
+            // Kullanıcı "rock" yazdiginda, baslikta gecmese bile
+            // aciklamasinda gecen konserleri de bulmali. Yalnızca
+            // baslikta arasaydik arama sonuclari fakir kalırdı.
             query = query.Where(e =>
                 EF.Functions.Like(e.Title.ToLower(), pattern) ||
                 EF.Functions.Like(e.Description.ToLower(), pattern));
@@ -320,25 +320,25 @@ internal sealed class GetEventsQueryHandler
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// NEDEN switch? Neden alan adini dogrudan kullanmiyoruz?
+    /// NEDEN switch? Neden alan adını doğrudan kullanmiyoruz?
     /// ==============================================================
-    /// Bazi kutuphaneler `OrderBy("Title")` gibi METIN alarak siralama
+    /// Bazi kutuphaneler `OrderBy("Title")` gibi METİN alarak sıralama
     /// yapmayi mumkun kiliyor. Cazip ama TEHLIKELI.
     ///
     /// Iki sebeple:
     ///
-    /// 1) GUVENLIK: Ham SQL uretilen bir yapida bu, siralama uzerinden
+    /// 1) GÜVENLİK: Ham SQL uretilen bir yapida bu, sıralama üzerinden
     ///    SQL enjeksiyonuna kapi acar. (EF Core'un LINQ'i buna karsi
-    ///    korumali ama aliskanlik olarak dogrusunu yaziyorum.)
+    ///    korumali ama aliskanlik olarak dogrusunu yazıyorum.)
     ///
     /// 2) VERI SIZINTISI: Istemci sortBy=PasswordHash yazarsa, sonuclar
-    ///    o alana gore SIRALANIR. Alan yanitta gorunmese bile,
+    ///    o alana göre SIRALANIR. Alan yanitta gorunmese bile,
     ///    siralamanin kendisi bilgi verir -- birden fazla sorguyla
     ///    degerler ikili aramayla cikarilabilir.
     ///
-    /// Beyaz liste (whitelist) ile yalnizca IZIN VERDIGIM alanlar
+    /// Beyaz liste (whitelist) ile yalnızca IZIN VERDIGIM alanlar
     /// siralanabiliyor. Taninmayan deger sessizce varsayilana dusuyor:
-    /// hata donmek yerine mantikli bir sonuc vermek, listeleme
+    /// hata donmek yerine mantikli bir sonuç vermek, listeleme
     /// uclarinda daha iyi bir davranis.
     /// ==============================================================
     /// </remarks>
@@ -347,11 +347,11 @@ internal sealed class GetEventsQueryHandler
         string? sortBy,
         string? sortDirection)
     {
-        // OrdinalIgnoreCase: kultur bagimsiz karsilastirma.
+        // OrdinalIgnoreCase: kultur bağımsız karsilastirma.
         //
         // Turkce kulturde "TITLE".ToLower() "tıtle" verir (noktasiz i)
-        // ve "title" ile ESLESMEZ. Sunucunun kultur ayarina gore
-        // calisan/calismayan bir siralama, teshisi cok zor bir hata
+        // ve "title" ile ESLESMEZ. Sunucunun kultur ayarina göre
+        // calisan/çalışmayan bir sıralama, teshisi çok zor bir hata
         // olurdu.
         var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
 
@@ -365,10 +365,10 @@ internal sealed class GetEventsQueryHandler
                 ? query.OrderByDescending(e => e.CreatedAt)
                 : query.OrderBy(e => e.CreatedAt),
 
-            // Varsayilan: etkinlik tarihi, yaklasanlar once.
+            // Varsayılan: etkinlik tarihi, yaklasanlar önce.
             //
-            // Kullanici "bu hafta ne var" diye bakiyor; en uzak
-            // tarihli konseri ilk sirada gormek istemez.
+            // Kullanıcı "bu hafta ne var" diye bakiyor; en uzak
+            // tarihli konseri ilk sırada gormek istemez.
             _ => descending
                 ? query.OrderByDescending(e => e.EventDate)
                 : query.OrderBy(e => e.EventDate),
@@ -384,13 +384,13 @@ public sealed record GetEventByIdQuery(Guid Id, bool IncludeUnpublished)
     : IRequest<Result<EventDetail>>;
 
 /// <summary>
-/// Herkese acik etkinlik durumlari.
+/// Herkese açık etkinlik durumlari.
 /// </summary>
 /// <remarks>
-/// Iki handler da (liste ve detay) ayni listeyi kullaniyor. Ayri ayri
-/// yazsaydik, ilerde yeni bir durum eklendiginde birini guncelleyip
-/// digerini unutmak kacinilmazdi -- ve sonuc bir GUVENLIK acigi olurdu:
-/// listede gorunmeyen bir etkinlik detayda gorunur (veya tersi).
+/// Iki handler da (liste ve detay) aynı listeyi kullaniyor. Ayrı ayrı
+/// yazsaydık, ilerde yeni bir durum eklendiginde birini guncelleyip
+/// digerini unutmak kacinilmazdi -- ve sonuç bir GÜVENLİK acigi olurdu:
+/// listede gorunmeyen bir etkinlik detayda görünür (veya tersi).
 /// </remarks>
 internal static class EventVisibility
 {
@@ -422,41 +422,41 @@ internal sealed class GetEventByIdQueryHandler
         // ==============================================================
         // PDF Sprint 11: "Etkinlik detaylari" cache edilebilir.
         // ==============================================================
-        // PDF kurali: "Kullaniciya ozel hassas veriler ortak cache
-        // icinde tutulmamalidir."
+        // PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache
+        // içinde tutulmamalidir."
         //
-        // Bu sorgu ILK BAKISTA kullanicidan bagimsiz gorunuyor -- ayni
-        // etkinlik herkese ayni doner. Ama bir alan var:
-        // IncludeUnpublished. Admin icin true, herkes icin false.
-        // Yani AYNI Id, ROLE GORE FARKLI sonuc veriyor.
+        // Bu sorgu ILK BAKISTA kullanicidan bağımsız görünüyor -- aynı
+        // etkinlik herkese aynı döner. Ama bir alan var:
+        // IncludeUnpublished. Admin için true, herkes için false.
+        // Yani AYNI Id, ROLE GORE FARKLI sonuç veriyor.
         //
         // ------------------------------------------------------------
         // ILK AKLIMA GELEN COZUM VE NEDEN VAZGECTIM
         // ------------------------------------------------------------
-        // "Anahtara rolu de ekleyeyim" diye dusundum:
+        // "Anahtara rolü de ekleyeyim" diye dusundum:
         //
         //     event:detail:{id}:admin
         //     event:detail:{id}:public
         //
-        // Calisirdi. Ama YAYINLANMAMIS etkinligin tum icerigi Redis e
-        // yazilmis olurdu. Redis e erisen herhangi biri (yanlis
-        // yapilandirilmis bir port, baska bir uygulama, bir yedek
-        // dosyasi) organizatorun henuz yayinlamadigi etkinlikleri
+        // Calisirdi. Ama YAYINLANMAMIS etkinliğin tüm içeriği Redis e
+        // yazilmis olurdu. Redis e erisen herhangi biri (yanlış
+        // yapilandirilmis bir port, başka bir uygulama, bir yedek
+        // dosyasi) organizatorun henüz yayinlamadigi etkinlikleri
         // okuyabilirdi.
         //
         // ------------------------------------------------------------
-        // SECTIGIM COZUM: YAYINLANMAMIS ICERIK HIC ONBELLEKLENMEZ
+        // SECTIGIM COZUM: YAYINLANMAMIS ICERIK HİÇ ONBELLEKLENMEZ
         // ------------------------------------------------------------
-        // Admin gorunumu onbellegi TAMAMEN ATLIYOR ve dogrudan
+        // Admin gorunumu önbelleği TAMAMEN ATLIYOR ve doğrudan
         // veritabanina gidiyor. Onbellege giren sorgu ise YALNIZCA
-        // yayinlanmis etkinlikleri donduren surum. Redis te hicbir
+        // yayinlanmis etkinlikleri donduren surum. Redis te hiçbir
         // zaman taslak veri bulunmuyor.
         //
         // Maliyeti: admin istekleri onbellekten yararlanmiyor. Kabul
         // edilebilir -- admin trafigi toplam trafigin binde biri bile
-        // degil ve onbellek zaten olcek icin var.
+        // değil ve önbellek zaten olcek için var.
         //
-        // Yan fayda: anahtar sayisi ikiye katlanmiyor.
+        // Yan fayda: anahtar sayısı ikiye katlanmiyor.
         // ==============================================================
         var detail = request.IncludeUnpublished
             ? await LoadAsync(request.Id, includeUnpublished: true, cancellationToken)
@@ -488,22 +488,22 @@ internal sealed class GetEventByIdQueryHandler
         // IDOR KORUMASI -- ARTIK SORGUNUN ICINDE
         // ==============================================================
         // Onceden bu kontrol veriyi CEKTIKTEN SONRA yapiliyordu.
-        // Onbellek eklerken sorgunun icine tasidim ve daha da guvenli
+        // Onbellek eklerken sorgunun icine tasidim ve daha da güvenli
         // oldu.
         //
-        // Detay endpoint i Id ile dogrudan cagrilabiliyor. Kontrol
-        // olmasaydi birisi Id yi gorup (veya tahmin edip) taslak
-        // etkinligi okuyabilirdi. Buna "guvensiz dogrudan nesne
-        // referansi" (IDOR) denir.
+        // Detay endpoint i Id ile doğrudan cagrilabiliyor. Kontrol
+        // olmasaydı birisi Id yi gorup (veya tahmin edip) taslak
+        // etkinligi okuyabilirdi. Buna "guvensiz doğrudan nesne
+        // referansı" (IDOR) denir.
         //
-        // Sorguya tasimanin ek faydasi: yetkisiz kullanici icin
-        // veritabanindan HIC veri gelmiyor, dolayisiyla onbellege de
-        // yazilamiyor. Onceki yerlesimde veri once cekilip sonra
+        // Sorguya tasimanin ek faydasi: yetkisiz kullanıcı için
+        // veritabanindan HİÇ veri gelmiyor, dolayisiyla onbellege de
+        // yazılamıyor. Önceki yerlesimde veri önce cekilip sonra
         // reddediliyordu.
         //
-        // Bulunamayan kayit 404 donuyor, 403 degil -- bilerek.
-        // 403 "bu kayit VAR ama goremezsin" der ve varligini DOGRULAR.
-        // 404 hicbir sey sizdirmaz.
+        // Bulunamayan kayıt 404 dönüyor, 403 değil -- bilerek.
+        // 403 "bu kayıt VAR ama goremezsin" der ve varligini DOGRULAR.
+        // 404 hiçbir sey sizdirmaz.
         // ==============================================================
         if (!includeUnpublished)
         {
@@ -519,11 +519,11 @@ internal sealed class GetEventByIdQueryHandler
                 e.Category.Name,
                 e.OrganizerId,
 
-                // Organizator adini ALT SORGU ile aliyorum.
+                // Organizatör adını ALT SORGU ile alıyorum.
                 //
-                // Sebep: Event ile OrganizerProfile arasinda navigation
+                // Sebep: Event ile OrganizerProfile arasında navigation
                 // ozelligi tanimlamadik. Tanimlayabilirdik ama Event
-                // sinifi zaten kalabalik ve bu bilgi yalnizca detay
+                // sinifi zaten kalabalik ve bu bilgi yalnızca detay
                 // ekraninda gerekiyor.
                 _context.OrganizerProfiles
                     .Where(p => p.Id == e.OrganizerId)
@@ -554,8 +554,8 @@ internal sealed class GetEventByIdQueryHandler
                         s.EndDate,
                         s.HallId,
 
-                        // EventSession'da Hall navigation'i YOK -- yalnizca
-                        // HallId var. Alt sorgu ile adini aliyorum.
+                        // EventSession'da Hall navigation'i YOK -- yalnızca
+                        // HallId var. Alt sorgu ile adını alıyorum.
                         //
                         // Navigation eklemek de mumkundu ama EventSession'i
                         // olabildigince yalin tutmak istiyorum: Sprint 7'de

@@ -10,14 +10,14 @@ namespace Ticketing.Infrastructure.Storage;
 /// ==================================================================
 /// URETIMDE BU SINIF YETMEZ -- BILINCLI BIR SINIRLAMA
 /// ==================================================================
-/// Birden fazla sunucuya olceklenince disk PAYLASILMAZ: kullanici
+/// Birden fazla sunucuya olceklenince disk PAYLASILMAZ: kullanıcı
 /// afisi sunucu-1 e yukler, sunucu-2 den istendiginde bulunamaz.
 ///
-/// O gun IFileStorage in S3/Azure Blob uygulamasi yazilacak ve
+/// O gün IFileStorage in S3/Azure Blob uygulamasi yazilacak ve
 /// Application katmaninda TEK SATIR degismeyecek. Arayuzun varlik
 /// sebebi tam olarak bu.
 ///
-/// Simdilik yerel disk yeterli cunku tek sunucuda calisiyoruz --
+/// Şimdilik yerel disk yeterli çünkü tek sunucuda calisiyoruz --
 /// ihtiyac duymadigimiz altyapiyi simdiden kurmuyorum.
 /// ==================================================================
 /// </remarks>
@@ -46,15 +46,15 @@ internal sealed class LocalFileStorage : IFileStorage
         var yol = TamYol(storedFileName);
 
         // ==============================================================
-        // FileMode.CreateNew -- Create DEGIL
+        // FileMode.CreateNew -- Create DEĞİL
         // ==============================================================
         // Create, var olan dosyanin USTUNE yazar. CreateNew ise dosya
         // varsa HATA firlatir.
         //
-        // Ad zaten Guid oldugu icin cakisma pratikte imkansiz. Ama
+        // Ad zaten Guid olduğu için çakışma pratikte imkansiz. Ama
         // "imkansiz" varsayimiyla ustune yazmak yerine PATLAMASINI
-        // tercih ediyorum: bir gun ad uretimi bozulursa (ornegin biri
-        // Guid yerine kullanici adini koyarsa) bu satir sessiz veri
+        // tercih ediyorum: bir gün ad üretimi bozulursa (örneğin biri
+        // Guid yerine kullanıcı adını koyarsa) bu satır sessiz veri
         // kaybi yerine gurultulu bir hata verir.
         // ==============================================================
         await using var dosya = new FileStream(
@@ -65,9 +65,9 @@ internal sealed class LocalFileStorage : IFileStorage
             bufferSize: 81920,
             useAsync: true);
 
-        // CopyToAsync akisi PARCA PARCA kopyaliyor; dosyanin tamami
-        // hicbir zaman bellege alinmiyor. 5 MB tek basina sorun degil
-        // ama es zamanli yuzlerce yukleme olsaydi olurdu.
+        // CopyToAsync akışı PARCA PARCA kopyaliyor; dosyanin tamami
+        // hiçbir zaman bellege alinmiyor. 5 MB tek başına sorun değil
+        // ama es zamanlı yuzlerce yukleme olsaydı olurdu.
         await content.CopyToAsync(dosya, cancellationToken).ConfigureAwait(false);
 
         return yol;
@@ -80,7 +80,7 @@ internal sealed class LocalFileStorage : IFileStorage
         var yol = TamYol(storedFileName);
 
         // File.Delete dosya yoksa zaten hata vermiyor.
-        // Silme islemi IDEMPOTENT olmali: temizlik job u ayni dosyayi
+        // Silme islemi IDEMPOTENT olmalı: temizlik job u aynı dosyayı
         // iki kez silmeye calisirsa patlamamali.
         File.Delete(yol);
 
@@ -88,7 +88,7 @@ internal sealed class LocalFileStorage : IFileStorage
     }
 
     /// <summary>
-    /// Dosya adini kok klasorle birlestirir ve sonucun GERCEKTEN kok
+    /// Dosya adını kok klasorle birlestirir ve sonucun GERCEKTEN kok
     /// klasorun altinda kaldigini dogrular.
     /// </summary>
     /// <remarks>
@@ -96,13 +96,13 @@ internal sealed class LocalFileStorage : IFileStorage
     /// UCUNCU SIPER -- DERINLEMESINE SAVUNMA
     /// ==============================================================
     /// Bu noktaya gelen ad zaten Guid: FileUploadValidator uretti ve
-    /// kullanici girdisi icermiyor. Yani bu kontrol BUGUN gereksiz.
+    /// kullanıcı girdisi icermiyor. Yani bu kontrol BUGUN gereksiz.
     ///
-    /// Yine de koyuyorum cunku bu sinif, cagiranin ne gonderdigini
-    /// bilmiyor. Ilerde biri IFileStorage i baska bir yerden, elle
-    /// olusturulmus bir adla cagirirsa tek koruma bu satir olacak.
+    /// Yine de koyuyorum çünkü bu sinif, cagiranin ne gonderdigini
+    /// bilmiyor. Ilerde biri IFileStorage i başka bir yerden, elle
+    /// olusturulmus bir adla cagirirsa tek koruma bu satır olacak.
     ///
-    /// Guvenlik kontrolu, ona GUVENEN katmanda degil, ihlal
+    /// Güvenlik kontrolü, ona GUVENEN katmanda değil, ihlal
     /// EDILEBILECEK katmanda durmali.
     /// ==============================================================
     /// </remarks>
@@ -113,7 +113,7 @@ internal sealed class LocalFileStorage : IFileStorage
 
         if (!yol.StartsWith(Path.GetFullPath(_root), StringComparison.Ordinal))
         {
-            throw new InvalidOperationException("Gecersiz dosya yolu.");
+            throw new InvalidOperationException("Geçersiz dosya yolu.");
         }
 
         return yol;

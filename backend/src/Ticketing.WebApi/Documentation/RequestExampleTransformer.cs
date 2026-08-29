@@ -5,44 +5,44 @@ using Microsoft.OpenApi.Models;
 namespace Ticketing.WebApi.Documentation;
 
 /// <summary>
-/// Istek govdelerine ornek deger ekler. PDF Sprint 18: "Request ornekleri".
+/// İstek govdelerine örnek deger ekler. PDF Sprint 18: "Request ornekleri".
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// NEDEN ORNEK GEREKLI? SEMA ZATEN VAR
 /// ==================================================================
-/// OpenAPI semasi alan adlarini ve turlerini soyluyor ama GECERLI
+/// OpenAPI semasi alan adlarini ve turlerini söylüyor ama GECERLI
 /// bir degerin neye benzedigini soylemiyor.
 ///
-/// Swagger'in urettigi varsayilan ornek su:
+/// Swagger'in urettigi varsayılan örnek su:
 ///
 ///     { "email": "string", "password": "string" }
 ///
-/// Bunu "Try it out" ile gonderirseniz 400 alirsiniz -- sifre
-/// kurallarina uymuyor. API'yi ilk kez deneyen kisi burada takilir
-/// ve hatanin kendisinde mi API'de mi oldugunu anlayamaz.
+/// Bunu "Try it out" ile gonderirseniz 400 alirsiniz -- şifre
+/// kurallarina uymuyor. API'yi ilk kez deneyen kişi burada takilir
+/// ve hatanin kendisinde mi API'de mi olduğunu anlayamaz.
 ///
 /// Gercekci ornekler, ilk denemeyi CALISIR hale getiriyor.
 ///
 /// ------------------------------------------------------------------
 /// ORNEKLER GERCEK KURALLARLA UYUMLU OLMALI
 /// ------------------------------------------------------------------
-/// Ornek sifre "Sifre123!" -- cunku dogrulayici en az 8 karakter,
-/// bir buyuk harf ve bir rakam istiyor (Sprint 3). "string" veya
-/// "test" yazsaydik ornek REDDEDILIRDI ve dokumantasyon kendi
+/// Ornek şifre "Şifre123!" -- çünkü dogrulayici en az 8 karakter,
+/// bir büyük harf ve bir rakam istiyor (Sprint 3). "string" veya
+/// "test" yazsaydık örnek REDDEDILIRDI ve dokumantasyon kendi
 /// API'siyle celisirdi.
 /// ==================================================================
 /// </remarks>
 internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 {
-    /// <summary>Yol soneki -> ornek govde.</summary>
+    /// <summary>Yol soneki -> örnek govde.</summary>
     /// <remarks>
-    /// Yola gore esliyorum, tipe gore degil.
+    /// Yola göre esliyorum, tipe göre değil.
     ///
-    /// Tipe gore eslesydim ayni DTO'yu kullanan iki uc ayni ornegi
-    /// alirdi -- oysa ornegin anlami baglama gore degisiyor
-    /// (kayit sirasindaki sifre ile sifre degistirmedeki sifre ayni
-    /// tip ama farkli hikaye).
+    /// Tipe göre eslesydim aynı DTO'yu kullanan iki uc aynı ornegi
+    /// alırdı -- oysa örneğin anlami baglama göre değişiyor
+    /// (kayıt sirasindaki şifre ile şifre degistirmedeki şifre aynı
+    /// tip ama farklı hikaye).
     /// </remarks>
     private static readonly (string Yol, string Metot, OpenApiObject Ornek)[] Ornekler =
     [
@@ -63,7 +63,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 
         ("auth/refresh-token", "POST", new OpenApiObject
         {
-            ["refreshToken"] = new OpenApiString("hK9v2mQ...  (giriste donen deger)"),
+            ["refreshToken"] = new OpenApiString("hK9v2mQ...  (girişte donen deger)"),
         }),
 
         ("reservations", "POST", new OpenApiObject
@@ -72,7 +72,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 
             // Coklu koltuk ornegi BILINCLI: tekil bir dizi gosterseydik
             // istemci gelistiricisi tek koltuk varsayabilir ve
-            // arayuzunu ona gore kurgulardi.
+            // arayuzunu ona göre kurgulardi.
             ["eventSeatIds"] = new OpenApiArray
             {
                 new OpenApiString("01a0436e-75a3-7068-8b48-a4eb6eacb02a"),
@@ -87,11 +87,11 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 
         ("/refund", "POST", new OpenApiObject
         {
-            // null = TAM iade. Bunu ornekte gostermek onemli: alanin
-            // opsiyonel oldugunu semadan gormek mumkun ama "bos
+            // null = TAM iade. Bunu ornekte göstermek önemli: alanin
+            // opsiyonel olduğunu semadan gormek mumkun ama "boş
             // birakirsam ne olur?" sorusunun cevabi ancak burada.
             ["amount"] = new OpenApiNull(),
-            ["reason"] = new OpenApiString("Musteri talebi"),
+            ["reason"] = new OpenApiString("Müşteri talebi"),
         }),
 
         // ---- Kimlik islemleri ----
@@ -113,7 +113,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
             ["newPassword"] = new OpenApiString("YeniSifre456!"),
         }),
 
-        // ---- Organizator islemleri ----
+        // ---- Organizatör islemleri ----
 
         ("events", "POST", new OpenApiObject
         {
@@ -126,8 +126,8 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
             ["hallId"] = new OpenApiString("01a0436e-6f4d-71b8-8e55-3c9d7f1a2e84"),
             ["eventDate"] = new OpenApiString("2026-07-15T20:00:00Z"),
 
-            // Satis baslangici ETKINLIKTEN once olmali; ornekte de
-            // oyle. Tersini gosterseydik ornek dogrulamadan gecmezdi.
+            // Satış baslangici ETKINLIKTEN önce olmalı; ornekte de
+            // oyle. Tersini gosterseydik örnek dogrulamadan gecmezdi.
             ["salesStartDate"] = new OpenApiString("2026-05-01T09:00:00Z"),
             ["salesEndDate"] = new OpenApiString("2026-07-15T19:00:00Z"),
             ["durationMinutes"] = new OpenApiInteger(120),
@@ -141,8 +141,8 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
             ["price"] = new OpenApiDouble(450),
             ["currency"] = new OpenApiString("TRY"),
 
-            // null = SINIRSIZ kota. Semadan "opsiyonel" oldugu
-            // gorulur ama "bos birakirsam ne olur?" sorusunun
+            // null = SINIRSIZ kota. Semadan "opsiyonel" olduğu
+            // gorulur ama "boş birakirsam ne olur?" sorusunun
             // cevabi ancak ornekte.
             ["quota"] = new OpenApiNull(),
             ["requiresStudentVerification"] = new OpenApiBoolean(false),
@@ -165,7 +165,7 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
         {
             ["eventId"] = new OpenApiString("01a0436e-7065-757e-8d38-ada797b90295"),
             ["rating"] = new OpenApiInteger(5),
-            ["comment"] = new OpenApiString("Harika bir konserdi, ses duzeni cok iyiydi."),
+            ["comment"] = new OpenApiString("Harika bir konserdi, ses düzeni çok iyiydi."),
         }),
     ];
 
@@ -198,8 +198,8 @@ internal sealed class RequestExampleTransformer : IOpenApiOperationTransformer
 
             foreach (var icerik in operation.RequestBody.Content.Values)
             {
-                // Zaten ornek varsa dokunmuyoruz: elle yazilmis bir
-                // ornek buradaki genel ornekten daha degerlidir.
+                // Zaten örnek varsa dokunmuyoruz: elle yazilmis bir
+                // örnek buradaki genel ornekten daha degerlidir.
                 icerik.Example ??= ornek;
             }
 

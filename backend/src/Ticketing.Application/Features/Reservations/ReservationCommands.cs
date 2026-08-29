@@ -14,7 +14,7 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.Application.Features.Reservations;
 
 // ===================================================================
-// IPTAL -- PDF: POST /api/v1/reservations/{id}/cancel
+// İPTAL -- PDF: POST /api/v1/reservations/{id}/cancel
 // ===================================================================
 
 public sealed record CancelReservationCommand(Guid Id, string? Reason) : IRequest<Result>;
@@ -40,11 +40,11 @@ internal sealed class CancelReservationCommandHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            return Result.Failure(Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+            return Result.Failure(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // Items ve icindeki EventSeat'leri yukluyorum: koltuklari
-        // SERBEST BIRAKACAGIZ ve bunun icin takip edilmeleri gerekiyor.
+        // Items ve icindeki EventSeat'leri yukluyorum: koltukları
+        // SERBEST BIRAKACAGIZ ve bunun için takip edilmeleri gerekiyor.
         var reservation = await _context.Reservations
             .Include(r => r.Items)
                 .ThenInclude(i => i.EventSeat)
@@ -56,30 +56,30 @@ internal sealed class CancelReservationCommandHandler
             return Result.Failure(ReservationErrors.NotFound);
         }
 
-        // Sahiplik kontrolu.
+        // Sahiplik kontrolü.
         //
-        // 403 degil 404 donuyorum: baskasinin rezervasyonunun VAR
-        // oldugunu dogrulamamak icin. 403 deseydim, saldirgan Id
-        // tarayip hangi rezervasyonlarin var oldugunu ogrenebilirdi.
+        // 403 değil 404 donuyorum: baskasinin rezervasyonunun VAR
+        // olduğunu dogrulamamak için. 403 deseydim, saldirgan Id
+        // tarayip hangi rezervasyonlarin var olduğunu ogrenebilirdi.
         if (reservation.UserId != userId)
         {
             return Result.Failure(ReservationErrors.NotFound);
         }
 
-        // Durum gecisi entity'de dogrulaniyor: zaten iptal edilmis
+        // Durum gecisi entity'de dogrulaniyor: zaten iptal edilmiş
         // veya onaylanmis bir rezervasyon iptal edilemez.
         reservation.Cancel(request.Reason);
 
         // ==============================================================
         // KOLTUKLARI SERBEST BIRAK
         // ==============================================================
-        // Bu adim ATLANIRSA en kotu hata olusur: rezervasyon iptal
-        // gorunur ama koltuklar 10 dakika daha kilitli kalir.
-        // Kullanici "iptal ettim ama koltuk hala dolu" der ve
+        // Bu adim ATLANIRSA en kötü hata olusur: rezervasyon iptal
+        // görünür ama koltuklar 10 dakika daha kilitli kalır.
+        // Kullanıcı "iptal ettim ama koltuk hâlâ dolu" der ve
         // sebebini kimse anlayamaz.
         //
-        // Release, satilmis koltugu reddediyor -- iptal edilen bir
-        // rezervasyonda satilmis koltuk olamaz ama savunmayi
+        // Release, satılmış koltuğu reddediyor -- iptal edilen bir
+        // rezervasyonda satılmış koltuk olamaz ama savunmayi
         // entity'de tutuyoruz.
         foreach (var item in reservation.Items)
         {
@@ -89,8 +89,8 @@ internal sealed class CancelReservationCommandHandler
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         // PDF Sprint 10: "SeatReleased".
-        // Vazgecen kullanicinin koltuklari, oturumu izleyen herkeste
-        // aninda yesile donuyor.
+        // Vazgecen kullanıcının koltukları, oturumu izleyen herkeste
+        // anında yesile dönüyor.
         await _seatNotifier.SeatsReleasedAsync(
             reservation.EventSessionId,
             reservation.Items.Select(i => i.EventSeatId).ToList(),
@@ -133,7 +133,7 @@ internal sealed class ExtendReservationCommandHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<ReservationDto>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var now = _clock.UtcNow;
@@ -150,8 +150,8 @@ internal sealed class ExtendReservationCommandHandler
         }
 
         // Entity kontrol ediyor:
-        //   - Yalnizca Locked durumunda uzatilabilir
-        //   - Suresi DOLMUS rezervasyon uzatilamaz (diriltilemez)
+        //   - Yalnızca Locked durumunda uzatilabilir
+        //   - Süresi DOLMUS rezervasyon uzatilamaz (diriltilemez)
         //   - Uzatma limiti asilamaz
         reservation.Extend(
             TimeSpan.FromMinutes(_options.MaxExtensionMinutes),
@@ -162,11 +162,11 @@ internal sealed class ExtendReservationCommandHandler
         // KOLTUKLARIN KILIT SURESINI DE UZAT
         // ==============================================================
         // Bu adim atlanirsa TUTARSIZLIK olusur: rezervasyon 15 dakika
-        // gecerli gorunur ama koltuklar 10. dakikada "musait" olur ve
-        // baskasi alabilir.
+        // geçerli görünür ama koltuklar 10. dakikada "musait" olur ve
+        // başkası alabilir.
         //
-        // Rezervasyon ile koltuk sureleri HER ZAMAN ayni olmali.
-        // Ikisini ayri yerlerde tuttugumuz icin bu senkronizasyon
+        // Rezervasyon ile koltuk sureleri HER ZAMAN aynı olmalı.
+        // Ikisini ayrı yerlerde tuttugumuz için bu senkronizasyon
         // bizim sorumlulugumuzda.
         foreach (var item in reservation.Items)
         {
@@ -192,13 +192,13 @@ internal sealed class ExtendReservationCommandHandler
 // ===================================================================
 
 /// <summary>
-/// Suresi dolmus rezervasyonlari iptal eder ve koltuklari serbest birakir.
+/// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
 ///
-/// PDF Sprint 7: "Suresi dolan rezervasyon otomatik olarak iptal
+/// PDF Sprint 7: "Süresi dolan rezervasyon otomatik olarak iptal
 /// edilmelidir."
-/// PDF Sprint 9: "Suresi dolan rezervasyonlari iptal etme" job'i.
+/// PDF Sprint 9: "Süresi dolan rezervasyonları iptal etme" job'i.
 ///
-/// Simdilik endpoint olarak da acik (admin tetikleyebilsin ve test
+/// Şimdilik endpoint olarak da açık (admin tetikleyebilsin ve test
 /// edebilelim). Sprint 9'da Hangfire ile dakikada bir calisacak.
 /// </summary>
 public sealed record ExpireReservationsCommand(int BatchSize = 100) : IRequest<Result<int>>;
@@ -229,9 +229,9 @@ internal sealed class ExpireReservationsCommandHandler
         // ==============================================================
         // TOPLU ISLEM SINIRI (BatchSize)
         // ==============================================================
-        // Sinir olmasaydi, sistem bir sure durup 50.000 suresi dolmus
+        // Sinir olmasaydı, sistem bir süre durup 50.000 süresi dolmuş
         // rezervasyon birikseydi, job hepsini tek transaction'da
-        // islemeye calisir ve dakikalarca tablo kilitlerdi.
+        // islemeye çalışır ve dakikalarca tablo kilitlerdi.
         //
         // Parca parca islemek, job'in her calismasinda kisa surmesini
         // ve digerlerinin bir sonraki calismada islenmesini saglar.
@@ -241,8 +241,8 @@ internal sealed class ExpireReservationsCommandHandler
             .Include(r => r.Items)
                 .ThenInclude(i => i.EventSeat)
 
-            // Etkinlik basligi, Outbox mesajinin icerigi icin gerekli.
-            // Include etmeseydik her rezervasyon icin ayri bir sorgu
+            // Etkinlik başlığı, Outbox mesajinin içeriği için gerekli.
+            // Include etmeseydik her rezervasyon için ayrı bir sorgu
             // atilirdi (N+1) -- 100 rezervasyonluk bir partide 100
             // fazladan gidis donus.
             .Include(r => r.EventSession)
@@ -261,16 +261,16 @@ internal sealed class ExpireReservationsCommandHandler
 
             foreach (var item in reservation.Items)
             {
-                // Satilmis koltugu atla.
+                // Satılmış koltuğu atla.
                 //
-                // Nasil olur? Odeme tam bu sirada tamamlanmis olabilir:
-                // rezervasyon PaymentPending, sure doldu, ama odeme
-                // basarili donup koltugu satti.
+                // Nasil olur? Ödeme tam bu sırada tamamlanmis olabilir:
+                // rezervasyon PaymentPending, süre doldu, ama ödeme
+                // başarılı donup koltuğu satti.
                 //
-                // Bu kontrol olmasaydi Release() DomainException
-                // firlatir ve TUM parti (batch) basarisiz olurdu --
+                // Bu kontrol olmasaydı Release() DomainException
+                // firlatir ve TÜM parti (batch) başarısız olurdu --
                 // tek bir kenar durum yuzunden 99 rezervasyon
-                // temizlenmeden kalirdi.
+                // temizlenmeden kalırdı.
                 if (item.EventSeat.Status != Domain.Enums.EventSeatStatus.Sold)
                 {
                     item.EventSeat.Release();
@@ -280,21 +280,21 @@ internal sealed class ExpireReservationsCommandHandler
             // ==========================================================
             // BILDIRIMI BURADA GONDERMIYORUZ -- OUTBOX'A YAZIYORUZ
             // ==========================================================
-            // PDF Sprint 9: "Rezervasyon suresi doldu bildirimi"
-            // Outbox senaryolari arasinda.
+            // PDF Sprint 9: "Rezervasyon süresi doldu bildirimi"
+            // Outbox senaryolari arasında.
             //
-            // Neden dogrudan e-posta gondermiyorum? Cunku bu bir
-            // DONGU icinde: 100 rezervasyonluk bir partide 100
+            // Neden doğrudan e-posta gondermiyorum? Çünkü bu bir
+            // DONGU içinde: 100 rezervasyonluk bir partide 100
             // e-posta gonderimi demek. SMTP sunucusu yavassa (her
-            // biri 2 saniye) job 3 dakika surer, bu sirada bir
-            // sonraki calisma baslayamaz ve suresi dolan yeni
+            // biri 2 saniye) job 3 dakika surer, bu sırada bir
+            // sonraki calisma baslayamaz ve süresi dolan yeni
             // rezervasyonlar temizlenmeden bekler.
             //
-            // Yani KOLTUKLAR BOSA BEKLER -- dogrudan gelir kaybi.
+            // Yani KOLTUKLAR BOSA BEKLER -- doğrudan gelir kaybi.
             //
             // Outbox'a yazmak ise sadece bir INSERT: mikrosaniyeler.
-            // Gonderim isi ayri bir job'a devrediliyor.
-            // PDF: "Job islemleri kullanici istegini gereksiz yere
+            // Gonderim isi ayrı bir job'a devrediliyor.
+            // PDF: "Job islemleri kullanıcı istegini gereksiz yere
             // bekletmemelidir."
             // ==========================================================
             _context.OutboxMessages.Add(OutboxMessage.Create(
@@ -312,11 +312,11 @@ internal sealed class ExpireReservationsCommandHandler
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             // ==========================================================
-            // PDF is kurali: "Rezervasyon suresi doldugunda koltuk
+            // PDF is kuralı: "Rezervasyon süresi doldugunda koltuk
             // serbest gorunmelidir."
             // ==========================================================
-            // Bu, Sprint 10'un en gorunur faydasi. SignalR olmasaydi
-            // kullanicinin bosalan koltugu gormesi icin sayfayi
+            // Bu, Sprint 10'un en görünür faydasi. SignalR olmasaydı
+            // kullanıcının bosalan koltuğu gormesi için sayfayı
             // yenilemesi gerekirdi -- ya da Sprint 7'de koydugum
             // 10 saniyelik yoklamayi beklemesi.
             //
@@ -326,7 +326,7 @@ internal sealed class ExpireReservationsCommandHandler
             //
             // Tek olayda birlestirseydik, rezervasyon sahibi kendi
             // rezervasyonunun mu yoksa baskasininkinin mi bittigini
-            // ayirt edemezdi.
+            // ayırt edemezdi.
             foreach (var reservation in expired)
             {
                 await _seatNotifier.SeatsReleasedAsync(

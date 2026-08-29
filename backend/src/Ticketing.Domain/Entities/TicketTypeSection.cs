@@ -1,7 +1,7 @@
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Bir bilet turunun hangi oturma plani bolumlerini kapsadigi.
+/// Bir bilet turunun hangi oturma planı bolumlerini kapsadigi.
 ///
 /// ==================================================================
 /// BU TABLO PDF'IN ER DIYAGRAMINDA YOK -- NEDEN EKLIYORUM?
@@ -10,24 +10,24 @@ namespace Ticketing.Domain.Entities;
 ///     POST /api/v1/ticket-types/{id}/assign-section
 ///
 /// Ve su is kuralini:
-///     "Ayni koltuk birden fazla aktif bilet turune atanamaz."
+///     "Aynı koltuk birden fazla aktif bilet turune atanamaz."
 ///
-/// Bu ikisi bir ESLESTIRME gerektiriyor: hangi bolum hangi bilet
+/// Bu ikisi bir ESLESTIRME gerektiriyor: hangi bölüm hangi bilet
 /// turune ait? Bunu tutacak bir yer olmadan endpoint'in yapacagi
 /// bir sey yok.
 ///
 /// Neden TicketType'a tek bir SeatSectionId eklemedim?
-/// Cunku bir bilet turu BIRDEN FAZLA bolumu kapsayabilir. Ornegin
-/// "Standart" bileti hem "Orta Blok" hem "Yan Blok" icin gecerli
+/// Çünkü bir bilet türü BIRDEN FAZLA bolumu kapsayabilir. Ornegin
+/// "Standart" bileti hem "Orta Blok" hem "Yan Blok" için geçerli
 /// olabilir. Tek alan bunu modelleyemezdi.
 ///
-/// Ters yon ise TEKILDIR: bir bolum yalnizca BIR bilet turune ait
-/// olabilir -- yoksa o bolumdeki koltugun fiyati belirsiz kalirdi.
+/// Ters yon ise TEKILDIR: bir bölüm yalnızca BIR bilet turune ait
+/// olabilir -- yoksa o bolumdeki koltuğun fiyati belirsiz kalırdı.
 /// Bu kisiti UNIQUE (SeatSectionId) index'i ile garanti ediyoruz.
 /// ==================================================================
 ///
 /// UserRole ve Favorite gibi bu da COMPOSITE KEY kullaniyor:
-/// kendine ait bir kimligi yok, kimligi iliskilendirdigi iki
+/// kendine ait bir kimliği yok, kimliği iliskilendirdigi iki
 /// varligin birlesimi.
 /// </summary>
 public class TicketTypeSection

@@ -8,15 +8,15 @@ namespace Ticketing.Domain.Common;
 public abstract class AuditableEntity : Entity
 {
     /// <summary>
-    /// Neden DateTimeOffset, DateTime degil?
+    /// Neden DateTimeOffset, DateTime değil?
     ///
     /// DateTime saat dilimi bilgisi TASIMAZ. Elinizdeki bir DateTime'a bakip
-    /// UTC mi yoksa Istanbul saati mi oldugunu anlayamazsiniz. (DateTime.Kind
+    /// UTC mi yoksa İstanbul saati mi olduğunu anlayamazsiniz. (DateTime.Kind
     /// diye bir alan var ama veritabanina yazilip okundugunda kaybolur.)
     ///
-    /// Bizim projede rezervasyon suresi 10 dakika. Saat dilimi karisirsa
-    /// 3 saatlik bir kayma olusur ve ya herkesin rezervasyonu aninda dolar
-    /// ya da hic dolmaz. Ikisi de felaket.
+    /// Bizim projede rezervasyon süresi 10 dakika. Saat dilimi karisirsa
+    /// 3 saatlik bir kayma olusur ve ya herkesin rezervasyonu anında dolar
+    /// ya da hiç dolmaz. Ikisi de felaket.
     ///
     /// DateTimeOffset offset bilgisini de saklar, bu belirsizligi ortadan
     /// kaldirir. PostgreSQL'de "timestamptz" tipine karsilik gelir.
@@ -25,8 +25,8 @@ public abstract class AuditableEntity : Entity
     public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
-    /// Islemi yapan kullanicinin Id'si. Nullable, cunku bazi kayitlari
-    /// SISTEM olusturur (background job, seed data) -- ortada kullanici yoktur.
+    /// Islemi yapan kullanıcının Id'si. Nullable, çünkü bazi kayitlari
+    /// SISTEM oluşturur (background job, seed data) -- ortada kullanıcı yoktur.
     /// </summary>
     public Guid? CreatedBy { get; set; }
 
@@ -37,13 +37,13 @@ public abstract class AuditableEntity : Entity
     /// <summary>
     /// Soft delete isareti.
     ///
-    /// Bu alani EF Core'un global query filter'i ile eslestirecegiz:
+    /// Bu alanı EF Core'un global query filter'i ile eslestirecegiz:
     ///     modelBuilder.Entity&lt;Event&gt;().HasQueryFilter(e =&gt; !e.IsDeleted);
     ///
     /// O satirdan sonra _context.Events.ToListAsync() yazdigimda EF sorguya
     /// otomatik olarak WHERE "IsDeleted" = false ekler. Her sorguda elle
     /// yazmayi unutma riski ortadan kalkar -- ki bu risk gercektir, 50 sorgudan
-    /// birinde mutlaka unutulur ve silinmis kayitlar kullaniciya gorunur.
+    /// birinde mutlaka unutulur ve silinmis kayitlar kullanıcıya görünür.
     ///
     /// Admin'in silinmisleri gormesi gerektiginde IgnoreQueryFilters() kullanacagiz.
     /// </summary>

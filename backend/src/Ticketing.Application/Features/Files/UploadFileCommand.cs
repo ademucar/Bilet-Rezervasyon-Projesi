@@ -9,8 +9,8 @@ namespace Ticketing.Application.Features.Files;
 
 /// <summary>Yuklenen dosyanin istemciye donen bilgisi.</summary>
 /// <remarks>
-/// StoragePath BILINCLI OLARAK YOK. Sunucudaki gercek dosya yolunu
-/// istemciye vermek, saldirgana dizin yapisini acik eder. Istemcinin
+/// StoragePath BILINCLI OLARAK YOK. Sunucudaki gerçek dosya yolunu
+/// istemciye vermek, saldirgana dizin yapisini açık eder. Istemcinin
 /// ihtiyaci olan tek sey Id ve indirme adresi.
 /// </remarks>
 public sealed record UploadedFileDto(
@@ -21,17 +21,17 @@ public sealed record UploadedFileDto(
     string DownloadUrl);
 
 /// <summary>
-/// Dosya yukleme. PDF Sprint 15: file type / MIME type / guvenli dosya adi.
+/// Dosya yukleme. PDF Sprint 15: file type / MIME type / güvenli dosya adı.
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// NEDEN IFormFile DEGIL, STREAM?
+/// NEDEN IFormFile DEĞİL, STREAM?
 /// ==================================================================
-/// IFormFile, Microsoft.AspNetCore.Http icinde tanimli. Application
+/// IFormFile, Microsoft.AspNetCore.Http içinde tanimli. Application
 /// katmanina almak, is mantigini WEB e bagimli yapardi -- mimari
 /// testimiz bunu zaten reddediyor.
 ///
-/// Stream ise System.IO icinde. Ayni komut yarin bir arka plan
+/// Stream ise System.IO içinde. Aynı komut yarin bir arka plan
 /// isinden veya konsol aracindan da cagrilabilir.
 /// ==================================================================
 /// </remarks>
@@ -62,11 +62,11 @@ internal sealed class UploadFileCommandHandler
         // ==============================================================
         // 1) IMZA ICIN BASTAN BIRKAC BAYT OKU
         // ==============================================================
-        // Tum dosyayi belege almiyorum. 5 MB tek basina sorun degil ama
-        // es zamanli 100 yukleme 500 MB eder ve sunucuyu dusurur.
+        // Tüm dosyayı belege almiyorum. 5 MB tek başına sorun değil ama
+        // es zamanlı 100 yukleme 500 MB eder ve sunucuyu dusurur.
         //
-        // Yalnizca imza icin gereken kadar okuyup akisi BASA SARIYORUM;
-        // sonra ayni akis dogrudan diske kopyalaniyor.
+        // Yalnızca imza için gereken kadar okuyup akışı BASA SARIYORUM;
+        // sonra aynı akis doğrudan diske kopyalaniyor.
         // ==============================================================
         var basBaytlari = new byte[FileUploadValidator.ImzaIcinGerekenBayt];
         var okunan = await request.Content
@@ -76,9 +76,9 @@ internal sealed class UploadFileCommandHandler
         // ==============================================================
         // 2) DOGRULA -- diske YAZMADAN ONCE
         // ==============================================================
-        // Sira onemli: once yazip sonra dogrulasaydik, zararli dosya
-        // gecersiz bulunana kadar diskte durmus olurdu. Kisa bir an
-        // gibi gorunuyor ama bu sure icinde baska bir istek o dosyayi
+        // Sıra önemli: önce yazip sonra dogrulasaydik, zararli dosya
+        // geçersiz bulunana kadar diskte durmus olurdu. Kisa bir an
+        // gibi görünüyor ama bu süre içinde başka bir istek o dosyayı
         // isteyebilir.
         //
         // Hicbir zaman diske dusmemesi, sonra silmekten guvenlidir.
@@ -96,7 +96,7 @@ internal sealed class UploadFileCommandHandler
 
         var guvenliAd = dogrulama.Value;
 
-        // Akisi basa sar: imza icin okudugumuz baytlar da diske yazilmali.
+        // Akisi basa sar: imza için okudugumuz baytlar da diske yazilmali.
         if (request.Content.CanSeek)
         {
             request.Content.Position = 0;
@@ -109,19 +109,19 @@ internal sealed class UploadFileCommandHandler
         // ==============================================================
         // 3) VERITABANI KAYDI
         // ==============================================================
-        // Dosya diskte, kayit veritabaninda -- iki ayri sistem. Kayit
-        // basarisiz olursa dosya SAHIPSIZ kalir.
+        // Dosya diskte, kayıt veritabaninda -- iki ayrı sistem. Kayıt
+        // başarısız olursa dosya SAHIPSIZ kalır.
         //
-        // Bunu dagitik islem (2PC) ile cozmuyorum: karmasik ve pahali.
+        // Bunu dagitik işlem (2PC) ile cozmuyorum: karmasik ve pahali.
         // Bunun yerine sahipsiz dosyalar KABUL EDILEBILIR sayiliyor ve
         // UploadedFile.IsOrphan() ile bulunup temizlenebiliyor.
         //
-        // Ters yon (kayit var, dosya yok) COK daha kotu olurdu: kullanici
-        // kirik bir baglanti gorurdu. Bu yuzden once dosya, sonra kayit.
+        // Ters yon (kayıt var, dosya yok) COK daha kötü olurdu: kullanıcı
+        // kırık bir bağlantı gorurdu. Bu yüzden önce dosya, sonra kayıt.
         // ==============================================================
         var kayit = UploadedFile.Create(
-            // Orijinal ad SAKLANIYOR ama diske yazilmiyor -- yalnizca
-            // kullaniciya gosterim icin. Path.GetFileName ile dizin
+            // Orijinal ad SAKLANIYOR ama diske yazilmiyor -- yalnızca
+            // kullanıcıya gosterim için. Path.GetFileName ile dizin
             // kismi atiliyor ki veritabaninda da yol parcasi durmasin.
             fileName: Path.GetFileName(request.FileName),
             storedFileName: guvenliAd,

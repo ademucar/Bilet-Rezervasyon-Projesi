@@ -4,39 +4,39 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Ticketing.WebApi.Security;
 
 /// <summary>
-/// Istek govdesi cok buyukse, govde OKUNMADAN once 413 doner.
+/// İstek govdesi çok buyukse, govde OKUNMADAN önce 413 döner.
 /// PDF Sprint 15: "Request size limit".
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// BU SINIF, [RequestSizeLimit] YETMEDIGI ICIN VAR
 /// ==================================================================
-/// Once yalnizca [RequestSizeLimit(5 MB)] kullandim. Sinir DOGRU
+/// Önce yalnızca [RequestSizeLimit(5 MB)] kullandim. Sinir DOGRU
 /// calisiyordu ama YANITI test edince iki sorun cikti:
 ///
-///   1) Durum kodu 413 degil 400 donuyordu. Kestrel dogru istisnayi
+///   1) Durum kodu 413 değil 400 donuyordu. Kestrel doğru istisnayi
 ///      (BadHttpRequestException, StatusCode = 413) firlatiyor ama
-///      MVC bunu MODEL BAGLAMA sirasinda yakalayip siradan bir
-///      dogrulama hatasina ceviriyor. Bizim GlobalExceptionHandler'a
-///      hic ulasmiyor.
+///      MVC bunu MODEL BAGLAMA sırasında yakalayip siradan bir
+///      doğrulama hatasina ceviriyor. Bizim GlobalExceptionHandler'a
+///      hiç ulasmiyor.
 ///
-///   2) Yanit, yapilandirdigimiz siniri AYNEN yaziyordu:
+///   2) Yanit, yapilandirdigimiz sınırı AYNEN yaziyordu:
 ///      "The max request body size is 5242880 bytes."
 ///      Bu, ic yapilandirmamizi disariya acan gereksiz bir bilgi ve
 ///      uygulamanin geri kalaniyla tutarsiz bir hata bicimi.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN RESOURCE FILTER, ACTION FILTER DEGIL?
+/// NEDEN RESOURCE FILTER, ACTION FILTER DEĞİL?
 /// ------------------------------------------------------------------
-/// Action filter, MODEL BAGLAMADAN SONRA calisiyor -- yani govde
-/// coktan okunmus, hata coktan olusmus oluyor. Cok gec.
+/// Action filter, MODEL BAGLAMADAN SONRA çalışıyor -- yani govde
+/// coktan okunmus, hata coktan olusmus oluyor. Çok geç.
 ///
 /// Resource filter, model baglamadan ONCE calisan ilk noktadir.
-/// Content-Length basligi o an zaten elimizde; govdeyi hic
+/// Content-Length başlığı o an zaten elimizde; govdeyi hiç
 /// okumadan karar verebiliyoruz.
 ///
-/// Yan fayda: 6 MB'lik bir istegi tel uzerinden okumak zorunda
-/// kalmiyoruz. Reddedecegimiz veriyi almak icin bant genisligi ve
+/// Yan fayda: 6 MB'lik bir isteği tel üzerinden okumak zorunda
+/// kalmiyoruz. Reddedecegimiz veriyi almak için bant genisligi ve
 /// bellek harcamak, tam olarak saldirganin istedigi seydir.
 ///
 /// ------------------------------------------------------------------
@@ -47,8 +47,8 @@ namespace Ticketing.WebApi.Security;
 /// giriyor ve istek durduruluyor -- ama yanit yine 400 oluyor.
 ///
 /// Yani bu sinif, YAYGIN durumu duzeltiyor; nadir durumda eski
-/// davranis geciyor. Ikisini birlikte kullaniyorum: bu filtre
-/// dogru yaniti verir, [RequestSizeLimit] ise gercek sinirlayici
+/// davranis geciyor. Ikisini birlikte kullanıyorum: bu filtre
+/// doğru yaniti verir, [RequestSizeLimit] ise gerçek sinirlayici
 /// olarak her kosulda korur.
 /// ==================================================================
 /// </remarks>
@@ -70,15 +70,15 @@ internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter
             return;
         }
 
-        // Problem Details bicimi: uygulamanin geri kalaniyla ayni.
+        // Problem Details bicimi: uygulamanin geri kalaniyla aynı.
         // Istemci tek bir hata ayristiricisi kullanabiliyor.
         var problem = new ProblemDetails
         {
-            Title = "Istek cok buyuk",
+            Title = "İstek çok büyük",
 
             // Siniri MB cinsinden, YUVARLANMIS olarak soyluyorum.
-            // Kullanicinin bilmesi gereken sey "5 MB"; tam bayt
-            // degeri onun isine yaramaz, saldirganin ise isine yarar.
+            // Kullanıcının bilmesi gereken sey "5 MB"; tam bayt
+            // değeri onun isine yaramaz, saldirganin ise isine yarar.
             Detail = $"Dosya boyutu en fazla {_limit / (1024 * 1024)} MB olabilir.",
             Status = StatusCodes.Status413PayloadTooLarge,
             Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}",
@@ -86,8 +86,8 @@ internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter
 
         problem.Extensions["errorCode"] = "request.too_large";
 
-        // Result atamak, islem hattini KISA DEVRE yapiyor: eylem
-        // metodu hic calismiyor ve govde hic okunmuyor.
+        // Result atamak, işlem hattini KISA DEVRE yapiyor: eylem
+        // metodu hiç calismiyor ve govde hiç okunmuyor.
         context.Result = new ObjectResult(problem)
         {
             StatusCode = StatusCodes.Status413PayloadTooLarge,
@@ -97,6 +97,6 @@ internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter
 
     public void OnResourceExecuted(ResourceExecutedContext context)
     {
-        // Istek tamamlandiktan sonra yapacak bir isimiz yok.
+        // İstek tamamlandıktan sonra yapacak bir isimiz yok.
     }
 }

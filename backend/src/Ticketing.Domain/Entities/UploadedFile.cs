@@ -3,19 +3,19 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Yuklenen dosya kaydi. PDF Sprint 15'in dosya guvenligi maddelerini
-/// (file type kontrolu, MIME type kontrolu, guvenli dosya adi) destekler.
+/// Yuklenen dosya kaydı. PDF Sprint 15'in dosya guvenligi maddelerini
+/// (file type kontrolü, MIME type kontrolü, güvenli dosya adı) destekler.
 ///
-/// Neden dosya bilgilerini ayri bir tabloda tutuyoruz?
+/// Neden dosya bilgilerini ayrı bir tabloda tutuyoruz?
 ///
-/// 1) Sahipsiz dosyalari (orphan) temizleyebilmek icin. Kullanici afis
-///    yukleyip etkinligi kaydetmezse dosya diskte kalir. Bu tablo
-///    sayesinde bir background job "hicbir kayda bagli olmayan
+/// 1) Sahipsiz dosyalari (orphan) temizleyebilmek için. Kullanıcı afis
+///    yukleyip etkinligi kaydetmezse dosya diskte kalır. Bu tablo
+///    sayesinde bir background job "hiçbir kayda bağlı olmayan
 ///    dosyalari sil" diyebilir.
 ///
-/// 2) Denetim: kim, ne zaman, hangi dosyayi yukledi.
+/// 2) Denetim: kim, ne zaman, hangi dosyayı yukledi.
 ///
-/// 3) Depolama saglayicisi degisirse (disk -> S3) sadece bu tablodaki
+/// 3) Depolama sağlayıcısı degisirse (disk -> S3) sadece bu tablodaki
 ///    yollar guncellenir.
 /// </summary>
 public class UploadedFile : AuditableEntity
@@ -28,19 +28,19 @@ public class UploadedFile : AuditableEntity
         StoragePath = string.Empty;
     }
 
-    /// <summary>Kullanicinin yukledigi ORIJINAL dosya adi. Sadece gosterim icin.</summary>
+    /// <summary>Kullanıcının yukledigi ORIJINAL dosya adı. Sadece gosterim için.</summary>
     public string FileName { get; private set; }
 
     /// <summary>
-    /// Diskte kullandigimiz GUVENLI dosya adi (Guid + uzanti).
+    /// Diskte kullandigimiz GUVENLI dosya adı (Guid + uzanti).
     ///
-    /// Neden orijinal adi kullanmiyoruz?
-    /// Kullanici "../../appsettings.json" veya "afis.jpg.exe" gibi bir ad
+    /// Neden orijinal adı kullanmiyoruz?
+    /// Kullanıcı "../../appsettings.json" veya "afis.jpg.exe" gibi bir ad
     /// gonderebilir. Ilki dizin gecisi (path traversal) saldirisidir,
     /// ikincisi calistirilabilir dosya gizlemedir.
     ///
     /// Uretilen bir ad kullanarak bu sinifin tamamini ortadan kaldiriyoruz.
-    /// Kullanicidan gelen HICBIR metin dosya yolunda kullanilmiyor.
+    /// Kullanicidan gelen HICBIR metin dosya yolunda kullanılmıyor.
     /// </summary>
     public string StoredFileName { get; private set; }
 
@@ -52,7 +52,7 @@ public class UploadedFile : AuditableEntity
 
     /// <summary>
     /// Bu dosya hangi kayda ait? Ornek: "Event", "OrganizerProfile".
-    /// null ise henuz hicbir kayda baglanmamis (temizlik adayi).
+    /// null ise henüz hiçbir kayda baglanmamis (temizlik adayi).
     /// </summary>
     public string? RelatedEntityName { get; private set; }
 
@@ -67,12 +67,12 @@ public class UploadedFile : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(storedFileName))
         {
-            throw new DomainException("Saklanan dosya adi bos olamaz.", "uploaded_file.name_required");
+            throw new DomainException("Saklanan dosya adı boş olamaz.", "uploaded_file.name_required");
         }
 
         if (sizeInBytes <= 0)
         {
-            throw new DomainException("Dosya boyutu sifirdan buyuk olmalidir.", "uploaded_file.invalid_size");
+            throw new DomainException("Dosya boyutu sıfırdan büyük olmalıdır.", "uploaded_file.invalid_size");
         }
 
         return new UploadedFile
@@ -94,6 +94,6 @@ public class UploadedFile : AuditableEntity
         RelatedEntityId = entityId;
     }
 
-    /// <summary>Hicbir kayda bagli degil mi? Temizlik job'i bunu sorar.</summary>
+    /// <summary>Hicbir kayda bağlı değil mi? Temizlik job'i bunu sorar.</summary>
     public bool IsOrphan() => RelatedEntityId is null;
 }

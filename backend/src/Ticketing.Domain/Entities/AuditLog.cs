@@ -3,12 +3,12 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Denetim kaydi. PDF sayfa 5: "Admin audit log kayitlarini inceleyebilir."
+/// Denetim kaydı. PDF sayfa 5: "Admin audit log kayitlarini inceleyebilir."
 ///
 /// APPEND-ONLY bir tablodur: kayitlar eklenir, ASLA guncellenmez veya
-/// silinmez. Bu yuzden AuditableEntity'den turemiyor -- UpdatedAt,
+/// silinmez. Bu yüzden AuditableEntity'den turemiyor -- UpdatedAt,
 /// IsDeleted gibi alanlarin burada anlami yok. Bir denetim kaydinin
-/// degistirilebilir olmasi, denetim fikrinin kendisini gecersiz kilar.
+/// degistirilebilir olmasını, denetim fikrinin kendisini geçersiz kilar.
 /// </summary>
 public class AuditLog : Entity
 {
@@ -23,13 +23,13 @@ public class AuditLog : Entity
 
     public Guid EntityId { get; private set; }
 
-    /// <summary>Ne yapildi. Ornek: "PriceChanged", "EventPublished".</summary>
+    /// <summary>Ne yapıldı. Ornek: "PriceChanged", "EventPublished".</summary>
     public string Action { get; private set; }
 
     /// <summary>
-    /// Degisiklik oncesi ve sonrasi degerler (JSON).
+    /// Degisiklik oncesi ve sonrası degerler (JSON).
     ///
-    /// PDF Sprint 6: "Satis baslamis bilet turunun fiyati degistirilirse
+    /// PDF Sprint 6: "Satış baslamis bilet turunun fiyati degistirilirse
     /// degisiklik loglanmalidir." Iste o log burada, eski ve yeni fiyatla.
     /// </summary>
     public string? OldValues { get; private set; }
@@ -37,15 +37,15 @@ public class AuditLog : Entity
     public string? NewValues { get; private set; }
 
     /// <summary>
-    /// Islemi yapan. null olabilir: background job'lar da kayit uretir.
+    /// Islemi yapan. null olabilir: background job'lar da kayıt üretir.
     /// </summary>
     public Guid? UserId { get; private set; }
 
     public string? IpAddress { get; private set; }
 
     /// <summary>
-    /// PDF Sprint 16: Correlation ID. Bu denetim kaydini, onu tetikleyen
-    /// HTTP istegine ve o istegin tum loglarina baglar.
+    /// PDF Sprint 16: Correlation ID. Bu denetim kaydini, önü tetikleyen
+    /// HTTP istegine ve o istegin tüm loglarina baglar.
     /// </summary>
     public string? CorrelationId { get; private set; }
 

@@ -41,7 +41,7 @@ public class ResultTests
         var eylem = () => sonuc.Value;
 
         eylem.Should().Throw<InvalidOperationException>()
-             .WithMessage("*Basarisiz bir sonucun degerine erisilemez*");
+             .WithMessage("*Başarısız bir sonucun değerine erişilemez*");
     }
 
     [Fact]

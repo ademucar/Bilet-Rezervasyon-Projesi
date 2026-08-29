@@ -199,7 +199,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             reservationId = rezervasyonId,
         });
 
-        // 422: is kurali ihlali. Istek bicimsel olarak dogru ama
+        // 422: is kurali ihlali. İstek bicimsel olarak dogru ama
         // sistemin durumu bu islemi kabul etmiyor.
         yanit.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
 
@@ -432,7 +432,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         // ==========================================================
         // BU UC ADMIN YETKISI ISTIYOR -- ILK DENEMEM 403 ALDI
         // ==========================================================
-        // Musteri token'iyla cagirdim ve reddedildi. Dogru davranis:
+        // Müşteri token'iyla cagirdim ve reddedildi. Dogru davranis:
         // suresi dolan rezervasyonlari toplu temizlemek, siradan bir
         // kullanicinin yapabilecegi bir islem degil.
         //

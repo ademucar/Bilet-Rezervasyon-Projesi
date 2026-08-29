@@ -10,19 +10,19 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Mekan ve salon yonetimi. PDF Sprint 4.
+/// Mekan ve salon yönetimi. PDF Sprint 4.
 ///
 /// ==================================================================
 /// YETKILENDIRME STRATEJISI
 /// ==================================================================
-/// OKUMA islemleri ANONIM: kullanici etkinlik ararken mekan bilgisini
-/// gormeli ve bunun icin giris yapmak zorunda kalmamali.
+/// OKUMA islemleri ANONIM: kullanıcı etkinlik ararken mekan bilgisini
+/// gormeli ve bunun için giriş yapmak zorunda kalmamali.
 ///
-/// YAZMA islemleri ADMIN: PDF sayfa 5'e gore mekan/salon yonetimi
-/// admin sorumlulugunda. Organizator yalnizca var olan salonlari SECER.
+/// YAZMA islemleri ADMIN: PDF sayfa 5'e göre mekan/salon yönetimi
+/// admin sorumlulugunda. Organizatör yalnızca var olan salonlari SECER.
 ///
-/// Bu ayrim olmasaydi her organizator kendi "salon"unu tanimlardi ve
-/// "ayni salon ayni saatte iki etkinlige atanamaz" kurali anlamsizlasirdi.
+/// Bu ayrim olmasaydı her organizatör kendi "salon"unu tanimlardi ve
+/// "aynı salon aynı saatte iki etkinlige atanamaz" kuralı anlamsizlasirdi.
 /// ==================================================================
 /// </summary>
 [ApiVersion("1.0")]
@@ -31,7 +31,7 @@ public sealed class VenuesController : ApiControllerBase
 {
     // ---------------- Mekan ----------------
 
-    /// <summary>Mekanlari sayfali listeler. Isim ve sehre gore filtrelenebilir.</summary>
+    /// <summary>Mekanlari sayfali listeler. Isim ve sehre göre filtrelenebilir.</summary>
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType<PagedResult<VenueListItem>>(StatusCodes.Status200OK)]
@@ -40,7 +40,7 @@ public sealed class VenuesController : ApiControllerBase
         CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(query, cancellationToken).ConfigureAwait(false));
 
-    /// <summary>Mekan detayini salonlariyla birlikte dondurur.</summary>
+    /// <summary>Mekan detayını salonlariyla birlikte döndürür.</summary>
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
     [ProducesResponseType<VenueDetail>(StatusCodes.Status200OK)]
@@ -48,7 +48,7 @@ public sealed class VenuesController : ApiControllerBase
     public async Task<IActionResult> GetVenue(Guid id, CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(new GetVenueByIdQuery(id), cancellationToken).ConfigureAwait(false));
 
-    /// <summary>Yeni mekan olusturur.</summary>
+    /// <summary>Yeni mekan oluşturur.</summary>
     [HttpPost]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
@@ -62,13 +62,13 @@ public sealed class VenuesController : ApiControllerBase
 
         // 201 Created + Location header.
         //
-        // 200 donmek de "calisir" ama REST'te olusturma islemi 201
+        // 200 donmek de "çalışır" ama REST'te oluşturma islemi 201
         // dondurmeli ve yeni kaynagin adresini Location header'inda
         // bildirmeli. Istemciler bunu takip edip kaynagi cekebiliyor.
         return HandleCreated(result, $"/api/v1/venues/{(result.IsSuccess ? result.Value : Guid.Empty)}");
     }
 
-    /// <summary>Mekan bilgilerini gunceller. Sehir DEGISTIRILEMEZ.</summary>
+    /// <summary>Mekan bilgilerini günceller. Şehir DEGISTIRILEMEZ.</summary>
     [HttpPut("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -79,18 +79,18 @@ public sealed class VenuesController : ApiControllerBase
         CancellationToken cancellationToken)
     {
         // ==============================================================
-        // ID GOVDEDEN DEGIL URL'DEN ALINIYOR
+        // ID GOVDEDEN DEĞİL URL'DEN ALINIYOR
         // ==============================================================
-        // Komut nesnesini dogrudan [FromBody] ile baglasaydim, istemci
+        // Komut nesnesini doğrudan [FromBody] ile baglasaydim, istemci
         // URL'de bir Id, govdede BASKA bir Id gonderebilirdi:
         //     PUT /api/v1/venues/AAA   { "id": "BBB", ... }
         //
-        // Hangisi gecerli? Belirsiz. Ve daha kotusu: yetkilendirme
-        // URL'deki Id'ye bakip govdedeki Id guncellenirse GUVENLIK
-        // ACIGI olusur -- kullanici erisebildigi bir kaynagin adresini
-        // verip erisemedigi bir kaynagi degistirir.
+        // Hangisi geçerli? Belirsiz. Ve daha kotusu: yetkilendirme
+        // URL'deki Id'ye bakip govdedeki Id guncellenirse GÜVENLİK
+        // ACIGI olusur -- kullanıcı erisebildigi bir kaynagin adresini
+        // verip erisemedigi bir kaynagi değiştirir.
         //
-        // Ayri bir Request tipi kullanip Id'yi YALNIZCA URL'den almak
+        // Ayrı bir Request tipi kullanip Id'yi YALNIZCA URL'den almak
         // bu belirsizligi tamamen ortadan kaldiriyor.
         var command = new UpdateVenueCommand(
             id, request.Name, request.Address, request.Latitude, request.Longitude);
@@ -98,7 +98,7 @@ public sealed class VenuesController : ApiControllerBase
         return HandleResult(await Sender.Send(command, cancellationToken).ConfigureAwait(false));
     }
 
-    /// <summary>Mekani pasife alir (soft delete). Aktif etkinlik varsa reddedilir.</summary>
+    /// <summary>Mekani pasife alır (soft delete). Aktif etkinlik varsa reddedilir.</summary>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -141,16 +141,16 @@ public sealed record CreateHallRequest(string Name, int Capacity);
 // SALON VE OTURMA PLANI
 // ===================================================================
 
-/// <summary>Salon ve oturma plani islemleri. PDF Sprint 4.</summary>
+/// <summary>Salon ve oturma planı islemleri. PDF Sprint 4.</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/halls")]
 public sealed class HallsController : ApiControllerBase
 {
-    /// <summary>Salonun adini ve kapasitesini gunceller.</summary>
+    /// <summary>Salonun adını ve kapasitesini günceller.</summary>
     /// <remarks>
     /// Kapasite, mevcut oturma planlarindaki koltuk sayisindan KUCUK
-    /// olamaz: aksi halde plani gecersiz kilardik ve o salonda
-    /// uretilmis koltuklar kapasiteyi asmis gorunurdu.
+    /// olamaz: aksi halde planı geçersiz kilardik ve o salonda
+    /// üretilmiş koltuklar kapasiteyi asmis görünürdü.
     /// </remarks>
     /// <response code="204">Guncellendi.</response>
     /// <response code="422">Kapasite mevcut oturma planiyla uyumsuz.</response>
@@ -167,12 +167,12 @@ public sealed class HallsController : ApiControllerBase
 
     /// <summary>Salonu siler.</summary>
     /// <remarks>
-    /// Salona bagli bir ETKINLIK varsa silinemez. Silinseydi o
-    /// etkinligin mekan bilgisi kopar ve bilet almis kullanicilar
+    /// Salona bağlı bir ETKİNLİK varsa silinemez. Silinseydi o
+    /// etkinliğin mekan bilgisi kopar ve bilet almis kullanıcılar
     /// nereye gideceklerini goremezdi.
     /// </remarks>
     /// <response code="204">Silindi.</response>
-    /// <response code="422">Bu salona bagli etkinlik var; silinemez.</response>
+    /// <response code="422">Bu salona bağlı etkinlik var; silinemez.</response>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -188,7 +188,7 @@ public sealed class HallsController : ApiControllerBase
             .Send(new GetSeatLayoutsByHallQuery(hallId), cancellationToken)
             .ConfigureAwait(false));
 
-    /// <summary>Salona yeni oturma plani ekler. PDF: POST /api/v1/halls/{hallId}/seat-layouts</summary>
+    /// <summary>Salona yeni oturma planı ekler. PDF: POST /api/v1/halls/{hallId}/seat-layouts</summary>
     [HttpPost("{hallId:guid}/seat-layouts")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
@@ -206,14 +206,14 @@ public sealed class HallsController : ApiControllerBase
 
 public sealed record CreateSeatLayoutRequest(string Name, string? Description);
 
-/// <summary>Oturma plani detay ve yapilandirma islemleri. PDF Sprint 4.</summary>
+/// <summary>Oturma planı detay ve yapilandirma islemleri. PDF Sprint 4.</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/seat-layouts")]
 public sealed class SeatLayoutsController : ApiControllerBase
 {
     /// <summary>
-    /// Plan detayini TUM bolum ve koltuklariyla dondurur.
-    /// Frontend gorsel koltuk haritasini bu veriyle ciziyor.
+    /// Plan detayını TÜM bölüm ve koltuklariyla döndürür.
+    /// Frontend görsel koltuk haritasini bu veriyle ciziyor.
     /// </summary>
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
@@ -222,7 +222,7 @@ public sealed class SeatLayoutsController : ApiControllerBase
     public async Task<IActionResult> GetSeatLayout(Guid id, CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(new GetSeatLayoutQuery(id), cancellationToken).ConfigureAwait(false));
 
-    /// <summary>Plana bolum ekler. PDF: POST /api/v1/seat-layouts/{id}/sections</summary>
+    /// <summary>Plana bölüm ekler. PDF: POST /api/v1/seat-layouts/{id}/sections</summary>
     [HttpPost("{id:guid}/sections")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
@@ -239,10 +239,10 @@ public sealed class SeatLayoutsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Bir bolume toplu koltuk uretir.
+    /// Bir bolume toplu koltuk üretir.
     /// PDF: POST /api/v1/seat-layouts/{id}/generate-seats
     /// </summary>
-    /// <returns>Uretilen koltuk sayisi.</returns>
+    /// <returns>Uretilen koltuk sayısı.</returns>
     [HttpPost("{id:guid}/generate-seats")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType<int>(StatusCodes.Status200OK)]

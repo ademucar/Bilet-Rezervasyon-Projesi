@@ -17,21 +17,21 @@ namespace Ticketing.Application.Features.Reports;
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// BU SINIF BU DOSYANIN GUVENLIK OMURGASI
+/// BU SINIF BU DOSYANIN GÜVENLİK OMURGASI
 /// ==================================================================
-/// Bes raporun HEPSI ayni soruyu sormak zorunda: "bu kullanici hangi
-/// etkinliklerin verisini gorebilir?"
+/// Bes raporun HEPSI aynı soruyu sormak zorunda: "bu kullanıcı hangi
+/// etkinliklerin verisini görebilir?"
 ///
 ///   ADMIN       -> hepsi
-///   ORGANIZATOR -> yalnizca kendi etkinlikleri
+///   ORGANİZATÖR -> yalnızca kendi etkinlikleri
 ///   DIGER       -> hicbiri
 ///
-/// Bu mantigi her raporda tekrar yazsaydim, birinde unutmak veya
-/// yanlis yazmak kacinilmazdi -- ve sonucu bir organizatorun
+/// Bu mantığı her raporda tekrar yazsaydim, birinde unutmak veya
+/// yanlış yazmak kacinilmazdi -- ve sonucu bir organizatorun
 /// RAKIPLERININ gelir rakamlarini gormesi olurdu.
 ///
 /// Tek yerde tutuyorum. Yeni bir rapor eklendiginde bu metodu
-/// cagirmamak, derleme hatasi vermez ama kod incelemesinde hemen
+/// cagirmamak, derleme hatası vermez ama kod incelemesinde hemen
 /// goze carpar: "scope nerede?"
 /// ==================================================================
 /// </remarks>
@@ -66,7 +66,7 @@ internal static class ReportScopeResolver
         if (currentUser.UserId is not Guid userId)
         {
             return Result.Failure<ReportScope>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         if (currentUser.Roles.Contains(Role.Names.Admin))
@@ -85,31 +85,31 @@ internal static class ReportScopeResolver
         {
             return Result.Failure<ReportScope>(Error.Forbidden(
                 "report.forbidden",
-                "Raporlar yalnizca organizator ve yoneticilere aciktir."));
+                "Raporlar yalnızca organizatör ve yoneticilere aciktir."));
         }
 
         return Result.Success(new ReportScope(IsAdmin: false, OrganizerId: organizerId));
     }
 
     /// <summary>
-    /// Kapsami DOGRUDAN kullanici kimliginden cozer.
+    /// Kapsami DOGRUDAN kullanıcı kimliginden cozer.
     /// </summary>
     /// <remarks>
     /// ==============================================================
     /// ARKA PLAN ISLERI ICIN -- HTTP BAGLAMI OLMADAN
     /// ==============================================================
-    /// Rapor disa aktarimi arka planda calisiyor ve orada
-    /// ICurrentUser bos. Kimlik, talep aninda DOGRULANIP Outbox
-    /// payload'ina yazildi; burada onu kullaniyoruz.
+    /// Rapor disa aktarimi arka planda çalışıyor ve orada
+    /// ICurrentUser boş. Kimlik, talep anında DOGRULANIP Outbox
+    /// payload'ina yazildi; burada önü kullanıyoruz.
     ///
-    /// Yetki kontrolu ZAYIFLAMIYOR: talep sirasinda kullanicinin
-    /// organizator ya da admin oldugu zaten dogrulandi. Burada
-    /// yalnizca ayni kapsami yeniden kuruyoruz.
+    /// Yetki kontrolü ZAYIFLAMIYOR: talep sırasında kullanıcının
+    /// organizatör ya da admin olduğu zaten dogrulandi. Burada
+    /// yalnızca aynı kapsami yeniden kuruyoruz.
     ///
     /// Rolu veritabanindan OKUYORUZ, payload'a yazmiyoruz. Sebep:
-    /// kullanicinin rolu talep ile isleme arasinda degismis
-    /// olabilir (admin yetkisi alinmis olabilir). Guncel rol her
-    /// zaman dogru olandir.
+    /// kullanıcının rolü talep ile isleme arasında degismis
+    /// olabilir (admin yetkisi alinmis olabilir). Güncel rol her
+    /// zaman doğru olandir.
     /// ==============================================================
     /// </remarks>
     public static async Task<ReportScope> ResolveForUserAsync(
@@ -134,17 +134,17 @@ internal static class ReportScopeResolver
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // Organizator profili silinmisse: KAPSAMI BOS birak.
+        // Organizatör profili silinmisse: KAPSAMI BOŞ birak.
         //
-        // OrganizerId null olunca Apply(...) hicbir kayitla
-        // eslesmiyor ve rapor BOS cikiyor. Istisna firlatmak yerine
+        // OrganizerId null olunca Apply(...) hiçbir kayitla
+        // eşleşmiyor ve rapor BOŞ cikiyor. Istisna firlatmak yerine
         // bunu tercih ettim: is, dead letter'a dusup operatoru
-        // mesgul etmek yerine bos bir rapor uretiyor.
+        // mesgul etmek yerine boş bir rapor uretiyor.
         return new ReportScope(IsAdmin: false, OrganizerId: organizerId);
     }
 }
 
-/// <summary>Raporlarin ortak tarih araligi parametreleri.</summary>
+/// <summary>Raporlarin ortak tarih aralığı parametreleri.</summary>
 public abstract record ReportRangeRequest
 {
     public DateTimeOffset? From { get; init; }
@@ -210,16 +210,16 @@ internal sealed class GetSalesSummaryReportQueryHandler
     /// ==============================================================
     /// NEDEN AYRI BIR static METOT?
     /// ==============================================================
-    /// Bu sorgu IKI FARKLI YERDEN calisiyor:
+    /// Bu sorgu IKI FARKLI YERDEN çalışıyor:
     ///
     ///   1) HTTP ucu       -> kapsam ICurrentUser'dan cozuluyor
     ///   2) Arka plan isi  -> kapsam Outbox payload'indaki userId'den
     ///
-    /// Arka planda HTTP baglami YOK, yani ICurrentUser bos doner.
-    /// Handler'i dogrudan cagirsaydik rapor "yetkisiz" hatasi verirdi
-    /// ya da (daha kotusu) kapsam bos kalip TUM VERIYI dondururdu.
+    /// Arka planda HTTP baglami YOK, yani ICurrentUser boş döner.
+    /// Handler'i doğrudan cagirsaydik rapor "yetkisiz" hatası verirdi
+    /// ya da (daha kotusu) kapsam boş kalip TÜM VERIYI dondururdu.
     ///
-    /// Sorguyu kapsamdan ayirinca ikisi de ayni kodu kullaniyor ve
+    /// Sorguyu kapsamdan ayirinca ikisi de aynı kodu kullaniyor ve
     /// yetki kurallari HER IKI YOLDA da AYNEN uygulaniyor. Arka planda
     /// "her seyi gor" gibi bir ayricalik YOK.
     /// ==============================================================
@@ -235,7 +235,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
 
         var tickets = scope.Apply(_context.Tickets.AsNoTracking());
 
-        // Tarih araligi ISTEGE BAGLI. Verilmezse tum zamanlar.
+        // Tarih aralığı ISTEGE BAGLI. Verilmezse tüm zamanlar.
         if (request.From.HasValue)
         {
             tickets = tickets.Where(t => t.CreatedAt >= request.From.Value);
@@ -263,7 +263,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
             .SumAsync(t => t.Price.Amount, cancellationToken)
             .ConfigureAwait(false);
 
-        // Rezervasyon sayilari: kapsam etkinlik uzerinden uygulaniyor.
+        // Rezervasyon sayilari: kapsam etkinlik üzerinden uygulaniyor.
         var reservations = _context.Reservations.AsNoTracking();
 
         if (!scope.IsAdmin)
@@ -299,10 +299,10 @@ internal sealed class GetSalesSummaryReportQueryHandler
             gross,
             refundedAmount,
 
-            // NET gelir: brut eksi iade.
+            // NET gelir: brüt eksi iade.
             //
-            // Admin panelindeki "islem hacmi" ile KARISTIRILMAMALI --
-            // orada iade dusulmuyor cunku o metrik sistemden gecen
+            // Admin panelindeki "işlem hacmi" ile KARISTIRILMAMALI --
+            // orada iade dusulmuyor çünkü o metrik sistemden gecen
             // parayi olcuyor. Burada organizatorun eline gecen parayi
             // olcuyoruz; iade dusulmek ZORUNDA.
             gross - refundedAmount,
@@ -314,7 +314,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
 }
 
 // ===================================================================
-// 2) ETKINLIK DOLULUGU -- GET /api/v1/reports/event-occupancy
+// 2) ETKİNLİK DOLULUGU -- GET /api/v1/reports/event-occupancy
 // ===================================================================
 
 public sealed record EventOccupancyRow(
@@ -362,7 +362,7 @@ internal sealed class GetEventOccupancyReportQueryHandler
         return Result.Success(rapor);
     }
 
-    /// <summary>Sorgunun kendisi. Bkz. SalesSummary aciklamasi.</summary>
+    /// <summary>Sorgunun kendisi. Bkz. SalesSummary açıklaması.</summary>
     internal static async Task<IReadOnlyList<EventOccupancyRow>> RunAsync(
         IApplicationDbContext _context,
         ReportScope scope,
@@ -375,12 +375,12 @@ internal sealed class GetEventOccupancyReportQueryHandler
                 e.Title,
                 e.EventDate,
 
-                // Koltuk sayimlarini ALT SORGU ile aliyorum.
+                // Koltuk sayimlarini ALT SORGU ile alıyorum.
                 //
-                // GroupBy ile de yapilabilirdi ama o zaman koltugu
+                // GroupBy ile de yapilabilirdi ama o zaman koltuğu
                 // OLMAYAN etkinlikler sonuctan DUSERDI (inner join
-                // davranisi). Oysa "0 koltuk uretilmis" bilgisi de
-                // rapor icin degerli -- organizator eksik kurulumu
+                // davranisi). Oysa "0 koltuk üretilmiş" bilgisi de
+                // rapor için degerli -- organizatör eksik kurulumu
                 // gorebilmeli.
                 Total = e.Sessions.SelectMany(s => s.EventSeats).Count(),
                 Sold = e.Sessions.SelectMany(s => s.EventSeats)
@@ -409,7 +409,7 @@ internal sealed class GetEventOccupancyReportQueryHandler
 }
 
 // ===================================================================
-// 3) ETKINLIK BAZLI GELIR -- GET /api/v1/reports/revenue-by-event
+// 3) ETKİNLİK BAZLI GELIR -- GET /api/v1/reports/revenue-by-event
 // ===================================================================
 
 public sealed record GetRevenueByEventReportQuery : ReportRangeRequest,
@@ -449,7 +449,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
         return Result.Success(rapor);
     }
 
-    /// <summary>Sorgunun kendisi. Bkz. SalesSummary aciklamasi.</summary>
+    /// <summary>Sorgunun kendisi. Bkz. SalesSummary açıklaması.</summary>
     internal static async Task<IReadOnlyList<EventRevenue>> RunAsync(
         IApplicationDbContext _context,
         ReportScope scope,
@@ -483,7 +483,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
             // ==========================================================
             // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
             // ==========================================================
-            // Once dogrudan "new EventRevenue(...)" yaziyordum ve uc
+            // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:
             //
             //   InvalidOperationException: The LINQ expression ...
@@ -493,12 +493,12 @@ internal sealed class GetRevenueByEventReportQueryHandler
             // projelendiremiyor (anonim tipe ise sorunsuz cevirebiliyor).
             //
             // Cozum: SQL'e cevrilebilen anonim tiple gruplayip,
-            // record'a bellekte gecmek. Gruplama sonucu zaten kucuk
-            // (etkinlik sayisi kadar satir), yani bellekte islemenin
+            // record'a bellekte gecmek. Gruplama sonucu zaten küçük
+            // (etkinlik sayısı kadar satır), yani bellekte islemenin
             // maliyeti yok.
             //
-            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEGIL.
-            // Gruplama ve toplama HALA SQL'de yapiliyor; yalnizca
+            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
+            // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
             // ==========================================================
             .Select(g => new
@@ -517,7 +517,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
 }
 
 // ===================================================================
-// 4) BILET TURU SATISLARI -- GET /api/v1/reports/ticket-type-sales
+// 4) BİLET TURU SATISLARI -- GET /api/v1/reports/ticket-type-sales
 // ===================================================================
 
 public sealed record TicketTypeSalesRow(
@@ -564,7 +564,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
         return Result.Success(rapor);
     }
 
-    /// <summary>Sorgunun kendisi. Bkz. SalesSummary aciklamasi.</summary>
+    /// <summary>Sorgunun kendisi. Bkz. SalesSummary açıklaması.</summary>
     internal static async Task<IReadOnlyList<TicketTypeSalesRow>> RunAsync(
         IApplicationDbContext _context,
         ReportScope scope,
@@ -592,9 +592,9 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
             {
                 Name = g.Key,
 
-                // Satilan ve iade edilen AYNI gruplamada.
+                // Satılan ve iade edilen AYNI gruplamada.
                 //
-                // Iki ayri sorgu yapip birlestirseydik, aralarinda bir
+                // Iki ayrı sorgu yapip birlestirseydik, aralarinda bir
                 // iade gerceklesirse rakamlar tutarsiz olurdu.
                 Sold = g.Count(t => t.Status == TicketStatus.Active
                                  || t.Status == TicketStatus.Used),
@@ -613,11 +613,11 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
                 r.Refunded,
                 r.Revenue,
 
-                // Ortalama fiyati BILET TURUNUN listelenen fiyatindan
-                // degil, GERCEKLESEN satistan hesapliyorum.
+                // Ortalama fiyati BİLET TURUNUN listelenen fiyatindan
+                // değil, GERCEKLESEN satistan hesapliyorum.
                 //
-                // Fark onemli: bilet turunun fiyati sonradan
-                // degistirilmis olabilir. Satilan biletler eski
+                // Fark önemli: bilet turunun fiyati sonradan
+                // degistirilmis olabilir. Satılan biletler eski
                 // fiyati tasiyor ve rapor gercekte ne kazanildigini
                 // gostermeli.
                 r.Sold == 0 ? 0 : Math.Round(r.Revenue / r.Sold, 2)))
@@ -629,7 +629,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
 }
 
 // ===================================================================
-// 5) ODEME DURUMLARI -- GET /api/v1/reports/payment-statuses
+// 5) ÖDEME DURUMLARI -- GET /api/v1/reports/payment-statuses
 // ===================================================================
 
 public sealed record PaymentStatusRow(
@@ -676,7 +676,7 @@ internal sealed class GetPaymentStatusReportQueryHandler
         return Result.Success(rapor);
     }
 
-    /// <summary>Sorgunun kendisi. Bkz. SalesSummary aciklamasi.</summary>
+    /// <summary>Sorgunun kendisi. Bkz. SalesSummary açıklaması.</summary>
     internal static async Task<IReadOnlyList<PaymentStatusRow>> RunAsync(
         IApplicationDbContext _context,
         ReportScope scope,
@@ -689,7 +689,7 @@ internal sealed class GetPaymentStatusReportQueryHandler
         var payments = _context.Payments.AsNoTracking();
 
         // Odemelerde kapsam, rezervasyon -> oturum -> etkinlik
-        // zinciri uzerinden uygulaniyor.
+        // zinciri üzerinden uygulaniyor.
         if (!scope.IsAdmin)
         {
             payments = payments.Where(
@@ -723,10 +723,10 @@ internal sealed class GetPaymentStatusReportQueryHandler
             .Select(r => new PaymentStatusRow(
                 r.Status,
 
-                // Enum adini METIN olarak da donuyorum.
+                // Enum adını METİN olarak da donuyorum.
                 //
-                // Yalnizca sayi donseydik her istemci kendi cevirim
-                // tablosunu tutmak zorunda kalirdi -- ve enum degisince
+                // Yalnızca sayi donseydik her istemci kendi cevirim
+                // tablosunu tutmak zorunda kalırdı -- ve enum değişince
                 // biri guncellenmeyi unuturdu.
                 r.Status.ToString(),
                 r.Count,

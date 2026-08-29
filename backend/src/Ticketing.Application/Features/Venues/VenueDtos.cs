@@ -3,9 +3,9 @@ namespace Ticketing.Application.Features.Venues;
 /// <summary>
 /// Mekan listesi ogesi.
 ///
-/// Listede DETAY alanlari (adres, koordinat) YOK -- yalnizca detay
-/// sayfasinda var. Neden? Liste sorgusu 100 kayit donebilir; her birine
-/// 500 karakterlik adres eklemek yaniti gereksiz sisirir. Kullanici
+/// Listede DETAY alanlari (adres, koordinat) YOK -- yalnızca detay
+/// sayfasinda var. Neden? Liste sorgusu 100 kayıt donebilir; her birine
+/// 500 karakterlik adres eklemek yaniti gereksiz sisirir. Kullanıcı
 /// zaten listede adresi okumuyor, isme bakip tikliyor.
 /// </summary>
 public sealed record VenueListItem(

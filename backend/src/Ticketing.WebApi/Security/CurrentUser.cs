@@ -8,9 +8,9 @@ namespace Ticketing.WebApi.Security;
 /// <summary>
 /// ICurrentUser'in HTTP tabanli uygulamasi.
 ///
-/// Bu sinif WebApi katmaninda cunku HttpContext'e erisiyor.
-/// Application katmani yalnizca ICurrentUser arayuzunu goruyor ve
-/// kimligin nereden geldigini (JWT, cerez, API anahtari) bilmiyor.
+/// Bu sinif WebApi katmaninda çünkü HttpContext'e erisiyor.
+/// Application katmani yalnızca ICurrentUser arayuzunu görüyor ve
+/// kimligin nereden geldigini (JWT, çerez, API anahtari) bilmiyor.
 /// </summary>
 internal sealed class CurrentUser : ICurrentUser
 {
@@ -24,11 +24,11 @@ internal sealed class CurrentUser : ICurrentUser
     {
         get
         {
-            // JWT'de kullanici kimligi "sub" claim'inde.
+            // JWT'de kullanıcı kimliği "sub" claim'inde.
             //
-            // ASP.NET Core varsayilan olarak "sub" claim'ini
+            // ASP.NET Core varsayılan olarak "sub" claim'ini
             // ClaimTypes.NameIdentifier'a ESLER. Bu esleme bazen kafa
-            // karistirici hatalara yol acar, o yuzden IKISINI DE
+            // karistirici hatalara yol acar, o yüzden IKISINI DE
             // kontrol ediyorum. Program.cs'te bu eslemeyi kapattik
             // ama savunmayi burada da tutuyorum.
             var value = Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
@@ -63,20 +63,20 @@ internal sealed class CurrentUser : ICurrentUser
             // ======================================================
             // Eskiden YALNIZCA response header'ina bakiyordu ve bu
             // SESSIZ bir hataydi: header'i CorrelationIdMiddleware
-            // OnStarting icinde yaziyor, o da handler CALISTIKTAN
+            // OnStarting içinde yazıyor, o da handler CALISTIKTAN
             // SONRA tetikleniyor.
             //
             // Yani istek islenirken burasi her zaman null donuyordu
-            // ve Outbox / AuditLog kayitlarina hicbir zaman
-            // correlation ID yazilmadi. Hicbir hata olusmadi, hicbir
-            // test kirilmadi -- sadece sutunlar bos kaldi.
+            // ve Outbox / AuditLog kayitlarina hiçbir zaman
+            // correlation ID yazilmadi. Hicbir hata olusmadi, hiçbir
+            // test kirilmadi -- sadece sutunlar boş kaldı.
             //
             // Items middleware'in ilk satirinda dolduruluyor;
-            // handler onu goruyor.
+            // handler önü görüyor.
             //
             // Header'a bakan dal FALLBACK olarak duruyor: yanit
-            // yazilmaya baslandiktan sonra cagrilan kodlar (ornegin
-            // istek ozeti logu) icin hala gecerli bir kaynak.
+            // yazilmaya baslandiktan sonra cagrilan kodlar (örneğin
+            // istek özeti logu) için hâlâ geçerli bir kaynak.
             // ======================================================
             if (context.Items.TryGetValue(
                     CorrelationIdMiddleware.HeaderName, out var item)
@@ -97,24 +97,24 @@ internal sealed class CurrentUser : ICurrentUser
     /// Istegin geldigi IP adresi.
     ///
     /// ==================================================================
-    /// GUVENLIK UYARISI -- X-Forwarded-For BURADA OKUNMUYOR
+    /// GÜVENLİK UYARISI -- X-Forwarded-For BURADA OKUNMUYOR
     /// ==================================================================
     /// Uygulama bir reverse proxy (nginx, yuk dengeleyici) arkasindaysa
-    /// RemoteIpAddress proxy'nin IP'sini verir, gercek kullanicininkini
-    /// degil. Gercek IP "X-Forwarded-For" header'inda gelir.
+    /// RemoteIpAddress proxy'nin IP'sini verir, gerçek kullanicininkini
+    /// değil. Gerçek IP "X-Forwarded-For" header'inda gelir.
     ///
     /// AMA o header'i BURADA elle okumak TEHLIKELIDIR: istemci bu
-    /// header'i istedigi gibi UYDURABILIR. IP'ye gore kilit veya rate
-    /// limit uyguluyorsak, saldirgan her istekte farkli bir IP yazarak
-    /// tum korumalari atlatir.
+    /// header'i istedigi gibi UYDURABILIR. IP'ye göre kilit veya rate
+    /// limit uyguluyorsak, saldirgan her istekte farklı bir IP yazarak
+    /// tüm korumalari atlatir.
     ///
     /// Dogru yontem: ASP.NET Core'un ForwardedHeaders middleware'ini
     /// GUVENILEN proxy listesiyle yapilandirmak. O zaman framework
-    /// header'i yalnizca guvenilen bir proxy'den geldiginde dikkate
-    /// alir ve RemoteIpAddress'i dogru degerle degistirir.
+    /// header'i yalnızca guvenilen bir proxy'den geldiğinde dikkate
+    /// alır ve RemoteIpAddress'i doğru degerle değiştirir.
     ///
     /// Bunu Sprint 15'te (API guvenligi) yapacagiz. O zamana kadar
-    /// RemoteIpAddress dogru calisiyor cunku proxy yok.
+    /// RemoteIpAddress doğru çalışıyor çünkü proxy yok.
     /// ==================================================================
     /// </summary>
     public string? IpAddress

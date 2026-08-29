@@ -11,23 +11,23 @@ namespace Ticketing.Infrastructure.Caching;
 internal sealed partial class RedisCacheService : ICacheService
 {
     /// <summary>
-    /// Tum anahtarlarin onune eklenen uygulama oneki.
+    /// Tüm anahtarlarin onune eklenen uygulama oneki.
     /// </summary>
     /// <remarks>
-    /// Redis sunucusu baska uygulamalarla PAYLASILABILIR. Onek olmasaydi
-    /// baska bir uygulamanin "ref:cities" anahtari bizimkiyle carpisirdi
-    /// ve ikisi de yanlis veri okurdu.
+    /// Redis sunucusu başka uygulamalarla PAYLASILABILIR. Onek olmasaydı
+    /// başka bir uygulamanin "ref:cities" anahtari bizimkiyle carpisirdi
+    /// ve ikisi de yanlış veri okurdu.
     ///
-    /// Ayrica "ticketing:*" ile bizim tum anahtarlarimizi tek seferde
+    /// Ayrıca "ticketing:*" ile bizim tüm anahtarlarimizi tek seferde
     /// gormek/temizlemek mumkun oluyor.
     /// </remarks>
     private const string AppPrefix = "ticketing:";
 
     /// <summary>
-    /// JSON ayarlari BIR KEZ olusturuluyor.
+    /// JSON ayarlari BIR KEZ oluşturuluyor.
     ///
     /// Her cagrida yeni JsonSerializerOptions uretmek yaygin ve pahali
-    /// bir hatadir: .NET her yeni ornek icin serilestirme meta verisini
+    /// bir hatadir: .NET her yeni örnek için serilestirme meta verisini
     /// bastan hesaplar ve onbellege alamaz.
     /// </summary>
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -55,19 +55,19 @@ internal sealed partial class RedisCacheService : ICacheService
         var fullKey = AppPrefix + key;
 
         // ==============================================================
-        // PDF KURALI: "Cache kapali oldugunda sistem calismaya devam
+        // PDF KURALI: "Cache kapalı olduğunda sistem calismaya devam
         // edebilmelidir."
         // ==============================================================
-        // Bu kural bu dosyanin en onemli tasarim kisitidir ve iki yerde
+        // Bu kural bu dosyanin en önemli tasarım kisitidir ve iki yerde
         // uygulaniyor: OKUMA ve YAZMA.
         //
-        // Onbellek bir HIZLANDIRICIDIR, veri kaynagi degil. Redis
+        // Onbellek bir HIZLANDIRICIDIR, veri kaynagi değil. Redis
         // coktugunde site YAVASLAMALI ama COKMEMELI.
         //
         // Istisnayi yukari biraksaydik, Redis'in bir dakikalik kesintisi
-        // TUM SITEYI 500 hatasina bogardi -- oysa veritabani gayet
-        // saglikli calisiyor olurdu. Onbellek eklemek, sistemi daha
-        // KIRILGAN yapmis olurdu ki bu tam tersi bir sonuc.
+        // TÜM SITEYI 500 hatasina bogardi -- oysa veritabani gayet
+        // sağlıklı çalışıyor olurdu. Onbellek eklemek, sistemi daha
+        // KIRILGAN yapmış olurdu ki bu tam tersi bir sonuç.
         // ==============================================================
         try
         {
@@ -87,15 +87,15 @@ internal sealed partial class RedisCacheService : ICacheService
             }
         }
 #pragma warning disable CA1031 // Genel istisna yakalama
-        // CA1031 bilincli olarak susturuldu.
+        // CA1031 bilinçli olarak susturuldu.
         //
-        // Burada beklenen istisnalari saymak mumkun degil:
+        // Burada beklenen istisnalari saymak mumkun değil:
         // RedisConnectionException, RedisTimeoutException,
         // JsonException, SocketException, ObjectDisposedException...
-        // Ve sayamadigimiz bir tanesi, onbellek yuzunden calisan bir
+        // Ve sayamadigimiz bir tanesi, önbellek yuzunden calisan bir
         // sorguyu hataya cevirirdi.
         //
-        // Hatayi YUTMUYORUZ, logluyoruz -- ama kullaniciya
+        // Hatayi YUTMUYORUZ, logluyoruz -- ama kullanıcıya
         // yansitmiyoruz. Yukaridaki PDF kuralinin geregi budur.
         catch (Exception ex)
 #pragma warning restore CA1031
@@ -103,14 +103,14 @@ internal sealed partial class RedisCacheService : ICacheService
             LogReadFailed(_logger, key, ex);
         }
 
-        // Onbellekte yok (veya Redis erisilemedi): asil kaynaktan uret.
+        // Onbellekte yok (veya Redis erisilemedi): asil kaynaktan üret.
         var fresh = await factory(cancellationToken).ConfigureAwait(false);
 
         // null'i onbelleklemiyoruz.
         //
-        // Sebep: "bulunamadi" sonucunu saklamak, kayit sonradan
-        // olusturulsa bile sure dolana kadar "yok" demeye devam etmek
-        // demektir. Ornegin admin bir etkinlik yayinlar ama kullanicilar
+        // Sebep: "bulunamadı" sonucunu saklamak, kayıt sonradan
+        // olusturulsa bile süre dolana kadar "yok" demeye devam etmek
+        // demektir. Ornegin admin bir etkinlik yayinlar ama kullanıcılar
         // 5 dakika boyunca 404 gormeye devam eder.
         if (fresh is null)
         {
@@ -122,11 +122,11 @@ internal sealed partial class RedisCacheService : ICacheService
             var db = _redis.GetDatabase();
             var json = JsonSerializer.Serialize(fresh, JsonOptions);
 
-            // Fire-and-forget DEGIL, bekliyoruz.
+            // Fire-and-forget DEĞİL, bekliyoruz.
             //
-            // Beklemeseydik yazma hatasini hic goremezdik ve onbellek
-            // sessizce hic dolmayabilirdi -- sistem calisir, sadece
-            // hicbir zaman hizlanmaz.
+            // Beklemeseydik yazma hatasini hiç goremezdik ve önbellek
+            // sessizce hiç dolmayabilirdi -- sistem çalışır, sadece
+            // hiçbir zaman hizlanmaz.
             await db.StringSetAsync(fullKey, json, expiration).ConfigureAwait(false);
 
             LogMiss(_logger, key);
@@ -156,23 +156,23 @@ internal sealed partial class RedisCacheService : ICacheService
     }
 
     /// <summary>
-    /// Onekle eslesen tum anahtarlari siler.
+    /// Onekle eslesen tüm anahtarlari siler.
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// NEDEN KEYS DEGIL SCAN?
+    /// NEDEN KEYS DEĞİL SCAN?
     /// ==============================================================
-    /// Redis'in KEYS komutu, eslesen anahtarlari bulmak icin TUM
-    /// anahtar alanini tek seferde tarar ve bu sirada SUNUCUYU
-    /// TAMAMEN BLOKE EDER. Redis tek is parcacikli oldugu icin, o
-    /// sirada gelen HER istek bekler.
+    /// Redis'in KEYS komutu, eslesen anahtarlari bulmak için TÜM
+    /// anahtar alanini tek seferde tarar ve bu sırada SUNUCUYU
+    /// TAMAMEN BLOKE EDER. Redis tek is parcacikli olduğu için, o
+    /// sırada gelen HER istek bekler.
     ///
-    /// Milyonlarca anahtarli bir Redis'te KEYS saniyelerce surebilir --
-    /// yani tek bir etkinlik guncellemesi tum siteyi saniyelerce
+    /// Milyonlarca anahtarli bir Redis'te KEYS saniyelerce sürebilir --
+    /// yani tek bir etkinlik guncellemesi tüm siteyi saniyelerce
     /// durdururdu.
     ///
-    /// SCAN ise imlecli (cursor) calisir: kucuk parcalar halinde tarar
-    /// ve aralarda diger isteklere sira verir. Biraz daha yavas ama
+    /// SCAN ise imlecli (cursor) çalışır: küçük parcalar halinde tarar
+    /// ve aralarda diger isteklere sıra verir. Biraz daha yavas ama
     /// sunucuyu bloke etmiyor.
     ///
     /// StackExchange.Redis'in Keys() metodu, sunucu destekliyorsa
@@ -189,14 +189,14 @@ internal sealed partial class RedisCacheService : ICacheService
             var pattern = $"{AppPrefix}{prefix}*";
             var silinen = 0;
 
-            // Coklu sunucu (cluster) durumunda her sunucuyu ayri
-            // taramak gerekiyor; tek sunucuda da dogru calisiyor.
+            // Coklu sunucu (cluster) durumunda her sunucuyu ayrı
+            // taramak gerekiyor; tek sunucuda da doğru çalışıyor.
             foreach (var endpoint in _redis.GetEndPoints())
             {
                 var server = _redis.GetServer(endpoint);
 
-                // Replika sunucularda anahtar silmek hatali olur;
-                // yalnizca ana (primary) sunucularda calisiyoruz.
+                // Replika sunucularda anahtar silmek hatalı olur;
+                // yalnızca ana (primary) sunucularda calisiyoruz.
                 if (server.IsReplica || !server.IsConnected)
                 {
                     continue;
@@ -247,13 +247,13 @@ internal sealed partial class RedisCacheService : ICacheService
     [LoggerMessage(
         EventId = 9304,
         Level = LogLevel.Warning,
-        Message = "Onbellege YAZILAMADI: {Key}. Sonuc yine de donduruldu.")]
+        Message = "Onbellege YAZILAMADI: {Key}. Sonuç yine de donduruldu.")]
     private static partial void LogWriteFailed(ILogger logger, string key, Exception exception);
 
     [LoggerMessage(
         EventId = 9305,
         Level = LogLevel.Warning,
-        Message = "Onbellek SILINEMEDI: {Key}. Veri sure dolana kadar bayat kalabilir.")]
+        Message = "Onbellek SILINEMEDI: {Key}. Veri süre dolana kadar bayat kalabilir.")]
     private static partial void LogRemoveFailed(ILogger logger, string key, Exception exception);
 
     [LoggerMessage(

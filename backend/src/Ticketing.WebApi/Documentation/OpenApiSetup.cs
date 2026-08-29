@@ -18,7 +18,7 @@ namespace Ticketing.WebApi.Documentation;
 ///   4. Validation hatalari     -> ProblemDetailsTransformer
 ///   5. Authentication          -> SecuritySchemeTransformer
 ///   6. Yetkili roller          -> AuthorizationTransformer
-///   7. Pagination              -> DocumentInfoTransformer (aciklama)
+///   7. Pagination              -> DocumentInfoTransformer (açıklama)
 ///   8. Problem Details         -> ProblemDetailsTransformer
 ///   9. Idempotency-Key         -> IdempotencyHeaderTransformer
 ///  10. API version bilgisi     -> DocumentInfoTransformer
@@ -28,12 +28,12 @@ namespace Ticketing.WebApi.Documentation;
 /// ------------------------------------------------------------------
 /// Yazabilirdik ama 60'tan fazla ucumuz var. Her birine
 /// [ProducesResponseType(401)] eklemek:
-///   - Yuzlerce satir tekrar
-///   - Birini unutunca belgeyle gercek arasinda sessiz bir fark
+///   - Yuzlerce satır tekrar
+///   - Birini unutunca belgeyle gerçek arasında sessiz bir fark
 ///
-/// Transformer, kurali TEK YERDEN uyguluyor: "kimlik dogrulamasi
+/// Transformer, kuralı TEK YERDEN uyguluyor: "kimlik dogrulamasi
 /// gerektiren her uca 401 ekle" gibi. Yeni bir uc eklendiginde
-/// hicbir sey yapmak gerekmiyor.
+/// hiçbir sey yapmak gerekmiyor.
 /// ==================================================================
 /// </remarks>
 internal static class OpenApiSetup
@@ -47,9 +47,9 @@ internal static class OpenApiSetup
             options.AddDocumentTransformer<DocumentInfoTransformer>();
             options.AddDocumentTransformer<SecuritySchemeTransformer>();
 
-            // SIRA ONEMLI: XML once calisiyor ki Description'i
+            // SIRA ONEMLI: XML önce çalışıyor ki Description'i
             // olustursun; AuthorizationTransformer sonra yetki notunu
-            // onun sonuna EKLIYOR. Ters sirada olsaydi XML aciklamasi
+            // onun sonuna EKLIYOR. Ters sırada olsaydı XML açıklaması
             // yetki notunun uzerine yazilirdi.
             options.AddOperationTransformer<XmlDocumentationTransformer>();
             options.AddOperationTransformer<AuthorizationTransformer>();
@@ -58,7 +58,7 @@ internal static class OpenApiSetup
             options.AddOperationTransformer<RequestExampleTransformer>();
 
             // Enum semalarina deger + isim ekliyor. Orval arastirmasi
-            // sirasinda belgede enum isimlerinin HIC olmadigini
+            // sırasında belgede enum isimlerinin HİÇ olmadigini
             // buldum (bkz. EnumSchemaTransformer).
             options.AddSchemaTransformer<EnumSchemaTransformer>();
         });
@@ -68,7 +68,7 @@ internal static class OpenApiSetup
 }
 
 /// <summary>
-/// Belgenin basligi, aciklamasi ve surum bilgisi. PDF: "API version bilgisi".
+/// Belgenin başlığı, açıklaması ve surum bilgisi. PDF: "API version bilgisi".
 /// </summary>
 internal sealed class DocumentInfoTransformer : IOpenApiDocumentTransformer
 {
@@ -89,10 +89,10 @@ internal sealed class DocumentInfoTransformer : IOpenApiDocumentTransformer
             // ==========================================================
             // Bir API'yi ilk kez kullanan kisinin cevabini aradigi
             // sorular burada: nasil kimlik dogrularim, hatalar hangi
-            // bicimde gelir, sayfalama nasil calisir.
+            // bicimde gelir, sayfalama nasil çalışır.
             //
-            // Bu bilgileri ayri bir README'ye koysaydik kimse
-            // bulamazdi -- Swagger'i acan kisi zaten "deneyerek
+            // Bu bilgileri ayrı bir README'ye koysaydık kimse
+            // bulamazdi -- Swagger'i acan kişi zaten "deneyerek
             // ogrenmek" istiyor.
             // ==========================================================
             Description = """
@@ -189,11 +189,11 @@ internal sealed class DocumentInfoTransformer : IOpenApiDocumentTransformer
 }
 
 /// <summary>
-/// JWT Bearer guvenlik semasi. PDF: "Authentication gereksinimleri".
+/// JWT Bearer güvenlik semasi. PDF: "Authentication gereksinimleri".
 /// </summary>
 internal sealed class SecuritySchemeTransformer : IOpenApiDocumentTransformer
 {
-    /// <summary>Guvenlik semasinin belge icindeki adi.</summary>
+    /// <summary>Güvenlik semasinin belge icindeki adı.</summary>
     public const string SchemeName = "Bearer";
 
     public Task TransformAsync(
@@ -213,7 +213,7 @@ internal sealed class SecuritySchemeTransformer : IOpenApiDocumentTransformer
             In = ParameterLocation.Header,
             Description =
                 "JWT access token. Swagger'da 'Authorize' dugmesine basip " +
-                "token'i yapistirin -- 'Bearer ' onekini EKLEMEYIN, arayuz " +
+                "token'i yapistirin -- 'Bearer ' onekini EKLEMEYIN, arayüz " +
                 "onu kendisi ekliyor.",
         };
 
@@ -232,10 +232,10 @@ internal sealed class SecuritySchemeTransformer : IOpenApiDocumentTransformer
 /// [Authorize] ozniteliklerini yansima (reflection) ile okuyup
 /// belgeye aktariyoruz.
 ///
-/// Elle yazsaydik: bir ucun yetkisi degistiginde belgeyi guncellemeyi
-/// unuturduk ve Swagger "herkese acik" derken uc 403 donerdi.
-/// Yanlis dokumantasyon, hic dokumantasyon olmamasindan kotudur --
-/// cunku ona GUVENILIYOR.
+/// Elle yazsaydık: bir ucun yetkisi degistiginde belgeyi guncellemeyi
+/// unuturduk ve Swagger "herkese açık" derken uc 403 donerdi.
+/// Yanlis dokumantasyon, hiç dokumantasyon olmamasindan kotudur --
+/// çünkü ona GUVENILIYOR.
 /// ==================================================================
 /// </remarks>
 internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
@@ -261,13 +261,13 @@ internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
             return Task.CompletedTask;
         }
 
-        // Bu uc token istiyor: guvenlik gereksinimini isaretle.
-        // Sema referansi ayri bir degiskene aliniyor.
+        // Bu uc token istiyor: güvenlik gereksinimini işaretle.
+        // Sema referansı ayrı bir degiskene aliniyor.
         //
         // Ic ice sozluk baslaticisi olarak yazdigimda StyleCop
-        // SA1500 verdi ("cok satirli blogun parantezleri ayni
+        // SA1500 verdi ("çok satirli blogun parantezleri aynı
         // satiri paylasmamali") -- ve hakliydi: "}] = []," satiri
-        // uc farkli seyi ayni yere sikistiriyordu.
+        // uc farklı seyi aynı yere sikistiriyordu.
         var sema = new OpenApiSecurityScheme
         {
             Reference = new OpenApiReference
@@ -287,9 +287,9 @@ internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
         // ==============================================================
         // ROL / POLITIKA BILGISI ACIKLAMAYA EKLENIYOR
         // ==============================================================
-        // Politika adlari ("AdminOnly", "EventOwner") tek basina
-        // anlasilir degil. Kisa bir aciklama ekliyorum ki Swagger'i
-        // okuyan kisi 403 alinca sasirmasin.
+        // Politika adları ("AdminOnly", "EventOwner") tek başına
+        // anlasilir değil. Kisa bir açıklama ekliyorum ki Swagger'i
+        // okuyan kişi 403 alınca sasirmasin.
         // ==============================================================
         var roller = yetkiler
             .Select(y => y.Policy ?? y.Roles)
@@ -327,33 +327,33 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
             && metadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any();
 
         // ==============================================================
-        // 429: HER UCA -- hiz siniri genel limitleyiciyle tumune uygulaniyor
+        // 429: HER UCA -- hiz sınırı genel limitleyiciyle tumune uygulaniyor
         // ==============================================================
-        // Sprint 15'te politikasi olmayan uclar icin de genel bir sinir
-        // koymustuk ("varsayilan olarak guvenli"). Yani 429 her uctan
-        // gelebilir ve istemci buna hazir olmali.
+        // Sprint 15'te politikasi olmayan uclar için de genel bir sinir
+        // koymustuk ("varsayılan olarak güvenli"). Yani 429 her uctan
+        // gelebilir ve istemci buna hazır olmalı.
         // ==============================================================
-        Ekle(operation, "429", "Cok fazla istek. Retry-After basligina bakin.");
+        Ekle(operation, "429", "Çok fazla istek. Retry-After basligina bakin.");
 
-        Ekle(operation, "500", "Beklenmeyen sunucu hatasi.");
+        Ekle(operation, "500", "Beklenmeyen sunucu hatası.");
 
         if (korumali)
         {
-            Ekle(operation, "401", "Token yok, gecersiz veya suresi dolmus.");
-            Ekle(operation, "403", "Token gecerli ama bu islem icin yetkiniz yok.");
+            Ekle(operation, "401", "Token yok, geçersiz veya süresi dolmuş.");
+            Ekle(operation, "403", "Token geçerli ama bu işlem için yetkiniz yok.");
         }
 
         // ==============================================================
         // 400: YALNIZCA GOVDE VEYA PARAMETRE ALAN UCLARA
         // ==============================================================
-        // Parametresiz bir GET ucunda dogrulama hatasi olusamaz.
+        // Parametresiz bir GET ucunda doğrulama hatası olusamaz.
         // Kosulsuz ekleseydik belge, olmayan bir davranisi vaat
         // ederdi.
         // ==============================================================
         if (context.Description.ParameterDescriptions.Count > 0)
         {
             Ekle(operation, "400",
-                "Dogrulama hatasi. `errors` alaninda hangi alanin neden " +
+                "Dogrulama hatası. `errors` alaninda hangi alanin neden " +
                 "reddedildigi yazar.");
         }
 
@@ -365,7 +365,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
     /// Controller'da [ProducesResponseType] ile acikca yazilmis bir
     /// yanit, buradaki genel aciklamadan daha degerli: o uca ozgu.
     ///
-    /// Ustune yazsaydik, ozenle yazilmis aciklamalar genel
+    /// Ustune yazsaydık, ozenle yazilmis aciklamalar genel
     /// metinlerle degistirilirdi.
     /// </remarks>
     private static void Ekle(OpenApiOperation operation, string kod, string aciklama)
@@ -395,16 +395,16 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
     {
         "400" => new OpenApiObject
         {
-            ["title"] = new OpenApiString("Dogrulama hatasi"),
+            ["title"] = new OpenApiString("Doğrulama hatası"),
             ["status"] = new OpenApiInteger(400),
-            ["detail"] = new OpenApiString("Gonderilen veriler gecerli degil."),
+            ["detail"] = new OpenApiString("Gonderilen veriler geçerli değil."),
             ["errorCode"] = new OpenApiString("validation.failed"),
             ["errors"] = new OpenApiObject
             {
                 ["Password"] = new OpenApiArray
                 {
-                    new OpenApiString("Sifre en az 8 karakter olmalidir."),
-                    new OpenApiString("Sifre en az bir rakam icermelidir."),
+                    new OpenApiString("Şifre en az 8 karakter olmalıdır."),
+                    new OpenApiString("Şifre en az bir rakam içermelidir."),
                 },
             },
             ["correlationId"] = new OpenApiString("01a048ce0ea078e7a6420ec159235062"),
@@ -414,7 +414,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
         {
             ["title"] = new OpenApiString("Unauthorized"),
             ["status"] = new OpenApiInteger(401),
-            ["detail"] = new OpenApiString("Giris yapmalisiniz."),
+            ["detail"] = new OpenApiString("Giriş yapmalisiniz."),
             ["errorCode"] = new OpenApiString("auth.required"),
         },
 
@@ -422,25 +422,25 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
         {
             ["title"] = new OpenApiString("Forbidden"),
             ["status"] = new OpenApiInteger(403),
-            ["detail"] = new OpenApiString("Bu islem icin yetkiniz yok."),
+            ["detail"] = new OpenApiString("Bu işlem için yetkiniz yok."),
             ["errorCode"] = new OpenApiString("auth.forbidden"),
         },
 
         "429" => new OpenApiObject
         {
-            ["title"] = new OpenApiString("Cok fazla istek"),
+            ["title"] = new OpenApiString("Çok fazla istek"),
             ["status"] = new OpenApiInteger(429),
             ["detail"] = new OpenApiString(
-                "Cok sik istek gonderdiniz. Lutfen biraz bekleyip tekrar deneyin."),
+                "Çok sik istek gonderdiniz. Lütfen biraz bekleyip tekrar deneyin."),
             ["errorCode"] = new OpenApiString("rate_limit.exceeded"),
         },
 
         _ => new OpenApiObject
         {
-            ["title"] = new OpenApiString("Sunucu hatasi"),
+            ["title"] = new OpenApiString("Sunucu hatası"),
             ["status"] = new OpenApiInteger(500),
             ["detail"] = new OpenApiString(
-                "Beklenmeyen bir hata olustu. Lutfen daha sonra tekrar deneyin."),
+                "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."),
             ["errorCode"] = new OpenApiString("server.unexpected"),
             ["correlationId"] = new OpenApiString("01a048ce0ea078e7a6420ec159235062"),
         },
@@ -449,20 +449,20 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
 
 /// <summary>
 /// Idempotency-Key basligini destekleyen uclara belgeler.
-/// PDF: "Idempotency-Key aciklamasi".
+/// PDF: "Idempotency-Key açıklaması".
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// HANGI UCLARA EKLENIYOR VE NEDEN YALNIZCA ONLARA?
 /// ==================================================================
-/// Rezervasyon olusturma, odeme baslatma ve iade. Ucu de:
-///   - Yeni bir kayit URETIYOR
-///   - Tekrari MALI veya operasyonel sonuc doguruyor
+/// Rezervasyon oluşturma, ödeme baslatma ve iade. Ucu de:
+///   - Yeni bir kayıt URETIYOR
+///   - Tekrari MALI veya operasyonel sonuç doguruyor
 ///
-/// Her uca eklemek yaniltici olurdu: bir GET icin Idempotency-Key
-/// gostermek, o basligin bir etkisi varmis gibi dusundurur.
+/// Her uca eklemek yanıltıcı olurdu: bir GET için Idempotency-Key
+/// göstermek, o basligin bir etkisi varmis gibi dusundurur.
 /// Belgede olmayan bir davranisi vaat etmemek, eksik belgelemekten
-/// daha onemli.
+/// daha önemli.
 /// ==================================================================
 /// </remarks>
 internal sealed class IdempotencyHeaderTransformer : IOpenApiOperationTransformer
@@ -505,11 +505,11 @@ internal sealed class IdempotencyHeaderTransformer : IOpenApiOperationTransforme
             Required = false,
             Description =
                 "Ayni istegin tekrarlanmasini guvenli kilar.\n\n" +
-                "Ag kopmasi sonrasi istegi AYNI anahtarla tekrar " +
+                "Ag kopmasi sonrası isteği AYNI anahtarla tekrar " +
                 "gonderirseniz yeni bir kayit olusmaz; ilk islemin " +
                 "sonucu doner.\n\n" +
-                "Her MANTIKSAL islem icin yeni bir deger uretin " +
-                "(ornegin bir GUID). Tekrar denemede AYNI degeri " +
+                "Her MANTIKSAL işlem için yeni bir deger üretin " +
+                "(örneğin bir GUID). Tekrar denemede AYNI değeri " +
                 "kullanin -- degistirirseniz sistem bunu yeni bir " +
                 "istek sayar.",
             Schema = new OpenApiSchema

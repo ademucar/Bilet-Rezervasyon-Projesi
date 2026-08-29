@@ -40,15 +40,15 @@ public static class DependencyInjection
                 // ==============================================================
                 // ValidateOnStart -- KRITIK
                 // ==============================================================
-                // Bu satir olmasaydi, dogrulama ancak JwtOptions ILK KEZ
+                // Bu satır olmasaydı, doğrulama ancak JwtOptions ILK KEZ
                 // ISTENDIGINDE calisirdi -- yani ilk login denemesinde.
                 //
                 // Yani: eksik JWT_SECRET ile uygulama sorunsuz ayaga kalkar,
                 // saglik kontrolunden gecer, yuk dengeleyici trafik gondermeye
-                // baslar ve ILK KULLANICI giris yapmaya calistiginda 500 alir.
+                // başlar ve ILK KULLANICI giriş yapmaya calistiginda 500 alır.
                 //
-                // ValidateOnStart ile uygulama HIC baslamaz. Deploy basarisiz
-                // olur, eski surum ayakta kalir, kimse etkilenmez.
+                // ValidateOnStart ile uygulama HİÇ baslamaz. Deploy başarısız
+                // olur, eski surum ayakta kalır, kimse etkilenmez.
                 // Buna "fail fast" denir ve dagitim guvenliginin temelidir.
                 .ValidateOnStart();
 
@@ -56,7 +56,7 @@ public static class DependencyInjection
         // Servisler
         // ------------------------------------------------------------------
 
-        // Singleton: durum tutmuyor, sadece DateTimeOffset.UtcNow donuyor.
+        // Singleton: durum tutmuyor, sadece DateTimeOffset.UtcNow dönüyor.
         // Her istekte yeni nesne uretmenin anlami yok.
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
@@ -64,7 +64,7 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
         // Singleton: imzalama anahtarini yapicida bir kez olusturuyor.
-        // Scoped olsaydi her istekte kriptografi nesnesi kurulurdu.
+        // Scoped olsaydı her istekte kriptografi nesnesi kurulurdu.
         services.AddSingleton<ITokenService, TokenService>();
 
         // ---- E-posta ----
@@ -76,7 +76,7 @@ public static class DependencyInjection
         services.AddSingleton<IEmailService, SmtpEmailService>();
 
         // Sprint 14: e-posta sablonlari.
-        // Singleton: durum tutmuyor, yalnizca IAppUrlProvider okuyor.
+        // Singleton: durum tutmuyor, yalnızca IAppUrlProvider okuyor.
         services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
 
         // ---- Uygulama adresleri ----
@@ -90,22 +90,22 @@ public static class DependencyInjection
         // ---- Raporlama (PDF Sprint 13) ----
         //
         // Singleton: ikisi de durum tutmuyor.
-        // ReportExporter yalnizca girdi -> cikti donusumu yapiyor;
-        // FileSystemReportStore ise kok klasoru bir kez okuyor.
+        // ReportExporter yalnızca girdi -> cikti donusumu yapiyor;
+        // FileSystemReportStore ise kok klasörü bir kez okuyor.
         services.AddSingleton<IReportExporter, ReportExporter>();
         services.AddSingleton<IReportFileStore, FileSystemReportStore>();
 
         // ---- Dosya depolama (PDF Sprint 15) ----
         //
-        // Singleton: kok klasoru bir kez okuyup olusturuyor, baska
+        // Singleton: kok klasörü bir kez okuyup olusturuyor, başka
         // durum tutmuyor. Her istekte yeniden Directory.CreateDirectory
         // cagirmanin anlami yok.
         services.AddSingleton<IFileStorage, LocalFileStorage>();
 
-        // ---- Odeme saglayicisi ----
+        // ---- Ödeme sağlayıcısı ----
         //
-        // Hangi saglayicinin kullanilacagi YAPILANDIRMADAN seciliyor.
-        // Boylece gelistirme ortaminda "Failed" secip basarisiz odeme
+        // Hangi sağlayıcının kullanilacagi YAPILANDIRMADAN seciliyor.
+        // Boylece gelistirme ortaminda "Failed" seçip başarısız ödeme
         // akisini deneyebiliyoruz -- kod degistirmeden.
         //
         // PDF Sprint 8: "En az iki implementasyon hazirlanabilir:

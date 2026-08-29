@@ -26,7 +26,7 @@ public sealed record NotificationDto(
 public sealed record GetNotificationsQuery : PaginationRequest,
     IRequest<Result<PagedResult<NotificationDto>>>
 {
-    /// <summary>Yalnizca okunmamislari getir.</summary>
+    /// <summary>Yalnızca okunmamislari getir.</summary>
     public bool UnreadOnly { get; init; }
 }
 
@@ -49,21 +49,21 @@ internal sealed class GetNotificationsQueryHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<PagedResult<NotificationDto>>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         // ==============================================================
         // KULLANICI FILTRESI -- BU SORGUNUN EN ONEMLI SATIRI
         // ==============================================================
-        // Bildirimler tanim geregi KISISEL: rezervasyon kodlari, odeme
+        // Bildirimler tanim geregi KISISEL: rezervasyon kodlari, ödeme
         // tutarlari, hangi etkinlige gittiginiz.
         //
-        // Bu filtre olmasaydi herkes herkesin bildirimlerini gorurdu.
-        // Ve bu, hicbir hata mesaji vermeden calisirdi -- yalnizca
-        // "cok fazla bildirim" olarak gorunurdu.
+        // Bu filtre olmasaydı herkes herkesin bildirimlerini gorurdu.
+        // Ve bu, hiçbir hata mesaji vermeden calisirdi -- yalnızca
+        // "çok fazla bildirim" olarak görünürdü.
         //
-        // Bu sorgu ASLA onbelleklenmiyor (PDF Sprint 11 kurali:
-        // "Kullaniciya ozel hassas veriler ortak cache icinde
+        // Bu sorgu ASLA onbelleklenmiyor (PDF Sprint 11 kuralı:
+        // "Kullanıcıya ozel hassas veriler ortak cache içinde
         // tutulmamalidir").
         // ==============================================================
         var query = _context.Notifications
@@ -78,7 +78,7 @@ internal sealed class GetNotificationsQueryHandler
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
         var items = await query
-            // En yeni once: bildirim listesinde kullanici SON olani
+            // En yeni önce: bildirim listesinde kullanıcı SON olani
             // gormek ister.
             .OrderByDescending(n => n.CreatedAt)
             .Skip(request.Skip)
@@ -106,7 +106,7 @@ internal sealed class GetNotificationsQueryHandler
 // ===================================================================
 
 /// <summary>
-/// Okunmamis bildirim sayisi. Zil ikonundaki rozet icin.
+/// Okunmamis bildirim sayısı. Zil ikonundaki rozet için.
 /// </summary>
 /// <remarks>
 /// ==================================================================
@@ -115,10 +115,10 @@ internal sealed class GetNotificationsQueryHandler
 /// Sayiyi liste ucundan da alabilirdik (totalCount). Ama zil rozeti
 /// HER SAYFADA ve DUZENLI ARALIKLARLA yenileniyor.
 ///
-/// Liste ucunu cagirsaydik her yenilemede 20 bildirimin tum metnini
-/// (baslik, mesaj, adres) bosuna tasirdik. Bu uc tek bir SAYI
-/// donuyor -- SQL tarafinda da yalnizca COUNT calisiyor, satirlar
-/// hic okunmuyor.
+/// Liste ucunu cagirsaydik her yenilemede 20 bildirimin tüm metnini
+/// (başlık, mesaj, adres) boşuna tasirdik. Bu uc tek bir SAYI
+/// dönüyor -- SQL tarafında da yalnızca COUNT çalışıyor, satirlar
+/// hiç okunmuyor.
 ///
 /// ix_notifications_user_isread index'i bu sorguyu karsiliyor.
 /// ==================================================================
@@ -145,12 +145,12 @@ internal sealed class GetUnreadNotificationCountQueryHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            // Giris yapmamis kullanici icin HATA degil SIFIR donuyorum.
+            // Giriş yapmamis kullanıcı için HATA değil SIFIR donuyorum.
             //
-            // Zil ikonu her sayfada var ve oturum suresi dolmus bir
-            // kullanicida 401 hatasi, arayuzde gereksiz bir hata
-            // kutusu olarak gorunurdu. Sifir bildirim gostermek
-            // dogru davranis.
+            // Zil ikonu her sayfada var ve oturum süresi dolmuş bir
+            // kullanicida 401 hatası, arayüzde gereksiz bir hata
+            // kutusu olarak görünürdü. Sifir bildirim göstermek
+            // doğru davranis.
             return Result.Success(0);
         }
 
@@ -192,14 +192,14 @@ internal sealed class MarkNotificationReadCommandHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            return Result.Failure(Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+            return Result.Failure(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // Sahiplik kontrolu SORGUYA dahil.
+        // Sahiplik kontrolü SORGUYA dahil.
         //
-        // Once kaydi cekip sonra "senin mi?" diye sorsaydik, iki
-        // adimda yaptigimiz seyi tek adimda yapiyoruz ve yanlislikla
-        // kontrolu atlamak imkansizlasiyor.
+        // Önce kaydı cekip sonra "senin mi?" diye sorsaydik, iki
+        // adımda yaptigimiz seyi tek adımda yapiyoruz ve yanlislikla
+        // kontrolü atlamak imkansizlasiyor.
         var notification = await _context.Notifications
             .FirstOrDefaultAsync(
                 n => n.Id == request.Id && n.UserId == userId,
@@ -208,16 +208,16 @@ internal sealed class MarkNotificationReadCommandHandler
 
         if (notification is null)
         {
-            // Baskasinin bildirimi de buraya duser ve 404 alir.
+            // Baskasinin bildirimi de buraya duser ve 404 alır.
             //
-            // 403 deseydik "bu bildirim VAR ama senin degil" demis
+            // 403 deseydik "bu bildirim VAR ama senin değil" demis
             // olurduk -- baskasinin bildirim aldigini dogrulamak
             // bile gereksiz bir sizinti.
             return Result.Failure(Error.NotFound(
-                "notification.not_found", "Bildirim bulunamadi."));
+                "notification.not_found", "Bildirim bulunamadı."));
         }
 
-        // MarkAsRead zaten okunmussa hicbir sey yapmiyor (idempotent).
+        // MarkAsRead zaten okunmussa hiçbir sey yapmiyor (idempotent).
         notification.MarkAsRead(_clock.UtcNow);
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -255,36 +255,36 @@ internal sealed class MarkAllNotificationsReadCommandHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            return Result.Failure<int>(Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+            return Result.Failure<int>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var now = _clock.UtcNow;
 
         // ==============================================================
-        // NEDEN ExecuteUpdateAsync DEGIL?
+        // NEDEN ExecuteUpdateAsync DEĞİL?
         // ==============================================================
-        // EF Core 7+ ile toplu guncelleme yapilabilir:
+        // EF Core 7+ ile toplu güncelleme yapilabilir:
         //
         //     await query.ExecuteUpdateAsync(s => s
         //         .SetProperty(n => n.IsRead, true)
         //         .SetProperty(n => n.ReadAt, now));
         //
-        // Tek SQL cumlesi, cok daha hizli. Kullanmadim cunku:
+        // Tek SQL cumlesi, çok daha hizli. Kullanmadim çünkü:
         //
         //   1) Entity metodunu (MarkAsRead) ATLAR. Bugun basit ama
-        //      ilerde bir kural eklenirse (ornegin "arsivlenmis
-        //      bildirim okundu isaretlenemez") toplu guncelleme onu
-        //      GORMEZ ve iki farkli davranis olusur.
+        //      ilerde bir kural eklenirse (örneğin "arsivlenmis
+        //      bildirim okundu isaretlenemez") toplu güncelleme önü
+        //      GORMEZ ve iki farklı davranis olusur.
         //
         //   2) Denetim interceptor'ini ATLAR: UpdatedAt/UpdatedBy
         //      dolmaz. Sprint 12'de tam bu tur bir bosluk yuzunden
-        //      CreatedAt'in hic dolmadigini bulmustum.
+        //      CreatedAt'in hiç dolmadigini bulmustum.
         //
-        // Okunmamis bildirim sayisi kullanici basina onlarla olculur;
+        // Okunmamis bildirim sayısı kullanıcı başına onlarla olculur;
         // tek tek yuklemenin maliyeti kabul edilebilir.
         //
         // Binlerce satira ciksaydi karar degisirdi -- o zaman toplu
-        // guncelleme yapip denetim alanlarini elle yazardim.
+        // güncelleme yapip denetim alanlarini elle yazardim.
         // ==============================================================
         var unread = await _context.Notifications
             .Where(n => n.UserId == userId && !n.IsRead)

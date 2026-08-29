@@ -8,14 +8,14 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.Application.Features.Auth.Register;
 
 /// <summary>
-/// Kayit akisi:
-///   1. E-posta zaten kullaniliyor mu?
-///   2. Sifreyi hash'le
-///   3. Kullaniciyi olustur ve varsayilan "User" rolunu ata
-///   4. Token uret
+/// Kayıt akışı:
+///   1. E-posta zaten kullanılıyor mu?
+///   2. Şifreyi hash'le
+///   3. Kullaniciyi oluştur ve varsayılan "User" rolunu ata
+///   4. Token üret
 ///
 /// sealed: architecture testimiz handler'larin sealed olmasini zorunlu
-/// kiliyor. Handler'dan miras almak icin bir sebep yok; sealed hem niyeti
+/// kiliyor. Handler'dan miras almak için bir sebep yok; sealed hem niyeti
 /// belirtir hem de JIT'in metod cagrilarini devirtualize etmesine izin verir.
 /// </summary>
 internal sealed class RegisterCommandHandler
@@ -39,12 +39,12 @@ internal sealed class RegisterCommandHandler
         RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        // E-postayi entity ile AYNI sekilde normalize ediyorum.
+        // E-postayi entity ile AYNI şekilde normalize ediyorum.
         //
-        // User.Create icinde de ToLowerInvariant var. Burada tekrar
-        // yapmam gerekiyor cunku ARAMA yapiyorum: veritabanindaki
-        // kayitlar kucuk harfle saklandi, aradigim deger de kucuk
-        // harf olmali. Aksi halde "Ahmet@X.com" ile arayinca kayit
+        // User.Create içinde de ToLowerInvariant var. Burada tekrar
+        // yapmam gerekiyor çünkü ARAMA yapıyorum: veritabanindaki
+        // kayitlar küçük harfle saklandi, aradigim deger de küçük
+        // harf olmalı. Aksi halde "Ahmet@X.com" ile arayinca kayıt
         // bulunamaz ve unique index ihlaline duseriz.
         var email = request.Email.Trim().ToLowerInvariant();
 
@@ -56,13 +56,13 @@ internal sealed class RegisterCommandHandler
         if (emailInUse)
         {
             // ------------------------------------------------------------------
-            // BURADA "kullanici numaralandirma" RISKI VAR AMA KABUL EDIYORUZ
+            // BURADA "kullanıcı numaralandirma" RISKI VAR AMA KABUL EDIYORUZ
             // ------------------------------------------------------------------
             // Login'de bilerek belirsiz mesaj donuyoruz. Kayitta ise
-            // "bu e-posta kullaniliyor" demek zorundayiz -- aksi halde
-            // kullanici neden kayit olamadigini anlayamaz.
+            // "bu e-posta kullanılıyor" demek zorundayız -- aksi halde
+            // kullanıcı neden kayıt olamadigini anlayamaz.
             //
-            // Bu, guvenlik ile kullanilabilirlik arasinda BILINCLI bir
+            // Bu, güvenlik ile kullanilabilirlik arasında BILINCLI bir
             // odundur ve sektor standardidir. Riski Sprint 15'te register
             // endpoint'ine rate limit koyarak sinirlayacagiz: saldirgan
             // e-posta listesi taramasini pratikte yapamayacak.
@@ -80,11 +80,11 @@ internal sealed class RegisterCommandHandler
             user.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber);
         }
 
-        // Varsayilan rol: User.
+        // Varsayılan rol: User.
         //
-        // Role.Ids.User SABIT bir GUID oldugu icin veritabanindan rol
+        // Role.Ids.User SABIT bir GUID olduğu için veritabanindan rol
         // kaydini CEKMEME gerek yok -- bir sorgu tasarruf ediyoruz.
-        // Rastgele ID kullansaydik once "User rolunu bul" sorgusu
+        // Rastgele ID kullansaydık önce "User rolunu bul" sorgusu
         // yapmak zorunda kalirdik.
         var defaultRole = Role.Create(Role.Ids.User, Role.Names.User);
         user.AssignRole(defaultRole);
@@ -105,7 +105,7 @@ internal sealed class RegisterCommandHandler
             accessToken.Value,
             accessToken.ExpiresAt,
 
-            // Kullaniciya token'in KENDISI gidiyor; veritabaninda HASH'i var.
+            // Kullanıcıya token'in KENDISI gidiyor; veritabaninda HASH'i var.
             refreshToken.Value,
             refreshToken.ExpiresAt,
             new UserSummary(

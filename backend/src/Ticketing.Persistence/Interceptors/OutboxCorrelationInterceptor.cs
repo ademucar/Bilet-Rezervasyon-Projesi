@@ -7,14 +7,14 @@ namespace Ticketing.Persistence.Interceptors;
 
 /// <summary>
 /// Yeni Outbox mesajlarina, o anki istegin Correlation ID'sini yazar.
-/// PDF Sprint 16: Correlation ID "Outbox kaydi icerisinde
-/// kullanilmalidir."
+/// PDF Sprint 16: Correlation ID "Outbox kaydı icerisinde
+/// kullanılmalıdır."
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// BU SINIF SPRINT 16'DA, OLCEREK BULUNAN BIR BOSLUK ICIN YAZILDI
 /// ==================================================================
-/// OutboxMessage.CorrelationId alani Sprint 9'dan beri VARDI.
+/// OutboxMessage.CorrelationId alanı Sprint 9'dan beri VARDI.
 /// Create() metodunda parametresi vardi. Veritabaninda sutunu ve
 /// hatta INDEKSI vardi. XML yorumunda "PDF Sprint 16" diye
 /// isaretlenmisti.
@@ -30,23 +30,23 @@ namespace Ticketing.Persistence.Interceptors;
 ///     ...
 ///     TOPLAM                 22          0
 ///
-/// Sekiz cagri yerinden YEDISI parametreyi hic gecmiyordu. Alan
+/// Sekiz cagri yerinden YEDISI parametreyi hiç gecmiyordu. Alan
 /// vardi, indeks vardi, niyet vardi -- veri yoktu.
 ///
 /// ------------------------------------------------------------------
 /// NEDEN 7 CAGRI YERINI TEK TEK DUZELTMEDIM?
 /// ------------------------------------------------------------------
-/// Duzeltebilirdim; 7 satirlik bir is. Ama ayni hata YENIDEN olurdu:
-/// 9. cagri yerini yazan kisi (yani gelecekteki ben) parametreyi
-/// yine unuturdu ve bunu kimse fark etmezdi -- cunku unutmanin
-/// belirtisi YOK. Kod derleniyor, testler geciyor, sistem calisiyor.
-/// Yalnizca uretimde bir sorunu arastirirken "bu e-postayi hangi
+/// Duzeltebilirdim; 7 satirlik bir is. Ama aynı hata YENIDEN olurdu:
+/// 9. cagri yerini yazan kişi (yani gelecekteki ben) parametreyi
+/// yine unuturdu ve bunu kimse fark etmezdi -- çünkü unutmanin
+/// belirtisi YOK. Kod derleniyor, testler geciyor, sistem çalışıyor.
+/// Yalnızca uretimde bir sorunu arastirirken "bu e-postayi hangi
 /// istek tetikledi?" diye sordugunda cevapsiz kaliyorsun.
 ///
 /// Interceptor, unutulmasi MUMKUN OLMAYAN yere koyuyor: kaydetme
-/// aninda, otomatik.
+/// anında, otomatik.
 ///
-/// Bu, Sprint 12'deki AuditFieldsInterceptor kararinin aynisi ve ayni
+/// Bu, Sprint 12'deki AuditFieldsInterceptor kararinin aynisi ve aynı
 /// desende bir hatayi cozuyor: "alan tanimli ama kimse doldurmuyor".
 ///
 /// ------------------------------------------------------------------
@@ -55,14 +55,14 @@ namespace Ticketing.Persistence.Interceptors;
 /// Ekleyebilirdim ve ChangeTracker'i bir kez yerine iki kez gezmekten
 /// kurtulurduk.
 ///
-/// Ayirmayi sectim cunku iki sinifin SORUMLULUGU farkli:
+/// Ayirmayi sectim çünkü iki sinifin SORUMLULUGU farklı:
 ///   - AuditFieldsInterceptor: AuditableEntity turevleri, "kim/ne zaman"
-///   - Bu sinif: yalnizca OutboxMessage, "hangi istek"
+///   - Bu sinif: yalnızca OutboxMessage, "hangi istek"
 ///
-/// OutboxMessage zaten AuditableEntity DEGIL (kendi CreatedAt'i var),
-/// yani ayni doneceye sigmiyorlardi. Performans farki da olcusuz:
-/// ChangeTracker gezintisi bellekte ve tipik bir kaydetmede birkac
-/// on giris var.
+/// OutboxMessage zaten AuditableEntity DEĞİL (kendi CreatedAt'i var),
+/// yani aynı doneceye sigmiyorlardi. Performans farki da olcusuz:
+/// ChangeTracker gezintisi bellekte ve tipik bir kaydetmede birkaç
+/// on giriş var.
 /// ==================================================================
 /// </remarks>
 internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
@@ -85,13 +85,13 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
     }
 
     /// <summary>
-    /// Senkron kaydetme icin ayni is.
+    /// Senkron kaydetme için aynı is.
     /// </summary>
     /// <remarks>
-    /// Ikisini de gecersiz kilmak SART. Yalnizca async surumu
-    /// yazsaydik, senkron SaveChanges() cagiran herhangi bir kod yolu
-    /// (seed islemi, migration, bir test) sessizce bos correlation ID
-    /// uretirdi -- ve bu, duzeltmeye calistigimiz hatanin ta kendisi.
+    /// Ikisini de geçersiz kilmak ŞART. Yalnızca async surumu
+    /// yazsaydık, senkron SaveChanges() cagiran herhangi bir kod yolu
+    /// (seed islemi, migration, bir test) sessizce boş correlation ID
+    /// üretirdi -- ve bu, duzeltmeye calistigimiz hatanin ta kendisi.
     /// </remarks>
     public override InterceptionResult<int> SavingChanges(
         DbContextEventData eventData,
@@ -112,15 +112,15 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
         }
 
         // ==============================================================
-        // ARKA PLAN ISLERINDE ICurrentUser BOS -- BU NORMAL
+        // ARKA PLAN ISLERINDE ICurrentUser BOŞ -- BU NORMAL
         // ==============================================================
         // ICurrentUser degerini IHttpContextAccessor'dan okuyor. Hangfire
         // isinde HTTP baglami YOK, dolayisiyla CorrelationId de yok.
         //
-        // O durumda hicbir sey yazmiyoruz ve alan null kaliyor. Bu
+        // O durumda hiçbir sey yazmiyoruz ve alan null kaliyor. Bu
         // DOGRU davranis: arka plan isinin urettigi yeni bir Outbox
-        // mesajini, alakasiz bir HTTP istegine baglamak yanlis bilgi
-        // uretirdi.
+        // mesajini, alakasiz bir HTTP istegine baglamak yanlış bilgi
+        // üretirdi.
         //
         // Arka plan isleri kendi correlation ID'lerini ISLEDIKLERI
         // mesajdan devraliyor (bkz. ProcessOutboxMessagesCommand).
@@ -134,11 +134,11 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
 
         foreach (var entry in context.ChangeTracker.Entries<OutboxMessage>())
         {
-            // Yalnizca YENI eklenen kayitlar.
+            // Yalnızca YENI eklenen kayitlar.
             //
-            // Guncellenen bir mesaja (ornegin "islendi" isaretlenen)
-            // dokunmuyoruz: onun correlation ID'si onu OLUSTURAN
-            // istege ait ve oyle kalmali. Isleyen isin ID'siyle
+            // Guncellenen bir mesaja (örneğin "islendi" isaretlenen)
+            // dokunmuyoruz: onun correlation ID'si önü OLUSTURAN
+            // isteğe ait ve oyle kalmali. Isleyen isin ID'siyle
             // degistirmek, zinciri tam ters yonde koparirdi.
             if (entry.State == EntityState.Added)
             {

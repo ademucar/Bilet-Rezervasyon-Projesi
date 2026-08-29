@@ -10,25 +10,25 @@ namespace Ticketing.Application.Common.Security;
 /// ==================================================================
 /// BU SINIF NEDEN GEREKLI? -- SOMUT SIZINTI YOLLARI
 /// ==================================================================
-/// Loglar cogu zaman "guvenli" sanilir ama degildir:
+/// Loglar çoğu zaman "güvenli" sanilir ama degildir:
 ///
-///   - Log dosyalari yedeklenir ve yedekler baska yerde durur
+///   - Log dosyalari yedeklenir ve yedekler başka yerde durur
 ///   - Merkezi log sistemlerine (Seq, ELK) gonderilir ve oraya
 ///     gelistirici disindaki kisiler de erisir
-///   - Hata ayiklama sirasinda ekran goruntusu alinip paylasilir
+///   - Hata ayiklama sırasında ekran goruntusu alinip paylasilir
 ///   - Destek talebine eklenir
 ///
-/// Bir JWT veya sifre sifirlama token'i loga duserse, ona erisen
-/// herkes o kullanicinin hesabina girebilir.
+/// Bir JWT veya şifre sıfırlama token'i loga duserse, ona erisen
+/// herkes o kullanıcının hesabina girebilir.
 ///
 /// ------------------------------------------------------------------
 /// NE MASKELENIYOR?
 /// ------------------------------------------------------------------
 ///   JWT              -> oturum ele gecirme
-///   Sifre alanlari   -> dogrudan hesap erisimi
+///   Şifre alanlari   -> doğrudan hesap erişimi
 ///   Kart numarasi    -> PCI-DSS ihlali (simulasyonda yok ama
-///                       gercek entegrasyonda gelebilir)
-///   E-posta          -> KISMEN maskeleniyor (asagida gerekce)
+///                       gerçek entegrasyonda gelebilir)
+///   E-posta          -> KISMEN maskeleniyor (aşağıda gerekce)
 /// ------------------------------------------------------------------
 /// </remarks>
 public static partial class SensitiveDataMasker
@@ -38,13 +38,13 @@ public static partial class SensitiveDataMasker
     // ==================================================================
     // NEDEN [GeneratedRegex]?
     // ==================================================================
-    // Regex'ler derleme zamaninda kaynak ureteci ile olusturuluyor.
+    // Regex'ler derleme zamaninda kaynak ureteci ile oluşturuluyor.
     //
     // new Regex(...) her cagrida yeniden ayristirir; static readonly
     // Regex ise calisma zamaninda derlenir. GeneratedRegex ise C# kodu
     // olarak URETILIYOR -- en hizlisi ve tahsis yapmiyor.
     //
-    // Maskeleme HER LOG SATIRINDA calisabilecegi icin bu onemli.
+    // Maskeleme HER LOG SATIRINDA calisabilecegi için bu önemli.
     // ==================================================================
 
     /// <summary>JWT: uc bolumlu, nokta ile ayrilmis Base64.</summary>
@@ -54,13 +54,13 @@ public static partial class SensitiveDataMasker
         matchTimeoutMilliseconds: 1000)]
     private static partial Regex JwtRegex();
 
-    /// <summary>JSON icindeki sifre benzeri alanlar.</summary>
+    /// <summary>JSON icindeki şifre benzeri alanlar.</summary>
     /// <remarks>
     /// Alan adlarini GENIS tutuyorum: password, currentPassword,
     /// newPassword, token, refreshToken, secret, apiKey.
     ///
     /// Fazla maskelemek, eksik maskelemekten iyidir: yanlislikla
-    /// maskelenen zararsiz bir alan yalnizca hata ayiklamayi
+    /// maskelenen zararsiz bir alan yalnızca hata ayiklamayi
     /// zorlastirir; kacirilan bir token ise hesap kaybi demektir.
     /// </remarks>
     [GeneratedRegex(
@@ -88,9 +88,9 @@ public static partial class SensitiveDataMasker
 
         var sonuc = JwtRegex().Replace(input, Maske);
 
-        // $1 ile alan ADINI koruyor, yalnizca DEGERI maskeliyoruz.
+        // $1 ile alan ADINI koruyor, yalnızca DEGERI maskeliyoruz.
         //
-        // Alan adini da silseydik logdan "hangi alan vardi" bilgisi
+        // Alan adını da silseydik logdan "hangi alan vardi" bilgisi
         // kaybolurdu ve hata ayiklamak imkansizlasirdi.
         sonuc = JsonSecretRegex().Replace(sonuc, @"$1""" + Maske + @"""");
 
@@ -106,15 +106,15 @@ public static partial class SensitiveDataMasker
     /// ==============================================================
     /// NEDEN TAMAMEN GIZLEMIYORUZ?
     /// ==============================================================
-    /// E-posta kisisel veri (KVKK/GDPR kapsaminda) ama ayni zamanda
-    /// destek ve hata ayiklama icin GEREKLI: "hangi kullanici?"
+    /// E-posta kisisel veri (KVKK/GDPR kapsaminda) ama aynı zamanda
+    /// destek ve hata ayiklama için GEREKLI: "hangi kullanıcı?"
     /// sorusunun en pratik cevabi.
     ///
-    /// Tamamen maskeleseydik loglar destek icin kullanilamaz hale
+    /// Tamamen maskeleseydik loglar destek için kullanilamaz hale
     /// gelirdi ve gelistiriciler maskelemeyi kapatmanin yolunu
-    /// ararlardi -- ki bu daha kotu bir sonuc.
+    /// ararlardi -- ki bu daha kötü bir sonuç.
     ///
-    /// Ilk uc harf + alan adi, destek icin yeterli ipucu veriyor ama
+    /// İlk uc harf + alan adı, destek için yeterli ipucu veriyor ama
     /// adresi TOPLU olarak toplamayi (spam listesi olusturmayi)
     /// engelliyor.
     /// ==============================================================
@@ -128,10 +128,10 @@ public static partial class SensitiveDataMasker
 
         var atIndex = email.IndexOf('@', StringComparison.Ordinal);
 
-        // @ yoksa gecerli bir e-posta degil; tamamen maskele.
+        // @ yoksa geçerli bir e-posta değil; tamamen maskele.
         //
-        // Kismi maskeleme mantigi burada calismaz ve yanlislikla
-        // tamamini loglamaktansa hicbir sey loglamak daha guvenli.
+        // Kismi maskeleme mantığı burada calismaz ve yanlislikla
+        // tamamini loglamaktansa hiçbir sey loglamak daha güvenli.
         if (atIndex <= 0)
         {
             return Maske;
@@ -140,8 +140,8 @@ public static partial class SensitiveDataMasker
         var yerelKisim = email[..atIndex];
         var alanAdi = email[atIndex..];
 
-        // Cok kisa yerel kisimlarda (a@x.com) ilk uc harf zaten
-        // tamamini acik eder. O durumda tek harf birakiyoruz.
+        // Çok kisa yerel kisimlarda (a@x.com) ilk uc harf zaten
+        // tamamini açık eder. O durumda tek harf birakiyoruz.
         var gorunenUzunluk = yerelKisim.Length <= 3 ? 1 : 3;
 
         return $"{yerelKisim[..gorunenUzunluk]}***{alanAdi}";

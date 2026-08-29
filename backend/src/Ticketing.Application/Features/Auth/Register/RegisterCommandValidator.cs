@@ -3,9 +3,9 @@ using FluentValidation;
 namespace Ticketing.Application.Features.Auth.Register;
 
 /// <summary>
-/// Kayit girdilerinin dogrulanmasi.
+/// Kayıt girdilerinin dogrulanmasi.
 ///
-/// Bu sinif ValidationBehavior tarafindan OTOMATIK bulunur ve calistirilir.
+/// Bu sinif ValidationBehavior tarafından OTOMATIK bulunur ve calistirilir.
 /// Handler'in dogrulamayi cagirmasina gerek yok -- dolayisiyla unutulamaz.
 /// </summary>
 public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand>
@@ -15,37 +15,37 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("E-posta adresi zorunludur.")
             .MaximumLength(256).WithMessage("E-posta adresi en fazla 256 karakter olabilir.")
-            .EmailAddress().WithMessage("Gecerli bir e-posta adresi giriniz.");
+            .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
 
         // ==================================================================
         // SIFRE POLITIKASI
         // ==================================================================
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Sifre zorunludur.")
+            .NotEmpty().WithMessage("Şifre zorunludur.")
 
             // Minimum 8 karakter. Uzunluk, karmasikliktan DAHA etkilidir:
             // her ek karakter olasilik uzayini katlanarak buyutur.
-            .MinimumLength(8).WithMessage("Sifre en az 8 karakter olmalidir.")
+            .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.")
 
             // ------------------------------------------------------------------
             // UST SINIR NEDEN VAR? -- COK ONEMLI BIR AYRINTI
             // ------------------------------------------------------------------
-            // BCrypt, girdinin YALNIZCA ILK 72 BYTE'INI dikkate alir.
+            // BCrypt, girdinin YALNIZCA ILK 72 BYTE'INI dikkate alır.
             // Gerisi sessizce yok sayilir.
             //
-            // Ust sinir koymasaydik su olurdu: 100 karakterlik bir sifre
-            // giren kullanici, aslinda ilk 72 karakteriyle korunuyor olurdu
-            // ve bunu bilmezdi. Daha kotusu: ilk 72 karakteri ayni olan iki
-            // FARKLI sifre ayni hash'i uretir ve ikisi de calisir.
+            // Ust sinir koymasaydik su olurdu: 100 karakterlik bir şifre
+            // giren kullanıcı, aslında ilk 72 karakteriyle korunuyor olurdu
+            // ve bunu bilmezdi. Daha kotusu: ilk 72 karakteri aynı olan iki
+            // FARKLI şifre aynı hash'i üretir ve ikisi de çalışır.
             //
-            // 72'yi acikca yasaklayarak kullaniciya dogru geri bildirim
+            // 72'yi acikca yasaklayarak kullanıcıya doğru geri bildirim
             // veriyoruz. Bu, BCrypt kullanan projelerde en sik atlanan
             // detaylardan biridir.
-            .MaximumLength(72).WithMessage("Sifre en fazla 72 karakter olabilir.")
+            .MaximumLength(72).WithMessage("Şifre en fazla 72 karakter olabilir.")
 
-            .Matches("[A-Z]").WithMessage("Sifre en az bir buyuk harf icermelidir.")
-            .Matches("[a-z]").WithMessage("Sifre en az bir kucuk harf icermelidir.")
-            .Matches("[0-9]").WithMessage("Sifre en az bir rakam icermelidir.");
+            .Matches("[A-Z]").WithMessage("Şifre en az bir büyük harf içermelidir.")
+            .Matches("[a-z]").WithMessage("Şifre en az bir küçük harf içermelidir.")
+            .Matches("[0-9]").WithMessage("Şifre en az bir rakam içermelidir.");
 
         RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage("Ad zorunludur.")
@@ -55,9 +55,9 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .NotEmpty().WithMessage("Soyad zorunludur.")
             .MaximumLength(100).WithMessage("Soyad en fazla 100 karakter olabilir.");
 
-        // Telefon opsiyonel; ama girildiyse bicimi dogru olmali.
-        // "When" olmadan bos deger de dogrulamaya girer ve gereksiz
-        // hata uretirdi.
+        // Telefon opsiyonel; ama girildiyse bicimi doğru olmalı.
+        // "When" olmadan boş deger de dogrulamaya girer ve gereksiz
+        // hata üretirdi.
         RuleFor(x => x.PhoneNumber)
             .MaximumLength(20).WithMessage("Telefon numarasi en fazla 20 karakter olabilir.")
             .Matches(@"^\+?[0-9\s\-()]+$").WithMessage("Gecerli bir telefon numarasi giriniz.")

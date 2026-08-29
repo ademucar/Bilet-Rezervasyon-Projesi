@@ -4,36 +4,36 @@ using Microsoft.AspNetCore.SignalR;
 namespace Ticketing.WebApi.Hubs;
 
 /// <summary>
-/// Gercek zamanli koltuk guncellemeleri. PDF Sprint 10.
+/// Gerçek zamanlı koltuk guncellemeleri. PDF Sprint 10.
 ///
 /// ==================================================================
 /// NEDEN [AllowAnonymous]?
 /// ==================================================================
-/// Bu karari uzun dusundum, cunku ilk refleks "her seyi kilitle" oluyor.
+/// Bu karari uzun dusundum, çünkü ilk refleks "her seyi kilitle" oluyor.
 ///
 /// 1) TUTARLILIK: GET /event-sessions/{id}/seat-availability zaten
-///    [AllowAnonymous]. Gerekcesi Sprint 7'de yazilmisti: kullanici
-///    bilet almadan once hangi koltuklarin bos oldugunu gorebilmeli.
+///    [AllowAnonymous]. Gerekcesi Sprint 7'de yazilmisti: kullanıcı
+///    bilet almadan önce hangi koltuklarin boş olduğunu gorebilmeli.
 ///
 ///    Bu hub'in yaydigi olaylar o uc noktanin dondugu bilginin
-///    AYNISINI tasiyor -- koltuk kimligi ve durumu, baska hicbir sey.
-///    Sorguya acik olan bilgiyi canli yayinda kapatmak tutarsiz
-///    olurdu ve hicbir sey korumazdi.
+///    AYNISINI tasiyor -- koltuk kimliği ve durumu, başka hiçbir sey.
+///    Sorguya açık olan bilgiyi canlı yayında kapatmak tutarsiz
+///    olurdu ve hiçbir sey korumazdi.
 ///
 /// 2) TOKEN'I ADRESE KOYMAK ISTEMEDIM: SignalR WebSocket kullaninca
-///    tarayici Authorization BASLIGI GONDEREMEZ. Standart cozum
+///    tarayıcı Authorization BASLIGI GONDEREMEZ. Standart çözüm
 ///    token'i sorgu dizesine koymaktir:
 ///
 ///        /hubs/seats?access_token=eyJhbGciOi...
 ///
-///    Ama URL'ler her yere yazilir: sunucu erisim loglari, ters vekil
-///    sunucu loglari, tarayici gecmisi, Referer basligi. Yani token
+///    Ama URL'ler her yere yazilir: sunucu erişim loglari, ters vekil
+///    sunucu loglari, tarayıcı gecmisi, Referer başlığı. Yani token
 ///    onlarca yerde duz metin olarak birikir.
 ///
-///    Korunacak bir sey olsaydi bu bedeli oderdik. Burada yok.
+///    Korunacak bir sey olsaydı bu bedeli oderdik. Burada yok.
 ///
 /// KIMLIK GEREKSEYDI NE YAPARDIK? Sprint 15'te bildirim hub'i
-/// eklendiginde (kullaniciya OZEL veri tasiyacak) orada kimlik SART
+/// eklendiginde (kullanıcıya OZEL veri tasiyacak) orada kimlik ŞART
 /// olacak ve token sorgu dizesi cozumunu, loglardan token'i maskeleyen
 /// bir yapilandirmayla birlikte kuracagiz.
 /// ==================================================================
@@ -41,53 +41,53 @@ namespace Ticketing.WebApi.Hubs;
 [AllowAnonymous]
 public sealed class SeatHub : Hub
 {
-    /// <summary>Bir oturumun grup adi. Tek yerde uretiliyor.</summary>
+    /// <summary>Bir oturumun grup adı. Tek yerde uretiliyor.</summary>
     /// <remarks>
-    /// Grup adini hem hub hem de bildirim gonderen sinif uretiyor.
-    /// Iki yerde elle yazsaydik birinde yazim hatasi yapmak,
-    /// mesajlarin HIC ULASMAMASINA yol acardi -- ve hicbir hata
-    /// vermezdi, cunku SignalR var olmayan bir gruba gondermeyi
-    /// hata saymaz. Sessizce calismayan bir sistem, patlayan
-    /// sistemden cok daha zor teshis edilir.
+    /// Grup adını hem hub hem de bildirim gonderen sinif uretiyor.
+    /// Iki yerde elle yazsaydık birinde yazım hatası yapmak,
+    /// mesajlarin HİÇ ULASMAMASINA yol acardi -- ve hiçbir hata
+    /// vermezdi, çünkü SignalR var olmayan bir gruba gondermeyi
+    /// hata saymaz. Sessizce çalışmayan bir sistem, patlayan
+    /// sistemden çok daha zor teshis edilir.
     /// </remarks>
     public static string GroupNameFor(Guid eventSessionId)
         => $"session-{eventSessionId}";
 
     /// <summary>
-    /// Istemciyi bir oturumun grubuna alir.
+    /// Istemciyi bir oturumun grubuna alır.
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// PDF IS KURALI: "Kullanici yalnizca goruntuledigi etkinlik
+    /// PDF IS KURALI: "Kullanıcı yalnızca goruntuledigi etkinlik
     /// oturumunun grubuna katilmalidir."
     /// ==============================================================
-    /// Neden bu kural var? Grup olmasaydi tek secenek TUM istemcilere
+    /// Neden bu kural var? Grup olmasaydı tek seçenek TÜM istemcilere
     /// yayin yapmak olurdu (Clients.All).
     ///
-    /// Somut sonucu: 50 farkli etkinlik satista ve 10.000 kisi
-    /// bagliyken, bir koltugun kilitlenmesi 10.000 kisiye mesaj
+    /// Somut sonucu: 50 farklı etkinlik satışta ve 10.000 kişi
+    /// bagliyken, bir koltuğun kilitlenmesi 10.000 kisiye mesaj
     /// gonderirdi. Bunlarin 9.800'u o etkinlige bakmiyor bile.
     ///
-    /// Grup ile yalnizca o oturumu izleyen 200 kisiye gidiyor.
+    /// Grup ile yalnızca o oturumu izleyen 200 kisiye gidiyor.
     /// Fark 50 kat.
     ///
-    /// ONCE ESKI GRUPTAN CIKIYORUZ: kullanici oturumlar arasinda
+    /// ONCE ESKİ GRUPTAN CIKIYORUZ: kullanıcı oturumlar arasında
     /// gezinirse (A oturumu -> B oturumu) eski gruptan cikmazsa
-    /// artik bakmadigi oturumun mesajlarini almaya devam ederdi.
+    /// artık bakmadigi oturumun mesajlarini almaya devam ederdi.
     /// Zamanla bir istemci onlarca gruba uye olurdu.
     /// ==============================================================
     /// </remarks>
     public async Task JoinSession(Guid eventSessionId)
     {
-        // Bos Guid'i reddediyorum.
+        // Boş Guid'i reddediyorum.
         //
-        // Olmasaydi "session-00000000-0000-0000-0000-000000000000"
-        // diye bir cop grup olusur ve hicbir mesaj almazdi.
+        // Olmasaydı "session-00000000-0000-0000-0000-000000000000"
+        // diye bir cop grup olusur ve hiçbir mesaj almazdi.
         // Istemcideki bir hatanin sessizce yutulmasi yerine
         // acikca soylenmesi daha iyi.
         if (eventSessionId == Guid.Empty)
         {
-            throw new HubException("Gecerli bir oturum kimligi gonderilmelidir.");
+            throw new HubException("Geçerli bir oturum kimliği gonderilmelidir.");
         }
 
         var previous = CurrentSession;
@@ -98,11 +98,11 @@ public sealed class SeatHub : Hub
                 Context.ConnectionId, GroupNameFor(previous.Value)).ConfigureAwait(false);
         }
 
-        // Bagli oldugu oturumu baglanti uzerinde sakliyorum.
+        // Bagli olduğu oturumu bağlantı uzerinde sakliyorum.
         //
         // Context.Items, bu BAGLANTIYA ozel bir sozluk. Statik bir
-        // sozluk kullansaydik iki sorun cikardi: es zamanli erisim
-        // kilitleme gerektirirdi ve baglanti kapandiginda kayit
+        // sozluk kullansaydık iki sorun çıkardı: es zamanlı erişim
+        // kilitleme gerektirirdi ve bağlantı kapandiginda kayıt
         // silinmezse bellek sizardi.
         Context.Items["EventSessionId"] = eventSessionId;
 
@@ -110,7 +110,7 @@ public sealed class SeatHub : Hub
             Context.ConnectionId, GroupNameFor(eventSessionId)).ConfigureAwait(false);
     }
 
-    /// <summary>Gruptan cikar. Istemci sayfadan ayrilirken cagirir.</summary>
+    /// <summary>Gruptan çıkar. Istemci sayfadan ayrilirken cagirir.</summary>
     public async Task LeaveSession(Guid eventSessionId)
     {
         await Groups.RemoveFromGroupAsync(
@@ -120,15 +120,15 @@ public sealed class SeatHub : Hub
     }
 
     /// <summary>
-    /// Baglanti kesildiginde temizlik.
+    /// Bağlantı kesildiginde temizlik.
     /// </summary>
     /// <remarks>
-    /// SignalR baglanti kopunca grup uyeliklerini ZATEN temizler;
+    /// SignalR bağlantı kopunca grup uyeliklerini ZATEN temizler;
     /// bu metot grubu elle silmiyor.
     ///
     /// Burada Context.Items'i temizliyorum. Aslinda o da baglantiyla
     /// birlikte gidiyor -- ama acikca yazmak, ilerde bu sozluge
-    /// baska bir sey konuldugunda temizligin unutulmamasi icin
+    /// başka bir sey konuldugunda temizligin unutulmamasi için
     /// bir hatirlatma.
     /// </remarks>
     public override Task OnDisconnectedAsync(Exception? exception)

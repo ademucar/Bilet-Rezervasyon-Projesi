@@ -11,45 +11,45 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Application.Features.Events;
 
 // ===================================================================
-// ETKINLIK GUNCELLEME VE SILME
+// ETKİNLİK GUNCELLEME VE SILME
 // ===================================================================
 // PDF Sprint 5 acikca su iki ucu istiyor:
 //     PUT    /api/v1/events/{id}
 //     DELETE /api/v1/events/{id}
 //
-// Sprint 19 denetiminde ikisinin de EKSIK oldugunu buldum. Domain
-// tarafinda UpdateDetails() ve UpdateDates() metotlari SPRINT 5'TEN
-// BERI vardi -- ama onlari cagiran hicbir uc yoktu. Yani yazilmis
+// Sprint 19 denetiminde ikisinin de EKSIK olduğunu buldum. Domain
+// tarafında UpdateDetails() ve UpdateDates() metotlari SPRINT 5'TEN
+// BERI vardi -- ama onlari cagiran hiçbir uc yoktu. Yani yazilmis
 // ama erisilemeyen kod.
 //
-// Bu, projede tekrar eden desenin bir baskasi: Sprint 12 (denetim
+// Bu, projede tekrar eden desenin bir başkası: Sprint 12 (denetim
 // alanlari), 15 (maskeleyici), 16 (correlation ID), 17 (idempotency),
 // 18 (XML yorumlari), 19 (Docker imaji). Hepsi "var ama calismiyor".
 // ===================================================================
 
 /// <summary>
-/// Etkinligin duzenlenebilir alanlarini gunceller. PDF: PUT /api/v1/events/{id}
+/// Etkinligin duzenlenebilir alanlarini günceller. PDF: PUT /api/v1/events/{id}
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// IKI FARKLI KURAL SETI VAR VE DOMAIN BUNU ZATEN AYIRIYOR
 /// ==================================================================
-/// PDF is kurali: "Yayina alinmis etkinligin kritik alanlari
+/// PDF is kuralı: "Yayina alinmis etkinliğin kritik alanlari
 /// KONTROLSUZ degistirilemez."
 ///
-/// "Kontrolsuz" kelimesi onemli: hicbir sey degistirilemez demiyor.
+/// "Kontrolsuz" kelimesi önemli: hiçbir sey degistirilemez demiyor.
 /// Domain katmani ayrimi zaten yapiyor:
 ///
-///   UpdateDetails -> baslik, aciklama, yas siniri
-///                    Yayindayken de degisebilir. Yazim hatasi
+///   UpdateDetails -> başlık, açıklama, yaş sınırı
+///                    Yayindayken de degisebilir. Yazim hatası
 ///                    duzeltmek yasak olmamali.
-///                    Yalnizca iptal/tamamlanmis etkinlikte kapali.
+///                    Yalnızca iptal/tamamlanmis etkinlikte kapalı.
 ///
-///   UpdateDates   -> etkinlik ve satis tarihleri
-///                    SATIS BASLADIYSA kapali. Bilet almis
+///   UpdateDates   -> etkinlik ve satış tarihleri
+///                    SATIS BASLADIYSA kapalı. Bilet almis
 ///                    kullanicilarin altindan tarihi cekmek olmaz.
 ///
-/// Bu handler ikisini AYRI cagiriyor: kullanici yalnizca basligi
+/// Bu handler ikisini AYRI cagiriyor: kullanıcı yalnızca başlığı
 /// degistirmek istiyorsa, tarih kurallari devreye girmiyor.
 /// ==================================================================
 /// </remarks>
@@ -67,11 +67,11 @@ public sealed class UpdateEventCommandValidator : AbstractValidator<UpdateEventC
     public UpdateEventCommandValidator()
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Baslik gereklidir.")
+            .NotEmpty().WithMessage("Başlık gereklidir.")
             .MaximumLength(200);
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("Aciklama gereklidir.")
+            .NotEmpty().WithMessage("Açıklama gereklidir.")
             .MaximumLength(4000);
 
         RuleFor(x => x.MinimumAge)
@@ -79,15 +79,15 @@ public sealed class UpdateEventCommandValidator : AbstractValidator<UpdateEventC
             .When(x => x.MinimumAge.HasValue);
 
         // ==========================================================
-        // TARIHLER YA HEP YA HIC
+        // TARIHLER YA HEP YA HİÇ
         // ==========================================================
-        // Ucunden yalnizca birini gonderirsek diger ikisi eski
-        // degerinde kalir ve tutarsiz bir kombinasyon olusabilir
-        // (ornegin satis bitisi yeni etkinlik tarihinden sonra).
+        // Ucunden yalnızca birini gonderirsek diger ikisi eski
+        // degerinde kalır ve tutarsiz bir kombinasyon olusabilir
+        // (örneğin satış bitisi yeni etkinlik tarihinden sonra).
         //
         // Domain zaten ValidateDates ile bunu yakalar ama hatayi
-        // ISTEK seviyesinde vermek daha net: kullanici "eksik alan"
-        // mesaji goruyor, "gecersiz tarih araligi" degil.
+        // ISTEK seviyesinde vermek daha net: kullanıcı "eksik alan"
+        // mesaji görüyor, "geçersiz tarih aralığı" değil.
         // ==========================================================
         RuleFor(x => x)
             .Must(x =>
@@ -136,7 +136,7 @@ internal sealed partial class UpdateEventCommandHandler
         }
 
         // Domain kurallari burada isliyor; ihlalde DomainException
-        // firlatiyor ve GlobalExceptionHandler onu 422'ye ceviriyor.
+        // firlatiyor ve GlobalExceptionHandler önü 422'ye ceviriyor.
         evt.UpdateDetails(request.Title, request.Description, request.MinimumAge);
 
         if (request.EventDate.HasValue
@@ -154,11 +154,11 @@ internal sealed partial class UpdateEventCommandHandler
         LogEventUpdated(_logger, evt.Id, evt.Title);
 
         // ==============================================================
-        // ONBELLEK TEMIZLIGI SART
+        // ONBELLEK TEMIZLIGI ŞART
         // ==============================================================
-        // Etkinlik detayi ve populer listesi onbellekte duruyor
-        // (Sprint 11). Temizlemezsek kullanici basligi degistirir,
-        // sayfayi yeniler ve ESKI basligi gorur -- "kaydedilmedi mi?"
+        // Etkinlik detayı ve popüler listesi onbellekte duruyor
+        // (Sprint 11). Temizlemezsek kullanıcı başlığı değiştirir,
+        // sayfayı yeniler ve ESKİ başlığı görür -- "kaydedilmedi mi?"
         // diye tekrar dener.
         // ==============================================================
         await _cache.RemoveByPrefixAsync(CacheKeys.EventPrefix, cancellationToken)
@@ -170,7 +170,7 @@ internal sealed partial class UpdateEventCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikGuncellendi,
         Level = LogLevel.Information,
-        Message = "Etkinlik guncellendi. Id: {EventId}, Baslik: {Title}")]
+        Message = "Etkinlik güncellendi. Id: {EventId}, Baslik: {Title}")]
     private static partial void LogEventUpdated(ILogger logger, Guid eventId, string title);
 }
 
@@ -181,29 +181,29 @@ internal sealed partial class UpdateEventCommandHandler
 /// ==================================================================
 /// FIZIKSEL SILME YOK -- SOFT DELETE
 /// ==================================================================
-/// AuditableEntity uzerindeki IsDeleted alani isaretleniyor ve global
-/// sorgu filtresi kaydi gizliyor.
+/// AuditableEntity uzerindeki IsDeleted alanı isaretleniyor ve global
+/// sorgu filtresi kaydı gizliyor.
 ///
 /// Neden fiziksel silmiyoruz?
-///   - Etkinlige bagli bilet, odeme ve denetim kayitlari var. Fiziksel
-///     silme ya bunlari da silerdi (mali kayit kaybi) ya da yabanci
-///     anahtar hatasi verirdi.
+///   - Etkinlige bağlı bilet, ödeme ve denetim kayitlari var. Fiziksel
+///     silme ya bunlari da silerdi (mali kayıt kaybi) ya da yabanci
+///     anahtar hatası verirdi.
 ///   - Silme KARARININ kendisi bir denetim verisi: "kim, ne zaman
 ///     sildi" sorusu cevaplanabilmeli.
 ///
 /// ------------------------------------------------------------------
-/// HANGI ETKINLIK SILINEBILIR?
+/// HANGI ETKİNLİK SILINEBILIR?
 /// ------------------------------------------------------------------
-/// Yalnizca HIC BILET SATILMAMIS olanlar.
+/// Yalnızca HİÇ BİLET SATILMAMIS olanlar.
 ///
 /// Bileti olan bir etkinligi silmek, o bileti almis kullanicilarin
-/// elindeki bileti gecersiz kilardi -- ve onlara hicbir sey
-/// soylenmemis olurdu. Boyle bir durumda dogru islem SILMEK degil,
-/// IPTAL etmek (POST /events/{id}/cancel): iptal, iade zincirini ve
+/// elindeki bileti geçersiz kilardi -- ve onlara hiçbir sey
+/// soylenmemis olurdu. Boyle bir durumda doğru işlem SILMEK değil,
+/// İPTAL etmek (POST /events/{id}/cancel): iptal, iade zincirini ve
 /// bildirimleri baslatiyor.
 ///
-/// Bu ayrimi kod icinde net tutuyorum ki ilerde biri "silme neden
-/// calismiyor?" diye sordugunda cevap hazir olsun.
+/// Bu ayrimi kod içinde net tutuyorum ki ilerde biri "silme neden
+/// calismiyor?" diye sordugunda cevap hazır olsun.
 /// ==================================================================
 /// </remarks>
 public sealed record DeleteEventCommand(Guid EventId) : IRequest<Result>;
@@ -242,13 +242,13 @@ internal sealed partial class DeleteEventCommandHandler
         }
 
         // ==============================================================
-        // SATILMIS BILET VAR MI?
+        // SATILMIS BİLET VAR MI?
         // ==============================================================
-        // Koltuk durumuna DEGIL, bilet kaydina bakiyorum.
+        // Koltuk durumuna DEĞİL, bilet kaydina bakiyorum.
         //
         // Koltuk "Locked" olabilir (biri secmis ama odememis) --
         // o kilit 10 dakikada dusuyor ve silmeyi engellememeli.
-        // Ama bir BILET uretilmisse para alinmis demektir.
+        // Ama bir BİLET uretilmisse para alinmis demektir.
         // ==============================================================
         var oturumIdleri = evt.Sessions.Select(s => s.Id).ToList();
 
@@ -265,8 +265,8 @@ internal sealed partial class DeleteEventCommandHandler
                 "baslatir."));
         }
 
-        // Aktif (suresi dolmamis) rezervasyon da engelliyor: kullanici
-        // o an odeme ekraninda olabilir.
+        // Aktif (süresi dolmamis) rezervasyon da engelliyor: kullanıcı
+        // o an ödeme ekraninda olabilir.
         var aktifRezervasyon = await _context.Reservations
             .AnyAsync(
                 r => oturumIdleri.Contains(r.EventSessionId)
@@ -286,13 +286,13 @@ internal sealed partial class DeleteEventCommandHandler
         // ==============================================================
         // AuditFieldsInterceptor SILMEYI SOFT DELETE'E CEVIRIYOR
         // ==============================================================
-        // Remove() cagiriyoruz ama kayit FIZIKSEL olarak silinmiyor:
+        // Remove() cagiriyoruz ama kayıt FIZIKSEL olarak silinmiyor:
         // Sprint 12'de yazdigimiz interceptor EntityState.Deleted'i
         // yakalayip IsDeleted = true yapiyor.
         //
         // Burada Remove() yazmak, "silme niyeti"ni normal EF diliyle
         // ifade etmemizi sagliyor; soft delete davranisi tek yerde
-        // (interceptor) duruyor ve her silme icin tekrar edilmiyor.
+        // (interceptor) duruyor ve her silme için tekrar edilmiyor.
         // ==============================================================
         _context.Events.Remove(evt);
 
@@ -307,7 +307,7 @@ internal sealed partial class DeleteEventCommandHandler
     }
 
     /// <remarks>
-    /// Warning seviyesi: silme geri alinmasi zor bir islem ve
+    /// Warning seviyesi: silme geri alinmasi zor bir işlem ve
     /// denetimde gorulmesi gerekiyor (Sprint 16'daki iade/iptal
     /// kararlarinin aynisi).
     /// </remarks>

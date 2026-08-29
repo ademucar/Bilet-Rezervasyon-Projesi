@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 namespace Ticketing.Application.Common.Options;
 
 /// <summary>
-/// Guvenlik ayarlari. appsettings "Security" bolumunden okunur.
+/// Güvenlik ayarlari. appsettings "Security" bolumunden okunur.
 ///
-/// Neden Application katmaninda? Cunku bu degerleri KULLANAN kod burada
-/// (LoginCommandHandler). Infrastructure'da olsaydi Application onu
-/// referans almak zorunda kalirdi ve katman kurali bozulurdu.
+/// Neden Application katmaninda? Çünkü bu değerleri KULLANAN kod burada
+/// (LoginCommandHandler). Infrastructure'da olsaydı Application önü
+/// referans almak zorunda kalırdı ve katman kuralı bozulurdu.
 ///
 /// Degerleri OKUMA isi (configuration binding) ise WebApi'de yapiliyor;
-/// Application yalnizca IOptions&lt;T&gt; uzerinden aliyor ve
+/// Application yalnızca IOptions&lt;T&gt; üzerinden aliyor ve
 /// yapilandirmanin nereden geldigini bilmiyor.
 /// </summary>
 public sealed class SecurityOptions
@@ -18,25 +18,25 @@ public sealed class SecurityOptions
     public const string SectionName = "Security";
 
     /// <summary>
-    /// Hesap kilitlenmeden once izin verilen basarisiz giris sayisi.
+    /// Hesap kilitlenmeden önce izin verilen başarısız giriş sayısı.
     ///
-    /// 5 degeri bilincli bir denge:
-    ///   - Cok dusuk olsaydi (2), sifresini yanlis yazan normal kullanici
+    /// 5 değeri bilinçli bir denge:
+    ///   - Çok düşük olsaydı (2), sifresini yanlış yazan normal kullanıcı
     ///     surekli kilitlenir ve destek hattini kilitlerdi.
-    ///   - Cok yuksek olsaydi (50), brute force korumasi anlamsizlasirdi.
+    ///   - Çok yüksek olsaydı (50), brute force korumasi anlamsizlasirdi.
     /// </summary>
     [Range(3, 20)]
     public int MaxFailedLoginAttempts { get; set; } = 5;
 
     /// <summary>
-    /// Kilit suresi (dakika).
+    /// Kilit süresi (dakika).
     ///
-    /// KALICI kilit YAPMIYORUZ. Kalici olsaydi saldirgan, hedefledigi
-    /// kullanicinin hesabini kasten 5 kez yanlis sifre girerek KALICI
-    /// olarak kilitleyebilirdi. Bu, kullaniciyi kendi hesabindan eden
-    /// bir servis disi birakma saldirisi olurdu.
+    /// KALICI kilit YAPMIYORUZ. Kalici olsaydı saldirgan, hedefledigi
+    /// kullanıcının hesabini kasten 5 kez yanlış şifre girerek KALICI
+    /// olarak kilitleyebilirdi. Bu, kullanıcıyı kendi hesabindan eden
+    /// bir servis dışı birakma saldirisi olurdu.
     ///
-    /// Gecici kilit ise saldiriyi yavaslatir ama mesru kullaniciyi
+    /// Gecici kilit ise saldiriyi yavaslatir ama mesru kullanıcıyı
     /// kalici magdur etmez.
     /// </summary>
     [Range(1, 1440)]

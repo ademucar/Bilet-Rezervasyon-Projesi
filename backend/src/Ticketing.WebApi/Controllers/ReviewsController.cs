@@ -21,13 +21,13 @@ public sealed class EventReviewsController : ApiControllerBase
     /// </summary>
     /// <remarks>
     /// Uygulanan kurallar:
-    ///   - Puan 1-5 arasinda olmalidir
-    ///   - Etkinlik TAMAMLANMIS olmalidir
-    ///   - Kullanicinin GECERLI bileti olmalidir (Active veya Used)
-    ///   - Etkinlik basina TEK yorum
+    ///   - Puan 1-5 arasında olmalıdır
+    ///   - Etkinlik TAMAMLANMIS olmalıdır
+    ///   - Kullanıcının GECERLI bileti olmalıdır (Active veya Used)
+    ///   - Etkinlik başına TEK yorum
     /// </remarks>
-    /// <response code="201">Yorum olusturuldu.</response>
-    /// <response code="403">Gecerli bilet yok.</response>
+    /// <response code="201">Yorum oluşturuldu.</response>
+    /// <response code="403">Geçerli bilet yok.</response>
     /// <response code="409">Etkinlik tamamlanmadi veya zaten yorum var.</response>
     [HttpPost]
     [Authorize]
@@ -40,11 +40,11 @@ public sealed class EventReviewsController : ApiControllerBase
         [FromBody] CreateReviewRequest request,
         CancellationToken cancellationToken)
     {
-        // eventId ADRESTEN aliniyor, govdeden DEGIL.
+        // eventId ADRESTEN aliniyor, govdeden DEĞİL.
         //
-        // Govdede de olsaydi ikisi CELISEBILIRDI: adres A etkinligini
+        // Govdede de olsaydı ikisi CELISEBILIRDI: adres A etkinligini
         // gosterirken govde B'yi soyleyebilirdi. Hangisinin kazandigi
-        // belirsiz kalir ve yetki kontrolu yanlis etkinlik uzerinde
+        // belirsiz kalır ve yetki kontrolü yanlış etkinlik uzerinde
         // calisabilirdi.
         var command = new CreateReviewCommand(eventId, request.Rating, request.Comment);
 
@@ -56,15 +56,15 @@ public sealed class EventReviewsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Etkinligin yorumlarini ve puan ozetini dondurur.
+    /// Etkinligin yorumlarini ve puan ozetini döndürür.
     /// PDF: GET /api/v1/events/{eventId}/reviews
     /// </summary>
     /// <remarks>
-    /// ANONIM erisime acik: yorumlar herkese gorunur olmali. Bilet
-    /// almayi dusunen kullanici, giris yapmadan once baskalarinin ne
+    /// ANONIM erisime açık: yorumlar herkese görünür olmalı. Bilet
+    /// almayi dusunen kullanıcı, giriş yapmadan önce baskalarinin ne
     /// dedigini gorebilmeli.
     ///
-    /// Gizlenmis (admin tarafindan kaldirilmis) yorumlar donmuyor.
+    /// Gizlenmis (admin tarafından kaldirilmis) yorumlar donmuyor.
     /// </remarks>
     [HttpGet]
     [AllowAnonymous]
@@ -76,9 +76,9 @@ public sealed class EventReviewsController : ApiControllerBase
     {
         // Adresten gelen eventId, sorgu dizesinden geleni EZIYOR.
         //
-        // Istemci ?eventId=... yazarak baska bir etkinligin
-        // yorumlarini isteyebilirdi. Zararsiz gorunuyor (yorumlar
-        // zaten acik) ama adres ile sonucun uyusmamasi her zaman bir
+        // Istemci ?eventId=... yazarak başka bir etkinliğin
+        // yorumlarini isteyebilirdi. Zararsiz görünüyor (yorumlar
+        // zaten açık) ama adres ile sonucun uyusmamasi her zaman bir
         // hata kaynagi.
         var effective = query with { EventId = eventId };
 
@@ -94,11 +94,11 @@ public sealed class EventReviewsController : ApiControllerBase
 public sealed class ReviewsController : ApiControllerBase
 {
     /// <summary>
-    /// Yorumu gunceller. PDF: PUT /api/v1/reviews/{id}
+    /// Yorumu günceller. PDF: PUT /api/v1/reviews/{id}
     /// </summary>
     /// <remarks>
-    /// PDF: "Kullanici yalnizca kendi yorumunu duzenleyebilir."
-    /// Sahiplik kontrolu handler icinde; baskasinin yorumu icin 403 doner.
+    /// PDF: "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
+    /// Sahiplik kontrolü handler içinde; baskasinin yorumu için 403 döner.
     /// </remarks>
     [HttpPut("{id:guid}")]
     [Authorize]
@@ -118,10 +118,10 @@ public sealed class ReviewsController : ApiControllerBase
     /// </summary>
     /// <remarks>
     /// IKI FARKLI DAVRANIS:
-    ///   Kullanici kendi yorumunu siler -> soft delete
-    ///   Admin baskasinin yorumunu siler -> GIZLENIR (denetim izi kalir)
+    ///   Kullanıcı kendi yorumunu siler -> soft delete
+    ///   Admin baskasinin yorumunu siler -> GIZLENIR (denetim izi kalır)
     ///
-    /// Gerekce DeleteReviewCommandHandler icinde ayrintili yazili.
+    /// Gerekce DeleteReviewCommandHandler içinde ayrintili yazili.
     /// </remarks>
     [HttpDelete("{id:guid}")]
     [Authorize]
@@ -145,8 +145,8 @@ public sealed class EventFavoriteController : ApiControllerBase
 {
     /// <summary>PDF: POST /api/v1/events/{eventId}/favorite</summary>
     /// <remarks>
-    /// IDEMPOTENT: zaten favorideyse de 204 doner. Kullanicinin
-    /// istedigi sonuc (etkinlik favorilerimde olsun) gerceklesmis
+    /// IDEMPOTENT: zaten favorideyse de 204 döner. Kullanıcının
+    /// istedigi sonuç (etkinlik favorilerimde olsun) gerceklesmis
     /// durumda; hata dondurmek anlamsiz olurdu.
     /// </remarks>
     [HttpPost]
@@ -159,7 +159,7 @@ public sealed class EventFavoriteController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>PDF: DELETE /api/v1/events/{eventId}/favorite</summary>
-    /// <remarks>IDEMPOTENT: favoride degilse de 204 doner.</remarks>
+    /// <remarks>IDEMPOTENT: favoride degilse de 204 döner.</remarks>
     [HttpDelete]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -169,13 +169,13 @@ public sealed class EventFavoriteController : ApiControllerBase
             .ConfigureAwait(false));
 }
 
-/// <summary>Kullanicinin favorileri. PDF: GET /api/v1/users/me/favorites</summary>
+/// <summary>Kullanıcının favorileri. PDF: GET /api/v1/users/me/favorites</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/users/me")]
 public sealed class MyFavoritesController : ApiControllerBase
 {
     /// <summary>
-    /// Kullanicinin favori etkinlikleri.
+    /// Kullanıcının favori etkinlikleri.
     /// </summary>
     /// <response code="200">Favori etkinlik listesi.</response>
     [HttpGet("favorites")]

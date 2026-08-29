@@ -16,50 +16,50 @@ namespace Ticketing.WebApi.Controllers;
 public sealed class FilesController : ApiControllerBase
 {
     /// <summary>
-    /// Dosya yukler (afis, gorsel, belge).
+    /// Dosya yukler (afis, görsel, belge).
     /// </summary>
     /// <remarks>
     /// Izin verilen turler: .jpg, .jpeg, .png, .webp, .pdf
-    /// En buyuk boyut: 5 MB
+    /// En büyük boyut: 5 MB
     ///
-    /// Uzanti, MIME turu ve dosya icerigi BIRLIKTE dogrulanir;
-    /// ucu de ayni turu gostermelidir.
+    /// Uzanti, MIME türü ve dosya içeriği BIRLIKTE dogrulanir;
+    /// ucu de aynı türü gostermelidir.
     /// </remarks>
     /// <response code="201">Dosya yuklendi.</response>
-    /// <response code="400">Dosya turu, icerigi veya boyutu gecersiz.</response>
+    /// <response code="400">Dosya türü, içeriği veya boyutu geçersiz.</response>
     /// <response code="413">Dosya izin verilen boyutu asiyor.</response>
     [HttpPost]
 
     // ==============================================================
-    // KIMLIK DOGRULAMA SART -- ANONIM YUKLEMEYE ASLA IZIN YOK
+    // KIMLIK DOGRULAMA ŞART -- ANONIM YUKLEMEYE ASLA IZIN YOK
     // ==============================================================
-    // Anonim dosya yukleme, sunucumuzu herkese acik bir depolama
+    // Anonim dosya yukleme, sunucumuzu herkese açık bir depolama
     // alanina cevirir. Saldirgan diski doldurabilir veya bizim alan
     // adimizi kullanarak zararli dosya dagitabilir -- ve iz surecek
     // bir kimlik olmaz.
     //
     // Kimlik zorunlu olunca her dosyanin bir sahibi oluyor
     // (AuditFieldsInterceptor CreatedBy alanini dolduruyor) ve
-    // kotuye kullanim geriye dogru izlenebiliyor.
+    // kotuye kullanim geriye doğru izlenebiliyor.
     // ==============================================================
     [Authorize]
 
-    // Islem politikasi: dakikada 20. Yukleme pahali bir islem
-    // (disk yazma + dogrulama) ve kotuye kullanimi kolay.
+    // İşlem politikasi: dakikada 20. Yukleme pahali bir işlem
+    // (disk yazma + doğrulama) ve kotuye kullanimi kolay.
     [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
 
     // ==============================================================
     // UC BAZLI BOYUT SINIRI
     // ==============================================================
-    // Program.cs'te genel sinir 1 MB. Dosya yukleme icin bu yetersiz
+    // Program.cs'te genel sinir 1 MB. Dosya yukleme için bu yetersiz
     // oldugundan burada 5 MB'a yukseltiyorum.
     //
-    // Genel siniri 5 MB yapip herkese acmak YANLIS olurdu: JSON
-    // isteyen uclarin 5 MB'lik govde kabul etmesi icin hicbir sebep
+    // Genel sınırı 5 MB yapip herkese acmak YANLIS olurdu: JSON
+    // isteyen uclarin 5 MB'lik govde kabul etmesi için hiçbir sebep
     // yok ve bu, gereksiz bir saldiri yuzeyi olurdu.
     //
     // Ilke: sinirlar ihtiyaci olan yerde GENISLETILIR, her yerde
-    // birden degil.
+    // birden değil.
     // ==============================================================
     [RequestSizeLimit(FileUploadValidator.MaksimumBoyut)]
 
@@ -67,15 +67,15 @@ public sealed class FilesController : ApiControllerBase
     // IKI SINIR ATTRIBUTE'U -- IKISI DE GEREKLI
     // ==============================================================
     // [RequestSizeLimit] GERCEK sinirlayici: govdeyi Kestrel
-    // seviyesinde kesiyor ve chunked isteklerde bile calisiyor.
-    // Ama tetiklendiginde MVC yanlis yanit uretiyor (400 + ic
-    // yapilandirmamiz), cunku hata model baglama sirasinda olusup
-    // dogrulama hatasina cevriliyor.
+    // seviyesinde kesiyor ve chunked isteklerde bile çalışıyor.
+    // Ama tetiklendiginde MVC yanlış yanit uretiyor (400 + ic
+    // yapilandirmamiz), çünkü hata model baglama sırasında olusup
+    // doğrulama hatasina çevriliyor.
     //
-    // [RequestSizeGuard] DOGRU YANITI veriyor: model baglamadan once
-    // Content-Length'e bakip 413 donuyor.
+    // [RequestSizeGuard] DOGRU YANITI veriyor: model baglamadan önce
+    // Content-Length'e bakip 413 dönüyor.
     //
-    // Biri korumayi, digeri iletisimi ustleniyor. Bunu ancak siniri
+    // Biri korumayi, digeri iletisimi ustleniyor. Bunu ancak sınırı
     // GERCEKTEN asan bir istek gonderip yaniti okuyunca fark ettim --
     // ayar dogruydu, davranis yanlisti.
     // ==============================================================
@@ -92,13 +92,13 @@ public sealed class FilesController : ApiControllerBase
             return BadRequest(new ProblemDetails
             {
                 Title = "Dosya gerekli",
-                Detail = "Yuklenecek dosya bulunamadi.",
+                Detail = "Yuklenecek dosya bulunamadı.",
                 Status = StatusCodes.Status400BadRequest,
             });
         }
 
-        // IFormFile burada BIRAKILIYOR: Application katmanina yalnizca
-        // Stream ve birkac string geciyor. Boylece is mantigi
+        // IFormFile burada BIRAKILIYOR: Application katmanina yalnızca
+        // Stream ve birkaç string geciyor. Boylece is mantığı
         // ASP.NET Core'a bagimli olmuyor (mimari testimizin sarti).
         await using var akis = file.OpenReadStream();
 
@@ -111,17 +111,17 @@ public sealed class FilesController : ApiControllerBase
             cancellationToken).ConfigureAwait(false);
 
         // Basarida 201 + Location: istemci yeni kaynagin adresini
-        // yanittan degil, standart bir header'dan da alabiliyor.
+        // yanittan değil, standart bir header'dan da alabiliyor.
         return sonuc.IsSuccess
             ? HandleCreated(sonuc, sonuc.Value.DownloadUrl)
             : HandleResult(sonuc);
     }
 
     /// <summary>
-    /// Yuklenmis bir dosyayi indirir.
+    /// Yuklenmis bir dosyayı indirir.
     /// </summary>
     /// <response code="200">Dosya donduruldu.</response>
-    /// <response code="404">Dosya bulunamadi.</response>
+    /// <response code="404">Dosya bulunamadı.</response>
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
     [EnableRateLimiting(RateLimitingSetup.Policies.Search)]
@@ -143,24 +143,24 @@ public sealed class FilesController : ApiControllerBase
         // ==============================================================
         // NEDEN HER ZAMAN "attachment"?
         // ==============================================================
-        // Content-Disposition: attachment, tarayiciya "bu dosyayi
+        // Content-Disposition: attachment, tarayiciya "bu dosyayı
         // GOSTERME, INDIR" diyor.
         //
-        // "inline" olsaydi tarayici dosyayi bizim alan adimizda
-        // acardi. Dogrulamayi gecmis ama icinde script barindiran bir
-        // dosya (ornegin polyglot bir PDF) o zaman BIZIM alan
-        // adimizda calisir ve kullanicilarin oturum cerezlerine
+        // "inline" olsaydı tarayıcı dosyayı bizim alan adimizda
+        // acardi. Dogrulamayi gecmis ama içinde script barindiran bir
+        // dosya (örneğin polyglot bir PDF) o zaman BIZIM alan
+        // adimizda çalışır ve kullanicilarin oturum cerezlerine
         // erisebilirdi.
         //
         // Indirme olarak sunmak bu riski ortadan kaldiriyor.
-        // X-Content-Type-Options: nosniff basligi (Sprint 15
-        // SecurityHeadersMiddleware) ikinci katman olarak tarayicinin
-        // turu tahmin etmesini de engelliyor.
+        // X-Content-Type-Options: nosniff başlığı (Sprint 15
+        // SecurityHeadersMiddleware) ikinci katman olarak tarayıcının
+        // türü tahmin etmesini de engelliyor.
         //
-        // NOT: Gercek bir uretim sisteminde yuklenen dosyalar AYRI bir
-        // alan adindan sunulur (ornegin cdn-ornek.com). Boylece dosya
-        // bir sekilde calissa bile ana alan adimizin cerezlerine
-        // erisemez. Bunu simdi yapmiyorum cunku tek alan adiyla
+        // NOT: Gerçek bir üretim sisteminde yuklenen dosyalar AYRI bir
+        // alan adindan sunulur (örneğin cdn-örnek.com). Boylece dosya
+        // bir şekilde calissa bile ana alan adimizin cerezlerine
+        // erisemez. Bunu simdi yapmiyorum çünkü tek alan adiyla
         // calisiyoruz -- ama olceklenirken ilk yapilacak sey bu.
         // ==============================================================
         return File(dosya.Content, dosya.ContentType, dosya.FileName);

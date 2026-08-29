@@ -1,28 +1,28 @@
 namespace Ticketing.Domain.Common;
 
 /// <summary>
-/// Es zamanli guncelleme kontrolu gereken entity'ler bundan turer.
+/// Es zamanlı güncelleme kontrolü gereken entity'ler bundan turer.
 /// Bundan turecekler: EventSeat (en kritigi), Reservation, Payment, Event.
 ///
 /// ------------------------------------------------------------------
 /// OPTIMISTIC CONCURRENCY NASIL CALISIR?
 /// ------------------------------------------------------------------
-/// Senaryo: Ayse ve Mehmet ayni anda B-5-12 koltugunu almak istiyor.
+/// Senaryo: Ayse ve Mehmet aynı anda B-5-12 koltuğunu almak istiyor.
 ///
 ///   t0  Ayse   satiri okur   -> Status=Available, RowVersion=100
 ///   t1  Mehmet satiri okur   -> Status=Available, RowVersion=100
-///   t2  Ayse   UPDATE gonderir:
+///   t2  Ayse   UPDATE gönderir:
 ///           UPDATE "EventSeats" SET "Status"=Locked
-///           WHERE "Id"=@id AND xmin=100          --> 1 satir etkilendi, BASARILI
-///           (PostgreSQL satiri gunceller, xmin otomatik 101 olur)
-///   t3  Mehmet UPDATE gonderir:
+///           WHERE "Id"=@id AND xmin=100          --> 1 satır etkilendi, BASARILI
+///           (PostgreSQL satiri günceller, xmin otomatik 101 olur)
+///   t3  Mehmet UPDATE gönderir:
 ///           UPDATE "EventSeats" SET "Status"=Locked
-///           WHERE "Id"=@id AND xmin=100          --> 0 satir etkilendi
+///           WHERE "Id"=@id AND xmin=100          --> 0 satır etkilendi
 ///
-/// EF Core "1 satir bekliyordum, 0 geldi" der ve DbUpdateConcurrencyException
+/// EF Core "1 satır bekliyordum, 0 geldi" der ve DbUpdateConcurrencyException
 /// firlatir. Mehmet'e 409 Conflict doneriz.
 ///
-/// KILIT NOKTA: Mehmet'in istegi ASLA veri bozmadi. Kaybetti ama sessizce
+/// KILIT NOKTA: Mehmet'in isteği ASLA veri bozmadi. Kaybetti ama sessizce
 /// Ayse'nin uzerine yazmadi. "Last write wins" davranisinin tam tersi.
 ///
 /// ------------------------------------------------------------------

@@ -9,49 +9,49 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Application.Features.Events;
 
 /// <summary>
-/// Gecmis etkinlikleri "tamamlandi" olarak isaretler.
+/// Gecmis etkinlikleri "tamamlandı" olarak isaretler.
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// BU IS SPRINT 12'DE ORTAYA CIKAN BIR EKSIKTEN DOGDU
 /// ==================================================================
-/// PDF Sprint 12 kurali: "Etkinlik tamamlanmadan yorum yapilamaz."
+/// PDF Sprint 12 kuralı: "Etkinlik tamamlanmadan yorum yapılamaz."
 ///
 /// Kurali uygulamaya oturunca fark ettim ki Event.Complete() metodu
-/// VAR ama HICBIR YERDEN CAGRILMIYOR. Yani hicbir etkinlik
+/// VAR ama HICBIR YERDEN CAGRILMIYOR. Yani hiçbir etkinlik
 /// Completed durumuna gecmiyordu.
 ///
-/// Sonucu: kural teknik olarak dogru calisir ama pratikte HIC KIMSE
-/// yorum yapamazdi. Ozellik "yazildi" ama hicbir zaman calismazdi --
-/// ve bunu ancak gercek veriyle deneyen biri fark ederdi.
+/// Sonucu: kural teknik olarak doğru çalışır ama pratikte HİÇ KIMSE
+/// yorum yapamazdi. Ozellik "yazildi" ama hiçbir zaman calismazdi --
+/// ve bunu ancak gerçek veriyle deneyen biri fark ederdi.
 ///
 /// PDF Sprint 9 arka plan isleri listesinde bu is SAYILMIYOR. Ama
-/// Sprint 12'nin kurali onsuz anlamsiz kaliyor. Sprintler arasindaki
-/// bu bosluk, PDF'i tek tek okuyup "bu gercekten calisir mi?" diye
+/// Sprint 12'nin kuralı onsuz anlamsiz kaliyor. Sprintler arasindaki
+/// bu bosluk, PDF'i tek tek okuyup "bu gerçekten çalışır mi?" diye
 /// sormanin neden gerekli oldugunun iyi bir ornegi.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN "ETKINLIK TARIHI GECTI" YETMIYOR?
+/// NEDEN "ETKİNLİK TARIHI GECTI" YETMIYOR?
 /// ------------------------------------------------------------------
 /// Yorum kontrolunu "EventDate &lt; simdi" diye de yazabilirdim ve is
 /// gereksiz olurdu.
 ///
-/// Yazmadim cunku DURUM, TARIHTEN daha fazla sey anlatiyor:
-/// bir etkinlik iptal edilmis (Cancelled) ya da askiya alinmis
-/// (Suspended) olabilir. Tarihi gecmis olmasi "gerceklesti" demek
-/// degil. Iptal edilmis bir konser icin yorum yapilmasi sacma olurdu.
+/// Yazmadim çünkü DURUM, TARIHTEN daha fazla sey anlatiyor:
+/// bir etkinlik iptal edilmiş (Cancelled) ya da askiya alinmis
+/// (Suspended) olabilir. Tarihi gecmis olmasını "gerceklesti" demek
+/// değil. İptal edilmiş bir konser için yorum yapilmasi sacma olurdu.
 ///
-/// Durum makinesi bu ayrimi zaten tutuyor: Complete() yalnizca
-/// SalesOpen/SalesClosed durumundan cagrilabiliyor. Iptal edilmis
+/// Durum makinesi bu ayrimi zaten tutuyor: Complete() yalnızca
+/// SalesOpen/SalesClosed durumundan cagrilabiliyor. İptal edilmiş
 /// etkinlik bu isten etkilenmiyor.
 /// ==================================================================
 /// </remarks>
 /// <param name="GracePeriodHours">
 /// Etkinlik bittikten kac saat sonra tamamlanmis sayilsin.
 ///
-/// Neden hemen degil? Cunku EventDate etkinligin BASLANGIC zamani.
+/// Neden hemen değil? Çünkü EventDate etkinliğin BASLANGIC zamani.
 /// Bir konser 20:00'de baslayip 23:00'te bitebilir. Tam 20:01'de
-/// "tamamlandi" desek, etkinlik daha SURERKEN yorum yapilabilirdi.
+/// "tamamlandı" desek, etkinlik daha SURERKEN yorum yapilabilirdi.
 ///
 /// 6 saat, en uzun etkinliklerin bile bitmesine yetiyor.
 /// </param>
@@ -81,11 +81,11 @@ internal sealed class CompletePastEventsCommandHandler
     {
         var esik = _clock.UtcNow.AddHours(-request.GracePeriodHours);
 
-        // Yalnizca Complete() cagrilabilir durumdakiler.
+        // Yalnızca Complete() cagrilabilir durumdakiler.
         //
         // Durum makinesi Draft veya Cancelled'dan Completed'a gecise
         // izin vermiyor; onlari sorguya dahil etseydik DomainException
-        // firlar ve TUM parti basarisiz olurdu.
+        // firlar ve TÜM parti başarısız olurdu.
         var tamamlanacaklar = await _context.Events
             .Where(e => e.EventDate < esik
                      && (e.Status == EventStatus.SalesOpen
@@ -105,7 +105,7 @@ internal sealed class CompletePastEventsCommandHandler
             // ==========================================================
             // IKI ADIM: ONCE SATISI KAPAT, SONRA TAMAMLA
             // ==========================================================
-            // Ilk yazimimda dogrudan Complete() cagiriyordum ve is
+            // İlk yazimimda doğrudan Complete() cagiriyordum ve is
             // calistiginda DomainException aldim:
             //
             //   "Etkinlik SalesOpen durumundan Completed durumuna
@@ -115,7 +115,7 @@ internal sealed class CompletePastEventsCommandHandler
             //     SalesOpen -> SalesClosed -> Completed
             //
             // Yani ARA DURUM atlanamiyor. Ve bu DOGRU bir kisit:
-            // bir etkinlik satisi acikken "tamamlandi" olamaz --
+            // bir etkinlik satışı acikken "tamamlandı" olamaz --
             // gecmis bir etkinlige bilet satilmaya devam ediyor
             // olurdu.
             //
@@ -123,7 +123,7 @@ internal sealed class CompletePastEventsCommandHandler
             // testlerin ve derleyicinin yaptigi seyin aynisi:
             // varsayimimi sessizce kabul etmek yerine reddetti.
             //
-            // Cozum ara durumu ATLAMAK degil, GECMEK.
+            // Cozum ara durumu ATLAMAK değil, GECMEK.
             if (evt.Status == EventStatus.SalesOpen)
             {
                 evt.CloseSales();
@@ -134,7 +134,7 @@ internal sealed class CompletePastEventsCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // Durum degisti: etkinlik detayi ve populer listesi bayatladi.
+        // Durum değişti: etkinlik detayı ve popüler listesi bayatladi.
         await _cache.RemoveByPrefixAsync(CacheKeys.EventPrefix, cancellationToken)
             .ConfigureAwait(false);
 

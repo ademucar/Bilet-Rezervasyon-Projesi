@@ -8,8 +8,8 @@ namespace Ticketing.Persistence.Configurations;
 /// Kimlik ve yetkilendirme tablolarinin EF eslestirmeleri.
 ///
 /// Konfigurasyonlari AGREGA bazinda grupladim (kimlik / mekan / etkinlik /
-/// rezervasyon / destek). Her sinif icin ayri dosya da yazilabilirdi ama
-/// 28 dosya arasinda dolasmak yerine ilgili olanlari yan yana gormek
+/// rezervasyon / destek). Her sinif için ayrı dosya da yazilabilirdi ama
+/// 28 dosya arasında dolasmak yerine ilgili olanlari yan yana gormek
 /// bakimi kolaylastiriyor -- ozellikle iliskili tablolarin FK ve index
 /// tanimlarini karsilastirirken.
 /// </summary>
@@ -29,11 +29,11 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PhoneNumber).HasMaxLength(20);
         builder.Property(u => u.PasswordResetTokenHash).HasMaxLength(128);
 
-        // Sifre sifirlama tokeni ile kullanici arama sorgusu icin.
+        // Şifre sıfırlama tokeni ile kullanıcı arama sorgusu için.
         //
-        // Partial index: yalnizca AKTIF talebi olan kullanicilar index'te.
-        // Kullanicilarin %99.9'unda bu alan null oldugu icin index
-        // neredeyse bos kaliyor -- tabloya yuk bindirmiyor.
+        // Partial index: yalnızca AKTIF talebi olan kullanıcılar index'te.
+        // Kullanicilarin %99.9'unda bu alan null olduğu için index
+        // neredeyse boş kaliyor -- tabloya yuk bindirmiyor.
         builder.HasIndex(u => u.PasswordResetTokenHash)
                .HasFilter("\"PasswordResetTokenHash\" IS NOT NULL")
                .HasDatabaseName("ix_users_password_reset_token");
@@ -41,16 +41,16 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         // ------------------------------------------------------------------
         // PARTIAL UNIQUE INDEX -- dikkat edilmesi gereken bir ayrinti
         // ------------------------------------------------------------------
-        // Normal bir unique index koysaydik su sorun cikardi:
-        // Bir kullaniciyi soft delete ile sildikten sonra AYNI e-postayla
-        // yeni kayit acilamazdi. Cunku silinmis satir hala index'te yer
+        // Normal bir unique index koysaydık su sorun çıkardı:
+        // Bir kullanıcıyı soft delete ile sildikten sonra AYNI e-postayla
+        // yeni kayıt acilamazdi. Çünkü silinmis satır hâlâ index'te yer
         // tutuyor olurdu.
         //
-        // HasFilter ile index'i yalnizca silinmemis satirlara uyguluyoruz:
+        // HasFilter ile index'i yalnızca silinmemis satirlara uyguluyoruz:
         //     CREATE UNIQUE INDEX ... WHERE "IsDeleted" = false
         //
-        // Bu, soft delete kullanan TUM unique index'ler icin gecerli bir
-        // kural. Atlanirsa hata kullanici "hesabimi silip yeniden acmak
+        // Bu, soft delete kullanan TÜM unique index'ler için geçerli bir
+        // kural. Atlanirsa hata kullanıcı "hesabimi silip yeniden acmak
         // istiyorum" diyene kadar ortaya cikmaz.
         builder.HasIndex(u => u.Email)
                .IsUnique()
@@ -81,12 +81,12 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         builder.HasIndex(r => r.Name).IsUnique();
 
-        // Baslangic verisi (seed). Role.Ids'teki SABIT GUID'ler kullaniliyor.
+        // Başlangıç verisi (seed). Role.Ids'teki SABIT GUID'ler kullanılıyor.
         //
-        // Neden sabit? Guid.CreateVersion7() kullansaydik migration her
-        // calistiginda farkli ID uretir, EF "bu veri degismis" diyerek
-        // her seferinde yeni migration istemek isterdi. Ayrica gelistirme,
-        // test ve production ortamlarinda Admin rolunun ID'si farkli olurdu.
+        // Neden sabit? Guid.CreateVersion7() kullansaydık migration her
+        // calistiginda farklı ID üretir, EF "bu veri degismis" diyerek
+        // her seferinde yeni migration istemek isterdi. Ayrıca gelistirme,
+        // test ve production ortamlarinda Admin rolunun ID'si farklı olurdu.
         builder.HasData(
             new { Id = Role.Ids.User, Name = Role.Names.User },
             new { Id = Role.Ids.Organizer, Name = Role.Names.Organizer },
@@ -102,12 +102,12 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 
         // COMPOSITE KEY -- PDF: "Composite Key kullanilan tablolar"
         //
-        // Bu tablonun kendine ait bir kimligi yok; kimligi iliskilendirdigi
-        // iki varligin birlesimidir. Composite key sayesinde ayni kullaniciya
-        // ayni rol IKI KEZ atanamaz -- veritabani seviyesinde garanti.
+        // Bu tablonun kendine ait bir kimliği yok; kimliği iliskilendirdigi
+        // iki varligin birlesimidir. Composite key sayesinde aynı kullanıcıya
+        // aynı rol IKI KEZ atanamaz -- veritabani seviyesinde garanti.
         //
-        // Ayri bir Id sutunu olsaydi ayni ciftten iki satir olusabilirdi ve
-        // engellemek icin AYRICA bir unique index gerekirdi.
+        // Ayrı bir Id sutunu olsaydı aynı ciftten iki satır olusabilirdi ve
+        // engellemek için AYRICA bir unique index gerekirdi.
         builder.HasKey(ur => new { ur.UserId, ur.RoleId });
 
         builder.HasOne(ur => ur.Role)
@@ -126,13 +126,13 @@ internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refre
 
         builder.Property(rt => rt.TokenHash).HasMaxLength(128).IsRequired();
         builder.Property(rt => rt.ReplacedByTokenHash).HasMaxLength(128);
-        builder.Property(rt => rt.CreatedByIp).HasMaxLength(45);   // IPv6 icin 45
+        builder.Property(rt => rt.CreatedByIp).HasMaxLength(45);   // IPv6 için 45
         builder.Property(rt => rt.RevokedByIp).HasMaxLength(45);
 
         builder.HasIndex(rt => rt.TokenHash).IsUnique();
 
-        // Kullanicinin aktif token'larini bulmak icin.
-        // Token calindiginda "bu kullanicinin TUM token'larini iptal et"
+        // Kullanıcının aktif token'larini bulmak için.
+        // Token calindiginda "bu kullanıcının TÜM token'larini iptal et"
         // sorgusu bu index'i kullanacak.
         builder.HasIndex(rt => new { rt.UserId, rt.ExpiresAt });
     }
@@ -155,7 +155,7 @@ internal sealed class OrganizerProfileConfiguration : IEntityTypeConfiguration<O
         builder.Property(op => op.LogoPath).HasMaxLength(512);
         builder.Property(op => op.Description).HasMaxLength(2000);
 
-        // 1-1 iliski: bir kullanicinin en fazla bir organizator profili olur.
+        // 1-1 iliski: bir kullanıcının en fazla bir organizatör profili olur.
         builder.HasOne(op => op.User)
                .WithOne()
                .HasForeignKey<OrganizerProfile>(op => op.UserId)
@@ -187,7 +187,7 @@ internal sealed class OrganizerApplicationConfiguration : IEntityTypeConfigurati
                .HasForeignKey(oa => oa.UserId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        // Admin panelinde "bekleyen basvurular" sorgusu icin.
+        // Admin panelinde "bekleyen basvurular" sorgusu için.
         builder.HasIndex(oa => oa.Status);
     }
 }

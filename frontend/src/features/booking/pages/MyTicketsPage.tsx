@@ -193,7 +193,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
 
         <div className="mt-3.5 flex items-end justify-between gap-3 border-t border-dashed border-slate-300 pt-3">
           <div className="min-w-0">
-            <p className="label-xs">Mekân</p>
+            <p className="label-xs">Mekan</p>
             <p className="truncate text-[13px] text-slate-700">{ticket.venueName}</p>
           </div>
           <span className="num shrink-0 text-base font-semibold text-slate-900">

@@ -1,7 +1,7 @@
 namespace Ticketing.Application.Abstractions.RealTime;
 
 /// <summary>
-/// Koltuk durumu degisikliklerini bagli istemcilere ANINDA bildirir.
+/// Koltuk durumu degisikliklerini bağlı istemcilere ANINDA bildirir.
 /// PDF Sprint 10.
 ///
 /// ==================================================================
@@ -12,37 +12,37 @@ namespace Ticketing.Application.Abstractions.RealTime;
 ///
 ///   - Application, Microsoft.AspNetCore.SignalR paketine baglanirdi
 ///   - Mimari testimiz (Application_AltyapiKatmanlariniReferansAlmamali)
-///     kirmizi yanardi -- ve hakli olarak
+///     kırmızı yanardi -- ve haklı olarak
 ///   - Birim testlerinde bir SignalR sunucusu ayaga kaldirmak
 ///     gerekirdi
 ///
-/// Bu arayuz sayesinde Application yalnizca "koltuk kilitlendi, ilgili
+/// Bu arayüz sayesinde Application yalnızca "koltuk kilitlendi, ilgili
 /// herkese haber ver" diyor. Nasil haber verildigi (SignalR, WebSocket,
-/// SSE, hatta hicbir sey) WebApi katmaninin isi.
+/// SSE, hatta hiçbir sey) WebApi katmaninin isi.
 /// ==================================================================
 ///
 /// ------------------------------------------------------------------
 /// BU BILDIRIMLER NEDEN OUTBOX'A YAZILMIYOR?
 /// ------------------------------------------------------------------
 /// Sprint 9'da e-posta ve bildirimleri Outbox'a yazdik. Burada AYNISINI
-/// YAPMIYORUZ ve bu bilincli bir ayrim.
+/// YAPMIYORUZ ve bu bilinçli bir ayrim.
 ///
 /// Fark, "kaybolursa ne olur?" sorusunun cevabinda:
 ///
-///   E-POSTA kaybolursa: kullanici biletini aldigindan haberi olmaz.
-///   Telafisi yok. Bu yuzden KALICI olmali -> Outbox.
+///   E-POSTA kaybolursa: kullanıcı biletini aldigindan haberi olmaz.
+///   Telafisi yok. Bu yüzden KALICI olmalı -> Outbox.
 ///
-///   KOLTUK BILDIRIMI kaybolursa: kullanicinin ekranindaki harita
-///   birkac saniye eski kalir. Zaten yedek mekanizmalar var:
+///   KOLTUK BILDIRIMI kaybolursa: kullanıcının ekranindaki harita
+///   birkaç saniye eski kalır. Zaten yedek mekanizmalar var:
 ///     - Istemci yeniden baglandiginda listeyi bastan cekiyor
 ///     - Rezervasyon denemesi sunucuda dogrulaniyor (409)
-///   Yani en kotu ihtimalle kullanici bir 409 gorur.
+///   Yani en kötü ihtimalle kullanıcı bir 409 görür.
 ///
 /// Ustelik Outbox'a yazmak GERCEK ZAMANLILIGI BOZARDI: mesaj en fazla
-/// 30 saniye sonra islenirdi. "Gercek zamanli" diye 30 saniye gecikmeli
+/// 30 saniye sonra islenirdi. "Gerçek zamanlı" diye 30 saniye gecikmeli
 /// bir sistem kurmak, amaci tamamen kacirmak olurdu.
 ///
-/// Ozetle: Outbox DAYANIKLILIK icin, SignalR HIZ icin. Ikisi farkli
+/// Ozetle: Outbox DAYANIKLILIK için, SignalR HIZ için. Ikisi farklı
 /// problemleri cozuyor.
 /// ------------------------------------------------------------------
 /// </summary>
@@ -50,16 +50,16 @@ public interface ISeatNotifier
 {
     /// <summary>
     /// PDF olayi: <c>SeatLocked</c>.
-    /// Koltuklar bir rezervasyon icin kilitlendi.
+    /// Koltuklar bir rezervasyon için kilitlendi.
     /// </summary>
     /// <remarks>
-    /// KIMIN kilitledigi GONDERILMIYOR -- yalnizca hangi koltuklar.
+    /// KIMIN kilitledigi GONDERILMIYOR -- yalnızca hangi koltuklar.
     ///
-    /// Kullanici kimligini yayinlasaydik, oturumu izleyen herkes
-    /// "su kisi su koltugu aldi" bilgisini gorurdu. Bu bir gizlilik
-    /// ihlali olurdu ve ekranda hicbir ise yaramazdi.
+    /// Kullanıcı kimligini yayinlasaydik, oturumu izleyen herkes
+    /// "su kişi su koltuğu aldi" bilgisini gorurdu. Bu bir gizlilik
+    /// ihlali olurdu ve ekranda hiçbir ise yaramazdi.
     ///
-    /// Ayni gerekce GetSeatAvailability sorgusunda da uygulanmisti;
+    /// Aynı gerekce GetSeatAvailability sorgusunda da uygulanmisti;
     /// burada tutarli davraniyoruz.
     /// </remarks>
     Task SeatsLockedAsync(
@@ -69,7 +69,7 @@ public interface ISeatNotifier
 
     /// <summary>
     /// PDF olayi: <c>SeatReleased</c>.
-    /// Koltuklar serbest birakildi (iptal, sure dolmasi veya iade).
+    /// Koltuklar serbest birakildi (iptal, süre dolmasi veya iade).
     /// </summary>
     Task SeatsReleasedAsync(
         Guid eventSessionId,
@@ -78,17 +78,17 @@ public interface ISeatNotifier
 
     /// <summary>
     /// PDF olayi: <c>SeatSold</c>.
-    /// Odeme tamamlandi, koltuklar KALICI olarak satildi.
+    /// Ödeme tamamlandı, koltuklar KALICI olarak satıldı.
     /// </summary>
     /// <remarks>
-    /// SeatLocked ile ayni gibi gorunuyor ama istemci icin FARKLI
+    /// SeatLocked ile aynı gibi görünüyor ama istemci için FARKLI
     /// anlama geliyor:
     ///
     ///   Locked -> 10 dakika sonra bosalabilir, umut var
     ///   Sold   -> bir daha asla bosalmayacak
     ///
-    /// PDF is kurali: "Satilan koltuk yeniden secilememelidir."
-    /// Istemci bu ayrimi bilmeden dogru rengi ve tiklanabilirligi
+    /// PDF is kuralı: "Satılan koltuk yeniden secilememelidir."
+    /// Istemci bu ayrimi bilmeden doğru rengi ve tiklanabilirligi
     /// belirleyemezdi.
     /// </remarks>
     Task SeatsSoldAsync(
@@ -98,14 +98,14 @@ public interface ISeatNotifier
 
     /// <summary>
     /// PDF olayi: <c>ReservationExpired</c>.
-    /// Bir rezervasyonun suresi doldu.
+    /// Bir rezervasyonun süresi doldu.
     /// </summary>
     /// <remarks>
-    /// SeatsReleasedAsync ile ayni koltuklari kapsiyor ama AYRI bir
-    /// olay, cunku iki farkli izleyicisi var:
+    /// SeatsReleasedAsync ile aynı koltukları kapsiyor ama AYRI bir
+    /// olay, çünkü iki farklı izleyicisi var:
     ///
     ///   - Oturumu izleyen HERKES: koltuklar bosaldi (SeatReleased)
-    ///   - Rezervasyonun SAHIBI: "sureniz doldu" uyarisi
+    ///   - Rezervasyonun SAHIBI: "süreniz doldu" uyarısı
     ///
     /// Ikisini tek olayda birlestirseydik, sahibi kendi
     /// rezervasyonunun mu yoksa baskasininkinin mi bittigini

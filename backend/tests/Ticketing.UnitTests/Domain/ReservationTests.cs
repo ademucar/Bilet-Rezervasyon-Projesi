@@ -253,7 +253,7 @@ public class ReservationTests
     public void Extend_SuresiDolmusRezervasyon_HataFirlatmali()
     {
         // Suresi dolmus rezervasyonu "uzatmak" onu diriltmek olurdu.
-        // Koltuklar bu arada baskasina satilmis olabilir.
+        // Koltuklar bu arada baskasina satılmış olabilir.
         var rezervasyon = Rezervasyon();
 
         var eylem = () => rezervasyon.Extend(TimeSpan.FromMinutes(5), 3, Simdi.AddMinutes(11));

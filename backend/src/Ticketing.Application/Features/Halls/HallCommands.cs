@@ -11,13 +11,13 @@ namespace Ticketing.Application.Features.Halls;
 internal static class HallErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "hall.not_found", "Salon bulunamadi.");
+        "hall.not_found", "Salon bulunamadı.");
 
     public static readonly Error VenueNotFound = Error.NotFound(
-        "hall.venue_not_found", "Mekan bulunamadi.");
+        "hall.venue_not_found", "Mekan bulunamadı.");
 
     public static readonly Error DuplicateName = Error.Conflict(
-        "hall.duplicate_name", "Bu mekanda ayni isimde bir salon zaten var.");
+        "hall.duplicate_name", "Bu mekanda aynı isimde bir salon zaten var.");
 
     public static readonly Error HasActiveEvents = Error.Conflict(
         "hall.has_active_events",
@@ -40,15 +40,15 @@ public sealed class CreateHallCommandValidator : AbstractValidator<CreateHallCom
     public CreateHallCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Salon adi zorunludur.")
-            .MaximumLength(150).WithMessage("Salon adi en fazla 150 karakter olabilir.");
+            .NotEmpty().WithMessage("Salon adı zorunludur.")
+            .MaximumLength(150).WithMessage("Salon adı en fazla 150 karakter olabilir.");
 
         RuleFor(x => x.Capacity)
-            .GreaterThan(0).WithMessage("Kapasite sifirdan buyuk olmalidir.")
-            // Ust sinir koyuyorum: dunyanin en buyuk stadyumu ~150.000 kisilik.
-            // 2 milyar kapasiteli bir salon yazim hatasidir ve koltuk
+            .GreaterThan(0).WithMessage("Kapasite sıfırdan büyük olmalıdır.")
+            // Ust sinir koyuyorum: dunyanin en büyük stadyumu ~150.000 kisilik.
+            // 2 milyar kapasiteli bir salon yazım hatasidir ve koltuk
             // uretiminde bellegi tuketir.
-            .LessThanOrEqualTo(200_000).WithMessage("Kapasite 200.000'i asamaz.");
+            .LessThanOrEqualTo(200_000).WithMessage("Kapasite 200.000'i aşamaz.");
     }
 }
 
@@ -79,10 +79,10 @@ internal sealed class CreateHallCommandHandler : IRequestHandler<CreateHallComma
 
         if (duplicate)
         {
-            // Bu kontrol kullaniciya anlamli mesaj icin.
+            // Bu kontrol kullanıcıya anlamlı mesaj için.
             // Kesin garanti veritabanindaki UNIQUE (VenueId, Name)
-            // partial index'inde -- iki kullanici ayni anda eklerse
-            // ikincisi orada patlar ve 409 doner.
+            // partial index'inde -- iki kullanıcı aynı anda eklerse
+            // ikincisi orada patlar ve 409 döner.
             return Result.Failure<Guid>(HallErrors.DuplicateName);
         }
 
@@ -130,24 +130,24 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
         // ==============================================================
         // KAPASITEYI DUSURURKEN MEVCUT KOLTUKLARI KONTROL ET
         // ==============================================================
-        // PDF is kurali: "Koltuk kapasitesi salon kapasitesini asmamalidir."
+        // PDF is kuralı: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //
         // Bu kural genelde koltuk EKLERKEN dusunulur. Ama ters yonden
         // de ihlal edilebilir: 500 koltuklu bir plan varken kapasiteyi
-        // 300'e dusurmek ayni kurali bozar.
+        // 300'e dusurmek aynı kuralı bozar.
         //
-        // Bu kontrol olmasaydi veri sessizce tutarsiz hale gelirdi ve
+        // Bu kontrol olmasaydı veri sessizce tutarsiz hale gelirdi ve
         // hatayi ancak aylar sonra bir raporda fark ederdik.
         if (request.Capacity < hall.Capacity)
         {
             // ==========================================================
             // BU SORGU ILK YAZISIMDA CALISMADI -- HIKAYESI
             // ==========================================================
-            // Once soyle yazmistim:
+            // Önce soyle yazmistim:
             //
             //   _context.SeatLayouts
             //       .Where(sl => sl.HallId == id)
-            //       .Select(sl => sl.Sections.Sum(sec => sec.Seats.Count(...)))
+            //       .Select(sl => sl.Sections.Sum(seç => seç.Seats.Count(...)))
             //       .DefaultIfEmpty(0)
             //       .MaxAsync()
             //
@@ -156,13 +156,13 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             //   InvalidOperationException: The LINQ expression
             //   'DbSet<SeatLayout>()...' could not be translated.
             //
-            // Sebep: IC ICE koleksiyon toplama (Sum icinde Count) EF Core
-            // tarafindan SQL'e cevrilemiyor.
+            // Sebep: IC ICE koleksiyon toplama (Sum içinde Count) EF Core
+            // tarafından SQL'e cevrilemiyor.
             //
             // DERS: LINQ'in derlenmesi, SQL'e cevrilebilecegi anlamina
-            // GELMEZ. IQueryable icinde yazdigin her sey bir SQL karsiligi
-            // bulmak zorunda. Bu tur hatalar yalnizca gercek veritabanina
-            // karsi calistirinca ortaya cikar -- birim testler yakalayamaz.
+            // GELMEZ. IQueryable içinde yazdigin her sey bir SQL karşılığı
+            // bulmak zorunda. Bu tur hatalar yalnızca gerçek veritabanina
+            // karsi calistirinca ortaya çıkar -- birim testler yakalayamaz.
             // (Sprint 17'de Testcontainers ile bunu koruyacagiz.)
             //
             // COZUM: Sorguyu KOLTUK tablosundan baslatip gruplamak.
@@ -176,8 +176,8 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            // Max()'i BELLEKTE aliyorum. Bir salonun plan sayisi en fazla
-            // birkac tanedir; bunu SQL'e ittirmek icin ugrasmanin degeri yok.
+            // Max()'i BELLEKTE alıyorum. Bir salonun plan sayısı en fazla
+            // birkaç tanedir; bunu SQL'e ittirmek için ugrasmanin değeri yok.
             //
             // Not: Seat entity'sinde global query filter (!IsDeleted) zaten
             // var, yani silinmis koltuklar bu sayima girmiyor.
@@ -220,13 +220,13 @@ internal sealed class DeleteHallCommandHandler : IRequestHandler<DeleteHallComma
             return Result.Failure(HallErrors.NotFound);
         }
 
-        // PDF is kurali: "Aktif etkinlik bulunan salon silinememelidir."
+        // PDF is kuralı: "Aktif etkinlik bulunan salon silinememelidir."
         //
         // Iki yerden kontrol ediyorum:
-        //   - Event.HallId  -> etkinligin ana salonu
-        //   - EventSession.HallId -> oturumun salonu (farkli olabilir)
+        //   - Event.HallId  -> etkinliğin ana salonu
+        //   - EventSession.HallId -> oturumun salonu (farklı olabilir)
         //
-        // Yalnizca birini kontrol etseydik, cok salonlu bir festivalin
+        // Yalnızca birini kontrol etseydik, çok salonlu bir festivalin
         // yan sahnesi silinebilirdi.
         var hasActiveEvents = await _context.Events
             .AsNoTracking()

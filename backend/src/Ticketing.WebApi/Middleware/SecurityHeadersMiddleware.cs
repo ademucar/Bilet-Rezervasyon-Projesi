@@ -1,7 +1,7 @@
 namespace Ticketing.WebApi.Middleware;
 
 /// <summary>
-/// Guvenlik basliklarini ekler. PDF Sprint 15: "Security headers".
+/// Güvenlik basliklarini ekler. PDF Sprint 15: "Security headers".
 /// </summary>
 /// <remarks>
 /// ==================================================================
@@ -10,9 +10,9 @@ namespace Ticketing.WebApi.Middleware;
 /// Basliklari controller'larda eklemek, birini unutmak demektir --
 /// ve unutulan uc tam olarak korumasiz olandir.
 ///
-/// Middleware TUM yanitlara ekliyor: controller, statik dosya,
-/// hata sayfasi, Swagger, Hangfire paneli. Yeni bir uc eklendiginde
-/// hicbir sey yapmaya gerek yok.
+/// Middleware TÜM yanitlara ekliyor: controller, statik dosya,
+/// hata sayfası, Swagger, Hangfire paneli. Yeni bir uc eklendiginde
+/// hiçbir sey yapmaya gerek yok.
 /// ==================================================================
 /// </remarks>
 internal sealed class SecurityHeadersMiddleware
@@ -35,14 +35,14 @@ internal sealed class SecurityHeadersMiddleware
         // ==============================================================
         // BASLIKLARI YANIT BASLAMADAN ONCE EKLE
         // ==============================================================
-        // OnStarting kullaniyorum, dogrudan atama degil.
+        // OnStarting kullanıyorum, doğrudan atama değil.
         //
         // Sebep: _next(context) calistiktan SONRA eklemeye calissaydik,
         // yanit govdesi coktan yazilmaya baslamis olabilirdi ve
-        // "headers are read-only" istisnasi alirdik.
+        // "headers are read-only" istisnasi alırdık.
         //
-        // OnStarting, ilk bayt yazilmadan hemen once calisiyor --
-        // basliklari degistirmek icin son guvenli an.
+        // OnStarting, ilk bayt yazilmadan hemen önce çalışıyor --
+        // basliklari degistirmek için son güvenli an.
         // ==============================================================
         context.Response.OnStarting(() =>
         {
@@ -51,10 +51,10 @@ internal sealed class SecurityHeadersMiddleware
             // ----------------------------------------------------------
             // X-Content-Type-Options: nosniff
             // ----------------------------------------------------------
-            // Tarayicinin icerik turunu TAHMIN etmesini engelliyor.
+            // Tarayicinin içerik turunu TAHMIN etmesini engelliyor.
             //
-            // Olmasaydi: kullanicinin yukledigi bir .txt dosyasi HTML
-            // gibi gorunuyorsa tarayici onu HTML olarak calistirabilir
+            // Olmasaydı: kullanıcının yukledigi bir .txt dosyasi HTML
+            // gibi gorunuyorsa tarayıcı önü HTML olarak calistirabilir
             // ve icindeki script calisirdi. Buna "MIME sniffing
             // saldirisi" deniyor.
             headers["X-Content-Type-Options"] = "nosniff";
@@ -62,16 +62,16 @@ internal sealed class SecurityHeadersMiddleware
             // ----------------------------------------------------------
             // X-Frame-Options: DENY
             // ----------------------------------------------------------
-            // Sayfanin baska bir sitede iframe icine konmasini
+            // Sayfanin başka bir sitede iframe icine konmasini
             // engelliyor.
             //
-            // Olmasaydi: saldirgan bizim sitemizi seffaf bir iframe'e
+            // Olmasaydı: saldirgan bizim sitemizi seffaf bir iframe'e
             // koyup ustune kendi dugmelerini yerlestirebilirdi.
-            // Kullanici "odulu al" sanip aslinda "bileti iptal et"e
+            // Kullanıcı "odulu al" sanip aslında "bileti iptal et"e
             // basardi. Buna "clickjacking" deniyor.
             //
-            // CSP'nin frame-ancestors direktifi de ayni isi yapiyor ama
-            // eski tarayicilar yalnizca bu basligi anliyor.
+            // CSP'nin frame-ancestors direktifi de aynı isi yapiyor ama
+            // eski tarayicilar yalnızca bu başlığı anliyor.
             headers["X-Frame-Options"] = "DENY";
 
             // ----------------------------------------------------------
@@ -80,13 +80,13 @@ internal sealed class SecurityHeadersMiddleware
             // Baska siteye giderken ADRESIMIZIN ne kadarinin
             // gonderilecegini belirliyor.
             //
-            // Varsayilan davranis TAM ADRESI gonderiyor. Bizim
+            // Varsayılan davranis TAM ADRESI gönderiyor. Bizim
             // adreslerimizde hassas bilgi olabilir:
             //   /rezervasyonlar/{guid}
             //   /api/v1/reports/exports/{guid}
             //
             // strict-origin-when-cross-origin: kendi sitemizde tam
-            // adres, disariya yalnizca alan adi.
+            // adres, disariya yalnızca alan adı.
             headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
 
             // ----------------------------------------------------------
@@ -95,7 +95,7 @@ internal sealed class SecurityHeadersMiddleware
             // Tarayici ozelliklerini kapatiyor. Bizim uygulamamiz
             // kamera, mikrofon veya konum kullanmiyor.
             //
-            // Kullanmadigimiz bir ozelligi kapatmak bedava guvenlik:
+            // Kullanmadigimiz bir ozelligi kapatmak bedava güvenlik:
             // ilerde bir XSS acigi olussa bile saldirgan bunlara
             // erisemez.
             headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
@@ -103,7 +103,7 @@ internal sealed class SecurityHeadersMiddleware
             // ----------------------------------------------------------
             // Content-Security-Policy
             // ----------------------------------------------------------
-            // XSS'e karsi en guclu savunma: hangi kaynaklardan script,
+            // XSS'e karsi en güçlü savunma: hangi kaynaklardan script,
             // stil ve resim yuklenebilecegini belirliyor.
             //
             // ==========================================================
@@ -111,24 +111,24 @@ internal sealed class SecurityHeadersMiddleware
             // ==========================================================
             // Bu bir API; HTML dondurmuyor. O zaman CSP niye?
             //
-            // Cunku iki yerde HTML var:
+            // Çünkü iki yerde HTML var:
             //   1) Hangfire izleme paneli (/hangfire)
             //   2) Hata sayfalari ve Swagger (gelistirmede)
             //
-            // Ayrica bir saldirgan API'den HTML dondurmeyi basarirsa
+            // Ayrıca bir saldirgan API'den HTML dondurmeyi basarirsa
             // (yansitilmis XSS), CSP son savunma hatti oluyor.
             //
-            // default-src 'none': hicbir sey yuklenemez. En kisitlayici
-            // baslangic; ihtiyac oldukca aciliyor.
+            // default-src 'none': hiçbir sey yuklenemez. En kisitlayici
+            // başlangıç; ihtiyac oldukca aciliyor.
             // ==========================================================
             headers["Content-Security-Policy"] = _isDevelopment
 
-                // Gelistirmede Swagger ve Hangfire paneli satir ici
+                // Gelistirmede Swagger ve Hangfire paneli satır ici
                 // script/stil kullaniyor. 'unsafe-inline' vermezsek
                 // paneller calismaz.
                 //
-                // Bu bir GUVENLIK GEVSETMESI ve yalnizca gelistirmede
-                // gecerli -- uretimde bu paneller zaten kapali veya
+                // Bu bir GÜVENLİK GEVSETMESI ve yalnızca gelistirmede
+                // geçerli -- uretimde bu paneller zaten kapalı veya
                 // ag seviyesinde korunuyor.
                 ? "default-src 'self'; " +
                   "script-src 'self' 'unsafe-inline'; " +
@@ -136,7 +136,7 @@ internal sealed class SecurityHeadersMiddleware
                   "img-src 'self' data:; " +
                   "frame-ancestors 'none'"
 
-                // Uretimde cok daha siki: satir ici script YOK.
+                // Uretimde çok daha siki: satır ici script YOK.
                 : "default-src 'none'; " +
                   "script-src 'self'; " +
                   "style-src 'self'; " +
@@ -153,17 +153,17 @@ internal sealed class SecurityHeadersMiddleware
             // Tarayiciya "bu siteye bir daha SADECE HTTPS ile gel" der.
             //
             // YALNIZCA URETIMDE. Gelistirmede localhost HTTP kullaniyor;
-            // HSTS gonderirsek tarayici localhost'u kalici olarak
+            // HSTS gonderirsek tarayıcı localhost'u kalici olarak
             // HTTPS'e zorlar ve gelistirme ortami bozulur.
             //
-            // Bunu geri almak zor: tarayici ayarlarindan elle silmek
-            // gerekiyor. Bu yuzden kosul SART.
+            // Bunu geri almak zor: tarayıcı ayarlarindan elle silmek
+            // gerekiyor. Bu yüzden kosul ŞART.
             if (!_isDevelopment)
             {
-                // 1 yil + alt alan adlari.
+                // 1 yil + alt alan adları.
                 //
                 // preload EKLEMEDIM: preload listesine girmek KALICI
-                // bir karardir ve cikmak aylar surer. Once gercek bir
+                // bir karardir ve cikmak aylar surer. Önce gerçek bir
                 // alan adiyla test edilmeli.
                 headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
             }
@@ -171,14 +171,14 @@ internal sealed class SecurityHeadersMiddleware
             // ----------------------------------------------------------
             // Sunucu parmak izi
             // ----------------------------------------------------------
-            // "Server: Kestrel" basligi BURADAN kaldirilamiyor: Kestrel
-            // onu bu geri cagrimdan SONRA ekliyor. Denedim, calismadi.
+            // "Server: Kestrel" başlığı BURADAN kaldirilamiyor: Kestrel
+            // önü bu geri cagrimdan SONRA ekliyor. Denedim, calismadi.
             //
             // Dogru yer Program.cs'teki AddServerHeader = false ayari
-            // (gerekcesi orada yazili).
+            // (gerekçesi orada yazili).
             //
-            // X-Powered-By ise bazi ters vekil sunucular tarafindan
-            // ekleniyor; onu burada kaldirabiliyoruz.
+            // X-Powered-By ise bazi ters vekil sunucular tarafından
+            // ekleniyor; önü burada kaldirabiliyoruz.
             headers.Remove("X-Powered-By");
 
             return Task.CompletedTask;

@@ -6,12 +6,12 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Persistence.Configurations;
 
 /// <summary>
-/// Tum konfigurasyonlarda tekrarlanan eslestirmeleri toplayan yardimcilar.
+/// Tüm konfigurasyonlarda tekrarlanan eslestirmeleri toplayan yardimcilar.
 ///
-/// Bunlari ayri bir yere almamin sebebi: xmin eslestirmesini 5 farkli
-/// dosyada elle yazsaydim, birinde bir harf hatasi yapmam yeterdi --
-/// o tablo icin optimistic concurrency SESSIZCE calismazdi. Derleme
-/// hatasi vermez, test kirmizi yanmaz; sadece ayni koltuk iki kisiye
+/// Bunlari ayrı bir yere almamin sebebi: xmin eslestirmesini 5 farklı
+/// dosyada elle yazsaydim, birinde bir harf hatası yapmam yeterdi --
+/// o tablo için optimistic concurrency SESSIZCE calismazdi. Derleme
+/// hatası vermez, test kırmızı yanmaz; sadece aynı koltuk iki kisiye
 /// satilirdi. Tek bir metotta toplamak bu riski ortadan kaldiriyor.
 /// </summary>
 internal static class ConfigurationExtensions
@@ -29,7 +29,7 @@ internal static class ConfigurationExtensions
     ///
     /// HasColumnType("xid")         -> xmin'in veri tipi. 32 bit isaretsiz.
     ///
-    /// ValueGeneratedOnAddOrUpdate  -> Bu degeri BIZ yazmiyoruz;
+    /// ValueGeneratedOnAddOrUpdate  -> Bu değeri BIZ yazmiyoruz;
     ///                                 PostgreSQL her INSERT ve UPDATE'te
     ///                                 kendisi guncelliyor. EF'e "sen
     ///                                 dokunma, okuduktan sonra geri al" diyoruz.
@@ -38,7 +38,7 @@ internal static class ConfigurationExtensions
     ///                                 EF her UPDATE sorgusuna
     ///                                     WHERE Id = @id AND xmin = @okunan
     ///                                 kosulunu OTOMATIK ekler.
-    ///                                 Araya baskasi girmisse 0 satir
+    ///                                 Araya başkası girmisse 0 satır
     ///                                 etkilenir ve EF
     ///                                 DbUpdateConcurrencyException firlatir.
     ///
@@ -63,19 +63,19 @@ internal static class ConfigurationExtensions
     {
         builder.Property(x => x.CreatedAt).IsRequired();
 
-        // Soft delete: silinmis kayitlar varsayilan olarak sorgulara gelmez.
+        // Soft delete: silinmis kayitlar varsayılan olarak sorgulara gelmez.
         //
         // Bu satirdan sonra context.Events.ToListAsync() yazdigimda EF
         // sorguya otomatik olarak WHERE "IsDeleted" = false ekler.
         // Her sorguda elle yazmayi unutma riski ortadan kalkar -- ki bu
         // risk gercektir: 50 sorgudan birinde mutlaka unutulur ve
-        // silinmis kayitlar kullaniciya gorunur.
+        // silinmis kayitlar kullanıcıya görünür.
         //
         // Admin'in silinmisleri gormesi gerektiginde IgnoreQueryFilters().
         builder.HasQueryFilter(x => !x.IsDeleted);
 
         // Soft delete'li tablolarda IsDeleted'i index'e dahil ediyorum
-        // cunku ARTIK HER SORGUDA bu kosul var. Index olmadan her sorgu
+        // çünkü ARTIK HER SORGUDA bu kosul var. Index olmadan her sorgu
         // tam tarama yapardi.
         builder.HasIndex(x => x.IsDeleted);
     }
@@ -83,12 +83,12 @@ internal static class ConfigurationExtensions
     /// <summary>
     /// Money value object'ini iki sutuna esler: {ad}_Amount ve {ad}_Currency.
     ///
-    /// numeric(18,2) kullaniyorum:
+    /// numeric(18,2) kullanıyorum:
     ///   - numeric = PostgreSQL'in TAM HASSASIYETLI ondalik tipi.
-    ///     real/double precision gibi yuvarlama hatasi yapmaz.
+    ///     real/double precision gibi yuvarlama hatası yapmaz.
     ///   - 18 basamak, 2'si kurus. 999 trilyon TL'ye kadar yeter.
     ///
-    /// PDF Sprint 6: "Para degerleri decimal olarak tutulmalidir.
+    /// PDF Sprint 6: "Para değerleri decimal olarak tutulmalidir.
     /// Floating point kullanilmamalidir."
     /// </summary>
     public static void ConfigureMoney<TEntity>(

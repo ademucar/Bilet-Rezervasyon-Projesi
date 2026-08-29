@@ -11,7 +11,7 @@ using Ticketing.Application.Common.Results;
 namespace Ticketing.Application.Features.Auth.Password;
 
 // ===================================================================
-// 1) SIFRE DEGISTIRME -- giris yapmis kullanici
+// 1) SIFRE DEGISTIRME -- giriş yapmış kullanıcı
 // ===================================================================
 
 /// <summary>PDF: POST /api/v1/auth/change-password</summary>
@@ -23,23 +23,23 @@ public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePas
     public ChangePasswordCommandValidator()
     {
         RuleFor(x => x.CurrentPassword)
-            .NotEmpty().WithMessage("Mevcut sifre zorunludur.");
+            .NotEmpty().WithMessage("Mevcut şifre zorunludur.");
 
         RuleFor(x => x.NewPassword)
-            .NotEmpty().WithMessage("Yeni sifre zorunludur.")
-            .MinimumLength(8).WithMessage("Sifre en az 8 karakter olmalidir.")
-            .MaximumLength(72).WithMessage("Sifre en fazla 72 karakter olabilir.")
-            .Matches("[A-Z]").WithMessage("Sifre en az bir buyuk harf icermelidir.")
-            .Matches("[a-z]").WithMessage("Sifre en az bir kucuk harf icermelidir.")
-            .Matches("[0-9]").WithMessage("Sifre en az bir rakam icermelidir.")
+            .NotEmpty().WithMessage("Yeni şifre zorunludur.")
+            .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.")
+            .MaximumLength(72).WithMessage("Şifre en fazla 72 karakter olabilir.")
+            .Matches("[A-Z]").WithMessage("Şifre en az bir büyük harf içermelidir.")
+            .Matches("[a-z]").WithMessage("Şifre en az bir küçük harf içermelidir.")
+            .Matches("[0-9]").WithMessage("Şifre en az bir rakam içermelidir.")
 
-            // Yeni sifre eskisiyle ayni olamaz.
+            // Yeni şifre eskisiyle aynı olamaz.
             //
-            // Bu kontrol olmasaydi "sifreni degistir" uyarisi alan bir
-            // kullanici ayni sifreyi girip uyariyi susturabilirdi --
-            // yani guvenlik onlemi hicbir sey yapmamis olurdu.
+            // Bu kontrol olmasaydı "sifreni degistir" uyarısı alan bir
+            // kullanıcı aynı sifreyi girip uyariyi susturabilirdi --
+            // yani güvenlik önlemi hiçbir sey yapmamis olurdu.
             .NotEqual(x => x.CurrentPassword)
-            .WithMessage("Yeni sifre mevcut sifreyle ayni olamaz.");
+            .WithMessage("Yeni şifre mevcut sifreyle aynı olamaz.");
     }
 }
 
@@ -77,11 +77,11 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
 
         // Mevcut sifreyi DOGRULUYORUZ -- token'a sahip olmak yetmez.
         //
-        // Neden? Saldirgan bir sekilde access token ele gecirmisse
+        // Neden? Saldirgan bir şekilde access token ele gecirmisse
         // (calinmis cihaz, XSS), sifreyi degistirip hesabi kalici
-        // olarak ele gecirebilirdi. Mevcut sifre sormak bu yolu kapatir.
+        // olarak ele gecirebilirdi. Mevcut şifre sormak bu yolu kapatır.
         //
-        // Bu, "hassas islem icin yeniden kimlik dogrulama" ilkesidir.
+        // Bu, "hassas işlem için yeniden kimlik doğrulama" ilkesidir.
         if (!_passwordHasher.Verify(request.CurrentPassword, user.PasswordHash))
         {
             return Result.Failure(AuthErrors.InvalidCredentials);
@@ -90,15 +90,15 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
         user.ChangePasswordHash(_passwordHasher.Hash(request.NewPassword));
 
         // ==============================================================
-        // SIFRE DEGISINCE TUM OTURUMLARI KAPAT
+        // SIFRE DEGISINCE TÜM OTURUMLARI KAPAT
         // ==============================================================
-        // Kullanici sifresini genelde "biri hesabima girmis olabilir"
-        // supehesiyle degistirir. Eski refresh token'lar gecerli kalsaydi
-        // saldirgan 7 gun daha erisebilirdi -- yani sifre degistirmek
-        // hicbir ise yaramazdi.
+        // Kullanıcı sifresini genelde "biri hesabima girmis olabilir"
+        // supehesiyle değiştirir. Eski refresh token'lar geçerli kalsaydi
+        // saldirgan 7 gün daha erisebilirdi -- yani şifre degistirmek
+        // hiçbir ise yaramazdi.
         //
-        // Bu, sifre degistirmenin ANLAMLI olmasini saglayan adimdir ve
-        // cok sik atlanir.
+        // Bu, şifre degistirmenin ANLAMLI olmasini saglayan adimdir ve
+        // çok sik atlanir.
         var activeTokens = await _context.RefreshTokens
             .Where(rt => rt.UserId == userId && rt.RevokedAt == null)
             .ToListAsync(cancellationToken)
@@ -127,17 +127,17 @@ public sealed class ForgotPasswordCommandValidator : AbstractValidator<ForgotPas
     public ForgotPasswordCommandValidator()
         => RuleFor(x => x.Email)
             .NotEmpty().WithMessage("E-posta adresi zorunludur.")
-            .EmailAddress().WithMessage("Gecerli bir e-posta adresi giriniz.");
+            .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
 }
 
 internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, Result>
 {
     /// <summary>
-    /// Sifirlama linkinin gecerlilik suresi.
+    /// Sıfırlama linkinin gecerlilik süresi.
     ///
-    /// 1 saat, guvenlik ile kullanilabilirlik arasinda yaygin bir denge:
-    ///   - Kullanici e-postasini gorup tiklamaya yeterli sure bulur.
-    ///   - E-posta kutusuna sonradan erisen biri icin pencere dardir.
+    /// 1 saat, güvenlik ile kullanilabilirlik arasında yaygin bir denge:
+    ///   - Kullanıcı e-postasini gorup tiklamaya yeterli süre bulur.
+    ///   - E-posta kutusuna sonradan erisen biri için pencere dardir.
     /// </summary>
     private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(1);
 
@@ -172,24 +172,24 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
         // ==============================================================
         // KULLANICI BULUNAMASA BILE BASARILI DONUYORUZ
         // ==============================================================
-        // Bu, Login'dekiyle AYNI sebep: kullanici numaralandirmayi
+        // Bu, Login'dekiyle AYNI sebep: kullanıcı numaralandirmayi
         // engellemek.
         //
-        // "Bu e-posta kayitli degil" deseydik, saldirgan bir e-posta
-        // listesini bu endpoint'e sokup hangilerinin sistemde oldugunu
+        // "Bu e-posta kayıtlı değil" deseydik, saldirgan bir e-posta
+        // listesini bu endpoint'e sokup hangilerinin sistemde olduğunu
         // ogrenirdi. Ustelik bu endpoint kimlik dogrulamasi
-        // gerektirmiyor -- yani herkese acik bir tarama araci olurdu.
+        // gerektirmiyor -- yani herkese açık bir tarama araci olurdu.
         //
-        // Kullanici acisindan da dogru davranis: "Eger bu adres
-        // kayitliysa bir e-posta gonderdik" mesaji hem dogru hem
-        // guvenli.
+        // Kullanıcı acisindan da doğru davranis: "Eger bu adres
+        // kayıtlıysa bir e-posta gonderdik" mesaji hem doğru hem
+        // güvenli.
         if (user is null)
         {
             return Result.Success();
         }
 
-        // Refresh token uretecini yeniden kullaniyorum: ayni kriptografik
-        // guvenceye ihtiyacimiz var (tahmin edilemez, yuksek entropili)
+        // Refresh token uretecini yeniden kullanıyorum: aynı kriptografik
+        // guvenceye ihtiyacimiz var (tahmin edilemez, yüksek entropili)
         // ve ikinci bir uretec yazmak gereksiz tekrar olurdu.
         var resetToken = _tokenService.CreateRefreshToken();
 
@@ -202,7 +202,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
 
         await _emailService.SendAsync(
             user.Email,
-            "Sifre Sifirlama Talebi",
+            "Şifre Sıfırlama Talebi",
             $"""
              <p>Merhaba {user.FirstName},</p>
              <p>Sifrenizi sifirlamak icin asagidaki baglantiya tiklayin:</p>
@@ -228,15 +228,15 @@ public sealed class ResetPasswordCommandValidator : AbstractValidator<ResetPassw
 {
     public ResetPasswordCommandValidator()
     {
-        RuleFor(x => x.Token).NotEmpty().WithMessage("Sifirlama anahtari zorunludur.");
+        RuleFor(x => x.Token).NotEmpty().WithMessage("Sıfırlama anahtari zorunludur.");
 
         RuleFor(x => x.NewPassword)
-            .NotEmpty().WithMessage("Yeni sifre zorunludur.")
-            .MinimumLength(8).WithMessage("Sifre en az 8 karakter olmalidir.")
-            .MaximumLength(72).WithMessage("Sifre en fazla 72 karakter olabilir.")
-            .Matches("[A-Z]").WithMessage("Sifre en az bir buyuk harf icermelidir.")
-            .Matches("[a-z]").WithMessage("Sifre en az bir kucuk harf icermelidir.")
-            .Matches("[0-9]").WithMessage("Sifre en az bir rakam icermelidir.");
+            .NotEmpty().WithMessage("Yeni şifre zorunludur.")
+            .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.")
+            .MaximumLength(72).WithMessage("Şifre en fazla 72 karakter olabilir.")
+            .Matches("[A-Z]").WithMessage("Şifre en az bir büyük harf içermelidir.")
+            .Matches("[a-z]").WithMessage("Şifre en az bir küçük harf içermelidir.")
+            .Matches("[0-9]").WithMessage("Şifre en az bir rakam içermelidir.");
     }
 }
 
@@ -263,31 +263,31 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
     {
         var tokenHash = _tokenService.HashRefreshToken(request.Token);
 
-        // Token hash'i ile kullaniciyi ariyoruz.
+        // Token hash'i ile kullanıcıyı ariyoruz.
         // ix_users_password_reset_token partial index'i bu sorguyu karsiliyor.
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.PasswordResetTokenHash == tokenHash, cancellationToken)
             .ConfigureAwait(false);
 
-        // Token yoksa veya suresi dolmussa AYNI hatayi donuyoruz.
+        // Token yoksa veya süresi dolmussa AYNI hatayi donuyoruz.
         //
-        // "Token suresi dolmus" ile "token gecersiz" ayrimini yapmiyoruz
-        // cunku ikisi de saldirgana bilgi verir: "suresi dolmus" demek,
-        // o token'in bir zamanlar GECERLI oldugunu itiraf etmektir.
+        // "Token süresi dolmuş" ile "token geçersiz" ayrimini yapmiyoruz
+        // çünkü ikisi de saldirgana bilgi verir: "süresi dolmuş" demek,
+        // o token'in bir zamanlar GECERLI olduğunu itiraf etmektir.
         if (user is null || !user.IsPasswordResetTokenValid(tokenHash, _clock.UtcNow))
         {
             return Result.Failure(Error.Validation(
                 "auth.invalid_reset_token",
-                "Sifirlama baglantisi gecersiz veya suresi dolmus. Lutfen yeni bir talep olusturun."));
+                "Sıfırlama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeni bir talep oluşturun."));
         }
 
-        // ChangePasswordHash icinde ClearPasswordResetToken da cagriliyor,
-        // yani token TEK KULLANIMLIK oluyor. Ayni link ikinci kez
-        // calismaz -- e-postasi baskasinin eline gecen kullanici icin
-        // onemli bir koruma.
+        // ChangePasswordHash içinde ClearPasswordResetToken da cagriliyor,
+        // yani token TEK KULLANIMLIK oluyor. Aynı link ikinci kez
+        // calismaz -- e-postası baskasinin eline gecen kullanıcı için
+        // önemli bir koruma.
         user.ChangePasswordHash(_passwordHasher.Hash(request.NewPassword));
 
-        // Sifre sifirlandiginda tum oturumlari kapat.
+        // Şifre sifirlandiginda tüm oturumlari kapat.
         // Sifirlamanin sebebi genelde hesabin ele gecirilmis olmasidir;
         // saldirganin mevcut oturumu devam etmemeli.
         var activeTokens = await _context.RefreshTokens

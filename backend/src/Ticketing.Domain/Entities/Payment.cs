@@ -6,11 +6,11 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Odeme kaydi. PDF Sprint 8.
+/// Ödeme kaydı. PDF Sprint 8.
 ///
-/// Gercek bir odeme saglayicisi kullanmiyoruz ama entegrasyona BENZER
+/// Gerçek bir ödeme sağlayıcısı kullanmiyoruz ama entegrasyona BENZER
 /// bir yapi kuruyoruz: IPaymentService arayuzu + MockPaymentProvider.
-/// Bu entity, hangi saglayici kullanilirsa kullanilsin ayni kalir.
+/// Bu entity, hangi sağlayıcı kullanilirsa kullanilsin aynı kalır.
 /// </summary>
 public class Payment : ConcurrentEntity
 {
@@ -41,10 +41,10 @@ public class Payment : ConcurrentEntity
 
         // Failed, Cancelled, Refunded son durumlar.
         //
-        // Failed'dan Processing'e donus YOK. Bu kasitli: basarisiz bir
-        // odemeyi "yeniden denemek" ayni kaydi diriltmek degil, YENI bir
-        // Payment kaydi olusturmak demektir. Boylece her deneme ayri
-        // kayitli kalir ve denetim izi bozulmaz.
+        // Failed'dan Processing'e donus YOK. Bu kasitli: başarısız bir
+        // ödemeyi "yeniden denemek" aynı kaydı diriltmek değil, YENI bir
+        // Payment kaydı olusturmak demektir. Boylece her deneme ayrı
+        // kayıtlı kalır ve denetim izi bozulmaz.
     };
 
     public Guid ReservationId { get; private set; }
@@ -53,8 +53,8 @@ public class Payment : ConcurrentEntity
     public string ProviderName { get; private set; }
 
     /// <summary>
-    /// Saglayicinin bize verdigi islem referansi.
-    /// Mutabakat (reconciliation) ve destek talepleri icin sart:
+    /// Saglayicinin bize verdiği işlem referansı.
+    /// Mutabakat (reconciliation) ve destek talepleri için sart:
     /// saglayiciya "su islemde ne oldu" diye sorarken bu numarayi veririz.
     /// </summary>
     public string? ProviderReference { get; private set; }
@@ -66,9 +66,9 @@ public class Payment : ConcurrentEntity
     /// <summary>
     /// Simdiye kadar iade edilen toplam tutar.
     ///
-    /// Neden bir bool degil de TUTAR? Cunku kismi iade var
+    /// Neden bir bool değil de TUTAR? Çünkü kismi iade var
     /// (bkz. CancellationPolicy: %50 iade). Bir rezervasyondaki 4 biletten
-    /// 2'si iade edilirse tutarin yarisi geri doner. bool ile bunu
+    /// 2'si iade edilirse tutarin yarisi geri döner. bool ile bunu
     /// modelleyemezdik.
     /// </summary>
     public Money RefundedAmount { get; private set; }
@@ -77,7 +77,7 @@ public class Payment : ConcurrentEntity
 
     public DateTimeOffset? CompletedAt { get; private set; }
 
-    /// <summary>PDF Sprint 15: odeme baslatma idempotent olmalidir.</summary>
+    /// <summary>PDF Sprint 15: ödeme baslatma idempotent olmalıdır.</summary>
     public string? IdempotencyKey { get; private set; }
 
     public Reservation Reservation { get; private set; } = null!;
@@ -94,12 +94,12 @@ public class Payment : ConcurrentEntity
     {
         if (string.IsNullOrWhiteSpace(providerName))
         {
-            throw new DomainException("Odeme saglayicisi belirtilmelidir.", "payment.provider_required");
+            throw new DomainException("Ödeme sağlayıcısı belirtilmelidir.", "payment.provider_required");
         }
 
         if (amount.Amount <= 0)
         {
-            throw new DomainException("Odeme tutari sifirdan buyuk olmalidir.", "payment.invalid_amount");
+            throw new DomainException("Ödeme tutari sıfırdan büyük olmalıdır.", "payment.invalid_amount");
         }
 
         return new Payment
@@ -118,7 +118,7 @@ public class Payment : ConcurrentEntity
         if (!AllowedTransitions.TryGetValue(Status, out var allowed) || !Array.Exists(allowed, s => s == target))
         {
             throw new DomainException(
-                $"Odeme {Status} durumundan {target} durumuna gecemez.",
+                $"Ödeme {Status} durumundan {target} durumuna gecemez.",
                 "payment.invalid_transition");
         }
 
@@ -126,11 +126,11 @@ public class Payment : ConcurrentEntity
     }
 
     /// <summary>
-    /// Saglayicinin verdigi islem referansini kaydeder.
+    /// Saglayicinin verdiği işlem referansini kaydeder.
     ///
-    /// Ayri bir metot cunku referans, StartProcessing'den SONRA
-    /// (saglayici cagrisi donunce) belli oluyor. StartProcessing'e
-    /// parametre olarak vermek, cagri sirasini yanlis anlasilir
+    /// Ayrı bir metot çünkü referans, StartProcessing'den SONRA
+    /// (sağlayıcı cagrisi donunce) belli oluyor. StartProcessing'e
+    /// parametre olarak vermek, cagri sırasını yanlış anlasilir
     /// kilardi.
     /// </summary>
     public void SetProviderReference(string? providerReference)
@@ -141,7 +141,7 @@ public class Payment : ConcurrentEntity
         }
     }
 
-    /// <summary>Saglayiciya istek gonderildi, cevap bekleniyor.</summary>
+    /// <summary>Saglayiciya istek gönderildi, cevap bekleniyor.</summary>
     public void StartProcessing(string? providerReference = null)
     {
         TransitionTo(PaymentStatus.Processing);
@@ -152,19 +152,19 @@ public class Payment : ConcurrentEntity
     }
 
     /// <summary>
-    /// Odeme basarili.
+    /// Ödeme başarılı.
     ///
     /// ------------------------------------------------------------------
-    /// IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalidir."
+    /// IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
     /// ------------------------------------------------------------------
-    /// Odeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderebilir.
-    /// Bu bir hata degil, normal davranistir: saglayici cevap alamadigini
+    /// Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderebilir.
+    /// Bu bir hata değil, normal davranistir: sağlayıcı cevap alamadigini
     /// dusunurse tekrar dener.
     ///
-    /// Idempotent olmasaydi ayni rezervasyon icin iki kez bilet uretilirdi.
-    /// Bu yuzden zaten Successful ise sessizce donuyorum -- hata firlatmiyorum.
+    /// Idempotent olmasaydı aynı rezervasyon için iki kez bilet uretilirdi.
+    /// Bu yüzden zaten Successful ise sessizce donuyorum -- hata firlatmiyorum.
     ///
-    /// Hata firlatsaydim saglayici "callback basarisiz" deyip tekrar
+    /// Hata firlatsaydim sağlayıcı "callback başarısız" deyip tekrar
     /// tekrar denerdi ve sonsuz dongu olusurdu.
     /// </summary>
     public bool Complete(string? providerReference, DateTimeOffset now)
@@ -173,7 +173,7 @@ public class Payment : ConcurrentEntity
         {
             // Zaten tamamlanmis. Ikinci callback'i sessizce yok say.
             // false donuyorum ki cagiran taraf "yeni bir sey olmadi,
-            // bilet uretme" diye anlasin.
+            // bilet üretme" diye anlasin.
             return false;
         }
 
@@ -209,29 +209,29 @@ public class Payment : ConcurrentEntity
     public void Cancel() => TransitionTo(PaymentStatus.Cancelled);
 
     /// <summary>
-    /// Iade islemi. Kismi iade destekler.
+    /// İade islemi. Kismi iade destekler.
     /// </summary>
     public void Refund(Money refundAmount, string? providerReference = null)
     {
         if (Status != PaymentStatus.Successful && Status != PaymentStatus.Refunded)
         {
             throw new DomainException(
-                "Yalnizca basarili odeme iade edilebilir.",
+                "Yalnızca başarılı ödeme iade edilebilir.",
                 "payment.not_refundable");
         }
 
         var yeniToplam = RefundedAmount + refundAmount;
 
-        // Odenenden fazlasini iade etmek imkansiz olmali.
+        // Odenenden fazlasini iade etmek imkansiz olmalı.
         //
-        // Bu kontrol olmasaydi, tekrarlanan bir iade istegi (ornegin
-        // callback iki kez gelirse) kullaniciya iki kat para gonderirdi.
-        // Money zaten negatif tutari engelliyor ama bu farkli bir kural:
-        // "toplam iade, odemeyi asamaz".
+        // Bu kontrol olmasaydı, tekrarlanan bir iade isteği (örneğin
+        // callback iki kez gelirse) kullanıcıya iki kat para gonderirdi.
+        // Money zaten negatif tutarı engelliyor ama bu farklı bir kural:
+        // "toplam iade, ödemeyi aşamaz".
         if (yeniToplam > Amount)
         {
             throw new DomainException(
-                $"Iade tutari odenen tutari asamaz. Odenen: {Amount}, " +
+                $"İade tutari odenen tutari aşamaz. Odenen: {Amount}, " +
                 $"toplam iade girisimi: {yeniToplam}",
                 "payment.refund_exceeds_amount");
         }
@@ -241,8 +241,8 @@ public class Payment : ConcurrentEntity
         _transactions.Add(PaymentTransaction.Create(
             Id, PaymentTransactionType.Refund, PaymentStatus.Refunded, providerReference));
 
-        // Tam iade yapildiysa durumu da guncelle.
-        // Kismi iadede Successful kaliyor -- cunku odeme hala gecerli,
+        // Tam iade yapildiysa durumu da güncelle.
+        // Kismi iadede Successful kaliyor -- çünkü ödeme hâlâ geçerli,
         // sadece bir kismi geri donmus.
         if (RefundedAmount.Amount == Amount.Amount && Status == PaymentStatus.Successful)
         {
@@ -250,6 +250,6 @@ public class Payment : ConcurrentEntity
         }
     }
 
-    /// <summary>Iade edilebilecek kalan tutar.</summary>
+    /// <summary>İade edilebilecek kalan tutar.</summary>
     public Money GetRefundableAmount() => Amount - RefundedAmount;
 }

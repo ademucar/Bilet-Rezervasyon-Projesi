@@ -3,17 +3,17 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Etkinlik yorumu ve puani. PDF Sprint 12.
+/// Etkinlik yorumu ve puanı. PDF Sprint 12.
 ///
 /// Is kurallari (PDF sayfa 20):
-///   - Puan 1-5 arasinda olmali            -> burada kontrol ediliyor
-///   - Kullanici etkinlik basina BIR yorum -> UNIQUE (UserId, EventId)
-///   - Yalnizca gecerli bilet almis kullanici yorum yapabilir
-///   - Etkinlik tamamlanmadan yorum yapilamaz
+///   - Puan 1-5 arasında olmalı            -> burada kontrol ediliyor
+///   - Kullanıcı etkinlik başına BIR yorum -> UNIQUE (UserId, EventId)
+///   - Yalnızca geçerli bilet almis kullanıcı yorum yapabilir
+///   - Etkinlik tamamlanmadan yorum yapılamaz
 ///
 /// Son iki kural BURADA kontrol EDILEMEZ: bilet ve etkinlik durumu
 /// bilgisi bu entity'de yok, veritabaninda. Onlar Application katmanindaki
-/// handler'da kontrol edilecek. Bunu acikca yaziyorum ki "neden burada
+/// handler'da kontrol edilecek. Bunu acikca yazıyorum ki "neden burada
 /// yok?" sorusu havada kalmasin.
 /// </summary>
 public class Review : AuditableEntity
@@ -30,11 +30,11 @@ public class Review : AuditableEntity
     public string Comment { get; private set; }
 
     /// <summary>
-    /// Admin tarafindan gizlendi mi?
+    /// Admin tarafından gizlendi mi?
     /// PDF: "Admin uygunsuz yorumu kaldirabilir."
     ///
-    /// Silmek yerine gizliyoruz (soft delete zaten var, bu ayri bir bayrak):
-    /// boylece denetim izi kalir ve kullanici "yorumum nerede?" derse
+    /// Silmek yerine gizliyoruz (soft delete zaten var, bu ayrı bir bayrak):
+    /// boylece denetim izi kalır ve kullanıcı "yorumum nerede?" derse
     /// cevap verebiliriz.
     /// </summary>
     public bool IsHidden { get; private set; }
@@ -62,13 +62,13 @@ public class Review : AuditableEntity
     {
         if (rating is < 1 or > 5)
         {
-            throw new DomainException("Puan 1 ile 5 arasinda olmalidir.", "review.invalid_rating");
+            throw new DomainException("Puan 1 ile 5 arasında olmalıdır.", "review.invalid_rating");
         }
     }
 
     /// <summary>
-    /// PDF: "Kullanici yalnizca kendi yorumunu duzenleyebilir."
-    /// Sahiplik kontrolu Application katmanindaki ReviewOwner policy'sinde
+    /// PDF: "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
+    /// Sahiplik kontrolü Application katmanindaki ReviewOwner policy'sinde
     /// yapilacak; burada sadece veri kurallari var.
     /// </summary>
     public void Update(int rating, string comment)
@@ -76,7 +76,7 @@ public class Review : AuditableEntity
         if (IsHidden)
         {
             throw new DomainException(
-                "Gizlenmis yorum duzenlenemez.",
+                "Gizlenmis yorum düzenlenemez.",
                 "review.hidden");
         }
 

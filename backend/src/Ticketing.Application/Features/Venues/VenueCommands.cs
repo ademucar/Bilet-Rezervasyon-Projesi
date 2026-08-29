@@ -12,18 +12,18 @@ namespace Ticketing.Application.Features.Venues;
 internal static class VenueErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "venue.not_found", "Mekan bulunamadi.");
+        "venue.not_found", "Mekan bulunamadı.");
 
     public static readonly Error CityNotFound = Error.NotFound(
-        "venue.city_not_found", "Secilen sehir bulunamadi.");
+        "venue.city_not_found", "Secilen şehir bulunamadı.");
 
     public static readonly Error HasActiveEvents = Error.Conflict(
         "venue.has_active_events",
-        "Bu mekanda aktif etkinlikler var. Once etkinlikleri iptal edin.");
+        "Bu mekanda aktif etkinlikler var. Önce etkinlikleri iptal edin.");
 
     public static readonly Error DuplicateName = Error.Conflict(
         "venue.duplicate_name",
-        "Bu sehirde ayni isimde bir mekan zaten var.");
+        "Bu sehirde aynı isimde bir mekan zaten var.");
 }
 
 // ===================================================================
@@ -43,29 +43,29 @@ public sealed class CreateVenueCommandValidator : AbstractValidator<CreateVenueC
     public CreateVenueCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Mekan adi zorunludur.")
-            .MaximumLength(200).WithMessage("Mekan adi en fazla 200 karakter olabilir.");
+            .NotEmpty().WithMessage("Mekan adı zorunludur.")
+            .MaximumLength(200).WithMessage("Mekan adı en fazla 200 karakter olabilir.");
 
         RuleFor(x => x.Address)
             .NotEmpty().WithMessage("Adres zorunludur.")
             .MaximumLength(500).WithMessage("Adres en fazla 500 karakter olabilir.");
 
         RuleFor(x => x.CityId)
-            .NotEmpty().WithMessage("Sehir secilmelidir.");
+            .NotEmpty().WithMessage("Şehir seçilmelidir.");
 
-        // Koordinat kontrolunu HEM burada HEM entity'de yapiyorum.
+        // Koordinat kontrolunu HEM burada HEM entity'de yapıyorum.
         //
-        // Tekrar gibi gorunuyor ama amaclari farkli: buradaki kullaniciya
-        // "enlem -90 ile 90 arasinda olmali" diye anlasilir bir form
-        // hatasi verir; entity'deki ise koda hangi yoldan gelirse gelsin
-        // gecersiz bir Venue olusmasini engeller (ornegin veri tasima
+        // Tekrar gibi görünüyor ama amaclari farklı: buradaki kullanıcıya
+        // "enlem -90 ile 90 arasında olmalı" diye anlasilir bir form
+        // hatası verir; entity'deki ise koda hangi yoldan gelirse gelsin
+        // geçersiz bir Venue olusmasini engeller (örneğin veri tasima
         // scripti FluentValidation'dan gecmez).
         RuleFor(x => x.Latitude)
-            .InclusiveBetween(-90, 90).WithMessage("Enlem -90 ile 90 arasinda olmalidir.")
+            .InclusiveBetween(-90, 90).WithMessage("Enlem -90 ile 90 arasında olmalıdır.")
             .When(x => x.Latitude.HasValue);
 
         RuleFor(x => x.Longitude)
-            .InclusiveBetween(-180, 180).WithMessage("Boylam -180 ile 180 arasinda olmalidir.")
+            .InclusiveBetween(-180, 180).WithMessage("Boylam -180 ile 180 arasında olmalıdır.")
             .When(x => x.Longitude.HasValue);
     }
 }
@@ -78,11 +78,11 @@ internal sealed class CreateVenueCommandHandler : IRequestHandler<CreateVenueCom
 
     public async Task<Result<Guid>> Handle(CreateVenueCommand request, CancellationToken cancellationToken)
     {
-        // Sehrin var oldugunu dogruluyorum.
+        // Sehrin var olduğunu dogruluyorum.
         //
         // Yapmasaydik ne olurdu? Foreign key ihlali -> DbUpdateException
-        // -> kullanici "Veri cakismasi" gibi anlamsiz bir 409 alirdi.
-        // Burada kontrol edip "Secilen sehir bulunamadi" demek cok daha
+        // -> kullanıcı "Veri çakışması" gibi anlamsiz bir 409 alırdı.
+        // Burada kontrol edip "Secilen şehir bulunamadı" demek çok daha
         // anlasilir.
         var cityExists = await _context.Cities
             .AsNoTracking()
@@ -96,15 +96,15 @@ internal sealed class CreateVenueCommandHandler : IRequestHandler<CreateVenueCom
 
         var name = request.Name.Trim();
 
-        // Ayni sehirde ayni isimde mekan olmasin.
+        // Aynı sehirde aynı isimde mekan olmasın.
         //
-        // NOT: Bu kontrol yarisa aciktir -- iki kullanici ayni anda
+        // NOT: Bu kontrol yarisa aciktir -- iki kullanıcı aynı anda
         // olusturursa ikisi de "yok" gorup ikisi de ekleyebilir.
-        // Kesin garanti icin veritabaninda UNIQUE (CityId, Name)
-        // index'i olmali. Su an yok; Sprint 5'te ekleyecegim.
+        // Kesin garanti için veritabaninda UNIQUE (CityId, Name)
+        // index'i olmalı. Su an yok; Sprint 5'te ekleyecegim.
         //
-        // Bu kontrolun degeri, YAYGIN durumda (tek kullanici, yazim
-        // hatasi) anlamli bir mesaj vermek.
+        // Bu kontrolun değeri, YAYGIN durumda (tek kullanıcı, yazım
+        // hatası) anlamlı bir mesaj vermek.
         var duplicate = await _context.Venues
             .AsNoTracking()
             .AnyAsync(v => v.CityId == request.CityId && v.Name == name, cancellationToken)
@@ -166,14 +166,14 @@ internal sealed class UpdateVenueCommandHandler : IRequestHandler<UpdateVenueCom
             return Result.Failure(VenueErrors.NotFound);
         }
 
-        // Sehir DEGISTIRILEMEZ -- komutda CityId alani bilerek yok.
+        // Şehir DEGISTIRILEMEZ -- komutda CityId alanı bilerek yok.
         //
-        // Bir mekan fiziksel bir binadir; sehir degistirmez. Izin
-        // verseydik, gecmis etkinliklerin sehir bilgisi de degismis
-        // olurdu ve "Istanbul'da izledigim konser" birden Ankara'ya
+        // Bir mekan fiziksel bir binadir; şehir degistirmez. Izin
+        // verseydik, gecmis etkinliklerin şehir bilgisi de degismis
+        // olurdu ve "İstanbul'da izledigim konser" birden Ankara'ya
         // tasinirdi. Raporlar bozulurdu.
         //
-        // Yanlis sehirle olusturulmus bir mekan varsa: sil, yeniden olustur.
+        // Yanlis sehirle olusturulmus bir mekan varsa: sil, yeniden oluştur.
         venue.Rename(request.Name);
         venue.UpdateAddress(request.Address);
 
@@ -212,14 +212,14 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
         }
 
         // ==============================================================
-        // PDF is kurali: "Aktif etkinlik bulunan salon silinememelidir."
+        // PDF is kuralı: "Aktif etkinlik bulunan salon silinememelidir."
         // ==============================================================
-        // Mekan seviyesinde de ayni kural gecerli: mekani silersek
-        // altindaki salonlar da erisilemez hale gelir.
+        // Mekan seviyesinde de aynı kural geçerli: mekani silersek
+        // altindaki salonlar da erişilemez hale gelir.
         //
-        // "Aktif" derken TAMAMLANMAMIS ve IPTAL EDILMEMIS etkinlikleri
+        // "Aktif" derken TAMAMLANMAMIS ve İPTAL EDILMEMIS etkinlikleri
         // kastediyorum. Gecmis etkinliklerin varligi silmeyi engellememeli
-        // -- yoksa hicbir mekan asla silinemezdi.
+        // -- yoksa hiçbir mekan asla silinemezdi.
         var hasActiveEvents = await _context.Events
             .AsNoTracking()
             .AnyAsync(
@@ -237,8 +237,8 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
         // SOFT DELETE.
         //
         // Fiziksel silme yapsaydik gecmis etkinliklerin VenueId'si
-        // bosluga isaret ederdi ve "3 yil onceki konser neredeydi?"
-        // sorusu cevapsiz kalirdi. Ayrica FK kisiti (Restrict) zaten
+        // bosluga isaret ederdi ve "3 yil önceki konser neredeydi?"
+        // sorusu cevapsiz kalırdı. Ayrıca FK kisiti (Restrict) zaten
         // silmeye izin vermezdi.
         venue.IsDeleted = true;
         venue.DeletedAt = DateTimeOffset.UtcNow;

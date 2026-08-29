@@ -4,13 +4,13 @@ namespace Ticketing.Domain.Entities;
 
 /// <summary>
 /// Mekan (bina). Ornek: "Zorlu PSM", "Kadikoy Sahnesi".
-/// Bir mekanin icinde birden fazla salon (Hall) olabilir.
+/// Bir mekanin içinde birden fazla salon (Hall) olabilir.
 ///
-/// PDF: Mekan/salon yonetimi ADMIN'in sorumlulugundadir, organizatorun degil.
-/// Sebep: Salonlar fiziksel gercekliktir. Organizator sadece var olan bir
-/// salonu belirli bir tarih araligi icin secer. Bu ayrim olmasaydi
-/// "ayni salon ayni saatte iki etkinlige atanamaz" kuralini uygulayamazdik --
-/// herkes kendi salonunu tanimlardi ve cakisma tespiti anlamsizlasirdi.
+/// PDF: Mekan/salon yönetimi ADMIN'in sorumlulugundadir, organizatorun değil.
+/// Sebep: Salonlar fiziksel gercekliktir. Organizatör sadece var olan bir
+/// salonu belirli bir tarih aralığı için secer. Bu ayrim olmasaydı
+/// "aynı salon aynı saatte iki etkinlige atanamaz" kuralini uygulayamazdik --
+/// herkes kendi salonunu tanimlardi ve çakışma tespiti anlamsizlasirdi.
 /// </summary>
 public class Venue : AuditableEntity
 {
@@ -33,7 +33,7 @@ public class Venue : AuditableEntity
 
     public string Address { get; private set; }
 
-    /// <summary>Harita gosterimi icin. Ikisi de opsiyonel.</summary>
+    /// <summary>Harita gosterimi için. Ikisi de opsiyonel.</summary>
     public decimal? Latitude { get; private set; }
 
     public decimal? Longitude { get; private set; }
@@ -48,17 +48,17 @@ public class Venue : AuditableEntity
     {
         if (cityId == Guid.Empty)
         {
-            throw new DomainException("Sehir secilmelidir.", "venue.city_required");
+            throw new DomainException("Şehir seçilmelidir.", "venue.city_required");
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Mekan adi bos olamaz.", "venue.name_required");
+            throw new DomainException("Mekan adı boş olamaz.", "venue.name_required");
         }
 
         if (string.IsNullOrWhiteSpace(address))
         {
-            throw new DomainException("Adres bos olamaz.", "venue.address_required");
+            throw new DomainException("Adres boş olamaz.", "venue.address_required");
         }
 
         return new Venue(cityId, name.Trim(), address.Trim());
@@ -68,7 +68,7 @@ public class Venue : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Mekan adi bos olamaz.", "venue.name_required");
+            throw new DomainException("Mekan adı boş olamaz.", "venue.name_required");
         }
 
         Name = name.Trim();
@@ -78,7 +78,7 @@ public class Venue : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(address))
         {
-            throw new DomainException("Adres bos olamaz.", "venue.address_required");
+            throw new DomainException("Adres boş olamaz.", "venue.address_required");
         }
 
         Address = address.Trim();
@@ -86,18 +86,18 @@ public class Venue : AuditableEntity
 
     public void SetCoordinates(decimal latitude, decimal longitude)
     {
-        // Enlem -90..90, boylam -180..180 araliginda olmalidir.
-        // Bu kontrolu koymamin sebebi: frontend'den yanlislikla ters
+        // Enlem -90..90, boylam -180..180 araliginda olmalıdır.
+        // Bu kontrolü koymamin sebebi: frontend'den yanlislikla ters
         // gonderilen koordinatlar (lat/lng yer degistirmis) haritada
         // mekani okyanusun ortasinda gosterir ve kimse sebebini anlamaz.
         if (latitude is < -90 or > 90)
         {
-            throw new DomainException("Enlem -90 ile 90 arasinda olmalidir.", "venue.invalid_latitude");
+            throw new DomainException("Enlem -90 ile 90 arasında olmalıdır.", "venue.invalid_latitude");
         }
 
         if (longitude is < -180 or > 180)
         {
-            throw new DomainException("Boylam -180 ile 180 arasinda olmalidir.", "venue.invalid_longitude");
+            throw new DomainException("Boylam -180 ile 180 arasında olmalıdır.", "venue.invalid_longitude");
         }
 
         Latitude = latitude;

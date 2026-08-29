@@ -8,8 +8,8 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Rezervasyon. PDF Sprint 7.
 ///
-/// Kullanici koltuk sectiginde olusur, 10 dakika boyunca koltuklari kilitler.
-/// Bu sure icinde odeme yapilmazsa background job tarafindan iptal edilir.
+/// Kullanıcı koltuk sectiginde olusur, 10 dakika boyunca koltukları kilitler.
+/// Bu süre içinde ödeme yapilmazsa background job tarafından iptal edilir.
 /// </summary>
 public class Reservation : ConcurrentEntity
 {
@@ -21,7 +21,7 @@ public class Reservation : ConcurrentEntity
 
     // ---------------------------------------------------------------
     // DURUM MAKINESI
-    // docs/02-domain-model.md'deki tablonun birebir karsiligi
+    // docs/02-domain-model.md'deki tablonun birebir karşılığı
     // ---------------------------------------------------------------
 
     private static readonly Dictionary<ReservationStatus, ReservationStatus[]> AllowedTransitions = new()
@@ -35,7 +35,7 @@ public class Reservation : ConcurrentEntity
         [ReservationStatus.PaymentPending] =
         [
             ReservationStatus.Confirmed,
-            ReservationStatus.Locked,      // odeme basarisiz -> geri don
+            ReservationStatus.Locked,      // ödeme başarısız -> geri dön
             ReservationStatus.Expired,
             ReservationStatus.Cancelled
         ],
@@ -47,9 +47,9 @@ public class Reservation : ConcurrentEntity
         // Expired, Cancelled, Refunded bilerek YOK -- son durumlar.
         //
         // Ozellikle "Expired" anahtarinin olmamasi, PDF'in su kuralinin
-        // dogrudan karsiligi:
-        //   "Suresi dolmus rezervasyon uzerinden odeme baslatilamaz."
-        // Expired'dan PaymentPending'e giden bir yol OLMADIGI icin
+        // doğrudan karşılığı:
+        //   "Süresi dolmuş rezervasyon üzerinden ödeme baslatilamaz."
+        // Expired'dan PaymentPending'e giden bir yol OLMADIGI için
         // bu kural yapisal olarak imkansiz hale geliyor.
     };
 
@@ -62,52 +62,52 @@ public class Reservation : ConcurrentEntity
     public Guid EventSessionId { get; private set; }
 
     /// <summary>
-    /// Kullaniciya gosterilecek kisa kod. Ornek: "RSV-8F3A2C".
+    /// Kullanıcıya gösterilecek kisa kod. Ornek: "RSV-8F3A2C".
     ///
-    /// Neden Id yetmiyor? Guid 36 karakter ve okunamaz. Kullanici cagri
+    /// Neden Id yetmiyor? Guid 36 karakter ve okunamaz. Kullanıcı cagri
     /// merkezini aradiginda "rezervasyon numaram 8f3a2c1d-..." diye
-    /// okuyamaz. Kisa kod bu yuzden var.
+    /// okuyamaz. Kisa kod bu yüzden var.
     /// </summary>
     public string ReservationCode { get; private set; }
 
     public ReservationStatus Status { get; private set; }
 
     /// <summary>
-    /// Toplam tutar. BACKEND tarafinda hesaplanir.
+    /// Toplam tutar. BACKEND tarafında hesaplanir.
     ///
-    /// PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
-    /// guvenilmemelidir."
+    /// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
+    /// güvenilmemelidir."
     ///
-    /// Bu sadece bir tavsiye degil, guvenlik gereksinimidir: frontend'den
-    /// gelen tutara guvenirsek, kullanici tarayici konsolundan istegi
+    /// Bu sadece bir tavsiye değil, güvenlik gereksinimidir: frontend'den
+    /// gelen tutara guvenirsek, kullanıcı tarayıcı konsolundan isteği
     /// degistirip 500 TL'lik bileti 1 TL'ye alabilir. Tutar her zaman
     /// sunucudaki EventSeat.Price degerlerinden hesaplanir.
     /// </summary>
     public Money TotalAmount { get; private set; }
 
-    /// <summary>Kilit bitis zamani. Bu andan sonra koltuklar serbest.</summary>
+    /// <summary>Kilit bitiş zamani. Bu andan sonra koltuklar serbest.</summary>
     public DateTimeOffset ExpiresAt { get; private set; }
 
     /// <summary>
-    /// Kac kez sure uzatildi. PDF'te yok ama gerekli:
-    /// sinirsiz uzatma olsaydi bir kullanici populer bir etkinlikte
-    /// koltuklari suresiz bloke edip satisi sabote edebilirdi.
+    /// Kac kez süre uzatıldı. PDF'te yok ama gerekli:
+    /// sınırsız uzatma olsaydı bir kullanıcı popüler bir etkinlikte
+    /// koltukları suresiz bloke edip satışı sabote edebilirdi.
     /// </summary>
     public int ExtensionCount { get; private set; }
 
     /// <summary>
-    /// PDF Sprint 15: "Ayni isteğin tekrar gonderilmesine karsi
-    /// idempotency uygulanmalidir."
+    /// PDF Sprint 15: "Aynı isteğin tekrar gonderilmesine karsi
+    /// idempotency uygulanmalıdır."
     ///
-    /// Senaryo: Kullanici butona basiyor, internet yavas, sabirsizlanip
+    /// Senaryo: Kullanıcı butona basiyor, internet yavas, sabirsizlanip
     /// tekrar basiyor. Iki istek de sunucuya ulasiyor.
     ///
-    /// Cozum: Bu alan veritabaninda UNIQUE. Ikinci istek geldiginde unique
+    /// Cozum: Bu alan veritabaninda UNIQUE. Ikinci istek geldiğinde unique
     /// ihlali olusur, biz yakalar ve ILK istegin sonucunu doneriz.
     ///
-    /// Neden ayri bir IdempotencyKeys tablosu degil? Cunku o zaman
-    /// "key kaydet" ve "rezervasyon olustur" iki ayri islem olurdu ve
-    /// aralarinda yine yaris durumu dogardi. Ayni satirda tutmak,
+    /// Neden ayrı bir IdempotencyKeys tablosu değil? Çünkü o zaman
+    /// "key kaydet" ve "rezervasyon oluştur" iki ayrı işlem olurdu ve
+    /// aralarinda yine yaris durumu dogardi. Aynı satirda tutmak,
     /// unique constraint'in ATOMIK garantisinden faydalanmamizi sagliyor.
     /// </summary>
     public string? IdempotencyKey { get; private set; }
@@ -129,14 +129,14 @@ public class Reservation : ConcurrentEntity
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Yeni rezervasyon olusturur ve koltuklari kilitler.
+    /// Yeni rezervasyon oluşturur ve koltukları kilitler.
     /// </summary>
     /// <param name="seats">
     /// Kilitlenecek koltuklar. Fiyat bilgisi BUNLARDAN okunur -- cagirandan
     /// gelen bir tutar parametresi bilerek YOK.
     /// </param>
     /// <param name="now">
-    /// Su anki zaman. Disaridan aliyorum ki "sure doldu" senaryolarini
+    /// Su anki zaman. Disaridan alıyorum ki "süre doldu" senaryolarini
     /// sistem saatini degistirmeden test edebilelim.
     /// </param>
     public static Reservation Create(
@@ -151,17 +151,17 @@ public class Reservation : ConcurrentEntity
 
         if (seats.Count == 0)
         {
-            throw new DomainException("En az bir koltuk secilmelidir.", "reservation.no_seats");
+            throw new DomainException("En az bir koltuk seçilmelidir.", "reservation.no_seats");
         }
 
-        // Ayni koltugun iki kez gonderilmesini engelliyorum.
-        // Frontend'de bir hata olusursa veya kotu niyetli bir istek gelirse
-        // ayni koltuk icin iki kalem olusur, tutar iki katina cikar ve
+        // Aynı koltuğun iki kez gonderilmesini engelliyorum.
+        // Frontend'de bir hata olusursa veya kötü niyetli bir istek gelirse
+        // aynı koltuk için iki kalem olusur, tutar iki katina çıkar ve
         // ikinci kilit girisimi zaten patlar. Bastan kesmek daha temiz.
         var tekilKoltukSayisi = seats.Select(s => s.Id).Distinct().Count();
         if (tekilKoltukSayisi != seats.Count)
         {
-            throw new DomainException("Ayni koltuk birden fazla kez secilemez.", "reservation.duplicate_seats");
+            throw new DomainException("Aynı koltuk birden fazla kez secilemez.", "reservation.duplicate_seats");
         }
 
         var reservation = new Reservation
@@ -178,13 +178,13 @@ public class Reservation : ConcurrentEntity
         foreach (var seat in seats)
         {
             // Koltugu kilitle. Musait degilse burada DomainException firlar
-            // ve rezervasyon HIC olusmaz -- "ya hep ya hic".
+            // ve rezervasyon HİÇ olusmaz -- "ya hep ya hiç".
             seat.Lock(reservation.Id, reservation.ExpiresAt, now);
 
             reservation._items.Add(ReservationItem.Create(
                 reservation.Id, seat.Id, seat.TicketTypeId, seat.Price));
 
-            // Toplami koltugun KENDI fiyatindan hesapliyorum.
+            // Toplami koltuğun KENDİ fiyatindan hesapliyorum.
             reservation.TotalAmount += seat.Price;
         }
 
@@ -200,12 +200,12 @@ public class Reservation : ConcurrentEntity
     }
 
     /// <summary>
-    /// Okunabilir rezervasyon kodu uretir. Ornek: "RSV-8F3A2C".
+    /// Okunabilir rezervasyon kodu üretir. Ornek: "RSV-8F3A2C".
     ///
     /// Karisabilecek karakterleri (0/O, 1/I/L) bilerek CIKARIYORUM.
-    /// Kullanici kodu telefonda okuyacak veya elle yazacak; "0" mi "O" mu
+    /// Kullanıcı kodu telefonda okuyacak veya elle yazacak; "0" mi "O" mu
     /// diye dusunmesini istemiyoruz. Bu detay cagri merkezi yukunu
-    /// gercekten azaltir.
+    /// gerçekten azaltir.
     /// </summary>
     private static string GenerateCode()
     {
@@ -237,8 +237,8 @@ public class Reservation : ConcurrentEntity
     }
 
     /// <summary>
-    /// Sure doldu mu?
-    /// Metot, property degil -- sonuc zamana bagli.
+    /// Süre doldu mu?
+    /// Metot, property değil -- sonuç zamana bağlı.
     /// </summary>
     public bool IsExpiredAt(DateTimeOffset now) => now >= ExpiresAt;
 
@@ -246,24 +246,24 @@ public class Reservation : ConcurrentEntity
     {
         var kalan = ExpiresAt - now;
 
-        // Negatif sure donmuyorum: frontend geri sayimda "-00:03" gostermemeli.
+        // Negatif süre donmuyorum: frontend geri sayimda "-00:03" gostermemeli.
         return kalan > TimeSpan.Zero ? kalan : TimeSpan.Zero;
     }
 
     /// <summary>
-    /// Odeme baslatir.
+    /// Ödeme baslatir.
     ///
-    /// Sure kontrolunu durum gecisinden ONCE yapiyorum. Sebep: bu bir
-    /// IS KURALI ihlali, gecersiz bir durum gecisi degil. Kullaniciya
-    /// "sureniz doldu" demek, "gecis yapilamaz" demekten cok daha anlamli.
-    /// Hata kodu da farkli oldugu icin frontend ikisine farkli tepki verebilir.
+    /// Süre kontrolunu durum gecisinden ONCE yapıyorum. Sebep: bu bir
+    /// IS KURALI ihlali, geçersiz bir durum gecisi değil. Kullanıcıya
+    /// "süreniz doldu" demek, "gecis yapılamaz" demekten çok daha anlamlı.
+    /// Hata kodu da farklı olduğu için frontend ikisine farklı tepki verebilir.
     /// </summary>
     public void StartPayment(DateTimeOffset now)
     {
         if (IsExpiredAt(now))
         {
             throw new DomainException(
-                "Rezervasyon suresi dolmus, odeme baslatilamaz.",
+                "Rezervasyon süresi dolmuş, ödeme baslatilamaz.",
                 "reservation.expired");
         }
 
@@ -271,8 +271,8 @@ public class Reservation : ConcurrentEntity
     }
 
     /// <summary>
-    /// Odeme basarisiz oldu, kilitli duruma geri don.
-    /// Sure UZATILMAZ -- bkz. docs/01-is-analizi.md soru 8.
+    /// Ödeme başarısız oldu, kilitli duruma geri dön.
+    /// Süre UZATILMAZ -- bkz. docs/01-is-analizi.md soru 8.
     /// </summary>
     public void RevertToLocked() => TransitionTo(ReservationStatus.Locked);
 
@@ -284,7 +284,7 @@ public class Reservation : ConcurrentEntity
     }
 
     /// <summary>
-    /// Sure doldu. Background job cagirir.
+    /// Süre doldu. Background job cagirir.
     /// </summary>
     public void Expire(DateTimeOffset now)
     {
@@ -308,23 +308,23 @@ public class Reservation : ConcurrentEntity
     /// Rezervasyon suresini uzatir.
     /// PDF Sprint 7: "POST /api/v1/reservations/{id}/extend"
     /// </summary>
-    /// <param name="extension">Eklenecek sure.</param>
-    /// <param name="maxExtensions">Izin verilen maksimum uzatma sayisi.</param>
+    /// <param name="extension">Eklenecek süre.</param>
+    /// <param name="maxExtensions">Izin verilen maksimum uzatma sayısı.</param>
     public void Extend(TimeSpan extension, int maxExtensions, DateTimeOffset now)
     {
         if (Status != ReservationStatus.Locked)
         {
             throw new DomainException(
-                "Yalnizca kilitli rezervasyonun suresi uzatilabilir.",
+                "Yalnızca kilitli rezervasyonun süresi uzatilabilir.",
                 "reservation.not_extendable");
         }
 
         if (IsExpiredAt(now))
         {
-            // Suresi dolmus rezervasyonu "uzatmak" onu diriltmek olurdu.
-            // Koltuklar bu arada baskasina satilmis olabilir.
+            // Süresi dolmuş rezervasyonu "uzatmak" önü diriltmek olurdu.
+            // Koltuklar bu arada baskasina satılmış olabilir.
             throw new DomainException(
-                "Suresi dolmus rezervasyon uzatilamaz.",
+                "Süresi dolmuş rezervasyon uzatilamaz.",
                 "reservation.expired");
         }
 
@@ -339,6 +339,6 @@ public class Reservation : ConcurrentEntity
         ExtensionCount++;
     }
 
-    /// <summary>Rezervasyondaki bilet sayisi.</summary>
+    /// <summary>Rezervasyondaki bilet sayısı.</summary>
     public int GetTicketCount() => _items.Count;
 }

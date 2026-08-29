@@ -16,10 +16,10 @@ namespace Ticketing.Application.Common.Pagination;
         "CA1000, PagedResult<Event>.Create() gibi cagrilarda tip parametresini " +
         "yazmak zorunda kalmayi 'kullanim zorlugu' sayar. " +
         "Ancak bu, factory metot kalibinin dogal sonucudur ve .NET'in kendisi de " +
-        "ayni yaklasimi kullanir (ornegin ImmutableArray<T>.Empty). " +
-        "Alternatif, ayri bir static olmayan fabrika sinifi yazmak olurdu; bu, " +
+        "aynı yaklasimi kullanir (örneğin ImmutableArray<T>.Empty). " +
+        "Alternatif, ayrı bir static olmayan fabrika sinifi yazmak olurdu; bu, " +
         "hicbir sey kazandirmadan bir tip daha ekler. " +
-        "Kural yalnizca bu tip icin bastirildi.")]
+        "Kural yalnızca bu tip için bastirildi.")]
 public sealed class PagedResult<T>
 {
     private PagedResult(IReadOnlyList<T> items, int pageNumber, int pageSize, int totalCount)
@@ -39,16 +39,16 @@ public sealed class PagedResult<T>
     public int TotalCount { get; }
 
     /// <summary>
-    /// Toplam sayfa sayisi.
+    /// Toplam sayfa sayısı.
     ///
     /// (int)Math.Ceiling(totalCount / (double)pageSize) yerine
-    /// tam sayi aritmetigi kullaniyorum: (a + b - 1) / b
+    /// tam sayi aritmetigi kullanıyorum: (a + b - 1) / b
     ///
-    /// Neden? double'a cevirmek cok buyuk sayilarda hassasiyet kaybina
+    /// Neden? double'a cevirmek çok büyük sayilarda hassasiyet kaybina
     /// yol acabilir ve gereksiz bir donusum. Tam sayi versiyonu hem
-    /// daha hizli hem de her zaman kesin dogru.
+    /// daha hizli hem de her zaman kesin doğru.
     ///
-    /// Ornek: 25 kayit, sayfa boyutu 10
+    /// Ornek: 25 kayıt, sayfa boyutu 10
     ///   (25 + 10 - 1) / 10 = 34 / 10 = 3   (tam sayi bolmesi)
     /// </summary>
     public int TotalPages => PageSize > 0 ? (TotalCount + PageSize - 1) / PageSize : 0;
@@ -65,11 +65,11 @@ public sealed class PagedResult<T>
         => new(items, pageNumber, pageSize, totalCount);
 
     /// <summary>
-    /// Bos sonuc. Arama hicbir kayit dondurmediginde kullanilir.
+    /// Boş sonuç. Arama hiçbir kayıt dondurmediginde kullanilir.
     ///
-    /// null donmek yerine bos bir sayfa donuyorum: frontend'in
-    /// "sonuc yok mu yoksa hata mi?" diye ayirt etmesi gerekmesin.
-    /// Bos liste, "arama calisti ama eslesme yok" demektir.
+    /// null donmek yerine boş bir sayfa donuyorum: frontend'in
+    /// "sonuç yok mu yoksa hata mi?" diye ayırt etmesi gerekmesin.
+    /// Boş liste, "arama calisti ama eslesme yok" demektir.
     /// </summary>
     public static PagedResult<T> Empty(int pageNumber, int pageSize)
         => new([], pageNumber, pageSize, 0);

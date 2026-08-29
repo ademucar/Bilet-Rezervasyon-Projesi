@@ -4,7 +4,7 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Bilet turu ve fiyati. PDF Sprint 6.
+/// Bilet türü ve fiyati. PDF Sprint 6.
 /// Ornek: Standard, Student, VIP, EarlyBird, Balcony, FrontStage.
 /// </summary>
 public class TicketType : AuditableEntity
@@ -27,10 +27,10 @@ public class TicketType : AuditableEntity
     public Money Price { get; private set; }
 
     /// <summary>
-    /// Kontenjan. null ise sinirsiz (koltuk sayisi kadar).
+    /// Kontenjan. null ise sınırsız (koltuk sayısı kadar).
     ///
-    /// PDF: "Kontenjan salon kapasitesini asamaz." Bu kontrol Application
-    /// katmaninda yapilacak cunku salon kapasitesi bu entity'de yok.
+    /// PDF: "Kontenjan salon kapasitesini aşamaz." Bu kontrol Application
+    /// katmaninda yapilacak çünkü salon kapasitesi bu entity'de yok.
     /// </summary>
     public int? Quota { get; private set; }
 
@@ -41,9 +41,9 @@ public class TicketType : AuditableEntity
     public bool IsActive { get; private set; }
 
     /// <summary>
-    /// PDF: "Ogrenci bileti icin dogrulama alani tasarlanmalidir."
-    /// true ise satin alma sirasinda ogrenci belgesi numarasi istenecek
-    /// ve giriste kontrol edilecek.
+    /// PDF: "Ogrenci bileti için doğrulama alanı tasarlanmalidir."
+    /// true ise satin alma sırasında ogrenci belgesi numarasi istenecek
+    /// ve girişte kontrol edilecek.
     /// </summary>
     public bool RequiresStudentVerification { get; private set; }
 
@@ -51,7 +51,7 @@ public class TicketType : AuditableEntity
 
     private readonly List<TicketTypeSection> _sections = [];
 
-    /// <summary>Bu bilet turunun kapsadigi oturma plani bolumleri.</summary>
+    /// <summary>Bu bilet turunun kapsadigi oturma planı bolumleri.</summary>
     public IReadOnlyCollection<TicketTypeSection> Sections => _sections.AsReadOnly();
 
     public static TicketType Create(
@@ -63,16 +63,16 @@ public class TicketType : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Bilet turu adi bos olamaz.", "ticket_type.name_required");
+            throw new DomainException("Bilet türü adı boş olamaz.", "ticket_type.name_required");
         }
 
-        // PDF: "Fiyat sifirdan kucuk olamaz."
-        // Money zaten negatif tutari reddediyor, yani bu kural iki katmanda
-        // korunuyor. Money'de olmasi genel kural, burada olmasi ise
-        // okuyana bu kuralin bilincli oldugunu gosteriyor.
+        // PDF: "Fiyat sıfırdan küçük olamaz."
+        // Money zaten negatif tutarı reddediyor, yani bu kural iki katmanda
+        // korunuyor. Money'de olmasını genel kural, burada olmasını ise
+        // okuyana bu kuralin bilinçli olduğunu gosteriyor.
         if (quota is <= 0)
         {
-            throw new DomainException("Kontenjan sifirdan buyuk olmalidir.", "ticket_type.invalid_quota");
+            throw new DomainException("Kontenjan sıfırdan büyük olmalıdır.", "ticket_type.invalid_quota");
         }
 
         return new TicketType
@@ -87,7 +87,7 @@ public class TicketType : AuditableEntity
     }
 
     /// <summary>
-    /// PDF: "Bilet turu satis tarih araligi disinda satin alinamaz."
+    /// PDF: "Bilet türü satış tarih aralığı disinda satin alinamaz."
     /// </summary>
     public bool IsOnSaleAt(DateTimeOffset moment)
     {
@@ -110,7 +110,7 @@ public class TicketType : AuditableEntity
     }
 
     /// <summary>
-    /// PDF: "Satis baslamis bilet turunun fiyati degistirilirse degisiklik
+    /// PDF: "Satış baslamis bilet turunun fiyati degistirilirse degisiklik
     /// loglanmalidir."
     ///
     /// Eski fiyati DONDURUYORUM ki cagiran taraf audit log kaydini
@@ -130,7 +130,7 @@ public class TicketType : AuditableEntity
         if (start.HasValue && end.HasValue && start.Value >= end.Value)
         {
             throw new DomainException(
-                "Satis baslangici bitisten once olmalidir.",
+                "Satış baslangici bitisten önce olmalıdır.",
                 "ticket_type.invalid_sales_period");
         }
 
@@ -139,14 +139,14 @@ public class TicketType : AuditableEntity
     }
 
     /// <summary>
-    /// Bu bilet turune bir bolum atar.
+    /// Bu bilet turune bir bölüm atar.
     /// PDF: POST /api/v1/ticket-types/{id}/assign-section
     /// </summary>
     public void AssignSection(Guid seatSectionId)
     {
-        // Ayni bolumu iki kez atamayi sessizce yok sayiyorum.
-        // "Bu bolumu bu bilet turune ata" istegi idempotent olmali:
-        // iki kez cagrilirsa sonuc ayni olmali.
+        // Aynı bolumu iki kez atamayi sessizce yok sayiyorum.
+        // "Bu bolumu bu bilet turune ata" isteği idempotent olmalı:
+        // iki kez cagrilirsa sonuç aynı olmalı.
         if (_sections.Exists(s => s.SeatSectionId == seatSectionId))
         {
             return;
@@ -159,23 +159,23 @@ public class TicketType : AuditableEntity
         => _sections.RemoveAll(s => s.SeatSectionId == seatSectionId);
 
     /// <summary>
-    /// Bilet turunun temel bilgilerini gunceller.
+    /// Bilet turunun temel bilgilerini günceller.
     ///
-    /// Fiyat BURADA degismiyor -- onun icin ayri bir metot var
-    /// (ChangePrice), cunku fiyat degisikligi LOGLANMAK zorunda.
-    /// Ayni metotta olsaydi, "sadece adi degistirdim" durumunda da
-    /// gereksiz audit kaydi olusurdu.
+    /// Fiyat BURADA degismiyor -- onun için ayrı bir metot var
+    /// (ChangePrice), çünkü fiyat degisikligi LOGLANMAK zorunda.
+    /// Aynı metotta olsaydı, "sadece adı degistirdim" durumunda da
+    /// gereksiz audit kaydı olusurdu.
     /// </summary>
     public void Update(string name, int? quota, bool requiresStudentVerification)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Bilet turu adi bos olamaz.", "ticket_type.name_required");
+            throw new DomainException("Bilet türü adı boş olamaz.", "ticket_type.name_required");
         }
 
         if (quota is <= 0)
         {
-            throw new DomainException("Kontenjan sifirdan buyuk olmalidir.", "ticket_type.invalid_quota");
+            throw new DomainException("Kontenjan sıfırdan büyük olmalıdır.", "ticket_type.invalid_quota");
         }
 
         Name = name.Trim();

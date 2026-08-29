@@ -7,15 +7,15 @@ namespace Ticketing.Application.Abstractions.Persistence;
 /// Application katmaninin veritabanina bakan yuzu.
 ///
 /// ==================================================================
-/// NEDEN REPOSITORY DEGIL DE DOGRUDAN DbSet?
+/// NEDEN REPOSITORY DEĞİL DE DOGRUDAN DbSet?
 /// ==================================================================
-/// Klasik yaklasim her entity icin bir repository yazmaktir:
+/// Klasik yaklasim her entity için bir repository yazmaktir:
 /// IUserRepository, IEventRepository, IReservationRepository...
 ///
 /// Bunu YAPMADIM. Sebeplerim:
 ///
 /// 1) DbSet&lt;T&gt; ZATEN bir repository'dir ve IQueryable ZATEN bir
-///    sorgu soyutlamasidir. Ustune bir katman daha koymak, ayni isi
+///    sorgu soyutlamasidir. Ustune bir katman daha koymak, aynı isi
 ///    iki kez yapmaktir.
 ///
 /// 2) Repository'ler kacinilmaz olarak sisiyor:
@@ -23,27 +23,27 @@ namespace Ticketing.Application.Abstractions.Persistence;
 ///    GetByIdWithSessionsAndSeatsAndTicketTypes...
 ///    Her yeni ekran yeni bir metot dogurur.
 ///
-/// 3) Repository, EF'in en guclu ozelliklerini (projeksiyon, Include,
-///    Split query, compiled query) ya gizler ya da her birini ayri
+/// 3) Repository, EF'in en güçlü ozelliklerini (projeksiyon, Include,
+///    Split query, compiled query) ya gizler ya da her birini ayrı
 ///    metot olarak acmaya zorlar.
 ///
-/// PDF de bu konuda esnek: "Repository abstraction GEREKIYORSA yalnizca
+/// PDF de bu konuda esnek: "Repository abstraction GEREKIYORSA yalnızca
 /// interface seviyesinde" diyor. Yani zorunlu tutmuyor.
 ///
 /// ------------------------------------------------------------------
 /// PEKI TEST EDILEBILIRLIK?
 /// ------------------------------------------------------------------
-/// Repository'nin ana gerekcesi "handler'i mock'layabilmek"tir.
+/// Repository'nin ana gerekçesi "handler'i mock'layabilmek"tir.
 /// Ama biz zaten Testcontainers ile GERCEK PostgreSQL uzerinde
 /// integration test yazacagiz (PDF Sprint 17 bunu zorunlu tutuyor).
 ///
-/// Mock'lanmis bir repository ile yazilan test, gercek veritabanindaki
+/// Mock'lanmis bir repository ile yazilan test, gerçek veritabanindaki
 /// unique index ihlallerini, concurrency cakismalarini ve transaction
 /// davranisini YAKALAYAMAZ -- ki bizim projemizin en kritik kisimlari
 /// tam olarak bunlar.
 ///
-/// Bu arayuz yine de degerli: Application katmani somut
-/// TicketingDbContext'i degil bu soyutlamayi goruyor, yani Persistence
+/// Bu arayüz yine de degerli: Application katmani somut
+/// TicketingDbContext'i değil bu soyutlamayi görüyor, yani Persistence
 /// katmanina bagimli olmuyor. Architecture testimiz bunu zorunlu kiliyor.
 /// </summary>
 public interface IApplicationDbContext

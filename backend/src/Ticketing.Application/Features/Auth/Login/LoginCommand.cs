@@ -23,27 +23,27 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
         // ==================================================================
         // LOGIN'DE SIFRE KURALLARI UYGULANMAZ -- BU KASITLI
         // ==================================================================
-        // Register'da "en az bir buyuk harf" gibi kurallar var ama burada
-        // YOK. Sadece "bos olmasin" diyoruz.
+        // Register'da "en az bir büyük harf" gibi kurallar var ama burada
+        // YOK. Sadece "boş olmasın" diyoruz.
         //
         // Neden? Iki sebep:
         //
-        // 1) Sifre politikasi zamanla degisir. Bugun 8 karakter zorunlu
-        //    ama 2 yil once kayit olan kullanicinin sifresi 6 karakter
-        //    olabilir. Login'de yeni kurali uygularsak o kullanici
+        // 1) Şifre politikasi zamanla degisir. Bugun 8 karakter zorunlu
+        //    ama 2 yil önce kayıt olan kullanıcının sifresi 6 karakter
+        //    olabilir. Login'de yeni kuralı uygularsak o kullanıcı
         //    kendi hesabina GIREMEZ hale gelir.
         //
-        // 2) Saldirgana bilgi vermemek. "Sifre en az bir rakam
-        //    icermelidir" hatasi, saldirgana sifre politikasini ogretir
+        // 2) Saldirgana bilgi vermemek. "Şifre en az bir rakam
+        //    içermelidir" hatası, saldirgana şifre politikasini ogretir
         //    ve deneme uzayini daraltmasini saglar.
         // ==================================================================
         RuleFor(x => x.Email).NotEmpty().WithMessage("E-posta adresi zorunludur.");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("Sifre zorunludur.");
+        RuleFor(x => x.Password).NotEmpty().WithMessage("Şifre zorunludur.");
     }
 }
 
 /// <summary>
-/// Giris akisi. PDF Sprint 15'in "Brute force korumasi" maddesini de karsilar.
+/// Giriş akışı. PDF Sprint 15'in "Brute force korumasi" maddesini de karsilar.
 /// </summary>
 internal sealed partial class LoginCommandHandler
     : IRequestHandler<LoginCommand, Result<AuthResponse>>
@@ -74,8 +74,8 @@ internal sealed partial class LoginCommandHandler
     {
         var email = request.Email.Trim().ToLowerInvariant();
 
-        // Rolleri de yukluyorum cunku token'a yazacagim.
-        // Ayri sorgu yapmak yerine tek seferde alarak veritabanina
+        // Rolleri de yukluyorum çünkü token'a yazacagim.
+        // Ayrı sorgu yapmak yerine tek seferde alarak veritabanina
         // gidis sayisini azaltiyorum.
         var user = await _context.Users
             .Include(u => u.UserRoles)
@@ -87,42 +87,42 @@ internal sealed partial class LoginCommandHandler
             // ==============================================================
             // ZAMANLAMA SALDIRISINA KARSI SAHTE HASH DOGRULAMA
             // ==============================================================
-            // Burada dogrudan donseydik su acik olusurdu:
+            // Burada doğrudan donseydik su açık olusurdu:
             //
-            //   Kullanici YOK  -> istek ~5 ms surer (sadece DB sorgusu)
-            //   Kullanici VAR  -> istek ~300 ms surer (BCrypt dogrulamasi)
+            //   Kullanıcı YOK  -> istek ~5 ms surer (sadece DB sorgusu)
+            //   Kullanıcı VAR  -> istek ~300 ms surer (BCrypt dogrulamasi)
             //
-            // Saldirgan yanit SURESINE bakarak e-postanin kayitli olup
+            // Saldirgan yanit SURESINE bakarak e-postanin kayıtlı olup
             // olmadigini anlayabilirdi -- hata mesajlarini ozdes yapmamiz
             // bosa giderdi. Buna "zamanlama saldirisi" (timing attack) denir.
             //
-            // Cozum: kullanici bulunamasa BILE bir BCrypt dogrulamasi
-            // calistiriyoruz. Boylece iki durum da ayni sureyi aliyor.
+            // Cozum: kullanıcı bulunamasa BILE bir BCrypt dogrulamasi
+            // calistiriyoruz. Boylece iki durum da aynı süreyi aliyor.
             //
-            // Kullanilan hash gecerli bir BCrypt hash'i ("dummy" kelimesinin
-            // hash'i); sonucu zaten kullanmiyoruz, amac sadece ayni
+            // Kullanilan hash geçerli bir BCrypt hash'i ("dummy" kelimesinin
+            // hash'i); sonucu zaten kullanmiyoruz, amac sadece aynı
             // hesaplama maliyetini odemek.
             _ = _passwordHasher.Verify(
                 request.Password,
                 "$2a$12$C6UzMDM.H6dfI/f/IKcEe.7ZLQhO7BsLFcHy5UbfHYHmqLQ8sBEHu");
 
             // ==========================================================
-            // PDF Sprint 16: "Basarisiz login" loglanmalidir.
+            // PDF Sprint 16: "Başarısız login" loglanmalidir.
             // ==========================================================
-            // E-POSTA MASKELI (Sprint 15 gerekcesi): basarisiz giris
-            // loglari saldiri sirasinda BINLERCE satir uretiyor. Acik
-            // yazsaydik, saldirganin denedigi tum adresler log
-            // dosyasinda toplu bir liste olusturur -- yani saldirgan
-            // basarisiz olsa bile bizim loglarimiz onun ise yarardi.
+            // E-POSTA MASKELI (Sprint 15 gerekçesi): başarısız giriş
+            // loglari saldiri sırasında BINLERCE satır uretiyor. Acik
+            // yazsaydık, saldirganin denedigi tüm adresler log
+            // dosyasinda toplu bir liste oluşturur -- yani saldirgan
+            // başarısız olsa bile bizim loglarimiz onun ise yarardi.
             //
-            // Sebebi de ayri bir alan olarak veriyorum ("kullanici yok"
-            // / "sifre yanlis"). Ayni mesaji kullansaydik, uretimde
+            // Sebebi de ayrı bir alan olarak veriyorum ("kullanıcı yok"
+            // / "şifre yanlış"). Aynı mesaji kullansaydık, uretimde
             // "hangi hesaplar VAR?" sorusunu loglardan cevaplamak
             // imkansiz olurdu -- oysa bu, bir saldirinin hedefli mi
-            // yoksa korlemesine mi oldugunu anlamak icin gerekli.
+            // yoksa korlemesine mi olduğunu anlamak için gerekli.
             //
-            // DIKKAT: bu ayrim yalnizca LOGDA var. Kullaniciya donen
-            // yanit ikisinde de ayni ("E-posta veya sifre hatali") --
+            // DIKKAT: bu ayrim yalnızca LOGDA var. Kullanıcıya donen
+            // yanit ikisinde de aynı ("E-posta veya şifre hatalı") --
             // aksi halde hesap sayimi (user enumeration) yapilabilirdi.
             // ==========================================================
             LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "kullanici_yok");
@@ -130,18 +130,18 @@ internal sealed partial class LoginCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
-        // Kilit kontrolu, sifre kontrolunden ONCE.
-        // Kilitli hesapta sifre dogrulamasi yapmak hem gereksiz CPU
+        // Kilit kontrolü, şifre kontrolunden ONCE.
+        // Kilitli hesapta şifre dogrulamasi yapmak hem gereksiz CPU
         // harcar hem de saldirganin kilit durumunu atlatmasina yarar.
         if (user.IsLockedOut())
         {
-            // Kilitli hesaba giris denemesi, DEVAM EDEN bir saldirinin
+            // Kilitli hesaba giriş denemesi, DEVAM EDEN bir saldirinin
             // en net isaretidir: hesap zaten kilitlendigi halde biri
-            // hala deniyor.
+            // hâlâ deniyor.
             //
-            // Burada kullanici KIMLIGINI (Guid) logluyorum, e-postayi
-            // degil: hesap zaten belirlenmis durumda ve destek ekibi
-            // Guid ile kullaniciya ulasabiliyor.
+            // Burada kullanıcı KIMLIGINI (Guid) logluyorum, e-postayi
+            // değil: hesap zaten belirlenmis durumda ve destek ekibi
+            // Guid ile kullanıcıya ulasabiliyor.
             LogLoginBlocked(_logger, user.Id, "hesap_kilitli");
 
             return Result.Failure<AuthResponse>(AuthErrors.AccountLocked);
@@ -158,21 +158,21 @@ internal sealed partial class LoginCommandHandler
                 _security.MaxFailedLoginAttempts,
                 TimeSpan.FromMinutes(_security.LockoutMinutes));
 
-            // Basarisiz deneme sayacini KAYDETMEK zorundayiz.
-            // Kaydetmezsek sayac hic artmaz ve brute force korumasi
-            // hicbir sey yapmaz -- calistigini sanip korumasiz kaliriz.
+            // Başarısız deneme sayacini KAYDETMEK zorundayız.
+            // Kaydetmezsek sayaç hiç artmaz ve brute force korumasi
+            // hiçbir sey yapmaz -- calistigini sanip korumasiz kaliriz.
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "sifre_yanlis");
 
-            // Bu deneme hesabi KILITLEDIYSE ayrica logluyorum.
+            // Bu deneme hesabi KILITLEDIYSE ayrıca logluyorum.
             //
-            // Neden ayri bir olay? Cunku bu, izleme sisteminde alarm
-            // kurulacak esik: tek bir basarisiz giris gurultu, ama
+            // Neden ayrı bir olay? Çünkü bu, izleme sisteminde alarm
+            // kurulacak esik: tek bir başarısız giriş gurultu, ama
             // "son 10 dakikada 50 hesap kilitlendi" bir saldiri.
             //
-            // Ayni EventId'yi kullansaydik bu iki durumu birbirinden
-            // ayiran bir alarm kurali yazilamazdi.
+            // Aynı EventId'yi kullansaydık bu iki durumu birbirinden
+            // ayiran bir alarm kuralı yazilamazdi.
             if (user.IsLockedOut())
             {
                 LogAccountLocked(_logger, user.Id, _security.MaxFailedLoginAttempts);
@@ -181,7 +181,7 @@ internal sealed partial class LoginCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
         }
 
-        // Basarili giris: cezayi kaldir.
+        // Başarılı giriş: cezayi kaldir.
         user.ResetFailedLoginAttempts();
 
         var roles = await GetRoleNamesAsync(user.Id, cancellationToken).ConfigureAwait(false);
@@ -199,9 +199,9 @@ internal sealed partial class LoginCommandHandler
 
         // PDF Sprint 16: "Login" loglanmalidir.
         //
-        // Token'i veya e-postayi LOGLAMIYORUM. Kullanici kimligi ve
-        // rolleri yeterli: "kim giris yapti" sorusunu cevapliyor ama
-        // log dosyasi tek basina ne bir kullanici listesi ne de bir
+        // Token'i veya e-postayi LOGLAMIYORUM. Kullanıcı kimliği ve
+        // rolleri yeterli: "kim giriş yapti" sorusunu cevapliyor ama
+        // log dosyasi tek başına ne bir kullanıcı listesi ne de bir
         // oturum ele gecirme araci oluyor.
         LogLoginSucceeded(_logger, user.Id, roles.Count);
 
@@ -222,55 +222,55 @@ internal sealed partial class LoginCommandHandler
     // ==============================================================
     // LOG TANIMLARI
     // ==============================================================
-    // [LoggerMessage] kaynak ureteci kullaniyorum (CA1848):
-    // _logger.LogInformation("...", arg) yazsaydik her cagride
+    // [LoggerMessage] kaynak ureteci kullanıyorum (CA1848):
+    // _logger.LogInformation("...", arg) yazsaydık her cagride
     // string bicimlendirme ve kutulama (boxing) olurdu -- log
-    // seviyesi kapali olsa BILE.
+    // seviyesi kapalı olsa BILE.
     //
-    // Uretilen kod once IsEnabled kontrolu yapiyor; kapaliysa
-    // hicbir tahsis yapmiyor.
+    // Uretilen kod önce IsEnabled kontrolü yapiyor; kapaliysa
+    // hiçbir tahsis yapmiyor.
     // ==============================================================
 
     [LoggerMessage(
         EventId = LogEvents.LoginBasarili,
         Level = LogLevel.Information,
-        Message = "Giris basarili. Kullanici: {UserId}, Rol sayisi: {RoleCount}")]
+        Message = "Giriş başarılı. Kullanıcı: {UserId}, Rol sayısı: {RoleCount}")]
     private static partial void LogLoginSucceeded(ILogger logger, Guid userId, int roleCount);
 
     /// <remarks>
-    /// Warning seviyesi, Information degil.
+    /// Warning seviyesi, Information değil.
     ///
-    /// Sebep: uretim ortamlarinda Information cogu zaman
-    /// filtreleniyor. Basarisiz girisi Information yapsaydik,
-    /// "son 5 dakikada 100 basarisiz giris" alarmi HIC tetiklenmezdi
-    /// -- kural dogru olurdu ama besleyen veri hic gelmezdi.
+    /// Sebep: üretim ortamlarinda Information çoğu zaman
+    /// filtreleniyor. Başarısız girişi Information yapsaydik,
+    /// "son 5 dakikada 100 başarısız giriş" alarmi HİÇ tetiklenmezdi
+    /// -- kural doğru olurdu ama besleyen veri hiç gelmezdi.
     ///
-    /// Bu, guvenlik acisindan en degerli log satirimiz.
+    /// Bu, güvenlik acisindan en degerli log satirimiz.
     /// </remarks>
     [LoggerMessage(
         EventId = LogEvents.LoginBasarisiz,
         Level = LogLevel.Warning,
-        Message = "Giris basarisiz. E-posta: {MaskedEmail}, Sebep: {Reason}")]
+        Message = "Giriş başarısız. E-posta: {MaskedEmail}, Sebep: {Reason}")]
     private static partial void LogLoginFailed(ILogger logger, string maskedEmail, string reason);
 
     [LoggerMessage(
         EventId = LogEvents.LoginBasarisiz,
         Level = LogLevel.Warning,
-        Message = "Giris engellendi. Kullanici: {UserId}, Sebep: {Reason}")]
+        Message = "Giriş engellendi. Kullanıcı: {UserId}, Sebep: {Reason}")]
     private static partial void LogLoginBlocked(ILogger logger, Guid userId, string reason);
 
     [LoggerMessage(
         EventId = LogEvents.HesapKilitlendi,
         Level = LogLevel.Warning,
-        Message = "Hesap kilitlendi. Kullanici: {UserId}, Basarisiz deneme: {Attempts}")]
+        Message = "Hesap kilitlendi. Kullanıcı: {UserId}, Başarısız deneme: {Attempts}")]
     private static partial void LogAccountLocked(ILogger logger, Guid userId, int attempts);
 
     private async Task<IReadOnlyCollection<string>> GetRoleNamesAsync(
         Guid userId,
         CancellationToken cancellationToken)
     {
-        // Join yerine navigation kullaniyorum; EF bunu tek sorguya cevirir.
-        // AsNoTracking cunku bu veriyi yalnizca okuyup token'a yazacagiz;
+        // Join yerine navigation kullanıyorum; EF bunu tek sorguya cevirir.
+        // AsNoTracking çünkü bu veriyi yalnızca okuyup token'a yazacagiz;
         // EF'in degisiklik takibi yapmasina gerek yok (bellek tasarrufu).
         return await _context.UserRoles
             .AsNoTracking()

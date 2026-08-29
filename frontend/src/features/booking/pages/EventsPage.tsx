@@ -238,7 +238,7 @@ export function EventsPage() {
                  her şey yerinden zıplıyordu.
 
                  Şimdi iskelet gerçek kartın anatomisini taşıyor:
-                 solda 72px'lik takvim bloğu, sağda başlık ve mekân
+                 solda 72px'lik takvim bloğu, sağda başlık ve mekan
                  satırları. Veri gelince yalnızca renkler değişiyor,
                  yerleşim aynı kalıyor.
 

@@ -24,7 +24,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         builder.HasOne(r => r.User)
                .WithMany()
                .HasForeignKey(r => r.UserId)
-               .OnDelete(DeleteBehavior.Restrict);   // rezervasyonu olan kullanici silinemez
+               .OnDelete(DeleteBehavior.Restrict);   // rezervasyonu olan kullanıcı silinemez
 
         builder.HasOne(r => r.EventSession)
                .WithMany()
@@ -41,12 +41,12 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         // ------------------------------------------------------------------
         // IDEMPOTENCY -- PDF Sprint 15
         // ------------------------------------------------------------------
-        // Kullanici butona iki kez basarsa ikinci istek bu unique index'e
+        // Kullanıcı butona iki kez basarsa ikinci istek bu unique index'e
         // takilir ve yeni rezervasyon OLUSMAZ.
         //
         // HasFilter ile NULL olanlari disarida biraktim: idempotency key
         // gondermeyen (opsiyonel) istekler birbirini engellememeli.
-        // PostgreSQL'de NULL'lar unique index'te birbirinden farkli sayilir
+        // PostgreSQL'de NULL'lar unique index'te birbirinden farklı sayilir
         // ama filtre koymak hem niyeti netlestiriyor hem de index'i
         // kucultuyor.
         builder.HasIndex(r => r.IdempotencyKey)
@@ -54,7 +54,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                .HasFilter("\"IdempotencyKey\" IS NOT NULL")
                .HasDatabaseName("ix_reservations_idempotency_key");
 
-        // "Benim rezervasyonlarim" sayfasi
+        // "Benim rezervasyonlarim" sayfası
         builder.HasIndex(r => new { r.UserId, r.Status });
 
         // ------------------------------------------------------------------
@@ -62,8 +62,8 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         // ------------------------------------------------------------------
         //     WHERE Status IN (Locked, PaymentPending) AND ExpiresAt <= now()
         //
-        // Bu sorgu DAKIKADA BIR calisacak. Index olmasaydi her calismada
-        // tum Reservations tablosunu tararsdi. 100.000 rezervasyondan sonra
+        // Bu sorgu DAKIKADA BIR calisacak. Index olmasaydı her calismada
+        // tüm Reservations tablosunu tararsdi. 100.000 rezervasyondan sonra
         // bu, veritabanini surekli mesgul eden bir yuke donusurdu.
         builder.HasIndex(r => new { r.Status, r.ExpiresAt })
                .HasDatabaseName("ix_reservations_status_expires");
@@ -84,12 +84,12 @@ internal sealed class ReservationItemConfiguration : IEntityTypeConfiguration<Re
                .HasForeignKey(i => i.EventSeatId)
                .OnDelete(DeleteBehavior.Restrict);   // rezerve koltuk silinemez
 
-        // Bir koltuk ayni anda yalnizca BIR aktif rezervasyon kalemine
-        // ait olabilir. Bunu unique index ile garanti edemeyiz cunku
-        // gecmis (iptal olmus) rezervasyonlarin kalemleri de ayni koltuga
+        // Bir koltuk aynı anda yalnızca BIR aktif rezervasyon kalemine
+        // ait olabilir. Bunu unique index ile garanti edemeyiz çünkü
+        // gecmis (iptal olmuş) rezervasyonlarin kalemleri de aynı koltuga
         // isaret ediyor. Asil garanti EventSeat.Status uzerinde.
         //
-        // Bu index yalnizca sorgu hizi icin.
+        // Bu index yalnızca sorgu hizi için.
         builder.HasIndex(i => i.EventSeatId);
     }
 }
@@ -163,16 +163,16 @@ internal sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         builder.ConfigureMoney(t => t.Price, "Price_");
 
-        // PDF sayfa 8: "Bilet numarasi benzersiz olmalidir."
+        // PDF sayfa 8: "Bilet numarasi benzersiz olmalıdır."
         builder.HasIndex(t => t.TicketNumber)
                .IsUnique()
                .HasDatabaseName("ix_tickets_number");
 
-        // Bir rezervasyon kalemi icin YALNIZCA BIR bilet.
+        // Bir rezervasyon kalemi için YALNIZCA BIR bilet.
         //
-        // Bu, "ayni koltuk icin iki bilet uretildi" hatasinin veritabani
-        // seviyesindeki karsiligi. Boyle bir hata olsa salona iki kisi
-        // girerdi ve kapida tartisma cikardi.
+        // Bu, "aynı koltuk için iki bilet üretildi" hatasinin veritabani
+        // seviyesindeki karşılığı. Boyle bir hata olsa salona iki kişi
+        // girerdi ve kapida tartisma çıkardı.
         builder.HasIndex(t => t.ReservationItemId)
                .IsUnique()
                .HasFilter("\"IsDeleted\" = false")
@@ -198,7 +198,7 @@ internal sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
                .HasForeignKey<TicketQrCode>(q => q.TicketId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        // "Biletlerim" sayfasi
+        // "Biletlerim" sayfası
         builder.HasIndex(t => new { t.UserId, t.Status });
 
         // Etkinlik girisinde kontrol
@@ -216,11 +216,11 @@ internal sealed class TicketQrCodeConfiguration : IEntityTypeConfiguration<Ticke
         builder.Property(q => q.QrValue).HasMaxLength(128).IsRequired();
         builder.Property(q => q.ImagePath).HasMaxLength(512);
 
-        // PDF sayfa 8: "QR kod degeri benzersiz olmalidir."
+        // PDF sayfa 8: "QR kod değeri benzersiz olmalıdır."
         //
-        // Bu index ayni zamanda GIRIS KONTROLUNUN sorgusudur:
+        // Bu index aynı zamanda GIRIS KONTROLUNUN sorgusudur:
         // gorevli QR'i okuttugunda "SELECT ... WHERE QrValue = @deger"
-        // calisir. Index olmadan her okutmada tam tarama olurdu ve
+        // çalışır. Index olmadan her okutmada tam tarama olurdu ve
         // kapida kuyruk olusurdu.
         builder.HasIndex(q => q.QrValue)
                .IsUnique()

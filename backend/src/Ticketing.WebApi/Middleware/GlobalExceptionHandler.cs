@@ -9,23 +9,23 @@ using Ticketing.Application.Common.Security;
 namespace Ticketing.WebApi.Middleware;
 
 /// <summary>
-/// Yakalanmamis tum exception'lari Problem Details formatina cevirir.
+/// Yakalanmamış tüm exception'lari Problem Details formatina cevirir.
 ///
 /// PDF Sprint 2:
 ///   - "Global exception handling eklenmelidir."
-///   - "Problem Details standardi kullanilmalidir."
+///   - "Problem Details standardi kullanılmalıdır."
 ///
 /// ------------------------------------------------------------------
-/// NEDEN IExceptionHandler, NEDEN KLASIK MIDDLEWARE DEGIL?
+/// NEDEN IExceptionHandler, NEDEN KLASIK MIDDLEWARE DEĞİL?
 /// ------------------------------------------------------------------
 /// Eskiden bu is try/catch iceren bir middleware ile yapilirdi.
 /// .NET 8 ile gelen IExceptionHandler arayuzu daha iyi:
 ///
 ///   - Birden fazla handler zincirlenebilir; biri false donerse
-///     sirada digeri denenir. Boylece "once ozel durumlar, sonra
-///     genel yakalayici" duzeni kurulabilir.
+///     sırada digeri denenir. Boylece "önce ozel durumlar, sonra
+///     genel yakalayici" düzeni kurulabilir.
 ///   - Framework'un kendi hata isleme altyapisiyla butunlesir.
-///   - try/catch blogu yazmadan calisir; kod daha temiz.
+///   - try/catch blogu yazmadan çalışır; kod daha temiz.
 /// </summary>
 internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 {
@@ -39,20 +39,20 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     //    her cagride:
     //      - object[] dizisi ayrilir (boxing: int -> object)
     //      - sablon metni her seferinde ayristirilir
-    //    Log seviyesi kapali olsa BILE bu maliyet oder.
+    //    Log seviyesi kapalı olsa BILE bu maliyet oder.
     //
-    // 2) Asagidaki [LoggerMessage] nitelikleri, derleme aninda kod
-    //    URETIR. Uretilen kod once "bu seviye acik mi?" diye bakar;
-    //    kapaliysa hicbir tahsis yapmadan aninda doner.
+    // 2) Aşağıdaki [LoggerMessage] nitelikleri, derleme anında kod
+    //    URETIR. Uretilen kod önce "bu seviye açık mi?" diye bakar;
+    //    kapaliysa hiçbir tahsis yapmadan anında döner.
     //
-    // 3) EventId sayesinde loglari koda gore filtreleyebiliyoruz:
+    // 3) EventId sayesinde loglari koda göre filtreleyebiliyoruz:
     //    "5001 numarali olaylari goster" gibi.
     //
     // Bu, saniyede binlerce istek alan bir serviste olculebilir fark
-    // yaratir. Ve maliyeti sadece birkac satirlik bildirim.
+    // yaratir. Ve maliyeti sadece birkaç satirlik bildirim.
     //
-    // Not: Bunun icin sinifin "partial" olmasi sart -- uretilen kod
-    // ayni sinifin ikinci yarisi olarak eklenir.
+    // Not: Bunun için sinifin "partial" olmasını sart -- uretilen kod
+    // aynı sinifin ikinci yarisi olarak eklenir.
     // ==================================================================
 
     [LoggerMessage(
@@ -90,13 +90,13 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // ==========================================================
             // ValidationBehavior'in firlattigi hata.
             //
-            // Bu daldan once yoktu ve dogrulama hatalari 500 donuyordu --
+            // Bu daldan önce yoktu ve doğrulama hatalari 500 donuyordu --
             // uygulamayi ILK KEZ CALISTIRDIGIMDA fark ettim. Derleme
-            // temizdi, testler yesildi ama endpoint yanlis cevap
+            // temizdi, testler yesildi ama endpoint yanlış cevap
             // veriyordu.
             //
-            // Ders: birim testler ve derleme, "parcalar dogru mu" sorusunu
-            // cevaplar; "sistem dogru mu" sorusunu ancak calistirmak
+            // Ders: birim testler ve derleme, "parcalar doğru mu" sorusunu
+            // cevaplar; "sistem doğru mu" sorusunu ancak calistirmak
             // (veya integration test) cevaplar. Sprint 17'de bu akislari
             // integration testle koruyacagiz.
             Application.Common.Exceptions.ValidationException validationEx
@@ -105,16 +105,16 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // ==========================================================
             // 1. IS KURALI IHLALI -> 422 Unprocessable Entity
             // ==========================================================
-            // "Suresi dolmus rezervasyonda odeme baslatilamaz" gibi.
-            // Bu bir HATA DEGIL, beklenen bir durum. Gunde binlerce kez
+            // "Süresi dolmuş rezervasyonda ödeme baslatilamaz" gibi.
+            // Bu bir HATA DEĞİL, beklenen bir durum. Gunde binlerce kez
             // olusabilir.
             //
-            // Bu yuzden Warning seviyesinde logluyorum, Error degil.
-            // Error olsaydi izleme panosu surekli alarm calardi ve
-            // GERCEK hatalar bu gurultunun icinde kaybolurdu.
+            // Bu yüzden Warning seviyesinde logluyorum, Error değil.
+            // Error olsaydı izleme panosu surekli alarm calardi ve
+            // GERCEK hatalar bu gurultunun içinde kaybolurdu.
             DomainException domainEx => CreateProblem(
                 statusCode: StatusCodes.Status422UnprocessableEntity,
-                title: "Is kurali ihlali",
+                title: "Is kuralı ihlali",
                 detail: domainEx.Message,
                 errorCode: domainEx.ErrorCode),
 
@@ -123,48 +123,48 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // ==========================================================
             // PROJENIN EN KRITIK HATA YOLU.
             //
-            // Iki kullanici ayni koltugu ayni anda almaya calisti;
+            // Iki kullanıcı aynı koltuğu aynı anda almaya calisti;
             // EventSeats uzerindeki xmin token'i ikinciyi reddetti.
             //
-            // Kullaniciya "sunucu hatasi" demek YANLIS olurdu -- sunucu
-            // tam olarak dogru calisti ve veri butunlugunu korudu.
+            // Kullanıcıya "sunucu hatası" demek YANLIS olurdu -- sunucu
+            // tam olarak doğru calisti ve veri butunlugunu korudu.
             // 409 dondugumuzde frontend koltuk haritasini yenileyip
-            // "bu koltuk az once alindi" diyebiliyor.
+            // "bu koltuk az önce alındı" diyebiliyor.
             DbUpdateConcurrencyException => CreateProblem(
                 statusCode: StatusCodes.Status409Conflict,
                 title: "Cakisma",
-                detail: "Bu kayit siz islem yaparken baskasi tarafindan degistirildi. " +
-                        "Lutfen sayfayi yenileyip tekrar deneyin.",
+                detail: "Bu kayıt siz işlem yaparken başkası tarafından degistirildi. " +
+                        "Lütfen sayfayı yenileyip tekrar deneyin.",
                 errorCode: "concurrency.conflict"),
 
             // ==========================================================
             // 3. VERITABANI KISITI IHLALI -> 409 Conflict
             // ==========================================================
-            // Unique index ihlali buraya duser. Ornegin ayni koltuk icin
-            // ikinci bir EventSeat olusturma girisimi.
+            // Unique index ihlali buraya duser. Ornegin aynı koltuk için
+            // ikinci bir EventSeat oluşturma girisimi.
             //
-            // ONEMLI: Exception'in KENDI mesajini kullaniciya DONMUYORUM.
-            // Icinde tablo adi, sutun adi ve index adi gecer:
+            // ONEMLI: Exception'in KENDİ mesajini kullanıcıya DONMUYORUM.
+            // Icinde tablo adı, sutun adı ve index adı gecer:
             //     "duplicate key value violates unique constraint
             //      ix_event_seats_session_seat"
-            // Bu, saldirgana veritabani semasi hakkinda bilgi verir.
-            // Kendi genel mesajimizi donup detayi yalnizca loga yaziyoruz.
+            // Bu, saldirgana veritabani semasi hakkında bilgi verir.
+            // Kendi genel mesajimizi donup detayı yalnızca loga yazıyoruz.
             DbUpdateException => CreateProblem(
                 statusCode: StatusCodes.Status409Conflict,
-                title: "Veri cakismasi",
-                detail: "Islem tamamlanamadi. Ayni kayit zaten mevcut olabilir.",
+                title: "Veri çakışması",
+                detail: "İşlem tamamlanamadi. Aynı kayıt zaten mevcut olabilir.",
                 errorCode: "database.constraint_violation"),
 
             // ==========================================================
-            // 4. ISTEK IPTAL EDILDI -> 499 (istemci baglantisini kesti)
+            // 4. ISTEK İPTAL EDILDI -> 499 (istemci baglantisini kesti)
             // ==========================================================
-            // Kullanici sayfayi kapatti veya yenilendi. Bu HIC hata degil.
+            // Kullanıcı sayfayı kapatti veya yenilendi. Bu HİÇ hata değil.
             // 500 olarak loglasaydik hata grafiklerimiz sahte artislarla
             // dolardi.
             OperationCanceledException => CreateProblem(
                 statusCode: 499,
-                title: "Istek iptal edildi",
-                detail: "Islem istemci tarafindan iptal edildi.",
+                title: "İstek iptal edildi",
+                detail: "İşlem istemci tarafından iptal edildi.",
                 errorCode: "request.cancelled"),
 
             // ==========================================================
@@ -174,39 +174,39 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // BU DALI SPRINT 15'TE TESTLE BULDUM
             // ==========================================================
             // Program.cs'te MaxRequestBodySize = 1 MB ayarladiktan sonra
-            // 2 MB'lik bir istek gonderip dogruladim. Sonuc 500 dondu.
+            // 2 MB'lik bir istek gonderip dogruladim. Sonuç 500 dondu.
             //
             // 500 YANLIS ve iki acidan zararli:
             //   1) Istemciye "sunucu bozuk" diyor. Oysa sunucu tam olarak
-            //      dogru calisti -- korumasi devreye girdi. Istemci
-            //      "sonra tekrar denerim" diye dusunup ayni buyuk istegi
-            //      tekrar gonderiyor ve sonsuza kadar basarisiz oluyor.
+            //      doğru calisti -- korumasi devreye girdi. Istemci
+            //      "sonra tekrar denerim" diye dusunup aynı büyük isteği
+            //      tekrar gönderiyor ve sonsuza kadar başarısız oluyor.
             //   2) 500'ler izleme panosunda alarm uretiyor. Saldirgan
-            //      buyuk istekler gondererek sahte alarm yagmuru
+            //      büyük istekler gondererek sahte alarm yagmuru
             //      olusturabilirdi.
             //
             // Kestrel sinir asimini BadHttpRequestException olarak
-            // firlatiyor ve icinde DOGRU durum kodunu tasiyor
-            // (413 Payload Too Large). Onu kullaniyorum -- kendim
-            // tahmin etmiyorum, cunku ayni istisna bozuk govde icin
+            // firlatiyor ve içinde DOGRU durum kodunu tasiyor
+            // (413 Payload Too Large). Onu kullanıyorum -- kendim
+            // tahmin etmiyorum, çünkü aynı istisna bozuk govde için
             // 400 ile de gelebiliyor.
             //
             // DERS: bir korumayi eklemek yetmiyor; TETIKLENDIGINDE ne
             // dondugunu de dogrulamak gerekiyor. Ayar dogruydu, yanit
-            // yanlisti ve bunu yalnizca calistirinca gordum.
+            // yanlisti ve bunu yalnızca calistirinca gordum.
             // ==========================================================
             BadHttpRequestException badRequestEx => CreateProblem(
                 statusCode: badRequestEx.StatusCode,
                 title: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
-                    ? "Istek cok buyuk"
-                    : "Gecersiz istek",
+                    ? "İstek çok büyük"
+                    : "Geçersiz istek",
                 detail: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
                     ? "Gonderdiginiz istek izin verilen boyutu asiyor."
-                    : "Istek govdesi okunamadi veya bicimi gecersiz.",
+                    : "Istek govdesi okunamadi veya bicimi geçersiz.",
 
-                // Istisnanin KENDI mesajini donmuyorum: icinde Kestrel'in
-                // ic ayrintilari (sinir degeri, ayristirici durumu) gecer
-                // ve bu saldirgana yapilandirmamizi acik eder.
+                // Istisnanin KENDİ mesajini donmuyorum: içinde Kestrel'in
+                // ic ayrintilari (sinir değeri, ayristirici durumu) gecer
+                // ve bu saldirgana yapilandirmamizi açık eder.
                 errorCode: badRequestEx.StatusCode == StatusCodes.Status413PayloadTooLarge
                     ? "request.too_large"
                     : "request.malformed"),
@@ -216,8 +216,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // ==========================================================
             _ => CreateProblem(
                 statusCode: StatusCodes.Status500InternalServerError,
-                title: "Sunucu hatasi",
-                detail: "Beklenmeyen bir hata olustu. Lutfen daha sonra tekrar deneyin.",
+                title: "Sunucu hatası",
+                detail: "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
                 errorCode: "server.unexpected")
         };
 
@@ -225,8 +225,8 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
         // Correlation ID'yi hata yanitina ekliyorum.
         //
-        // Boylece kullanici destek talebinde bu kodu verebiliyor ve
-        // biz loglarda tam olarak o istegi bulabiliyoruz. Bu tek alan,
+        // Boylece kullanıcı destek talebinde bu kodu verebiliyor ve
+        // biz loglarda tam olarak o isteği bulabiliyoruz. Bu tek alan,
         // destek surelerini saatlerden dakikalara indiriyor.
         if (httpContext.Response.Headers.TryGetValue(
                 CorrelationIdMiddleware.HeaderName, out var correlationId))
@@ -239,7 +239,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         // ==========================================================
         // Stack trace'i YALNIZCA gelistirmede donuyorum.
         //
-        // Uretimde stack trace dondurmek ciddi bir guvenlik acigidir:
+        // Uretimde stack trace dondurmek ciddi bir güvenlik acigidir:
         // saldirgana kullandigin kutuphaneleri, surumlerini, ic sinif
         // yapini ve dosya yollarini gosterir. Bu bilgilerle hedefli
         // saldiri hazirlanabilir.
@@ -247,49 +247,49 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         {
             problem.Extensions["exception"] = exception.GetType().Name;
 
-            // Stack trace de maskeleniyor: icinde degisken degerleri
+            // Stack trace de maskeleniyor: içinde degisken değerleri
             // gecmese bile, ic ice sarilmis istisnalarin mesajlari
             // stack trace metnine dahil olabiliyor.
             //
-            // Burasi yalnizca gelistirme ortami ama gelistirme
-            // ortamindaki veriler de gercek: tarayici konsolundan
+            // Burasi yalnızca gelistirme ortami ama gelistirme
+            // ortamindaki veriler de gerçek: tarayıcı konsolundan
             // kopyalanip hata kaydina yapistiriliyor.
             problem.Extensions["stackTrace"] = SensitiveDataMasker.Mask(exception.StackTrace);
         }
 
-        // RFC 7807: Problem Details icin zorunlu icerik tipi.
+        // RFC 7807: Problem Details için zorunlu içerik tipi.
         httpContext.Response.StatusCode = problem.Status ?? 500;
         httpContext.Response.ContentType = "application/problem+json";
 
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken).ConfigureAwait(false);
 
-        // true = "bu exception'i ben islendim, baska handler'a gitmesin"
+        // true = "bu exception'i ben islendim, başka handler'a gitmesin"
         return true;
     }
 
     /// <summary>
-    /// Dogrulama hatalarini RFC 7807'nin "errors" uzantisiyla dondurur.
+    /// Doğrulama hatalarini RFC 7807'nin "errors" uzantisiyla döndürür.
     ///
-    /// Bicim:
+    /// Biçim:
     ///     {
-    ///       "status": 400, "title": "Dogrulama hatasi",
+    ///       "status": 400, "title": "Doğrulama hatası",
     ///       "errors": {
-    ///         "Email":    ["Gecerli bir e-posta adresi giriniz."],
-    ///         "Password": ["Sifre en az 8 karakter olmalidir."]
+    ///         "Email":    ["Geçerli bir e-posta adresi giriniz."],
+    ///         "Password": ["Şifre en az 8 karakter olmalıdır."]
     ///       }
     ///     }
     ///
-    /// Duz bir liste degil ALAN BAZINDA sozluk donuyoruz cunku frontend
-    /// her mesaji ilgili form alaninin altinda gostermek zorunda.
-    /// Liste donseydik hangi mesajin hangi alana ait oldugu bilinemezdi.
+    /// Duz bir liste değil ALAN BAZINDA sozluk donuyoruz çünkü frontend
+    /// her mesaji ilgili form alaninin altinda göstermek zorunda.
+    /// Liste donseydik hangi mesajin hangi alana ait olduğu bilinemezdi.
     /// </summary>
     private static ProblemDetails CreateValidationProblem(
         Application.Common.Exceptions.ValidationException exception)
     {
         var problem = CreateProblem(
             StatusCodes.Status400BadRequest,
-            "Dogrulama hatasi",
-            "Gonderilen veriler gecerli degil. Lutfen alanlari kontrol edin.",
+            "Doğrulama hatası",
+            "Gonderilen veriler geçerli değil. Lütfen alanlari kontrol edin.",
             "validation.failed");
 
         problem.Extensions["errors"] = exception.Errors;
@@ -309,16 +309,16 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             Title = title,
             Detail = detail,
 
-            // RFC 7807'ye gore "type" hatanin dokumantasyonuna isaret
-            // eden bir URI olmalidir. Standart HTTP durum kodlari icin
-            // RFC'nin kendi adreslerini kullaniyorum.
+            // RFC 7807'ye göre "type" hatanin dokumantasyonuna isaret
+            // eden bir URI olmalıdır. Standart HTTP durum kodlari için
+            // RFC'nin kendi adreslerini kullanıyorum.
             Type = $"https://datatracker.ietf.org/doc/html/rfc9110#name-{statusCode}"
         };
 
-        // Makine tarafindan okunabilir hata kodu.
+        // Makine tarafından okunabilir hata kodu.
         //
         // Frontend "detail" metnine bakarak karar VERMEMELI -- metni
-        // degistirdigimiz gun frontend bozulur. Bu kod sabit kalir.
+        // degistirdigimiz gün frontend bozulur. Bu kod sabit kalır.
         if (!string.IsNullOrWhiteSpace(errorCode))
         {
             problem.Extensions["errorCode"] = errorCode;
@@ -335,10 +335,10 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         // 4xx = istemci kaynakli, BEKLENEN durum   -> Warning
         // 5xx = sunucu kaynakli, GERCEK hata       -> Error
         //
-        // Bu ayrimi yapmasaydik ne olurdu? "Koltuk dolu" gibi gunde
+        // Bu ayrimi yapmasaydik ne olurdu? "Koltuk dolu" gibi günde
         // binlerce kez olusan normal durumlar Error olarak loglanirdi.
         // Uyari sistemleri surekli alarm calar, ekip alarmlari gormezden
-        // gelmeye baslar ve GERCEK bir cokme oldugunda kimse fark etmez.
+        // gelmeye başlar ve GERCEK bir cokme olduğunda kimse fark etmez.
         //
         // Buna "alarm yorgunlugu" denir ve izleme sistemlerini ise
         // yaramaz hale getiren en yaygin sebeptir.
@@ -348,7 +348,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
         }
         else
         {
-            // Stack trace GECMIYORUM: beklenen bir durum icin 40 satirlik
+            // Stack trace GECMIYORUM: beklenen bir durum için 40 satirlik
             // stack trace yazmak log dosyalarini gereksiz sisirir.
             //
             // ==========================================================
@@ -357,16 +357,16 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // exception.Message KULLANICI GIRDISI ICEREBILIYOR. Somut
             // ornekler:
             //
-            //   - JSON ayristirma hatasi, govdenin bir parcasini mesaja
-            //     koyar. Login istegi basarisiz ayristirilirsa SIFRE
+            //   - JSON ayristirma hatası, govdenin bir parcasini mesaja
+            //     koyar. Login isteği başarısız ayristirilirsa SIFRE
             //     loga duser.
-            //   - FluentValidation mesajlari, dogrulanan degeri
+            //   - FluentValidation mesajlari, dogrulanan değeri
             //     iceren bicimde yazilabiliyor.
-            //   - Npgsql kisit ihlali mesajlari, cakisan DEGERI yaziyor.
+            //   - Npgsql kisit ihlali mesajlari, cakisan DEGERI yazıyor.
             //
-            // Loglar "guvenli" degildir: yedeklenir, merkezi sisteme
+            // Loglar "güvenli" degildir: yedeklenir, merkezi sisteme
             // gonderilir, ekran goruntusu alinip paylasilir. Oraya
-            // dusen bir JWT, o kullanicinin hesabi demektir.
+            // dusen bir JWT, o kullanıcının hesabi demektir.
             // ==========================================================
             LogClientError(statusCode, SensitiveDataMasker.Mask(exception.Message));
         }

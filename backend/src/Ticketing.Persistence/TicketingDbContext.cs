@@ -9,12 +9,12 @@ namespace Ticketing.Persistence;
 /// ------------------------------------------------------------------
 /// NEDEN DbSet'ler VAR AMA IS MANTIGI YOK?
 /// ------------------------------------------------------------------
-/// DbContext'in tek isi veri erisimidir. Icine "rezervasyon olustur"
-/// gibi metotlar yazsaydik, is mantigi Persistence katmanina sizardi
-/// ve architecture testimiz bunu yakalamasa bile tasarim bozulurdu.
+/// DbContext'in tek isi veri erisimidir. Icine "rezervasyon oluştur"
+/// gibi metotlar yazsaydık, is mantığı Persistence katmanina sizardi
+/// ve architecture testimiz bunu yakalamasa bile tasarım bozulurdu.
 ///
-/// Ayrica: Controller'lar bu sinifi DOGRUDAN kullanmayacak
-/// (PDF: "Controller dogrudan DbContext kullanmamalidir"). Bunu
+/// Ayrıca: Controller'lar bu sinifi DOGRUDAN kullanmayacak
+/// (PDF: "Controller doğrudan DbContext kullanmamalidir"). Bunu
 /// architecture testi ile zorunlu kildik.
 /// </summary>
 public partial class TicketingDbContext : DbContext
@@ -48,7 +48,7 @@ public partial class TicketingDbContext : DbContext
     public DbSet<TicketTypeSection> TicketTypeSections => Set<TicketTypeSection>();
     public DbSet<EventSeat> EventSeats => Set<EventSeat>();
 
-    // --- Rezervasyon ve odeme ---
+    // --- Rezervasyon ve ödeme ---
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<ReservationItem> ReservationItems => Set<ReservationItem>();
     public DbSet<Payment> Payments => Set<Payment>();
@@ -70,7 +70,7 @@ public partial class TicketingDbContext : DbContext
 
         base.OnModelCreating(modelBuilder);
 
-        // Bu assembly'deki TUM IEntityTypeConfiguration siniflarini bulur
+        // Bu assembly'deki TÜM IEntityTypeConfiguration siniflarini bulur
         // ve uygular.
         //
         // Alternatif, her konfigurasyonu tek tek burada cagirmakti:
@@ -78,8 +78,8 @@ public partial class TicketingDbContext : DbContext
         //     modelBuilder.ApplyConfiguration(new EventConfiguration());
         //     ... x28
         //
-        // Bunu YAPMADIM cunku 29. entity'yi eklerken bu satiri eklemeyi
-        // unutmak cok kolay ve hata sessizdir: EF entity'yi varsayilan
+        // Bunu YAPMADIM çünkü 29. entity'yi eklerken bu satiri eklemeyi
+        // unutmak çok kolay ve hata sessizdir: EF entity'yi varsayılan
         // kurallarla esler, unique index'ler ve concurrency token'lar
         // OLUSMAZ. Migration'a bakmadan fark edemezsin.
         //
@@ -90,46 +90,46 @@ public partial class TicketingDbContext : DbContext
     }
 
     /// <summary>
-    /// Tum Guid birincil anahtarlari "istemci tarafinda uretilir" olarak isaretler.
+    /// Tüm Guid birincil anahtarlari "istemci tarafında üretilir" olarak isaretler.
     ///
     /// ==================================================================
     /// BU METOT GERCEK BIR HATAYI DUZELTIYOR -- HIKAYESI
     /// ==================================================================
-    /// Sprint 4'te oturma planina bolum eklerken su hatayi aldik:
+    /// Sprint 4'te oturma planina bölüm eklerken su hatayi aldik:
     ///
-    ///     DbUpdateConcurrencyException: 1 satir etkilenmesi bekleniyordu,
-    ///     0 satir etkilendi.
+    ///     DbUpdateConcurrencyException: 1 satır etkilenmesi bekleniyordu,
+    ///     0 satır etkilendi.
     ///
     /// Loglara bakinca EF'in INSERT yerine UPDATE urettigini gorduk:
     ///     UPDATE "SeatSections" SET ... WHERE "Id" = @p11
-    /// Satir henuz var olmadigi icin 0 satir etkilendi.
+    /// Satir henüz var olmadığı için 0 satır etkilendi.
     ///
     /// SEBEP:
     /// Entity taban sinifimizda Id'yi BIZ uretiyoruz:
     ///     public Guid Id { get; protected set; } = Guid.CreateVersion7();
     ///
-    /// EF Core ise Guid anahtarlari varsayilan olarak
-    /// "ValueGeneratedOnAdd" (veritabani/EF uretir) kabul eder.
+    /// EF Core ise Guid anahtarlari varsayılan olarak
+    /// "ValueGeneratedOnAdd" (veritabani/EF üretir) kabul eder.
     ///
     /// Bu ikisi celisince su olur: EF, bir navigation koleksiyonuna
     /// eklenmis yeni nesneyi gordugunde "anahtari dolu, demek ki
     /// veritabaninda ZATEN VAR" diye dusunur ve Modified isaretler.
     ///
     /// NEDEN Venue ve Hall'da OLMADI?
-    /// Cunku onlari _context.Venues.Add(...) ile ACIKCA ekledik --
-    /// Add() her zaman Added isaretler. Hata yalnizca nesne bir
-    /// KOLEKSIYON uzerinden eklendiginde ortaya cikiyor.
+    /// Çünkü onlari _context.Venues.Add(...) ile ACIKCA ekledik --
+    /// Add() her zaman Added isaretler. Hata yalnızca nesne bir
+    /// KOLEKSIYON üzerinden eklendiginde ortaya cikiyor.
     ///
-    /// NEDEN TEK TEK DEGIL DE TOPLU DUZELTIYORUM?
-    /// Ayni tuzak su yerlerde de patlayacakti:
+    /// NEDEN TEK TEK DEĞİL DE TOPLU DUZELTIYORUM?
+    /// Aynı tuzak su yerlerde de patlayacakti:
     ///     Reservation -> ReservationItems   (Sprint 7)
     ///     Payment     -> PaymentTransactions (Sprint 8)
     ///     EventSession -> EventSeats         (Sprint 5)
-    ///     SeatSection -> Seats               (koltuk uretimi)
+    ///     SeatSection -> Seats               (koltuk üretimi)
     ///
     /// Yani projenin EN KRITIK akislarinin hepsi. Tek tek duzeltseydim
     /// birini unutmam kacinilmazdi ve hata aylar sonra, rezervasyon
-    /// akisinda ortaya cikardi.
+    /// akisinda ortaya çıkardı.
     ///
     /// Model uzerinde donerek toplu uygulamak, gelecekte eklenecek
     /// entity'leri de otomatik kapsiyor.

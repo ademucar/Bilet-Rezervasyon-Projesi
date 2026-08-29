@@ -7,12 +7,12 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.WebApi.Security;
 
 /// <summary>
-/// JWT dogrulama ve yetkilendirme politikalari.
+/// JWT doğrulama ve yetkilendirme politikalari.
 /// PDF Sprint 3: "Role based / Policy based / Resource based authorization".
 /// </summary>
 internal static class AuthenticationSetup
 {
-    /// <summary>Policy adlari. Metin yerine bu sabitler kullanilir.</summary>
+    /// <summary>Policy adları. Metin yerine bu sabitler kullanilir.</summary>
     public static class Policies
     {
         public const string AdminOnly = "AdminOnly";
@@ -39,49 +39,49 @@ internal static class AuthenticationSetup
                 // ==============================================================
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // Imza gecerli mi? Kapatilirsa HERKES kendi token'ini
-                    // uretip Admin rolu yazabilir. Asla kapatilmaz.
+                    // Imza geçerli mi? Kapatilirsa HERKES kendi token'ini
+                    // uretip Admin rolü yazabilir. Asla kapatılmaz.
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
 
-                    // Token'i BIZ mi urettik? Kapatilirsa, ayni imzalama
+                    // Token'i BIZ mi urettik? Kapatilirsa, aynı imzalama
                     // anahtarini kullanan BASKA bir sistemin token'i da
                     // kabul edilir.
                     ValidateIssuer = true,
                     ValidIssuer = configuration["Jwt:Issuer"],
 
-                    // Token BIZIM icin mi uretildi? Ornegin bir mobil
-                    // uygulama icin uretilmis token'in web API'de
+                    // Token BIZIM için mi üretildi? Ornegin bir mobil
+                    // uygulama için üretilmiş token'in web API'de
                     // kullanilmasini engeller.
                     ValidateAudience = true,
                     ValidAudience = configuration["Jwt:Audience"],
 
-                    // Suresi dolmus token reddedilsin. Kapatilirsa
-                    // access token'in kisa omurlu olmasinin hicbir
+                    // Süresi dolmuş token reddedilsin. Kapatilirsa
+                    // access token'in kisa omurlu olmasinin hiçbir
                     // anlami kalmaz.
                     ValidateLifetime = true,
 
                     // ==============================================================
                     // ClockSkew = ZERO -- VARSAYILANI DEGISTIRIYORUM
                     // ==============================================================
-                    // Varsayilan deger BES DAKIKADIR. Yani 15 dakikalik bir
-                    // token aslinda 20 dakika gecerli olur.
+                    // Varsayılan deger BES DAKIKADIR. Yani 15 dakikalik bir
+                    // token aslında 20 dakika geçerli olur.
                     //
                     // Bu tolerans, sunucu saatleri arasindaki farki telafi
-                    // etmek icin var. Ama biz tum zamanlari UTC tutuyoruz
+                    // etmek için var. Ama biz tüm zamanlari UTC tutuyoruz
                     // ve container'lar ana makine saatini paylasiyor --
                     // sapma yok.
                     //
-                    // Sifira cekmeyi tercih ediyorum cunku "15 dakika"
-                    // dedigimizde gercekten 15 dakika olmali. Aksi halde
-                    // guvenlik hesaplarimiz yanlis olur ve testlerde
-                    // "suresi dolmus token hala calisiyor" gibi kafa
+                    // Sifira cekmeyi tercih ediyorum çünkü "15 dakika"
+                    // dedigimizde gerçekten 15 dakika olmalı. Aksi halde
+                    // güvenlik hesaplarimiz yanlış olur ve testlerde
+                    // "süresi dolmuş token hâlâ çalışıyor" gibi kafa
                     // karistirici durumlarla ugrasırız.
                     ClockSkew = TimeSpan.Zero,
 
-                    // "sub" claim'ini oldugu gibi birak.
+                    // "sub" claim'ini olduğu gibi birak.
                     //
-                    // ASP.NET Core varsayilan olarak "sub"u
+                    // ASP.NET Core varsayılan olarak "sub"u
                     // ClaimTypes.NameIdentifier'a (uzun bir XML URI'sine)
                     // esler. Bu esleme, token'a ne yazdiginizla kodda ne
                     // okudugunuzun tutmamasina yol acan klasik bir
@@ -91,8 +91,8 @@ internal static class AuthenticationSetup
                 };
 
                 // Token gecersizse yanit header'ina sebebini ekle.
-                // Frontend "token suresi doldu" ile "token gecersiz"
-                // durumlarini ayirt edip birincisinde sessizce yenileme
+                // Frontend "token süresi doldu" ile "token geçersiz"
+                // durumlarini ayırt edip birincisinde sessizce yenileme
                 // yapabiliyor.
                 options.Events = new JwtBearerEvents
                 {
@@ -115,31 +115,31 @@ internal static class AuthenticationSetup
     {
         services.AddAuthorizationBuilder()
 
-            // ---- Rol bazli politikalar ----
+            // ---- Rol bazlı politikalar ----
             .AddPolicy(Policies.AdminOnly, policy =>
                 policy.RequireRole(Role.Names.Admin))
 
             // Admin, organizatorun yapabildigi her seyi yapabilmeli.
-            // RequireRole birden fazla rol aldiginda VEYA mantigi uygular:
+            // RequireRole birden fazla rol aldiginda VEYA mantığı uygular:
             // "Organizer VEYA Admin".
             //
-            // Bunu yazmasaydik admin, organizator endpoint'lerine
+            // Bunu yazmasaydik admin, organizatör endpoint'lerine
             // erisemezdi ve destek islerini yapamazdi.
             .AddPolicy(Policies.OrganizerOnly, policy =>
                 policy.RequireRole(Role.Names.Organizer, Role.Names.Admin))
 
-            // ---- Kaynak bazli politikalar ----
+            // ---- Kaynak bazlı politikalar ----
             //
-            // PDF Sprint 3: "Resource based authorization uygulanmalidir."
+            // PDF Sprint 3: "Resource based authorization uygulanmalıdır."
             //
-            // EventOwner artik GERCEK sahiplik kontrolu yapiyor:
+            // EventOwner artık GERCEK sahiplik kontrolü yapiyor:
             // EventOwnerAuthorizationHandler veritabanina bakip
-            // "bu etkinlik bu kullanicinin organizator profiline mi ait?"
+            // "bu etkinlik bu kullanıcının organizatör profiline mi ait?"
             // sorusunu cevapliyor. Admin her zaman gecer.
             //
-            // Rol bazli kontrol bunu YAPAMAZ: token yalnizca "bu kisi
-            // organizator" der, "bu etkinlik onun" demez. O kontrol
-            // olmasaydi her organizator digerlerinin etkinliklerini
+            // Rol bazlı kontrol bunu YAPAMAZ: token yalnızca "bu kişi
+            // organizatör" der, "bu etkinlik onun" demez. O kontrol
+            // olmasaydı her organizatör digerlerinin etkinliklerini
             // duzenleyebilirdi.
             .AddPolicy(Policies.EventOwner, policy =>
             {
@@ -149,19 +149,19 @@ internal static class AuthenticationSetup
             // ==========================================================
             // TicketOwner / ReservationOwner -- SPRINT 19'DA TAMAMLANDI
             // ==========================================================
-            // Sprint 3'te iskelet olarak birakilmislardi: yalnizca
+            // Sprint 3'te iskelet olarak birakilmislardi: yalnızca
             // RequireAuthenticatedUser() yapiyorlardi ve koddaki not
-            // "gercek kontrolleri Sprint 7-8'de yazacagiz" diyordu.
+            // "gerçek kontrolleri Sprint 7-8'de yazacagiz" diyordu.
             // Yazilmamislar.
             //
-            // Sprint 19 denetiminde OLCTUM: sistem acik DEGILDI --
+            // Sprint 19 denetiminde OLCTUM: sistem açık DEGILDI --
             // handler'lar sahiplik kontrolunu zaten yapiyor ve
-            // baskasinin rezervasyonuna erisim 404 donuyor.
+            // baskasinin rezervasyonuna erişim 404 dönüyor.
             //
-            // Yine de tamamlandi, cunku politika YANILTICIYDI:
+            // Yine de tamamlandı, çünkü politika YANILTICIYDI:
             // [Authorize(Policy = TicketOwner)] yazan biri kontrolun
-            // politikada oldugunu sanirdi. Simdi iki bagimsiz katman
-            // var; birinin unutulmasi digerini gecersiz kilmiyor.
+            // politikada olduğunu sanirdi. Simdi iki bağımsız katman
+            // var; birinin unutulmasi digerini geçersiz kilmiyor.
             // ==========================================================
             .AddPolicy(Policies.TicketOwner, policy =>
             {
@@ -174,9 +174,9 @@ internal static class AuthenticationSetup
                 policy.AddRequirements(new ReservationOwnerRequirement());
             });
 
-        // Handler'i kaydediyorum. Bu satir olmasaydi policy sessizce
-        // BASARISIZ olurdu -- requirement var ama onu degerlendirecek
-        // kimse yok. Herkes 403 alirdi ve sebebi cok gec anlasilirdi.
+        // Handler'i kaydediyorum. Bu satır olmasaydı policy sessizce
+        // BASARISIZ olurdu -- requirement var ama önü degerlendirecek
+        // kimse yok. Herkes 403 alırdı ve sebebi çok geç anlasilirdi.
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
                               EventOwnerAuthorizationHandler>();
 

@@ -9,9 +9,9 @@ namespace Ticketing.Application.Features.Auth.Logout;
 /// <summary>
 /// PDF: POST /api/v1/auth/logout
 ///
-/// RefreshToken opsiyonel: gonderilirse yalnizca O oturum kapatilir,
-/// gonderilmezse kullanicinin TUM oturumlari kapatilir
-/// ("tum cihazlardan cikis yap").
+/// RefreshToken opsiyonel: gonderilirse yalnızca O oturum kapatilir,
+/// gonderilmezse kullanıcının TÜM oturumlari kapatilir
+/// ("tüm cihazlardan çıkış yap").
 /// </summary>
 public sealed record LogoutCommand(string? RefreshToken) : IRequest<Result>;
 
@@ -58,11 +58,11 @@ internal sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand, Resu
         // ------------------------------------------------------------------
         // TOKEN BULUNAMASA BILE BASARILI DONUYORUM
         // ------------------------------------------------------------------
-        // "Cikis yapamadiniz" demek anlamsiz olurdu: kullanicinin niyeti
-        // oturumu kapatmak ve sonuc olarak oturum ZATEN kapali.
+        // "Çıkış yapamadiniz" demek anlamsiz olurdu: kullanıcının niyeti
+        // oturumu kapatmak ve sonuç olarak oturum ZATEN kapalı.
         //
-        // Ayrica bu, cikis endpoint'ini idempotent yapiyor: iki kez
-        // cagirmak hata uretmiyor. Aglayan bir istemci istegi tekrar
+        // Ayrıca bu, çıkış endpoint'ini idempotent yapiyor: iki kez
+        // cagirmak hata uretmiyor. Aglayan bir istemci isteği tekrar
         // gonderse bile sorun cikmaz.
         return Result.Success();
     }

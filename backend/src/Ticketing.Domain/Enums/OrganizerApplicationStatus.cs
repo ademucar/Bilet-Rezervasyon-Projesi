@@ -1,6 +1,6 @@
 namespace Ticketing.Domain.Enums;
 
-/// <summary>Organizator basvurusunun durumu. PDF sayfa 5.</summary>
+/// <summary>Organizatör basvurusunun durumu. PDF sayfa 5.</summary>
 public enum OrganizerApplicationStatus
 {
     Pending = 1,

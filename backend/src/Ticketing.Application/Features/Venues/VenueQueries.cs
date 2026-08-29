@@ -15,14 +15,14 @@ namespace Ticketing.Application.Features.Venues;
 /// PDF Sprint 4: GET /api/v1/venues
 ///
 /// PaginationRequest'ten turuyor: PageNumber, PageSize ve ust sinir
-/// kontrolu bedava geliyor.
+/// kontrolü bedava geliyor.
 /// </summary>
 public sealed record GetVenuesQuery : PaginationRequest, IRequest<Result<PagedResult<VenueListItem>>>
 {
-    /// <summary>Isme gore arama. null ise filtre uygulanmaz.</summary>
+    /// <summary>İsme göre arama. null ise filtre uygulanmaz.</summary>
     public string? Search { get; init; }
 
-    /// <summary>Sehre gore filtre.</summary>
+    /// <summary>Sehre göre filtre.</summary>
     public Guid? CityId { get; init; }
 }
 
@@ -37,17 +37,17 @@ internal sealed class GetVenuesQueryHandler
         "Globalization",
         "CA1304:Specify CultureInfo",
         Justification =
-            "Bu ToLower() cagrisi bir IFADE AGACI (expression tree) icinde ve " +
-            ".NET'te HIC CALISMIYOR. EF Core onu SQL'deki LOWER() fonksiyonuna " +
+            "Bu ToLower() cagrisi bir IFADE AGACI (expression tree) içinde ve " +
+            ".NET'te HİÇ CALISMIYOR. EF Core önü SQL'deki LOWER() fonksiyonuna " +
             "ceviriyor; buyuk/kucuk harf donusumunu veritabani yapiyor. " +
-            "Dolayisiyla .NET kultur ayarinin sonuca hicbir etkisi yok. " +
-            "Ayrica ToLowerInvariant() burada KULLANILAMAZ -- EF Core onu " +
+            "Dolayisiyla .NET kultur ayarinin sonuca hiçbir etkisi yok. " +
+            "Ayrıca ToLowerInvariant() burada KULLANILAMAZ -- EF Core önü " +
             "SQL'e ceviremez ve calisma zamaninda 'could not be translated' " +
             "hatasi verir.")]
     [SuppressMessage(
         "Globalization",
         "CA1311:Specify a culture or use an invariant version",
-        Justification = "Bkz. CA1304 aciklamasi: ifade agaci, SQL'e cevriliyor.")]
+        Justification = "Bkz. CA1304 açıklaması: ifade ağacı, SQL'e çevriliyor.")]
     public async Task<Result<PagedResult<VenueListItem>>> Handle(
         GetVenuesQuery request,
         CancellationToken cancellationToken)
@@ -57,12 +57,12 @@ internal sealed class GetVenuesQueryHandler
         // ==============================================================
         // FILTRELERI KOSULLU EKLIYORUM
         // ==============================================================
-        // IQueryable tembeldir (lazy): asagidaki Where cagrilarinin
-        // hicbiri veritabanina gitmez. Yalnizca SQL agacini insa eder.
-        // Sorgu, ToListAsync cagrildiginda TEK SEFERDE calisir.
+        // IQueryable tembeldir (lazy): aşağıdaki Where cagrilarinin
+        // hicbiri veritabanina gitmez. Yalnızca SQL agacini insa eder.
+        // Sorgu, ToListAsync cagrildiginda TEK SEFERDE çalışır.
         //
-        // Bu yuzden filtreleri if bloklariyla eklemek maliyetsiz.
-        // "her ihtimale karsi hepsini ekleyip null kontrolu yapayim"
+        // Bu yüzden filtreleri if bloklariyla eklemek maliyetsiz.
+        // "her ihtimale karsi hepsini ekleyip null kontrolü yapayim"
         // deseydik, SQL'e gereksiz "WHERE (@p IS NULL OR ...)" kosullari
         // girer ve PostgreSQL index kullanamaz hale gelirdi.
         // ==============================================================
@@ -78,25 +78,25 @@ internal sealed class GetVenuesQueryHandler
             // ==========================================================
             // NEDEN EF.Functions.ILike KULLANMIYORUM?
             // ==========================================================
-            // Ilk yazisimda ILike kullanmistim -- PostgreSQL'in
-            // buyuk/kucuk harf duyarsiz LIKE'i ve tam ihtiyacimiz olan sey.
+            // İlk yazisimda ILike kullanmistim -- PostgreSQL'in
+            // büyük/küçük harf duyarsiz LIKE'i ve tam ihtiyacimiz olan sey.
             //
-            // Ama derleme hatasi verdi: ILike, Npgsql paketinde tanimli.
-            // Kullanmak icin Application katmanina Npgsql referansi
-            // eklemem gerekirdi -- yani is mantigi katmanimiz
+            // Ama derleme hatası verdi: ILike, Npgsql paketinde tanimli.
+            // Kullanmak için Application katmanina Npgsql referansı
+            // eklemem gerekirdi -- yani is mantığı katmanimiz
             // POSTGRESQL'E OZGU hale gelirdi.
             //
-            // Bu, EF Core soyutlamasina bagimli olmaktan farkli bir sey.
-            // DbSet ve IQueryable her saglayicida ayni calisir; ILike
-            // yalnizca PostgreSQL'de var. Veritabanini degistirdigimizde
+            // Bu, EF Core soyutlamasina bagimli olmaktan farklı bir sey.
+            // DbSet ve IQueryable her saglayicida aynı çalışır; ILike
+            // yalnızca PostgreSQL'de var. Veritabanini degistirdigimizde
             // (veya integration testlerde SQLite kullanmak istedigimizde)
-            // bu satir derlenmezdi.
+            // bu satır derlenmezdi.
             //
-            // Bunun yerine saglayicidan bagimsiz EF.Functions.Like'i
-            // ToLower ile birlikte kullaniyorum.
+            // Bunun yerine saglayicidan bağımsız EF.Functions.Like'i
+            // ToLower ile birlikte kullanıyorum.
             //
             // PERFORMANS NOTU: ToLower(), sutun uzerinde fonksiyon
-            // uygulandigi icin normal bir btree index'i KULLANAMAZ.
+            // uygulandigi için normal bir btree index'i KULLANAMAZ.
             // Cozum, veritabaninda FONKSIYONEL index tanimlamak:
             //     CREATE INDEX ix_venues_name_lower ON "Venues" (LOWER("Name"));
             // Bunu Sprint 11'de (arama ve performans sprinti) ham SQL
@@ -105,10 +105,10 @@ internal sealed class GetVenuesQueryHandler
             query = query.Where(v => EF.Functions.Like(v.Name.ToLower(), pattern));
         }
 
-        // Toplam sayiyi ONCE aliyorum, sayfalamadan once.
+        // Toplam sayiyi ONCE alıyorum, sayfalamadan önce.
         //
-        // Skip/Take uyguladiktan sonra Count() cagirsaydik yalnizca o
-        // sayfadaki kayitlari sayardik ve TotalPages hep 1 cikardi.
+        // Skip/Take uyguladiktan sonra Count() cagirsaydik yalnızca o
+        // sayfadaki kayitlari sayardik ve TotalPages hep 1 çıkardı.
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
         var items = await query
@@ -120,7 +120,7 @@ internal sealed class GetVenuesQueryHandler
                 v.Name,
                 v.City.Name,
                 // Alt sorgu: EF bunu tek SQL'e cevirir (correlated subquery).
-                // Halls'u Include edip C#'ta saymak, TUM salonlari
+                // Halls'u Include edip C#'ta saymak, TÜM salonlari
                 // bellege cekmek demek olurdu.
                 v.Halls.Count(h => !h.IsDeleted)))
             .ToListAsync(cancellationToken)

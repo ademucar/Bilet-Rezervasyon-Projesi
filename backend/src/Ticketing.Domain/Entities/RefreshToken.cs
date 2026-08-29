@@ -3,8 +3,8 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Refresh token kaydi. PDF Sprint 3'un su maddelerini karsilar:
-///   - "Refresh Token rotation uygulanmalidir."
+/// Refresh token kaydı. PDF Sprint 3'un su maddelerini karsilar:
+///   - "Refresh Token rotation uygulanmalıdır."
 ///   - "Eski Refresh Token tekrar kullanilamamalidir."
 ///   - "Logout isleminde token iptal edilmelidir."
 /// </summary>
@@ -24,25 +24,25 @@ public class RefreshToken : Entity
     public Guid UserId { get; private set; }
 
     /// <summary>
-    /// Token'in KENDISI DEGIL, HASH'i saklanir.
+    /// Token'in KENDISI DEĞİL, HASH'i saklanir.
     ///
-    /// Bu cok onemli bir guvenlik karari. Neden?
+    /// Bu çok önemli bir güvenlik karari. Neden?
     ///
-    /// Refresh token, kullanicinin kimligini kanitlayan bir anahtardir --
-    /// pratikte sifreye esdegerdir. Veritabani bir sekilde sizarsa
+    /// Refresh token, kullanıcının kimligini kanitlayan bir anahtardir --
+    /// pratikte sifreye esdegerdir. Veritabani bir şekilde sizarsa
     /// (SQL injection, yedek dosyasinin calinmasi, ic tehdit), saldirgan
-    /// tum token'lari ele gecirip herkesin hesabina girebilir.
+    /// tüm token'lari ele gecirip herkesin hesabina girebilir.
     ///
     /// Hash sakladigimizda saldirgan eline sadece geri cevrilemez ozetler
-    /// gecer; onlarla giris yapamaz.
+    /// gecer; onlarla giriş yapamaz.
     ///
-    /// Sifreleri neden hash'liyorsak, refresh token'i da ayni sebeple
-    /// hash'lemeliyiz. Cok sik atlanan bir noktadir.
+    /// Sifreleri neden hash'liyorsak, refresh token'i da aynı sebeple
+    /// hash'lemeliyiz. Çok sik atlanan bir noktadir.
     ///
-    /// Not: Burada BCrypt gibi yavas bir algoritma DEGIL, SHA-256 gibi
+    /// Not: Burada BCrypt gibi yavas bir algoritma DEĞİL, SHA-256 gibi
     /// hizli bir algoritma kullanacagiz. Sebep: refresh token zaten
-    /// yuksek entropili rastgele bir degerdir, sozluk saldirisina acik
-    /// degildir. Sifreler tahmin edilebilir oldugu icin yavas algoritma
+    /// yüksek entropili rastgele bir degerdir, sozluk saldirisina açık
+    /// degildir. Şifreler tahmin edilebilir olduğu için yavas algoritma
     /// gerektirir; token'lar gerektirmez.
     /// </summary>
     public string TokenHash { get; private set; }
@@ -53,7 +53,7 @@ public class RefreshToken : Entity
 
     public string? CreatedByIp { get; private set; }
 
-    /// <summary>Iptal edildiyse ne zaman. null ise iptal edilmemis.</summary>
+    /// <summary>İptal edildiyse ne zaman. null ise iptal edilmemis.</summary>
     public DateTimeOffset? RevokedAt { get; private set; }
 
     public string? RevokedByIp { get; private set; }
@@ -61,24 +61,24 @@ public class RefreshToken : Entity
     /// <summary>
     /// ROTATION'IN KALBI.
     ///
-    /// Kullanici token'ini yeniledignde eski token iptal edilir ve bu alana
+    /// Kullanıcı token'ini yeniledignde eski token iptal edilir ve bu alana
     /// yeni token'in hash'i yazilir. Boylece bir zincir olusur:
     ///     token1 -> token2 -> token3 -> ...
     ///
-    /// Bu zincir neden lazim? Su saldiriyi tespit etmek icin:
+    /// Bu zincir neden lazim? Su saldiriyi tespit etmek için:
     ///
-    ///   1. Saldirgan token2'yi caldi (ornegin XSS ile).
-    ///   2. Gercek kullanici token2 ile yenileme yapti -> token3 aldi.
-    ///      token2 artik iptal.
+    ///   1. Saldirgan token2'yi caldi (örneğin XSS ile).
+    ///   2. Gerçek kullanıcı token2 ile yenileme yapti -> token3 aldi.
+    ///      token2 artık iptal.
     ///   3. Saldirgan da token2 ile yenileme denedi.
-    ///   4. Sistem "iptal edilmis bir token kullanildi" der.
+    ///   4. Sistem "iptal edilmiş bir token kullanıldı" der.
     ///
     /// Bu ancak IKI ihtimalle olur: ya token calindi ya da bir hata var.
-    /// Ikisi de ciddi. Bu durumda o kullanicinin TUM aktif token'larini
-    /// iptal ederiz ve saldirgan da gercek kullanici da disari atilir.
-    /// Kullanici tekrar giris yapar, saldirgan yapamaz.
+    /// Ikisi de ciddi. Bu durumda o kullanıcının TÜM aktif token'larini
+    /// iptal ederiz ve saldirgan da gerçek kullanıcı da disari atilir.
+    /// Kullanıcı tekrar giriş yapar, saldirgan yapamaz.
     ///
-    /// Bu alan olmasaydi calinmayi hic fark edemezdik.
+    /// Bu alan olmasaydı calinmayi hiç fark edemezdik.
     /// </summary>
     public string? ReplacedByTokenHash { get; private set; }
 
@@ -94,7 +94,7 @@ public class RefreshToken : Entity
 
     /// <summary>
     /// Token su an kullanilabilir mi?
-    /// Hem suresi dolmamis hem de iptal edilmemis olmali.
+    /// Hem süresi dolmamis hem de iptal edilmemis olmalı.
     /// </summary>
     public bool IsActive() => !IsRevoked() && !IsExpired();
 
@@ -110,13 +110,13 @@ public class RefreshToken : Entity
     {
         if (string.IsNullOrWhiteSpace(tokenHash))
         {
-            throw new DomainException("Token hash'i bos olamaz.", "refresh_token.hash_required");
+            throw new DomainException("Token hash'i boş olamaz.", "refresh_token.hash_required");
         }
 
         if (expiresAt <= DateTimeOffset.UtcNow)
         {
             throw new DomainException(
-                "Token gecerlilik suresi gelecekte olmalidir.",
+                "Token gecerlilik süresi gelecekte olmalıdır.",
                 "refresh_token.invalid_expiry");
         }
 
@@ -124,19 +124,19 @@ public class RefreshToken : Entity
     }
 
     /// <summary>
-    /// Token'i iptal eder. Zaten iptal edilmisse hicbir sey yapmaz (idempotent).
+    /// Token'i iptal eder. Zaten iptal edilmisse hiçbir sey yapmaz (idempotent).
     /// </summary>
     /// <param name="replacedByTokenHash">
     /// Rotation sonucu yeni uretilen token'in hash'i. Logout'ta null gecilir,
-    /// cunku yerine yeni bir token uretilmiyor.
+    /// çünkü yerine yeni bir token uretilmiyor.
     /// </param>
     public void Revoke(string? revokedByIp = null, string? replacedByTokenHash = null)
     {
         if (IsRevoked())
         {
-            // Idempotent: iki kez iptal etmek hata degil.
-            // Ilk iptalin zaman damgasini KORUYORUM -- ustune yazsaydim
-            // denetim izini bozardim, gercek iptal anini kaybederdim.
+            // Idempotent: iki kez iptal etmek hata değil.
+            // İlk iptalin zaman damgasini KORUYORUM -- ustune yazsaydim
+            // denetim izini bozardim, gerçek iptal anini kaybederdim.
             return;
         }
 

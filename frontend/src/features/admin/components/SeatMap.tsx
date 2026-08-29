@@ -63,7 +63,7 @@ export function SeatMap({ sections, onSeatClick, selectedSeatIds }: SeatMapProps
               : INACTIVE_COLOR,
 
           selectable: seat.isActive,
-          description: seat.isActive ? undefined : 'devre disi',
+          description: seat.isActive ? undefined : 'devre dışı',
         })),
       })),
     [sections, selectedSeatIds],

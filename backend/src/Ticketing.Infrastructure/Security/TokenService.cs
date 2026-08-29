@@ -10,7 +10,7 @@ using Ticketing.Application.Abstractions.Time;
 namespace Ticketing.Infrastructure.Security;
 
 /// <summary>
-/// JWT access token ve refresh token uretimi.
+/// JWT access token ve refresh token üretimi.
 /// PDF Sprint 3'un token gereksinimlerini karsilar.
 /// </summary>
 internal sealed class TokenService : ITokenService
@@ -28,7 +28,7 @@ internal sealed class TokenService : ITokenService
         //
         // Her token uretiminde yeniden olusturmak, her seferinde byte
         // dizisi ayirmak ve kriptografi nesnesi kurmak demek olurdu.
-        // Login yogun bir endpoint; bu kucuk fark toplamda hissedilir.
+        // Login yogun bir endpoint; bu küçük fark toplamda hissedilir.
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
         _signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
     }
@@ -47,17 +47,17 @@ internal sealed class TokenService : ITokenService
 
             new(JwtRegisteredClaimNames.Email, email),
 
-            // "jti" (JWT ID) = bu token'in benzersiz kimligi.
+            // "jti" (JWT ID) = bu token'in benzersiz kimliği.
             //
             // Neden gerekli? Ileride token kara listesi (blacklist)
             // uygulamak istersek, iptal edilen token'in jti degerini
             // Redis'e yazip her istekte kontrol edebiliriz.
-            // Simdiden koymak, sonradan eklemekten cok daha kolay:
+            // Simdiden koymak, sonradan eklemekten çok daha kolay:
             // aksi halde eski token'larda bu alan olmazdi.
             new(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString("N"))
         };
 
-        // Roller ayri ayri claim olarak ekleniyor.
+        // Roller ayrı ayrı claim olarak ekleniyor.
         // [Authorize(Roles = "Admin")] bu claim'lere bakacak.
         foreach (var role in roles)
         {
@@ -70,8 +70,8 @@ internal sealed class TokenService : ITokenService
             Issuer = _options.Issuer,
             Audience = _options.Audience,
 
-            // UtcDateTime kullaniyorum: JWT spec'i zamanlari Unix epoch
-            // (UTC) olarak saklar. DateTimeOffset'i dogrudan verseydik
+            // UtcDateTime kullanıyorum: JWT spec'i zamanlari Unix epoch
+            // (UTC) olarak saklar. DateTimeOffset'i doğrudan verseydik
             // kutuphane yine cevirirdi ama acikca yazmak, saat dilimi
             // hatalarina karsi niyeti belgeliyor.
             NotBefore = _clock.UtcNow.UtcDateTime,
@@ -80,8 +80,8 @@ internal sealed class TokenService : ITokenService
             SigningCredentials = _signingCredentials
         };
 
-        // JsonWebTokenHandler, eski JwtSecurityTokenHandler'a gore
-        // belirgin sekilde daha hizli ve daha az bellek kullaniyor.
+        // JsonWebTokenHandler, eski JwtSecurityTokenHandler'a göre
+        // belirgin şekilde daha hizli ve daha az bellek kullaniyor.
         // Microsoft yeni projelerde bunu oneriyor.
         var handler = new JsonWebTokenHandler();
         var token = handler.CreateToken(descriptor);
@@ -95,11 +95,11 @@ internal sealed class TokenService : ITokenService
         // KRIPTOGRAFIK RASTGELELIK -- Random SINIFI KULLANILMAZ
         // ==================================================================
         // System.Random tahmin edilebilir bir dizidir: tohumunu (seed)
-        // bilen veya birkac ciktisini goren biri sonraki degerleri
+        // bilen veya birkaç ciktisini goren biri sonraki değerleri
         // hesaplayabilir.
         //
         // Refresh token pratikte sifreye esdegerdir. Tahmin edilebilir
-        // olsaydi saldirgan gecerli token uretip herkesin hesabina girerdi.
+        // olsaydı saldirgan geçerli token uretip herkesin hesabina girerdi.
         //
         // RandomNumberGenerator isletim sisteminin kriptografik
         // rastgelelik kaynagini kullanir.
@@ -123,23 +123,23 @@ internal sealed class TokenService : ITokenService
     public string HashRefreshToken(string refreshToken)
     {
         // ==================================================================
-        // NEDEN SHA-256, NEDEN BCrypt DEGIL?
+        // NEDEN SHA-256, NEDEN BCrypt DEĞİL?
         // ==================================================================
-        // Sifreler icin BCrypt kullaniyoruz cunku sifreler TAHMIN
-        // EDILEBILIR ("123456", "sifre123"). Yavas algoritma, sozluk
+        // Şifreler için BCrypt kullanıyoruz çünkü sifreler TAHMIN
+        // EDILEBILIR ("123456", "şifre123"). Yavas algoritma, sozluk
         // saldirisini pratikte imkansiz kilar.
         //
         // Refresh token ise 512 bit RASTGELE bir degerdir. Sozluk
         // saldirisina konu olamaz -- tahmin edilecek bir kalip yok.
         // Yavas algoritma kullanmak sadece her token yenilemesini
-        // yavaslatirdi, hicbir guvenlik kazandirmazdi.
+        // yavaslatirdi, hiçbir güvenlik kazandirmazdi.
         //
-        // SHA-256 burada dogru tercih: hizli ve geri cevrilemez.
+        // SHA-256 burada doğru tercih: hizli ve geri cevrilemez.
         //
-        // Salt kullanmiyoruz cunku ayni sebeple gereksiz: salt'in amaci
-        // ayni girdinin ayni hash'i uretmesini engellemektir; rastgele
-        // token'larda zaten ayni girdi iki kez olusmaz.
-        // Ayrica salt'siz olmasi, gelen token'i dogrudan hash'leyip
+        // Salt kullanmiyoruz çünkü aynı sebeple gereksiz: salt'in amaci
+        // aynı girdinin aynı hash'i uretmesini engellemektir; rastgele
+        // token'larda zaten aynı girdi iki kez olusmaz.
+        // Ayrıca salt'siz olmasını, gelen token'i doğrudan hash'leyip
         // veritabaninda ARAYABILMEMIZI sagliyor (index kullanilabiliyor).
         // ==================================================================
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken));

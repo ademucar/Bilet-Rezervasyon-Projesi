@@ -26,13 +26,13 @@ var builder = WebApplication.CreateBuilder(args);
 // ===================================================================
 // Serilog'u EN BASTA baglıyorum.
 //
-// Sebep: bundan sonraki her satir (servis kayitlari, yapilandirma
-// okuma, veritabani baglantisi) log uretebiliyor. Sonra baglasaydik
-// uygulamanin ACILIS asamasindaki loglar varsayilan saglayiciya
-// giderdi ve dosyaya HIC yazilmazdi.
+// Sebep: bundan sonraki her satır (servis kayitlari, yapilandirma
+// okuma, veritabani bağlantısı) log uretebiliyor. Sonra baglasaydik
+// uygulamanin ACILIS asamasindaki loglar varsayılan saglayiciya
+// giderdi ve dosyaya HİÇ yazilmazdi.
 //
-// Acilista olusan hatalar ise tam olarak en cok ihtiyac duyulan
-// loglardir: uygulama ayaga kalkmadiginda elimizde baska hicbir sey
+// Acilista olusan hatalar ise tam olarak en çok ihtiyac duyulan
+// loglardir: uygulama ayaga kalkmadiginda elimizde başka hiçbir sey
 // olmuyor.
 builder.AddSerilogLogging();
 
@@ -44,12 +44,12 @@ builder.Services.AddControllers();
 // ---- API dokumantasyonu (PDF Sprint 18) ----
 //
 // XML yorumlari + transformer'lar ile PDF'in on maddesi
-// karsilaniyor. Ayrintisi OpenApiSetup.cs icinde.
+// karsilaniyor. Ayrintisi OpenApiSetup.cs içinde.
 builder.Services.AddApiDocumentation();
 
 // ---- API Versioning ----
 //
-// PDF Sprint 18: "API versioning uygulanmalidir." ve
+// PDF Sprint 18: "API versioning uygulanmalıdır." ve
 // "/api/v1/events" bicimi isteniyor.
 //
 // URL segmenti tabanli surumleme sectim (header veya query yerine):
@@ -81,7 +81,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 
-// ---- Guvenlik ayarlari ----
+// ---- Güvenlik ayarlari ----
 builder.Services.AddOptions<SecurityOptions>()
        .Bind(builder.Configuration.GetSection(SecurityOptions.SectionName))
        .ValidateDataAnnotations()
@@ -92,11 +92,11 @@ builder.Services.AddOptions<ReservationOptions>()
        .ValidateDataAnnotations()
        .ValidateOnStart();
 
-// ICurrentUser HttpContext'e erisiyor; bu erisim icin gerekli.
+// ICurrentUser HttpContext'e erisiyor; bu erişim için gerekli.
 builder.Services.AddHttpContextAccessor();
 
-// Scoped: her HTTP istegi icin bir ornek. Singleton OLAMAZ cunku
-// istege ozel veri (kullanici kimligi) tasiyor.
+// Scoped: her HTTP isteği için bir örnek. Singleton OLAMAZ çünkü
+// isteğe ozel veri (kullanıcı kimliği) tasiyor.
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -128,9 +128,9 @@ builder.Services.AddObservability(
 // API GUVENLIGI -- PDF Sprint 15
 // ===================================================================
 
-// ---- Istek hizi sinirlama ----
-// Varsayilan acik; yalnizca yapilandirma acikca "false" derse
-// kapaniyor (entegrasyon testleri icin -- bkz. RateLimitingSetup).
+// ---- İstek hizi sinirlama ----
+// Varsayılan açık; yalnızca yapilandirma acikca "false" derse
+// kapaniyor (entegrasyon testleri için -- bkz. RateLimitingSetup).
 builder.Services.AddRateLimiting(
     builder.Configuration.GetValue("RateLimiting:Enabled", defaultValue: true));
 
@@ -139,10 +139,10 @@ builder.Services.AddRateLimiting(
 // ==================================================================
 // GELISTIRMEDE CORS'A NEDEN IHTIYAC YOK AMA YINE DE TANIMLIYORUZ?
 // ==================================================================
-// Gelistirmede Vite proxy'si sayesinde istekler tarayici acisindan
-// AYNI kaynaga (5173) gidiyor; CORS hic devreye girmiyor.
+// Gelistirmede Vite proxy'si sayesinde istekler tarayıcı acisindan
+// AYNI kaynaga (5173) gidiyor; CORS hiç devreye girmiyor.
 //
-// Uretimde ise frontend ve API farkli alan adlarinda olabilir. O gun
+// Uretimde ise frontend ve API farklı alan adlarinda olabilir. O gün
 // yapilandirma yapmak yerine SIMDIDEN kuruyorum -- ama izin verilen
 // kaynaklari YAPILANDIRMADAN okuyorum, kodda sabitlemiyorum.
 // ==================================================================
@@ -161,8 +161,8 @@ builder.Services.AddCors(options =>
             // AllowAnyOrigin() yazmak cazip ama TEHLIKELI: herhangi
             // bir site tarayicidan API'mize istek atabilirdi.
             //
-            // "Yapilandirma eksikse en guvenli davranis" ilkesi --
-            // eksik ayar, acik kapi anlamina gelmemeli.
+            // "Yapilandirma eksikse en güvenli davranis" ilkesi --
+            // eksik ayar, açık kapi anlamina gelmemeli.
             policy.WithOrigins();
 
             return;
@@ -173,33 +173,33 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
 
               // AllowCredentials + AllowAnyOrigin BIRLIKTE KULLANILAMAZ
-              // (tarayici reddeder). Kaynaklari acikca listeledigimiz
-              // icin kimlik bilgisi tasiyabiliyoruz.
+              // (tarayıcı reddeder). Kaynaklari acikca listeledigimiz
+              // için kimlik bilgisi tasiyabiliyoruz.
               .AllowCredentials()
 
               // Istemcinin okuyabilecegi ozel basliklar.
-              // Varsayilan olarak yalnizca birkac standart baslik
-              // gorunur; Retry-After ve correlation id'yi acikca
+              // Varsayılan olarak yalnızca birkaç standart başlık
+              // görünür; Retry-After ve correlation id'yi acikca
               // aciyoruz.
               .WithExposedHeaders("Retry-After", "X-Correlation-Id");
     });
 });
 
-// ---- Istek boyutu siniri ----
+// ---- İstek boyutu sınırı ----
 //
 // ==================================================================
 // PDF: "Request size limit"
 // ==================================================================
-// Varsayilan Kestrel siniri ~30 MB. Bizim en buyuk istegimiz bir
-// JSON govdesi ve birkac kilobayt.
+// Varsayılan Kestrel sınırı ~30 MB. Bizim en büyük istegimiz bir
+// JSON govdesi ve birkaç kilobayt.
 //
-// Sinir olmasaydi saldirgan 30 MB'lik istekler gonderip bellegi ve
+// Sinir olmasaydı saldirgan 30 MB'lik istekler gonderip bellegi ve
 // bant genisligini tuketebilirdi (basit bir DoS).
 //
-// 1 MB: en buyuk mesru istegimizin (cok koltuklu rezervasyon)
+// 1 MB: en büyük mesru istegimizin (çok koltuklu rezervasyon)
 // onlarca kati.
 //
-// NOT: Dosya yukleme ucu eklendiginde O UC ICIN ayri ve daha yuksek
+// NOT: Dosya yukleme ucu eklendiginde O UC ICIN ayrı ve daha yüksek
 // bir sinir gerekecek -- [RequestSizeLimit] ozniteligi ile uc bazinda
 // verilebiliyor.
 // ==================================================================
@@ -210,21 +210,21 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
     // ==============================================================
     // "Server: Kestrel" BASLIGINI KALDIR -- YAKALADIGIM HATA
     // ==============================================================
-    // Once bunu SecurityHeadersMiddleware icinde
+    // Önce bunu SecurityHeadersMiddleware içinde
     // headers.Remove("Server") ile yapmaya calistim. CALISMADI.
     //
-    // Sebep: Kestrel bu basligi OnStarting geri cagrimindan SONRA,
+    // Sebep: Kestrel bu başlığı OnStarting geri cagrimindan SONRA,
     // yaniti tel uzerine yazarken ekliyor. Middleware'in sildigi sey
-    // henuz orada bile degildi.
+    // henüz orada bile degildi.
     //
-    // Basliklari gercekten kontrol ederek buldum:
-    //   curl -D - -> "Server: Kestrel" hala goruluyordu.
+    // Basliklari gerçekten kontrol ederek buldum:
+    //   curl -D - -> "Server: Kestrel" hâlâ goruluyordu.
     //
     // Dogru yer sunucunun kendi ayari. Sprint 13'teki BOM hatasiyla
-    // ayni ders: kodun NIYETINI degil, URETTIGI CIKTIYI kontrol
+    // aynı ders: kodun NIYETINI değil, URETTIGI CIKTIYI kontrol
     // etmek gerekiyor.
     //
-    // Tek basina bir acik degil ama saldirgana bilgi veriyor:
+    // Tek başına bir açık değil ama saldirgana bilgi veriyor:
     // hangi sunucu, hangi surum, hangi bilinen aciklar.
     // ==============================================================
     options.AddServerHeader = false;
@@ -236,14 +236,14 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
 // BU YAPILANDIRMA OLMADAN HIZ SINIRI URETIMDE YANLIS CALISIR
 // ==================================================================
 // Uretimde uygulama bir ters vekil sunucu (nginx, load balancer)
-// arkasinda calisiyor. O durumda RemoteIpAddress VEKILIN adresini
-// gosterir -- gercek istemciyi degil.
+// arkasinda çalışıyor. O durumda RemoteIpAddress VEKILIN adresini
+// gosterir -- gerçek istemciyi değil.
 //
-// Sonuc: TUM istekler tek bir IP'den gelmis gibi gorunur ve hiz
-// siniri butun kullanicilari BIRLIKTE etkiler. Bir kullanici siniri
-// doldurunca herkes 429 alir.
+// Sonuç: TÜM istekler tek bir IP'den gelmis gibi görünür ve hiz
+// sınırı butun kullanicilari BIRLIKTE etkiler. Bir kullanıcı sınırı
+// doldurunca herkes 429 alır.
 //
-// ForwardedHeaders, X-Forwarded-For basligini okuyup gercek istemci
+// ForwardedHeaders, X-Forwarded-For basligini okuyup gerçek istemci
 // adresini geri koyuyor.
 // ==================================================================
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -253,18 +253,18 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     // ==============================================================
     // KNOWN PROXIES TEMIZLENIYOR -- DIKKAT
     // ==============================================================
-    // Varsayilan olarak yalnizca localhost'tan gelen X-Forwarded-For
+    // Varsayılan olarak yalnızca localhost'tan gelen X-Forwarded-For
     // basliklarina guveniliyor. Docker/Kubernetes'te vekil sunucu
-    // farkli bir IP'de olur ve basliklar YOK SAYILIR.
+    // farklı bir IP'de olur ve basliklar YOK SAYILIR.
     //
     // Listeleri bosaltmak "her vekile guven" demek. Bu, YALNIZCA
-    // uygulama dogrudan internete acik DEGILSE guvenlidir: aksi
+    // uygulama doğrudan internete açık DEGILSE guvenlidir: aksi
     // halde saldirgan X-Forwarded-For basligini uydurup hiz sinirini
     // atlatabilir.
     //
-    // Uretim dagitiminda vekil sunucunun gercek adresi buraya
-    // yazilmali. Bunu bir NOT olarak birakiyorum cunku degeri
-    // ortama bagli ve yanlis yapilandirmasi sessizce guvenlik
+    // Üretim dagitiminda vekil sunucunun gerçek adresi buraya
+    // yazilmali. Bunu bir NOT olarak birakiyorum çünkü değeri
+    // ortama bağlı ve yanlış yapilandirmasi sessizce güvenlik
     // acigi olusturuyor.
     // ==============================================================
     options.KnownNetworks.Clear();
@@ -279,9 +279,9 @@ builder.Services.AddBackgroundJobs(builder.Configuration);
 // ===================================================================
 // REDIS ONBELLEK -- PDF Sprint 11
 // ===================================================================
-// Baglanti dizesi yoksa veya Redis kapaliysa uygulama YINE ACILIR;
-// onbellek devre disi kalir ve sorgular veritabanindan karsilanir.
-// PDF: "Cache kapali oldugunda sistem calismaya devam edebilmelidir."
+// Bağlantı dizesi yoksa veya Redis kapaliysa uygulama YINE ACILIR;
+// önbellek devre dışı kalır ve sorgular veritabanindan karsilanir.
+// PDF: "Cache kapalı olduğunda sistem calismaya devam edebilmelidir."
 builder.Services.AddCaching(builder.Configuration);
 
 // ===================================================================
@@ -292,7 +292,7 @@ builder.Services.AddSignalR(options =>
     // Gelistirmede ayrintili hata dondur.
     //
     // Uretimde KAPALI kalmali: istisna ayrintilari (yigin izi, tip
-    // adlari, dosya yollari) istemciye gitmemeli. Bu, ic yapiyi
+    // adları, dosya yollari) istemciye gitmemeli. Bu, ic yapiyi
     // saldirgana anlatmak olurdu.
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
 });
@@ -309,10 +309,10 @@ var app = builder.Build();
 // Uretimde ASLA otomatik seed calistirmiyoruz. Sebep: seed kodu
 // yanlislikla veri uzerine yazabilir veya beklenmedik kayitlar
 // olusturabilir. Uretimde veri, kontrollu migration'lar veya admin
-// arayuzu uzerinden girilir.
+// arayuzu üzerinden girilir.
 //
-// CreateScope kullaniyorum cunku DatabaseSeeder ve DbContext SCOPED
-// kayitli; uygulama koku (root) singleton bir kapsam ve oradan scoped
+// CreateScope kullanıyorum çünkü DatabaseSeeder ve DbContext SCOPED
+// kayıtlı; uygulama koku (root) singleton bir kapsam ve oradan scoped
 // servis cozumlemek InvalidOperationException verir.
 if (app.Environment.IsDevelopment())
 {
@@ -332,44 +332,44 @@ app.UseExceptionHandler();
 // 2) Hata yanitina da correlation ID eklenebilsin diye hemen sonra.
 app.UseMiddleware<CorrelationIdMiddleware>();
 
-// 2b) Istek ozeti logu: correlation ID middleware'inden SONRA.
+// 2b) İstek özeti logu: correlation ID middleware'inden SONRA.
 //
-// Once olsaydi ozet satirinda CorrelationId alani BOS olurdu --
-// cunku deger henuz uretilmemis olurdu. Bu, PDF'in "correlation ID
-// application log icinde olmali" maddesini sessizce karsilanmamis
-// birakirdi: kod var, alan bos.
+// Önce olsaydı özet satirinda CorrelationId alanı BOŞ olurdu --
+// çünkü deger henüz üretilmemiş olurdu. Bu, PDF'in "correlation ID
+// application log içinde olmalı" maddesini sessizce karsilanmamis
+// birakirdi: kod var, alan boş.
 app.UseRequestLogging();
 
 // ===================================================================
-// GUVENLIK KATMANLARI -- PDF Sprint 15
+// GÜVENLİK KATMANLARI -- PDF Sprint 15
 // ===================================================================
 
-// 3) Ters vekil basliklari: hiz sinirindan ONCE olmali.
+// 3) Ters vekil basliklari: hiz sinirindan ONCE olmalı.
 //
-// Sonra olsaydi hiz siniri hala vekilin IP'sini gorurdu ve butun
+// Sonra olsaydı hiz sınırı hâlâ vekilin IP'sini gorurdu ve butun
 // kullanicilari tek kotada toplardi.
 app.UseForwardedHeaders();
 
-// 4) Guvenlik basliklari: mumkun oldugunca ERKEN.
+// 4) Güvenlik basliklari: mumkun oldugunca ERKEN.
 //
-// Hata sayfalari ve statik dosyalar dahil TUM yanitlara eklensin
+// Hata sayfalari ve statik dosyalar dahil TÜM yanitlara eklensin
 // istiyoruz.
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
 // 5) CORS: kimlik dogrulamadan ONCE.
 //
-// Tarayicinin gonderdigi on kontrol (preflight OPTIONS) istegi
-// kimlik bilgisi TASIMAZ. Kimlik dogrulamadan sonra olsaydi
-// preflight 401 alir ve gercek istek hic gonderilmezdi.
+// Tarayicinin gonderdigi on kontrol (preflight OPTIONS) isteği
+// kimlik bilgisi TASIMAZ. Kimlik dogrulamadan sonra olsaydı
+// preflight 401 alır ve gerçek istek hiç gonderilmezdi.
 app.UseCors();
 
-// 6) Hiz siniri: kimlik dogrulamadan SONRA.
+// 6) Hiz sınırı: kimlik dogrulamadan SONRA.
 //
-// Boylece giris yapmis kullanicilar icin kota KULLANICI bazli
-// olabiliyor (bkz. ClientKey). Once olsaydi herkes IP bazli
-// sayilirdi ve ayni agdaki kullanicilar birbirini engellerdi.
+// Boylece giriş yapmış kullanıcılar için kota KULLANICI bazlı
+// olabiliyor (bkz. ClientKey). Önce olsaydı herkes IP bazlı
+// sayilirdi ve aynı agdaki kullanıcılar birbirini engellerdi.
 //
-// Sira: Authentication -> RateLimiter -> Authorization
+// Sıra: Authentication -> RateLimiter -> Authorization
 
 if (app.Environment.IsDevelopment())
 {
@@ -379,21 +379,21 @@ if (app.Environment.IsDevelopment())
     // ==============================================================
     // SCALAR ARAYUZU -- /scalar
     // ==============================================================
-    // Yalnizca GELISTIRMEDE aciliyor.
+    // Yalnızca GELISTIRMEDE aciliyor.
     //
-    // Uretimde acik birakmak, tum uclarin, parametrelerin ve hata
-    // kodlarinin haritasini saldirgana hazir sunmak olurdu. API'nin
+    // Uretimde açık birakmak, tüm uclarin, parametrelerin ve hata
+    // kodlarinin haritasini saldirgana hazır sunmak olurdu. API'nin
     // kendisi zaten korumali ama "hangi uclar var?" sorusunu
     // bedavaya cevaplamanin bir sebebi yok.
     //
-    // Gercek bir uretimde bu arayuz ayri bir ic ag adresinde veya
+    // Gerçek bir uretimde bu arayüz ayrı bir ic ag adresinde veya
     // kimlik dogrulamali olarak sunulur.
     // ==============================================================
     app.MapScalarApiReference(options =>
     {
         options.Title = "Biletim API";
 
-        // Arayuzun urettigi ornek kod parcasi: varsayilan olarak
+        // Arayuzun urettigi örnek kod parcasi: varsayılan olarak
         // birden fazla dil gosteriyor. Bizim istemcimiz TypeScript.
         options.DefaultHttpClient =
             new(ScalarTarget.JavaScript, ScalarClient.Fetch);
@@ -410,32 +410,32 @@ else
 // UseAuthentication  -> "Sen kimsin?"   (token'i okur, User'i doldurur)
 // UseAuthorization   -> "Yetkin var mi?" (User'a bakip karar verir)
 //
-// Ters yazsaydik Authorization henuz doldurulmamis bir User goreceginden
-// giris yapmis kullanicilar bile 401 alirdi. Ve bu hata cok kafa
-// karistiricidir: token dogru, kod dogru ama calismiyor.
+// Ters yazsaydık Authorization henüz doldurulmamis bir User goreceginden
+// giriş yapmış kullanıcılar bile 401 alırdı. Ve bu hata çok kafa
+// karistiricidir: token doğru, kod doğru ama calismiyor.
 // ==================================================================
 app.UseAuthentication();
 app.UseRateLimiter();
 // ===================================================================
 // SAHIPLIK REDDINDE 404 -- PDF Sprint 19 denetiminde eklendi
 // ===================================================================
-// UseAuthorization'dan ONCE kaydediliyor. Ilk denememde SONRASINA
-// koymustum ve middleware HIC CALISMADI.
+// UseAuthorization'dan ONCE kaydediliyor. İlk denememde SONRASINA
+// koymustum ve middleware HİÇ CALISMADI.
 //
-// Sebep: middleware zinciri ic ice halkalar gibi calisiyor. Bir
-// middleware "sonraki"ni cagirir, o doner, sonra kendi isini
+// Sebep: middleware zinciri ic ice halkalar gibi çalışıyor. Bir
+// middleware "sonraki"ni cagirir, o döner, sonra kendi isini
 // bitirir.
 //
 // Yetkilendirme reddettiginde KISA DEVRE yapiyor: 403 yazip
-// donuyor ve sonraki halkayi HIC CAGIRMIYOR. Yani sonrasina
+// dönüyor ve sonraki halkayi HİÇ CAGIRMIYOR. Yani sonrasina
 // konan bir middleware o durumda calismaz.
 //
-// Once koydugumuzda ise: bizim _next() cagrimiz yetkilendirmeyi
+// Önce koydugumuzda ise: bizim _next() cagrimiz yetkilendirmeyi
 // KAPSIYOR. O reddedip donunce kontrol bize geri geliyor ve
 // yaniti duzeltebiliyoruz.
 //
 // Ders: "sonra calissin" istiyorsan middleware'i ONCE kaydet.
-// Sirala mantigi isteklerde ileri, YANITLARDA geri isliyor.
+// Sirala mantığı isteklerde ileri, YANITLARDA geri isliyor.
 // ===================================================================
 app.UseMiddleware<OwnershipNotFoundMiddleware>();
 
@@ -446,19 +446,19 @@ app.MapControllers();
 // SAGLIK UCLARI -- PDF Sprint 16
 // ===================================================================
 // Ucu de AllowAnonymous: yuk dengeleyici ve Kubernetes probe'lari
-// token tasiyamaz. Bu yuzden yanitlarda hicbir hassas bilgi yok
-// (baglanti dizesi, surum, ic hata mesaji donmuyor).
+// token tasiyamaz. Bu yüzden yanitlarda hiçbir hassas bilgi yok
+// (bağlantı dizesi, surum, ic hata mesaji donmuyor).
 
-// 1) Insan icin: her seyin ayrintili ozeti.
+// 1) Insan için: her seyin ayrintili özeti.
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
 });
 
-// 2) "Trafik alabilir miyim?" -- TUM bagimliliklar kontrol ediliyor.
+// 2) "Trafik alabilir miyim?" -- TÜM bagimliliklar kontrol ediliyor.
 //
-// Kubernetes readiness probe bunu cagirir. Basarisiz olursa
-// kapsayici OLDURULMEZ, yalnizca yuk dengeleyiciden cikarilir.
+// Kubernetes readiness probe bunu cagirir. Başarısız olursa
+// kapsayici OLDURULMEZ, yalnızca yuk dengeleyiciden cikarilir.
 app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains(HealthChecksSetup.ReadyTag),
@@ -470,18 +470,18 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 // ==================================================================
 // Predicate = _ => false  SATIRI BU DOSYADAKI EN KRITIK SATIR
 // ==================================================================
-// Buraya veritabani kontrolu eklemek cok mantikli gorunur ve
+// Buraya veritabani kontrolü eklemek çok mantikli görünür ve
 // FELAKETLE sonuclanir:
 //
-//   PostgreSQL 30 saniye yanit vermez -> tum kapsayicilarin live
+//   PostgreSQL 30 saniye yanit vermez -> tüm kapsayicilarin live
 //   probe'u duser -> Kubernetes hepsini OLDURUR -> yeniden
-//   baslarlar, veritabani hala yok -> yine olurler...
+//   baslarlar, veritabani hâlâ yok -> yine olurler...
 //
 // Gecici bir veritabani sorunu, kalici bir uygulama cokusune
 // donusur. Uygulama, kendi yeniden baslatmasiyla COZEMEYECEGI bir
-// sey icin surekli yeniden baslatilir.
+// sey için surekli yeniden baslatilir.
 //
-// Live probe yalnizca "bu process kilitlendi mi?" sorusunu
+// Live probe yalnızca "bu process kilitlendi mi?" sorusunu
 // cevaplamali. Cevabi bagimliliklara BAGLI OLMAMALI.
 // ==================================================================
 app.MapHealthChecks("/health/live", new HealthCheckOptions
@@ -500,8 +500,8 @@ app.MapHub<SeatHub>("/hubs/seats");
 // ===================================================================
 // UseAuthentication/UseAuthorization SONRASINA konuldu.
 //
-// Once konsaydi, filtre calistiginda HttpContext.User henuz
-// doldurulmamis olurdu: admin olan kullanici bile panele
+// Önce konsaydi, filtre calistiginda HttpContext.User henüz
+// doldurulmamis olurdu: admin olan kullanıcı bile panele
 // giremezdi ve sebebi anlasilmazdi.
 // ===================================================================
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
@@ -510,17 +510,17 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 
     // Panelden is SILME ve YENIDEN CALISTIRMA yetkisi.
     //
-    // Acik birakiyorum cunku bir mesaj dead letter oldugunda
+    // Acik birakiyorum çünkü bir mesaj dead letter olduğunda
     // adminin sorunu duzeltip yeniden denemesi gerekiyor -- panelin
     // asil faydasi bu.
     //
-    // Erisim zaten Admin roluyle sinirli; salt okunur yapsaydik
-    // dead letter mesajlari icin elle SQL yazmak gerekirdi ki
-    // uretimde cok daha risklidir.
+    // Erişim zaten Admin roluyle sinirli; salt okunur yapsaydik
+    // dead letter mesajlari için elle SQL yazmak gerekirdi ki
+    // uretimde çok daha risklidir.
     IsReadOnlyFunc = _ => false,
 
-    // Panelin kendi "olcum" sayfalarini kapatiyorum: sunucu adi,
-    // makine adi gibi bilgileri gereksiz yere yaymanin anlami yok.
+    // Panelin kendi "olcum" sayfalarini kapatiyorum: sunucu adı,
+    // makine adı gibi bilgileri gereksiz yere yaymanin anlami yok.
     DisplayStorageConnectionString = false
 });
 
@@ -529,18 +529,18 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 // ===================================================================
 // Uygulama AYAGA KALKTIKTAN SONRA cagiriliyor.
 //
-// builder asamasinda yapsaydik Hangfire deposu (storage) henuz
-// hazir olmazdi ve kayit sirasinda istisna alirdik.
+// builder asamasinda yapsaydik Hangfire deposu (storage) henüz
+// hazır olmazdi ve kayıt sırasında istisna alırdık.
 BackgroundJobSetup.RegisterRecurringJobs(
     app.Services.GetRequiredService<IRecurringJobManager>());
 
 // ===================================================================
 // CALISTIR
 // ===================================================================
-// try/finally icinde: Log.CloseAndFlush() cagrilmazsa dosya sink'i
+// try/finally içinde: Log.CloseAndFlush() cagrilmazsa dosya sink'i
 // tamponundaki son loglar DISKE YAZILMADAN process sonlanir.
 //
-// Yani uygulamanin cokme anindaki loglari -- en cok ihtiyac
+// Yani uygulamanin cokme anindaki loglari -- en çok ihtiyac
 // duyacaklarimiz -- kaybolur. Tam olarak isimize yarayacak an.
 try
 {
@@ -552,7 +552,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Uygulama baslatilamadi.");
+    Log.Fatal(ex, "Uygulama başlatılamadı.");
 
     throw;
 }
@@ -563,6 +563,6 @@ finally
 
 /// <summary>
 /// Integration testlerin WebApplicationFactory ile bu projeyi
-/// baslatabilmesi icin gereken acik giris noktasi. (PDF Sprint 17)
+/// baslatabilmesi için gereken açık giriş noktasi. (PDF Sprint 17)
 /// </summary>
 public partial class Program;

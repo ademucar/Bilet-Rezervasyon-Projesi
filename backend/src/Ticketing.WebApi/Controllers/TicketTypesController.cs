@@ -7,14 +7,14 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Bilet turu ve fiyatlandirma. PDF Sprint 6.
-/// Etkinlik altindaki islemler (olusturma, listeleme).
+/// Bilet türü ve fiyatlandirma. PDF Sprint 6.
+/// Etkinlik altindaki islemler (oluşturma, listeleme).
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/events/{eventId:guid}/ticket-types")]
 public sealed class EventTicketTypesController : ApiControllerBase
 {
-    /// <summary>Etkinligin bilet turlerini fiyata gore sirali dondurur.</summary>
+    /// <summary>Etkinligin bilet turlerini fiyata göre sıralı döndürür.</summary>
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType<IReadOnlyList<TicketTypeDto>>(StatusCodes.Status200OK)]
@@ -23,15 +23,15 @@ public sealed class EventTicketTypesController : ApiControllerBase
             .Send(new GetTicketTypesQuery(eventId), cancellationToken)
             .ConfigureAwait(false));
 
-    /// <summary>Etkinlige yeni bilet turu ekler.</summary>
+    /// <summary>Etkinlige yeni bilet türü ekler.</summary>
     [HttpPost]
     // Route parametresi "eventId" ama EventOwner handler'i "id" ariyor.
-    // Bu yuzden burada OrganizerOnly kullaniyorum ve sahiplik kontrolu
-    // handler icinde Event uzerinden yapiliyor (AddTicketType, etkinligi
+    // Bu yüzden burada OrganizerOnly kullanıyorum ve sahiplik kontrolü
+    // handler içinde Event üzerinden yapiliyor (AddTicketType, etkinligi
     // yukleyip kurallarini uyguluyor).
     //
-    // Alternatif, EventOwner handler'ini "eventId" adini da okuyacak
-    // sekilde genisletmekti; Sprint 7'de rezervasyon endpointleri
+    // Alternatif, EventOwner handler'ini "eventId" adını da okuyacak
+    // şekilde genisletmekti; Sprint 7'de rezervasyon endpointleri
     // eklenirken o genellestirmeyi yapacagim.
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
     [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
@@ -52,19 +52,19 @@ public sealed class EventTicketTypesController : ApiControllerBase
     }
 }
 
-/// <summary>Bilet turu uzerindeki dogrudan islemler. PDF Sprint 6.</summary>
+/// <summary>Bilet türü uzerindeki doğrudan islemler. PDF Sprint 6.</summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/ticket-types")]
 public sealed class TicketTypesController : ApiControllerBase
 {
-    /// <summary>Bilet turunun adini, fiyatini ve kotasini gunceller.</summary>
+    /// <summary>Bilet turunun adını, fiyatini ve kotasini günceller.</summary>
     /// <remarks>
-    /// Satis BASLADIKTAN sonra fiyat degistirilemez: aksi halde ayni
-    /// koltugu farkli fiyata alan kullanicilar olurdu ve mutabakat
-    /// imkansizlasirdi. Domain bu kurali uyguluyor ve ihlalde 422 doner.
+    /// Satış BASLADIKTAN sonra fiyat degistirilemez: aksi halde aynı
+    /// koltuğu farklı fiyata alan kullanıcılar olurdu ve mutabakat
+    /// imkansizlasirdi. Domain bu kuralı uyguluyor ve ihlalde 422 döner.
     /// </remarks>
     /// <response code="204">Guncellendi.</response>
-    /// <response code="422">Satis basladi; bu alan artik degistirilemez.</response>
+    /// <response code="422">Satış basladi; bu alan artık degistirilemez.</response>
     [HttpPut("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -79,12 +79,12 @@ public sealed class TicketTypesController : ApiControllerBase
             cancellationToken).ConfigureAwait(false));
 
     /// <summary>
-    /// Fiyati degistirir.
+    /// Fiyati değiştirir.
     ///
-    /// AYRI endpoint cunku fiyat degisikligi ayri bir olaydir:
-    /// satis baslamissa denetim kaydi olusturulur (PDF Sprint 6).
-    /// Genel guncelleme icine gomulseydi, adi degistirilen her turde
-    /// gereksiz audit kaydi olusurdu.
+    /// AYRI endpoint çünkü fiyat degisikligi ayrı bir olaydir:
+    /// satış baslamissa denetim kaydı olusturulur (PDF Sprint 6).
+    /// Genel güncelleme icine gomulseydi, adı degistirilen her turde
+    /// gereksiz audit kaydı olusurdu.
     /// </summary>
     [HttpPut("{id:guid}/price")]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
@@ -113,11 +113,11 @@ public sealed class TicketTypesController : ApiControllerBase
 
     /// <summary>Bilet turunu siler.</summary>
     /// <remarks>
-    /// Yalnizca HIC BILET SATILMAMIS bir tur silinebilir. Satilmis
-    /// biletleri olan bir turu silmek, o biletleri sahipsiz birakirdi.
+    /// Yalnızca HİÇ BİLET SATILMAMIS bir tur silinebilir. Satılmış
+    /// biletleri olan bir türü silmek, o biletleri sahipsiz birakirdi.
     /// </remarks>
     /// <response code="204">Silindi.</response>
-    /// <response code="422">Bu ture ait bilet satilmis; silinemez.</response>
+    /// <response code="422">Bu ture ait bilet satılmış; silinemez.</response>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

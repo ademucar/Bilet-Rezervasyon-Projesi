@@ -74,7 +74,17 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
+# 127.0.0.1, "localhost" DEGIL.
+#
+# Container icinde localhost once ::1 (IPv6) olarak cozuluyor ama
+# nginx yalnizca 0.0.0.0:80 dinliyor. Sonuc: disaridan gelen her
+# istek 200 donerken saglik kontrolu "connection refused" aliyor ve
+# container sonsuza kadar "unhealthy" gorunuyordu.
+#
+# Servisin kendisinde sorun yoktu -- kontrol yanlis kapiyi
+# caliyordu. Ama compose'da baska bir servis buna service_healthy
+# ile baglanmis olsaydi hicbir zaman baslamazdi.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

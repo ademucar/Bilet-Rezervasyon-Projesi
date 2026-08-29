@@ -3,16 +3,16 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Oturma plani. Bir salonun belirli bir koltuk duzeni.
+/// Oturma planı. Bir salonun belirli bir koltuk düzeni.
 ///
-/// Neden bir salonun birden fazla plani olabilir?
-/// Ayni salon konser icin sahne onu ayakta + arkasi koltuklu,
-/// tiyatro icin tamamen koltuklu duzenlenebilir. Her duzen ayri bir plandir.
+/// Neden bir salonun birden fazla planı olabilir?
+/// Aynı salon konser için sahne önü ayakta + arkası koltuklu,
+/// tiyatro için tamamen koltuklu duzenlenebilir. Her duzen ayrı bir plandir.
 ///
 /// PDF is kurallari (sayfa 11):
-///   - "Ayni salonda ayni isimde iki oturma plani bulunmamalidir."
+///   - "Aynı salonda aynı isimde iki oturma planı bulunmamalidir."
 ///     -> UNIQUE (HallId, Name) index'i ile saglanacak
-///   - "Kullanilmis oturma plani fiziksel olarak silinmemelidir."
+///   - "Kullanılmış oturma planı fiziksel olarak silinmemelidir."
 ///     -> AuditableEntity'den gelen soft delete ile saglanacak
 ///   - "Koltuk kapasitesi salon kapasitesini asmamalidir."
 ///     -> ValidateCapacity metodu ile saglanacak
@@ -39,7 +39,7 @@ public class SeatLayout : AuditableEntity
     ///
     /// Silmek yerine pasife almanin sebebi: gecmis etkinlikler bu plana
     /// referans veriyor. Silseydik eski biletlerin koltuk bilgisi kaybolurdu
-    /// ve "3 yil onceki konserde hangi koltuktaydim" sorusu cevapsiz kalirdi.
+    /// ve "3 yil önceki konserde hangi koltuktaydim" sorusu cevapsiz kalırdı.
     /// </summary>
     public bool IsActive { get; private set; }
 
@@ -53,12 +53,12 @@ public class SeatLayout : AuditableEntity
     {
         if (hallId == Guid.Empty)
         {
-            throw new DomainException("Salon secilmelidir.", "seat_layout.hall_required");
+            throw new DomainException("Salon seçilmelidir.", "seat_layout.hall_required");
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Plan adi bos olamaz.", "seat_layout.name_required");
+            throw new DomainException("Plan adı boş olamaz.", "seat_layout.name_required");
         }
 
         return new SeatLayout(hallId, name.Trim()) { Description = description };
@@ -66,15 +66,15 @@ public class SeatLayout : AuditableEntity
 
     public SeatSection AddSection(string name, int displayOrder, string? colorHex = null)
     {
-        // Ayni plan icinde ayni isimde iki bolum olamaz.
+        // Aynı plan içinde aynı isimde iki bölüm olamaz.
         //
-        // Bu kontrolu BURADA yapiyorum cunku bolumler zaten bellekte,
+        // Bu kontrolü BURADA yapıyorum çünkü bölümler zaten bellekte,
         // Sections koleksiyonunda. Veritabanina gitmeden karar verebiliyorum.
         //
-        // Ama bu YETMEZ: iki kullanici ayni anda bolum eklerse ikisi de
-        // bellekte cakisma gormez. Bu yuzden veritabaninda AYRICA
-        // UNIQUE (SeatLayoutId, Name) index'i olacak. Uygulama kontrolu
-        // kullaniciya anlamli mesaj vermek icin, index ise dogruluk icin.
+        // Ama bu YETMEZ: iki kullanıcı aynı anda bölüm eklerse ikisi de
+        // bellekte çakışma gormez. Bu yüzden veritabaninda AYRICA
+        // UNIQUE (SeatLayoutId, Name) index'i olacak. Uygulama kontrolü
+        // kullanıcıya anlamlı mesaj vermek için, index ise dogruluk için.
         if (_sections.Exists(s => string.Equals(s.Name, name.Trim(), StringComparison.OrdinalIgnoreCase)))
         {
             throw new DomainException(
@@ -89,18 +89,18 @@ public class SeatLayout : AuditableEntity
     }
 
     /// <summary>
-    /// Plandaki toplam koltuk sayisi.
+    /// Plandaki toplam koltuk sayısı.
     ///
-    /// Metot, property degil -- cunku her cagrildiginda tum bolumleri
-    /// dolasip topluyor. Property olsaydi cagiran kisi bunun ucuz bir
-    /// alan okumasi oldugunu sanip donguler icinde kullanabilirdi.
+    /// Metot, property değil -- çünkü her cagrildiginda tüm bolumleri
+    /// dolasip topluyor. Property olsaydı cagiran kişi bunun ucuz bir
+    /// alan okumasi olduğunu sanip donguler içinde kullanabilirdi.
     /// </summary>
     public int GetTotalSeatCount() => _sections.Sum(s => s.Seats.Count);
 
     /// <summary>
     /// PDF: "Koltuk kapasitesi salon kapasitesini asmamalidir."
     ///
-    /// hallCapacity'yi PARAMETRE olarak aliyorum, Hall navigation'indan
+    /// hallCapacity'yi PARAMETRE olarak alıyorum, Hall navigation'indan
     /// okumuyorum. Sebep: Hall her zaman yuklu olmayabilir (Include
     /// edilmemisse null'dur). Parametre olarak almak, cagiran kisiyi
     /// veriyi saglamaya zorlar ve sessiz NullReferenceException riskini
@@ -113,7 +113,7 @@ public class SeatLayout : AuditableEntity
         if (toplamKoltuk > hallCapacity)
         {
             throw new DomainException(
-                $"Koltuk sayisi ({toplamKoltuk}) salon kapasitesini ({hallCapacity}) asamaz.",
+                $"Koltuk sayısı ({toplamKoltuk}) salon kapasitesini ({hallCapacity}) aşamaz.",
                 "seat_layout.capacity_exceeded");
         }
     }

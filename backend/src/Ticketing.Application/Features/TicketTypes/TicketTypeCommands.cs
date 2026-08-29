@@ -15,29 +15,29 @@ namespace Ticketing.Application.Features.TicketTypes;
 internal static class TicketTypeErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "ticket_type.not_found", "Bilet turu bulunamadi.");
+        "ticket_type.not_found", "Bilet türü bulunamadı.");
 
     public static readonly Error EventNotFound = Error.NotFound(
-        "ticket_type.event_not_found", "Etkinlik bulunamadi.");
+        "ticket_type.event_not_found", "Etkinlik bulunamadı.");
 
     public static readonly Error SalesStarted = Error.Conflict(
         "ticket_type.sales_started",
-        "Satisi baslamis etkinligin bilet turleri degistirilemez.");
+        "Satışı baslamis etkinliğin bilet türleri degistirilemez.");
 
     public static readonly Error QuotaExceedsCapacity = Error.Conflict(
         "ticket_type.quota_exceeds_capacity",
-        "Kontenjan, salon kapasitesini asamaz.");
+        "Kontenjan, salon kapasitesini aşamaz.");
 
     public static readonly Error SectionNotFound = Error.NotFound(
-        "ticket_type.section_not_found", "Bolum bulunamadi.");
+        "ticket_type.section_not_found", "Bölüm bulunamadı.");
 
     public static readonly Error SectionAlreadyAssigned = Error.Conflict(
         "ticket_type.section_already_assigned",
-        "Bu bolum baska bir bilet turune atanmis. Once mevcut atamayi kaldirin.");
+        "Bu bölüm başka bir bilet turune atanmis. Önce mevcut atamayi kaldirin.");
 
     public static readonly Error HasSoldTickets = Error.Conflict(
         "ticket_type.has_sold_tickets",
-        "Bu bilet turunden satis yapilmis. Silinemez, yalnizca pasife alinabilir.");
+        "Bu bilet turunden satış yapilmis. Silinemez, yalnızca pasife alinabilir.");
 }
 
 // ===================================================================
@@ -59,32 +59,32 @@ public sealed class CreateTicketTypeCommandValidator : AbstractValidator<CreateT
     public CreateTicketTypeCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Bilet turu adi zorunludur.")
+            .NotEmpty().WithMessage("Bilet türü adı zorunludur.")
             .MaximumLength(100);
 
-        // PDF is kurali: "Fiyat sifirdan kucuk olamaz."
+        // PDF is kuralı: "Fiyat sıfırdan küçük olamaz."
         //
         // Money value object'i de bunu reddediyor. Burada da kontrol
-        // etmemin sebebi kullaniciya ALAN BAZINDA anlasilir hata vermek:
-        // Money'nin DomainException'i 422 doner ve hangi alanin
-        // sorunlu oldugunu soylemez.
+        // etmemin sebebi kullanıcıya ALAN BAZINDA anlasilir hata vermek:
+        // Money'nin DomainException'i 422 döner ve hangi alanin
+        // sorunlu olduğunu soylemez.
         RuleFor(x => x.Price)
             .GreaterThanOrEqualTo(0).WithMessage("Fiyat negatif olamaz.")
-            // Ust sinir: 1 milyon TL'lik bilet yazim hatasidir.
+            // Ust sinir: 1 milyon TL'lik bilet yazım hatasidir.
             // (Ornegin 250 yerine 250000 yazilmasi.)
-            .LessThanOrEqualTo(1_000_000).WithMessage("Fiyat 1.000.000 asamaz.");
+            .LessThanOrEqualTo(1_000_000).WithMessage("Fiyat 1.000.000 aşamaz.");
 
         RuleFor(x => x.Currency)
             .NotEmpty()
-            .Length(3).WithMessage("Para birimi 3 harfli ISO 4217 kodu olmalidir (TRY, USD, EUR).");
+            .Length(3).WithMessage("Para birimi 3 harfli ISO 4217 kodu olmalıdır (TRY, USD, EUR).");
 
         RuleFor(x => x.Quota)
-            .GreaterThan(0).WithMessage("Kontenjan sifirdan buyuk olmalidir.")
+            .GreaterThan(0).WithMessage("Kontenjan sıfırdan büyük olmalıdır.")
             .When(x => x.Quota.HasValue);
 
         RuleFor(x => x.SalesStartDate)
             .LessThan(x => x.SalesEndDate)
-            .WithMessage("Satis baslangici, bitisinden once olmalidir.")
+            .WithMessage("Satış baslangici, bitisinden önce olmalıdır.")
             .When(x => x.SalesStartDate.HasValue && x.SalesEndDate.HasValue);
     }
 }
@@ -100,7 +100,7 @@ internal sealed class CreateTicketTypeCommandHandler
         CreateTicketTypeCommand request,
         CancellationToken cancellationToken)
     {
-        // TicketTypes'i Include ediyorum: Event.AddTicketType, ayni
+        // TicketTypes'i Include ediyorum: Event.AddTicketType, aynı
         // isimde tur var mi diye BELLEKTEKI koleksiyona bakiyor.
         var evt = await _context.Events
             .Include(e => e.TicketTypes)
@@ -113,7 +113,7 @@ internal sealed class CreateTicketTypeCommandHandler
         }
 
         // ==============================================================
-        // PDF is kurali: "Kontenjan salon kapasitesini asamaz."
+        // PDF is kuralı: "Kontenjan salon kapasitesini aşamaz."
         // ==============================================================
         if (request.Quota.HasValue)
         {
@@ -130,12 +130,12 @@ internal sealed class CreateTicketTypeCommandHandler
             }
         }
 
-        // Money yapicisi negatif tutari ve gecersiz para birimini
+        // Money yapicisi negatif tutarı ve geçersiz para birimini
         // reddediyor; DomainException -> 422.
         var price = new Money(request.Price, request.Currency);
 
-        // Event.AddTicketType, "satisi baslamis etkinlige yeni bilet
-        // turu eklenemez" kuralini ve isim cakismasini kontrol ediyor.
+        // Event.AddTicketType, "satışı baslamis etkinlige yeni bilet
+        // türü eklenemez" kuralini ve isim cakismasini kontrol ediyor.
         var ticketType = evt.AddTicketType(
             request.Name, price, request.Quota, request.RequiresStudentVerification);
 
@@ -151,7 +151,7 @@ internal sealed class CreateTicketTypeCommandHandler
 }
 
 // ===================================================================
-// FIYAT DEGISTIRME -- PDF: denetim kaydi ZORUNLU
+// FIYAT DEGISTIRME -- PDF: denetim kaydı ZORUNLU
 // ===================================================================
 
 public sealed record ChangeTicketTypePriceCommand(Guid Id, decimal Price, string Currency)
@@ -164,7 +164,7 @@ public sealed class ChangeTicketTypePriceCommandValidator
     {
         RuleFor(x => x.Price)
             .GreaterThanOrEqualTo(0).WithMessage("Fiyat negatif olamaz.")
-            .LessThanOrEqualTo(1_000_000).WithMessage("Fiyat 1.000.000 asamaz.");
+            .LessThanOrEqualTo(1_000_000).WithMessage("Fiyat 1.000.000 aşamaz.");
 
         RuleFor(x => x.Currency).NotEmpty().Length(3);
     }
@@ -200,11 +200,11 @@ internal sealed class ChangeTicketTypePriceCommandHandler
 
         var newPrice = new Money(request.Price, request.Currency);
 
-        // ChangePrice ESKI fiyati donuyor -- denetim kaydi icin.
+        // ChangePrice ESKİ fiyati dönüyor -- denetim kaydı için.
         var oldPrice = ticketType.ChangePrice(newPrice);
 
-        // Fiyat gercekten degismediyse denetim kaydi olusturma.
-        // Kullanici formu acip hicbir sey degistirmeden kaydettiginde
+        // Fiyat gerçekten degismediyse denetim kaydı oluşturma.
+        // Kullanıcı formu acip hiçbir sey degistirmeden kaydettiginde
         // audit log'u gereksiz kayitla sisirmeyelim.
         if (oldPrice == newPrice)
         {
@@ -212,19 +212,19 @@ internal sealed class ChangeTicketTypePriceCommandHandler
         }
 
         // ==============================================================
-        // PDF is kurali (Sprint 6):
-        // "Satis baslamis bilet turunun fiyati degistirilirse
+        // PDF is kuralı (Sprint 6):
+        // "Satış baslamis bilet turunun fiyati degistirilirse
         //  degisiklik loglanmalidir."
         // ==============================================================
-        // Neden yalnizca satis baslamissa? Cunku o noktadan sonra
+        // Neden yalnızca satış baslamissa? Çünkü o noktadan sonra
         // fiyat degisikligi TICARI bir olaydir: bazi musteriler eski
-        // fiyattan, bazilari yenisinden almis olur. Sikayet geldiginde
-        // "o gun fiyat neydi, kim degistirdi" sorusuna cevap verebilmek
+        // fiyattan, bazilari yenisinden almis olur. Sikayet geldiğinde
+        // "o gün fiyat neydi, kim degistirdi" sorusuna cevap verebilmek
         // gerekir.
         //
-        // Satis baslamadan once yapilan degisiklikler ise siradan
+        // Satış baslamadan önce yapilan degisiklikler ise siradan
         // duzenlemedir; her birini loglamak audit tablosunu gereksiz
-        // sisirir ve gercek olaylari gorunmez kilar.
+        // sisirir ve gerçek olaylari gorunmez kilar.
         var salesStarted = ticketType.Event.Status is EventStatus.SalesOpen
                                                    or EventStatus.SalesClosed
                                                    or EventStatus.Completed;
@@ -237,9 +237,9 @@ internal sealed class ChangeTicketTypePriceCommandHandler
                 action: "PriceChanged",
                 userId: _currentUser.UserId,
 
-                // Eski ve yeni degerleri JSON olarak sakliyorum.
-                // Duz metin ("250 TRY -> 300 TRY") yazsaydik sonradan
-                // ayristirmak gerekirdi; jsonb ile PostgreSQL icinde
+                // Eski ve yeni değerleri JSON olarak sakliyorum.
+                // Duz metin ("250 TRY -> 300 TRY") yazsaydık sonradan
+                // ayristirmak gerekirdi; jsonb ile PostgreSQL içinde
                 // sorgulanabilir kaliyor.
                 oldValues: JsonSerializer.Serialize(new
                 {
@@ -345,14 +345,14 @@ internal sealed class AssignSectionCommandHandler : IRequestHandler<AssignSectio
         }
 
         // ==============================================================
-        // PDF: "Ayni koltuk birden fazla aktif bilet turune atanamaz."
+        // PDF: "Aynı koltuk birden fazla aktif bilet turune atanamaz."
         // ==============================================================
-        // Bolum BASKA bir bilet turune atanmis mi?
+        // Bölüm BASKA bir bilet turune atanmis mi?
         //
         // Kesin garanti veritabanindaki UNIQUE (SeatSectionId)
-        // index'inde. Buradaki kontrol kullaniciya HANGI durumla
-        // karsilastigini anlatan bir mesaj vermek icin -- aksi halde
-        // ham bir 409 "Veri cakismasi" alirdi.
+        // index'inde. Buradaki kontrol kullanıcıya HANGI durumla
+        // karsilastigini anlatan bir mesaj vermek için -- aksi halde
+        // ham bir 409 "Veri çakışması" alırdı.
         var assignedElsewhere = await _context.TicketTypeSections
             .AsNoTracking()
             .AnyAsync(
@@ -366,7 +366,7 @@ internal sealed class AssignSectionCommandHandler : IRequestHandler<AssignSectio
             return Result.Failure(TicketTypeErrors.SectionAlreadyAssigned);
         }
 
-        // Idempotent: ayni bolum ikinci kez atanirsa entity yok sayiyor.
+        // Idempotent: aynı bölüm ikinci kez atanirsa entity yok sayiyor.
         ticketType.AssignSection(request.SeatSectionId);
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -401,12 +401,12 @@ internal sealed class DeleteTicketTypeCommandHandler
 
         // Bu turden bilet satilmissa SILME.
         //
-        // Satilmis biletler bu bilet turune referans veriyor. Silseydik
-        // (soft delete bile olsa) kullanicinin biletinde "bilet turu:
+        // Satılmış biletler bu bilet turune referans veriyor. Silseydik
+        // (soft delete bile olsa) kullanıcının biletinde "bilet türü:
         // bilinmiyor" yazardi ve iade hesabi yapilamazdi.
         //
-        // Bunun yerine pasife alinabilir: yeni satis olmaz, mevcut
-        // biletler gecerli kalir.
+        // Bunun yerine pasife alinabilir: yeni satış olmaz, mevcut
+        // biletler geçerli kalır.
         var hasSoldTickets = await _context.EventSeats
             .AsNoTracking()
             .AnyAsync(
@@ -478,11 +478,11 @@ internal sealed class GetTicketTypesQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // Bicimlendirmeyi BELLEKTE yapiyorum, sorguda degil.
+        // Bicimlendirmeyi BELLEKTE yapıyorum, sorguda değil.
         //
-        // Money.ToString() bir C# metodu; EF onu SQL'e ceviremez.
-        // Sorgu icinde cagirsaydik "could not be translated" hatasi
-        // alirdik -- Sprint 4'te bu tuzaga dusmustuk.
+        // Money.ToString() bir C# metodu; EF önü SQL'e ceviremez.
+        // Sorgu içinde cagirsaydik "could not be translated" hatası
+        // alırdık -- Sprint 4'te bu tuzaga dusmustuk.
         var dtos = items
             .Select(t => new TicketTypeDto(
                 t.Id,
@@ -490,8 +490,8 @@ internal sealed class GetTicketTypesQueryHandler
                 t.Price.Amount,
                 t.Price.Currency,
 
-                // Kullaniciya gosterilecek bicim.
-                // Sunucuda uretiyorum ki tum istemcilerde ayni gorunsun.
+                // Kullanıcıya gösterilecek biçim.
+                // Sunucuda uretiyorum ki tüm istemcilerde aynı gorunsun.
                 string.Create(CultureInfo.InvariantCulture, $"{t.Price.Amount:N2} {t.Price.Currency}"),
 
                 t.Quota,

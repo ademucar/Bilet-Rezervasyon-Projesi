@@ -138,7 +138,7 @@ export function ActiveFilterChips({
   if (filters.venueId) {
     rozetler.push({
       anahtar: 'venueId',
-      metin: 'Mekân seçili',
+      metin: 'Mekan seçili',
       kaldir: () => onChange({ venueId: undefined }),
     })
   }

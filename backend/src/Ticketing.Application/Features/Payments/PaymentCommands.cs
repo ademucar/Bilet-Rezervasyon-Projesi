@@ -20,40 +20,40 @@ namespace Ticketing.Application.Features.Payments;
 internal static class PaymentErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "payment.not_found", "Odeme bulunamadi.");
+        "payment.not_found", "Ödeme bulunamadı.");
 
     public static readonly Error ReservationNotFound = Error.NotFound(
-        "payment.reservation_not_found", "Rezervasyon bulunamadi.");
+        "payment.reservation_not_found", "Rezervasyon bulunamadı.");
 
     public static readonly Error ReservationNotPayable = Error.Conflict(
         "payment.reservation_not_payable",
-        "Bu rezervasyon icin odeme baslatilamaz. Suresi dolmus veya iptal edilmis olabilir.");
+        "Bu rezervasyon için ödeme baslatilamaz. Süresi dolmuş veya iptal edilmiş olabilir.");
 
     public static readonly Error AlreadyPaid = Error.Conflict(
         "payment.already_paid",
-        "Bu rezervasyon icin zaten basarili bir odeme yapilmis.");
+        "Bu rezervasyon için zaten başarılı bir ödeme yapilmis.");
 
     public static readonly Error ProviderRejected = Error.Conflict(
-        "payment.provider_rejected", "Odeme saglayicisi islemi reddetti.");
+        "payment.provider_rejected", "Ödeme sağlayıcısı islemi reddetti.");
 
     public static readonly Error VerificationFailed = Error.Conflict(
         "payment.verification_failed",
-        "Odeme saglayici tarafinda dogrulanamadi.");
+        "Ödeme sağlayıcı tarafında dogrulanamadi.");
 
     public static readonly Error NotRefundable = Error.Conflict(
-        "payment.not_refundable", "Bu odeme iade edilemez.");
+        "payment.not_refundable", "Bu ödeme iade edilemez.");
 }
 
 // ===================================================================
-// ODEME BASLATMA -- PDF: POST /api/v1/payments
+// ÖDEME BASLATMA -- PDF: POST /api/v1/payments
 // ===================================================================
 
 /// <summary>
-/// DIKKAT: Tutar alani YOK -- rezervasyondan okunuyor.
+/// DIKKAT: Tutar alanı YOK -- rezervasyondan okunuyor.
 ///
-/// PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
-/// guvenilmemelidir." Alan hic olmadigi icin istemci 500 TL'lik
-/// bileti 1 TL'ye odemeyi DENEYEMEZ bile.
+/// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
+/// güvenilmemelidir." Alan hiç olmadığı için istemci 500 TL'lik
+/// bileti 1 TL'ye ödemeyi DENEYEMEZ bile.
 /// </summary>
 public sealed record CreatePaymentCommand(Guid ReservationId, string? IdempotencyKey)
     : IRequest<Result<PaymentDto>>;
@@ -90,27 +90,27 @@ internal sealed partial class CreatePaymentCommandHandler
     }
 
     // ==============================================================
-    // PDF Sprint 16: "Odeme" loglanmalidir.
+    // PDF Sprint 16: "Ödeme" loglanmalidir.
     // ==============================================================
-    // TUTARI logluyorum ama KART BILGISI YOK -- zaten hicbir yerde
-    // saklamiyoruz (simulasyon saglayici kullaniyoruz).
+    // TUTARI logluyorum ama KART BILGISI YOK -- zaten hiçbir yerde
+    // saklamiyoruz (simülasyon sağlayıcı kullanıyoruz).
     //
-    // Tutar hassas veri degil ama is acisindan kritik: uretimde
-    // "bugun ne kadar odeme alindi?" sorusunun ilk cevabi loglardan
-    // geliyor, rapor sisteminden degil -- cunku rapor sistemi de
+    // Tutar hassas veri değil ama is acisindan kritik: uretimde
+    // "bugun ne kadar ödeme alındı?" sorusunun ilk cevabi loglardan
+    // geliyor, rapor sisteminden değil -- çünkü rapor sistemi de
     // bozulmus olabilir.
     // ==============================================================
     [LoggerMessage(
         EventId = LogEvents.OdemeBaslatildi,
         Level = LogLevel.Information,
-        Message = "Odeme baslatildi. Id: {PaymentId}, Rezervasyon: {ReservationId}, Tutar: {Amount} {Currency}")]
+        Message = "Ödeme baslatildi. Id: {PaymentId}, Rezervasyon: {ReservationId}, Tutar: {Amount} {Currency}")]
     private static partial void LogPaymentStarted(
         ILogger logger, Guid paymentId, Guid reservationId, decimal amount, string currency);
 
     [LoggerMessage(
         EventId = LogEvents.OdemeBasarisiz,
         Level = LogLevel.Warning,
-        Message = "Odeme saglayici tarafindan REDDEDILDI. Id: {PaymentId}, Rezervasyon: {ReservationId}")]
+        Message = "Ödeme sağlayıcı tarafından REDDEDILDI. Id: {PaymentId}, Rezervasyon: {ReservationId}")]
     private static partial void LogPaymentRejected(
         ILogger logger, Guid paymentId, Guid reservationId);
 
@@ -121,12 +121,12 @@ internal sealed partial class CreatePaymentCommandHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<PaymentDto>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var now = _clock.UtcNow;
 
-        // Idempotency: ayni anahtarla ikinci istek AYNI odemeyi doner.
+        // Idempotency: aynı anahtarla ikinci istek AYNI ödemeyi döner.
         if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
         {
             var existingId = await _context.Payments
@@ -148,16 +148,16 @@ internal sealed partial class CreatePaymentCommandHandler
 
         if (reservation is null || reservation.UserId != userId)
         {
-            // 404: baskasinin rezervasyonunun varligini dogrulamamak icin.
+            // 404: baskasinin rezervasyonunun varligini dogrulamamak için.
             return Result.Failure<PaymentDto>(PaymentErrors.ReservationNotFound);
         }
 
         // ==============================================================
-        // PDF: "Ayni rezervasyon icin birden fazla basarili odeme
+        // PDF: "Aynı rezervasyon için birden fazla başarılı ödeme
         //       olusamaz."
         // ==============================================================
-        // Bu kontrol olmasaydi kullanici iki kez odeme yapip iki kez
-        // ucret odeyebilirdi -- ve ikinci odemeyi iade etmek manuel
+        // Bu kontrol olmasaydı kullanıcı iki kez ödeme yapip iki kez
+        // ucret odeyebilirdi -- ve ikinci ödemeyi iade etmek manuel
         // mudahale gerektirirdi.
         var alreadyPaid = await _context.Payments
             .AsNoTracking()
@@ -172,15 +172,15 @@ internal sealed partial class CreatePaymentCommandHandler
         }
 
         // ==============================================================
-        // PDF: "Odeme yalnizca AKTIF rezervasyon icin baslatilabilir."
+        // PDF: "Ödeme yalnızca AKTIF rezervasyon için baslatilabilir."
         // ==============================================================
         // Reservation.StartPayment iki seyi kontrol ediyor:
-        //   1. Sure dolmus mu?  -> "reservation.expired"
-        //   2. Durum gecisi gecerli mi? (Locked -> PaymentPending)
+        //   1. Süre dolmuş mu?  -> "reservation.expired"
+        //   2. Durum gecisi geçerli mi? (Locked -> PaymentPending)
         //
-        // Sure kontrolu KRITIK: suresi dolmus bir rezervasyonda odeme
-        // alsaydik, kullanici para oderdi ama koltuklar baskasina
-        // satilmis olabilirdi.
+        // Süre kontrolü KRITIK: süresi dolmuş bir rezervasyonda ödeme
+        // alsaydik, kullanıcı para oderdi ama koltuklar baskasina
+        // satılmış olabilirdi.
         try
         {
             reservation.StartPayment(now);
@@ -190,7 +190,7 @@ internal sealed partial class CreatePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.ReservationNotPayable);
         }
 
-        // Tutari REZERVASYONDAN aliyorum -- istemciden degil.
+        // Tutari REZERVASYONDAN alıyorum -- istemciden değil.
         var payment = Payment.Create(
             reservation.Id,
             reservation.TotalAmount,
@@ -202,13 +202,13 @@ internal sealed partial class CreatePaymentCommandHandler
         // ==============================================================
         // SAGLAYICIYA GITMEDEN ONCE KAYDET
         // ==============================================================
-        // Neden? Saglayici cagrisi sirasinda uygulama cokerse, elimizde
-        // "Pending" durumda bir kayit kalir ve ne oldugunu arastirabilir,
+        // Neden? Sağlayıcı cagrisi sırasında uygulama cokerse, elimizde
+        // "Pending" durumda bir kayıt kalır ve ne olduğunu arastirabilir,
         // mutabakat yapabiliriz.
         //
-        // Once cagirip sonra kaydetseydik: para cekilmis ama bizde
-        // hicbir iz yok. Bu, gercek sistemlerde en korkulan durumdur --
-        // musteri "param gitti" der, bizde kayit yoktur.
+        // Önce cagirip sonra kaydetseydik: para cekilmis ama bizde
+        // hiçbir iz yok. Bu, gerçek sistemlerde en korkulan durumdur --
+        // müşteri "param gitti" der, bizde kayıt yoktur.
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         payment.StartProcessing();
@@ -230,25 +230,25 @@ internal sealed partial class CreatePaymentCommandHandler
             // ==========================================================
             // BURADA KOLTUKLARI SERBEST BIRAKMIYORUZ -- BILINCLI AYRIM
             // ==========================================================
-            // PDF Sprint 8: "Odeme basarisiz oldugunda koltuklar serbest
-            // birakilmalidir." Bu kurali FailPaymentCommandHandler'da
-            // uyguluyoruz. Peki neden burada degil?
+            // PDF Sprint 8: "Ödeme başarısız olduğunda koltuklar serbest
+            // birakilmalidir." Bu kuralı FailPaymentCommandHandler'da
+            // uyguluyoruz. Peki neden burada değil?
             //
             // Iki durum FARKLIDIR:
             //
-            //   BURASI: Odeme HIC BASLAMADI. Saglayici istegi daha
-            //           basinda reddetti (gecici hata, ag sorunu,
-            //           saglayici bakimda). Para hareket etmedi.
-            //           Kullanici saniyeler icinde tekrar deneyebilir.
+            //   BURASI: Ödeme HİÇ BASLAMADI. Sağlayıcı isteği daha
+            //           basinda reddetti (geçici hata, ag sorunu,
+            //           sağlayıcı bakimda). Para hareket etmedi.
+            //           Kullanıcı saniyeler içinde tekrar deneyebilir.
             //
-            //   FailPayment: Odeme BASLADI ve BASARISIZ SONUCLANDI
-            //           (kart reddedildi, 3D dogrulama basarisiz).
-            //           Bu kesin bir sonuctur; koltuklari tutmanin
+            //   FailPayment: Ödeme BASLADI ve BASARISIZ SONUCLANDI
+            //           (kart reddedildi, 3D doğrulama başarısız).
+            //           Bu kesin bir sonuctur; koltukları tutmanin
             //           anlami yok.
             //
-            // Ilkinde koltugu serbest biraksaydik, saglayicinin bir
-            // saniyelik kesintisi yuzunden kullanici koltugunu
-            // kaybederdi -- ve populer bir etkinlikte bir daha
+            // Ilkinde koltuğu serbest biraksaydik, sağlayıcının bir
+            // saniyelik kesintisi yuzunden kullanıcı koltuğunu
+            // kaybederdi -- ve popüler bir etkinlikte bir daha
             // bulamazdi.
             //
             // Kilit zaten 10 dakikada kendiliginden dolacak; sonsuza
@@ -266,7 +266,7 @@ internal sealed partial class CreatePaymentCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // PDF Sprint 16: "Odeme" loglanmalidir.
+        // PDF Sprint 16: "Ödeme" loglanmalidir.
         LogPaymentStarted(
             _logger,
             payment.Id,
@@ -292,7 +292,7 @@ internal sealed partial class CreatePaymentCommandHandler
 }
 
 // ===================================================================
-// ODEME TAMAMLAMA + BILET URETIMI
+// ÖDEME TAMAMLAMA + BİLET URETIMI
 // PDF: POST /api/v1/payments/{id}/complete
 // ===================================================================
 
@@ -322,12 +322,12 @@ internal sealed partial class CompletePaymentCommandHandler
         _logger = logger;
     }
 
-    // Odemenin BASARIYLA tamamlandigi an: para alindi, biletler
-    // uretildi. Sistemdeki en degerli tekil olay.
+    // Odemenin BASARIYLA tamamlandigi an: para alındı, biletler
+    // üretildi. Sistemdeki en degerli tekil olay.
     [LoggerMessage(
         EventId = LogEvents.OdemeBasarili,
         Level = LogLevel.Information,
-        Message = "Odeme BASARILI. Id: {PaymentId}, Tutar: {Amount} {Currency}, Uretilen bilet: {TicketCount}")]
+        Message = "Ödeme BASARILI. Id: {PaymentId}, Tutar: {Amount} {Currency}, Uretilen bilet: {TicketCount}")]
     private static partial void LogPaymentSucceeded(
         ILogger logger, Guid paymentId, decimal amount, string currency, int ticketCount);
 
@@ -337,8 +337,8 @@ internal sealed partial class CompletePaymentCommandHandler
     {
         var now = _clock.UtcNow;
 
-        // Rezervasyon, kalemleri ve koltuklariyla birlikte yukleniyor:
-        // hepsini DEGISTIRECEGIZ (onayla, sat, bilet uret).
+        // Rezervasyon, kalemleri ve koltuklariyla birlikte yükleniyor:
+        // hepsini DEGISTIRECEGIZ (onayla, sat, bilet üret).
         var payment = await _context.Payments
             .Include(p => p.Reservation)
                 .ThenInclude(r => r.Items)
@@ -356,12 +356,12 @@ internal sealed partial class CompletePaymentCommandHandler
         // ==============================================================
         // Callback'e KORU KORUNE GUVENMIYORUZ.
         //
-        // Bu endpoint disariya acik (odeme saglayicisi cagiracak).
-        // Dogrulama olmasaydi saldirgan dogrudan bu adrese istek
-        // gonderip BEDAVA BILET alabilirdi.
+        // Bu endpoint disariya açık (ödeme sağlayıcısı cagiracak).
+        // Doğrulama olmasaydı saldirgan doğrudan bu adrese istek
+        // gonderip BEDAVA BİLET alabilirdi.
         //
         // Simulasyonda da bu adimi isletiyoruz: MockPaymentProvider
-        // yalnizca KENDI urettigi referanslari dogruluyor, uydurma
+        // yalnızca KENDİ urettigi referanslari dogruluyor, uydurma
         // referans reddediliyor.
         var reference = request.ProviderReference ?? payment.ProviderReference;
 
@@ -380,15 +380,15 @@ internal sealed partial class CompletePaymentCommandHandler
         }
 
         // ==============================================================
-        // 2. IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalidir."
+        // 2. IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
         // ==============================================================
-        // Odeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderir.
-        // Bu bir hata degil, normal davranistir: saglayici cevap
+        // Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gönderir.
+        // Bu bir hata değil, normal davranistir: sağlayıcı cevap
         // alamadigini dusunurse tekrar dener.
         //
-        // Complete() zaten Successful ise FALSE donuyor. O durumda
+        // Complete() zaten Successful ise FALSE dönüyor. O durumda
         // bilet URETMIYORUZ -- aksi halde her callback'te yeni bilet
-        // olusur ve kullanicinin 5 bileti olurdu.
+        // olusur ve kullanıcının 5 bileti olurdu.
         var isFirstCompletion = payment.Complete(reference, now);
 
         if (!isFirstCompletion)
@@ -403,19 +403,19 @@ internal sealed partial class CompletePaymentCommandHandler
         // ==============================================================
         // 3. TEK TRANSACTION -- PDF Sprint 8'in acikca istedigi liste
         // ==============================================================
-        // "Asagidaki islemler tek bir transaction icinde calismalidir:
-        //    - Odeme basarili kaydi
-        //    - Rezervasyon onayi
-        //    - Bilet olusturma
-        //    - Koltuklarin satildi olarak isaretlenmesi
-        //    - Notification olusturma
-        //    - Outbox message olusturma"
+        // "Aşağıdaki islemler tek bir transaction içinde calismalidir:
+        //    - Ödeme başarılı kaydı
+        //    - Rezervasyon onayı
+        //    - Bilet oluşturma
+        //    - Koltuklarin satıldı olarak isaretlenmesi
+        //    - Notification oluşturma
+        //    - Outbox message oluşturma"
         //
         // Hepsi AYNI SaveChangesAsync cagrisinda kaydediliyor; EF bunu
-        // tek transaction icinde calistirir.
+        // tek transaction içinde calistirir.
         //
-        // Ayri ayri kaydetseydik: para alindi ama bilet olusmadi
-        // (baglanti koptu) gibi durumlar olusurdu ve elle duzeltmek
+        // Ayrı ayrı kaydetseydik: para alındı ama bilet olusmadi
+        // (bağlantı koptu) gibi durumlar olusurdu ve elle duzeltmek
         // gerekirdi.
 
         reservation.Confirm(payment.Id, now);
@@ -424,11 +424,11 @@ internal sealed partial class CompletePaymentCommandHandler
 
         foreach (var item in reservation.Items)
         {
-            // PDF: "Her rezervasyon kalemi icin bilet olusturulmalidir."
+            // PDF: "Her rezervasyon kalemi için bilet olusturulmalidir."
             //
             // Ticket.Create, ReservationItem.AttachTicket'i cagiriyor.
-            // O metot ayni kalem icin IKINCI bileti reddediyor --
-            // "koltuk bir ama bilet iki" hatasinin (salona iki kisi
+            // O metot aynı kalem için IKINCI bileti reddediyor --
+            // "koltuk bir ama bilet iki" hatasinin (salona iki kişi
             // girer) onune geciyor.
             var ticket = Ticket.Create(item, reservation.UserId, reservation.EventSessionId, now);
 
@@ -437,21 +437,21 @@ internal sealed partial class CompletePaymentCommandHandler
 
             tickets.Add(ticket);
 
-            // Koltugu SATILDI olarak isaretle.
+            // Koltugu SATILDI olarak işaretle.
             //
-            // MarkAsSold, koltugun BU rezervasyon tarafindan
-            // kilitlendigini dogruluyor -- baska bir rezervasyonun
-            // koltugunu satmamizi engelliyor.
+            // MarkAsSold, koltuğun BU rezervasyon tarafından
+            // kilitlendigini dogruluyor -- başka bir rezervasyonun
+            // koltuğunu satmamizi engelliyor.
             item.EventSeat.MarkAsSold(reservation.Id);
         }
 
-        // Bildirim (PDF Sprint 14: "Odeme basarili oldugunda").
+        // Bildirim (PDF Sprint 14: "Ödeme başarılı olduğunda").
         _context.Notifications.Add(Notification.Create(
             reservation.UserId,
             NotificationType.PaymentSucceeded,
-            "Odemeniz alindi",
-            $"{reservation.ReservationCode} numarali rezervasyonunuz onaylandi. " +
-            $"{tickets.Count} adet biletiniz hazir.",
+            "Ödemeniz alındı",
+            $"{reservation.ReservationCode} numarali rezervasyonunuz onaylandı. " +
+            $"{tickets.Count} adet biletiniz hazır.",
             reservation.Id,
             $"/biletlerim"));
 
@@ -460,38 +460,38 @@ internal sealed partial class CompletePaymentCommandHandler
         // ==============================================================
         // E-postayi BURADA GONDERMIYORUZ. Sebep:
         //
-        // E-posta gonderimi ile veritabani yazimi ayri sistemler ve
-        // aralarinda ortak transaction yok. Once gonderip sonra
-        // veritabani islemi geri alinirsa, kullanici "biletiniz hazir"
-        // maili alir ama bilet YOKTUR.
+        // E-posta gonderimi ile veritabani yazimi ayrı sistemler ve
+        // aralarinda ortak transaction yok. Önce gonderip sonra
+        // veritabani islemi geri alinirsa, kullanıcı "biletiniz hazır"
+        // maili alır ama bilet YOKTUR.
         //
-        // Bunun yerine "e-posta gonderilecek" NIYETINI ayni transaction
-        // icinde yaziyoruz. Arka plandaki job bunu okuyup gonderecek.
+        // Bunun yerine "e-posta gonderilecek" NIYETINI aynı transaction
+        // içinde yazıyoruz. Arka plandaki job bunu okuyup gonderecek.
         //
         // Job Sprint 9'da yazilacak; mesajlar o zamana kadar tabloda
         // birikecek ve islenecek.
         // PDF Sprint 14: "Bilet olusturuldugunda" bildirimi.
         //
-        // Odeme basarili bildirimi ZATEN var (yukarida) ama bu FARKLI
-        // bir sey: kullanici "param gitti mi?" ile "biletim hazir mi?"
+        // Ödeme başarılı bildirimi ZATEN var (yukarida) ama bu FARKLI
+        // bir sey: kullanıcı "param gitti mi?" ile "biletim hazır mi?"
         // sorularinin ikisini de soruyor.
         //
         // Tek bildirimde birlestirseydik, biletlerini gormek isteyen
-        // kullanici odeme bildirimini aramak zorunda kalirdi.
+        // kullanıcı ödeme bildirimini aramak zorunda kalırdı.
         _context.Notifications.Add(Notification.Create(
             reservation.UserId,
             NotificationType.TicketCreated,
-            "Biletleriniz hazir",
-            $"{tickets.Count} adet biletiniz olusturuldu. Girise QR " +
+            "Biletleriniz hazır",
+            $"{tickets.Count} adet biletiniz oluşturuldu. Girise QR " +
             "kodunuzu okutmaniz yeterli.",
             reservation.Id,
             "/biletlerim"));
 
-        // Sprint 9 notu: Bu iki mesaj AYRI cunku ayri seyler yapiyorlar
-        // ve BIRBIRINDEN BAGIMSIZ basarisiz olabilmeliler.
+        // Sprint 9 notu: Bu iki mesaj AYRI çünkü ayrı şeyler yapiyorlar
+        // ve BIRBIRINDEN BAGIMSIZ başarısız olabilmeliler.
         //
-        // Tek mesaj olsaydi ve e-posta gonderimi basarisiz olsaydi,
-        // uygulama ici bildirim de yeniden denenirdi -- kullanici
+        // Tek mesaj olsaydı ve e-posta gonderimi başarısız olsaydı,
+        // uygulama ici bildirim de yeniden denenirdi -- kullanıcı
         // bildirimi iki kez gorurdu. Ayirinca her biri kendi
         // RetryCount'unu tutuyor.
         _context.OutboxMessages.Add(OutboxMessage.Create(
@@ -516,23 +516,23 @@ internal sealed partial class CompletePaymentCommandHandler
         // ==============================================================
         // PDF Sprint 10: "SeatSold"
         // ==============================================================
-        // PDF is kurali: "Satilan koltuk yeniden secilememelidir."
+        // PDF is kuralı: "Satılan koltuk yeniden secilememelidir."
         //
-        // SeatLocked yerine AYRI bir olay gonderiyorum cunku istemci
-        // icin anlamlari farkli:
+        // SeatLocked yerine AYRI bir olay gonderiyorum çünkü istemci
+        // için anlamlari farklı:
         //
         //   Locked -> 10 dakika sonra bosalabilir, umut var
         //   Sold   -> bir daha asla bosalmayacak
         //
-        // Istemci bu ayrimi bilmeden dogru rengi ve tiklanabilirligi
-        // secemezdi. Tek olay gonderseydik, satilan koltuk sureli
-        // kilit gibi gorunur ve kullanici bosalmasini beklerdi.
+        // Istemci bu ayrimi bilmeden doğru rengi ve tiklanabilirligi
+        // secemezdi. Tek olay gonderseydik, satılan koltuk sureli
+        // kilit gibi görünür ve kullanıcı bosalmasini beklerdi.
         await _seatNotifier.SeatsSoldAsync(
             reservation.EventSessionId,
             reservation.Items.Select(i => i.EventSeatId).ToList(),
             cancellationToken).ConfigureAwait(false);
 
-        // PDF Sprint 16: "Odeme" -- basariyla tamamlanma ani.
+        // PDF Sprint 16: "Ödeme" -- basariyla tamamlanma ani.
         LogPaymentSucceeded(
             _logger,
             payment.Id,
@@ -558,7 +558,7 @@ internal sealed partial class CompletePaymentCommandHandler
 }
 
 // ===================================================================
-// ODEME BASARISIZ -- PDF: POST /api/v1/payments/{id}/fail
+// ÖDEME BASARISIZ -- PDF: POST /api/v1/payments/{id}/fail
 // ===================================================================
 
 public sealed record FailPaymentCommand(Guid PaymentId, string? Reason) : IRequest<Result>;
@@ -600,25 +600,25 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
 
         // ==============================================================
         // PDF Sprint 8 KURALI:
-        // "Odeme basarisiz oldugunda koltuklar serbest birakilmalidir."
+        // "Ödeme başarısız olduğunda koltuklar serbest birakilmalidir."
         // ==============================================================
         // ONEMLI NOT: docs/01-is-analizi.md soru 8'de ilk analizimde
-        // TERSINI yazmistim -- koltuklari kilitli tutup kullaniciya
-        // ikinci sans vermeyi onermistim (kart hatasi siktir diye).
+        // TERSINI yazmistim -- koltukları kilitli tutup kullanıcıya
+        // ikinci sans vermeyi onermistim (kart hatası siktir diye).
         //
-        // Ama PDF Sprint 8 bu kurali ACIKCA belirtiyor. Sartname
-        // benim tercihimin onune gecer; kurali PDF'e gore uyguluyorum
+        // Ama PDF Sprint 8 bu kuralı ACIKCA belirtiyor. Sartname
+        // benim tercihimin onune gecer; kuralı PDF'e göre uyguluyorum
         // ve dokumani da guncelledim.
         //
-        // Odun: kart hatasi alan kullanici koltuklarini kaybediyor.
-        // Kazanc: koltuklar hemen satisa donuyor, populer etkinliklerde
-        // bos yere bloke kalmiyor.
-        reservation.Cancel("Odeme basarisiz");
+        // Odun: kart hatası alan kullanıcı koltuklarini kaybediyor.
+        // Kazanc: koltuklar hemen satışa dönüyor, popüler etkinliklerde
+        // boş yere bloke kalmiyor.
+        reservation.Cancel("Ödeme başarısız");
 
         foreach (var item in reservation.Items)
         {
-            // Satilmis koltugu atla: bu odeme basarisiz olsa bile
-            // ayni rezervasyon icin baska bir odeme basarili olmus
+            // Satılmış koltuğu atla: bu ödeme başarısız olsa bile
+            // aynı rezervasyon için başka bir ödeme başarılı olmuş
             // olabilir (yaris durumu).
             if (item.EventSeat.Status != EventSeatStatus.Sold)
             {
@@ -629,16 +629,16 @@ internal sealed class FailPaymentCommandHandler : IRequestHandler<FailPaymentCom
         _context.Notifications.Add(Notification.Create(
             reservation.UserId,
             NotificationType.PaymentFailed,
-            "Odemeniz alinamadi",
-            $"{reservation.ReservationCode} numarali rezervasyonunuzun odemesi basarisiz oldu " +
+            "Ödemeniz alinamadi",
+            $"{reservation.ReservationCode} numarali rezervasyonunuzun ödemesi başarısız oldu " +
             "ve koltuklariniz serbest birakildi.",
             reservation.Id));
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         // PDF Sprint 10: "SeatReleased".
-        // Basarisiz odemede koltuklar hemen satisa donuyor; bekleyen
-        // kullanicilarin ekraninda aninda yesile ceviriyoruz.
+        // Başarısız odemede koltuklar hemen satışa dönüyor; bekleyen
+        // kullanicilarin ekraninda anında yesile ceviriyoruz.
         await _seatNotifier.SeatsReleasedAsync(
             reservation.EventSessionId,
             reservation.Items.Select(i => i.EventSeatId).ToList(),

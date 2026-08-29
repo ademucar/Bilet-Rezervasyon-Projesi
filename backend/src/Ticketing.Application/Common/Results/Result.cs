@@ -3,9 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Ticketing.Application.Common.Results;
 
 /// <summary>
-/// Bir islemin sonucunu temsil eder: ya basarili ya da hatali.
+/// Bir islemin sonucunu temsil eder: ya başarılı ya da hatalı.
 ///
-/// PDF Sprint 2: "Ortak result modeli hazirlanmalidir."
+/// PDF Sprint 2: "Ortak result modeli hazırlanmalıdır."
 /// </summary>
 public class Result
 {
@@ -15,20 +15,20 @@ public class Result
         // BU KONTROL NEDEN VAR?
         // ------------------------------------------------------------------
         // Iki tutarsiz durum mumkun:
-        //   - Basarili ama hata dolu   -> "Basardim ama hata var" (celiski)
-        //   - Basarisiz ama hata bos   -> "Basaramadim ama sebebi yok" (ise yaramaz)
+        //   - Başarılı ama hata dolu   -> "Basardim ama hata var" (celiski)
+        //   - Başarısız ama hata boş   -> "Basaramadim ama sebebi yok" (ise yaramaz)
         //
-        // Ikisi de PROGRAMLAMA hatasidir, kullanici hatasi degil. Bu yuzden
-        // Result donmuyor, dogrudan patlatiyorum: hatali kullanim uretime
-        // cikmadan once, ilk testte ortaya ciksin.
+        // Ikisi de PROGRAMLAMA hatasidir, kullanıcı hatası değil. Bu yüzden
+        // Result donmuyor, doğrudan patlatiyorum: hatalı kullanim uretime
+        // cikmadan önce, ilk testte ortaya ciksin.
         if (isSuccess && error != Error.None)
         {
-            throw new InvalidOperationException("Basarili bir sonuc hata icseremez.");
+            throw new InvalidOperationException("Başarılı bir sonuç hata icseremez.");
         }
 
         if (!isSuccess && error == Error.None)
         {
-            throw new InvalidOperationException("Basarisiz bir sonuc hata icermelidir.");
+            throw new InvalidOperationException("Başarısız bir sonuç hata içermelidir.");
         }
 
         IsSuccess = isSuccess;
@@ -51,7 +51,7 @@ public class Result
 }
 
 /// <summary>
-/// Deger dondurun islemler icin Result.
+/// Deger dondurun islemler için Result.
 /// </summary>
 [SuppressMessage(
     "Design",
@@ -60,10 +60,10 @@ public class Result
         "CA1000, PagedResult<Event>.Create() gibi cagrilarda tip parametresini " +
         "yazmak zorunda kalmayi 'kullanim zorlugu' sayar. " +
         "Ancak bu, factory metot kalibinin dogal sonucudur ve .NET'in kendisi de " +
-        "ayni yaklasimi kullanir (ornegin ImmutableArray<T>.Empty). " +
-        "Alternatif, ayri bir static olmayan fabrika sinifi yazmak olurdu; bu, " +
+        "aynı yaklasimi kullanir (örneğin ImmutableArray<T>.Empty). " +
+        "Alternatif, ayrı bir static olmayan fabrika sinifi yazmak olurdu; bu, " +
         "hicbir sey kazandirmadan bir tip daha ekler. " +
-        "Kural yalnizca bu tip icin bastirildi.")]
+        "Kural yalnızca bu tip için bastirildi.")]
 public class Result<TValue> : Result
 {
     private readonly TValue? _value;
@@ -75,12 +75,12 @@ public class Result<TValue> : Result
     }
 
     /// <summary>
-    /// Islem basariliysa deger.
+    /// İşlem basariliysa deger.
     ///
-    /// Basarisiz bir sonucta bu alana erisilirse EXCEPTION firlatiyorum.
-    /// null donmuyorum -- cunku o zaman cagiran kisi null'i gecerli bir
-    /// deger sanip devam edebilir ve hata cok ilerideki bir noktada,
-    /// hicbir sey anlatmayan bir NullReferenceException olarak patlar.
+    /// Başarısız bir sonucta bu alana erisilirse EXCEPTION firlatiyorum.
+    /// null donmuyorum -- çünkü o zaman cagiran kişi null'i geçerli bir
+    /// deger sanip devam edebilir ve hata çok ilerideki bir noktada,
+    /// hiçbir sey anlatmayan bir NullReferenceException olarak patlar.
     ///
     /// Burada patlarsa hata mesaji net: "sonucu kontrol etmeden degere
     /// eristin".
@@ -88,18 +88,18 @@ public class Result<TValue> : Result
     public TValue Value => IsSuccess
         ? _value!
         : throw new InvalidOperationException(
-            $"Basarisiz bir sonucun degerine erisilemez. Hata: {Error.Code} - {Error.Message}");
+            $"Başarısız bir sonucun değerine erişilemez. Hata: {Error.Code} - {Error.Message}");
 
     /// <summary>
-    /// Sonucu guvenli sekilde okumak icin.
+    /// Sonucu güvenli şekilde okumak için.
     ///
     /// Kullanim:
     ///     if (result.TryGetValue(out var user)) { ... user'i kullan ... }
     ///
     /// [NotNullWhen(true)] niteligini eklememin sebebi: derleyiciye
     /// "bu metot true dondurdugunde value KESINLIKLE null degildir"
-    /// demek. Boylece if bloguunun icinde derleyici null uyarisi vermiyor
-    /// ve gereksiz null kontrolu yazmiyoruz.
+    /// demek. Boylece if bloguunun içinde derleyici null uyarısı vermiyor
+    /// ve gereksiz null kontrolü yazmiyoruz.
     /// </summary>
     public bool TryGetValue([NotNullWhen(true)] out TValue? value)
     {
@@ -115,7 +115,7 @@ public class Result<TValue> : Result
     ///     return Result.Success(user);
     /// yerine sadece
     ///     return user;
-    /// yazabiliyoruz. Kucuk bir kolaylik ama 100 handler'da fark ediyor.
+    /// yazabiliyoruz. Küçük bir kolaylik ama 100 handler'da fark ediyor.
     /// </summary>
     public static implicit operator Result<TValue>(TValue value) => Success(value);
 

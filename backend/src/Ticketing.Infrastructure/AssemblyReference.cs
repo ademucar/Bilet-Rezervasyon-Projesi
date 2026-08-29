@@ -3,18 +3,18 @@ using System.Reflection;
 namespace Ticketing.Infrastructure;
 
 /// <summary>
-/// Bu sinif hicbir is yapmaz. Tek gorevi, bu projenin assembly'sine
-/// derleme zamaninda guvenli bir sekilde erisebilmemizi saglamak.
+/// Bu sinif hiçbir is yapmaz. Tek gorevi, bu projenin assembly'sine
+/// derleme zamaninda güvenli bir şekilde erisebilmemizi saglamak.
 ///
 /// Neden gerekli?
-/// Architecture testlerinde ve DI kayitlarinda "su assembly'deki tum
-/// handler'lari bul" gibi islemler yapacagiz. Bunun icin Assembly nesnesine
+/// Architecture testlerinde ve DI kayitlarinda "su assembly'deki tüm
+/// handler'lari bul" gibi islemler yapacagiz. Bunun için Assembly nesnesine
 /// ihtiyacimiz var. Assembly.Load("Ticketing.Infrastructure") gibi metin tabanli bir
-/// yontem kullanabilirdim ama proje adi degistiginde derleme hatasi vermez,
+/// yontem kullanabilirdim ama proje adı degistiginde derleme hatası vermez,
 /// calisma zamaninda patlar.
 ///
-/// typeof(AssemblyReference).Assembly ise derleyici tarafindan kontrol edilir.
-/// Proje adi degisirse kod derlenmez, hatayi aninda goruruz.
+/// typeof(AssemblyReference).Assembly ise derleyici tarafından kontrol edilir.
+/// Proje adı degisirse kod derlenmez, hatayi anında goruruz.
 /// </summary>
 public static class AssemblyReference
 {

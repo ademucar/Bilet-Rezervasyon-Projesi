@@ -17,58 +17,58 @@ public static class DependencyInjection
 
         services.AddMediatR(cfg =>
         {
-            // Bu assembly'deki TUM handler'lari tarayip kaydeder.
+            // Bu assembly'deki TÜM handler'lari tarayip kaydeder.
             // Her handler'i elle kaydetseydik 100. handler'da birini
             // unutmak kacinilmaz olurdu -- ve hata calisma zamaninda
-            // "handler bulunamadi" olarak ortaya cikardi.
+            // "handler bulunamadı" olarak ortaya çıkardı.
             cfg.RegisterServicesFromAssembly(assembly);
 
             // ==============================================================
             // PIPELINE SIRASI ONEMLIDIR
             // ==============================================================
-            // Behavior'lar KAYIT SIRASIYLA calisir. Su an tek behavior var
-            // ama Sprint 7'de TransactionBehavior eklendiginde sira soyle
-            // olmali:
+            // Behavior'lar KAYIT SIRASIYLA çalışır. Su an tek behavior var
+            // ama Sprint 7'de TransactionBehavior eklendiginde sıra soyle
+            // olmalı:
             //
             //   Validation -> Logging -> Transaction -> Handler
             //
-            // Validation EN BASTA cunku gecersiz bir istek icin transaction
+            // Validation EN BASTA çünkü geçersiz bir istek için transaction
             // acmanin veya log yazmanin anlami yok. Transaction en ICTE
-            // cunku yalnizca handler'in veritabani islemlerini sarmalamali;
-            // dogrulama suresi boyunca acik kalmis bir transaction
-            // baglanti havuzunu (connection pool) gereksiz mesgul eder.
+            // çünkü yalnızca handler'in veritabani islemlerini sarmalamali;
+            // doğrulama süresi boyunca açık kalmis bir transaction
+            // bağlantı havuzunu (connection pool) gereksiz mesgul eder.
             // ==============================================================
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 
-        // Bu assembly'deki tum AbstractValidator siniflarini kaydeder.
+        // Bu assembly'deki tüm AbstractValidator siniflarini kaydeder.
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
         // ==============================================================
         // OUTBOX ISLEYICILERI -- PDF Sprint 9
         // ==============================================================
-        // Bu kaydi ONCE Infrastructure'a yazmistim; derlenmedi, cunku
+        // Bu kaydı ONCE Infrastructure'a yazmistim; derlenmedi, çünkü
         // isleyiciler `internal`. Hatayi gorunce iki secenegim vardi:
         //
         //   A) Isleyicileri public yapmak
         //   B) Kaydi bu katmana tasimak            <-- SECILEN
         //
-        // (A) yanlis olurdu: bu siniflar disaridan cagrilmak icin
-        // degil, IOutboxMessageHandler arayuzu uzerinden calismak
-        // icin var. public yapmak, baska bir katmanin onlari
-        // dogrudan cagirabilmesi demekti.
+        // (A) yanlış olurdu: bu siniflar disaridan cagrilmak için
+        // değil, IOutboxMessageHandler arayuzu üzerinden calismak
+        // için var. public yapmak, başka bir katmanin onlari
+        // doğrudan cagirabilmesi demekti.
         //
         // Derleyici burada mimariyi KORUDU: "Application'in ic
-        // detayini disaridan kullanamazsin" dedi ve hakliydi.
-        // Kaydi ait oldugu yere tasimak dogru cozum.
+        // detayını disaridan kullanamazsin" dedi ve hakliydi.
+        // Kaydi ait olduğu yere tasimak doğru çözüm.
         //
         // Scoped: hepsi IApplicationDbContext kullaniyor ve o scoped.
         // Singleton yapsaydik "captive dependency" olusurdu --
         // uygulama omru boyunca yasayan tek bir DbContext.
         //
-        // Assembly taramasi yerine ACIKCA yaziyorum: bir isleyici
+        // Assembly taramasi yerine ACIKCA yazıyorum: bir isleyici
         // eklendiginde bu listeye de eklenmesi gerektigi belli olsun.
-        // Unutulursa processor "kayitli isleyici yok" hatasi verip
+        // Unutulursa processor "kayıtlı isleyici yok" hatası verip
         // dead letter'a dusurur; sessizce kaybolmaz.
         // ==============================================================
         services.AddScoped<IOutboxMessageHandler, TicketsIssuedOutboxHandler>();
@@ -79,10 +79,10 @@ public static class DependencyInjection
         services.AddScoped<IOutboxMessageHandler, DailySalesSummaryOutboxHandler>();
 
         // Sprint 13: rapor disa aktarimi.
-        // PDF: "Rapor uretimi background job olarak calistirilmali."
+        // PDF: "Rapor üretimi background job olarak calistirilmali."
         services.AddScoped<IOutboxMessageHandler, Features.Reports.ReportExportOutboxHandler>();
 
-        // Sprint 14: rezervasyon olusturuldu e-postasi.
+        // Sprint 14: rezervasyon oluşturuldu e-postası.
         services.AddScoped<IOutboxMessageHandler, ReservationCreatedOutboxHandler>();
 
         return services;

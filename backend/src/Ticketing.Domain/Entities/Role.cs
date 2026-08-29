@@ -3,7 +3,7 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Sistem rolu. PDF sayfa 4-5: Kullanici, Organizator, Admin.
+/// Sistem rolü. PDF sayfa 4-5: Kullanıcı, Organizatör, Admin.
 /// </summary>
 public class Role : Entity
 {
@@ -28,12 +28,12 @@ public class Role : Entity
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Rol isimleri. Kod icinde "Admin" diye metin yazmak yerine
+    /// Rol isimleri. Kod içinde "Admin" diye metin yazmak yerine
     /// RoleNames.Admin kullanacagiz.
     ///
-    /// Neden? Metin yazarsan yazim hatasi derleme zamaninda YAKALANMAZ.
-    /// [Authorize(Roles = "Adnim")] yazdiginda kod derlenir, calisir ve
-    /// hicbir admin o endpoint'e giremez. Hatayi bulmak saatler alir.
+    /// Neden? Metin yazarsan yazım hatası derleme zamaninda YAKALANMAZ.
+    /// [Authorize(Roles = "Adnim")] yazdiginda kod derlenir, çalışır ve
+    /// hiçbir admin o endpoint'e giremez. Hatayi bulmak saatler alır.
     /// Sabit kullandiginda derleyici seni korur.
     /// </summary>
     public static class Names
@@ -46,13 +46,13 @@ public class Role : Entity
     /// <summary>
     /// Rollerin ID'lerini SABIT tutuyorum, rastgele uretmiyorum.
     ///
-    /// Sebep: Seed data (baslangic verisi) her ortamda ayni olmali.
+    /// Sebep: Seed data (başlangıç verisi) her ortamda aynı olmalı.
     /// Guid.CreateVersion7() kullansaydim, migration her calistiginda
-    /// farkli ID uretirdi ve EF Core "bu veri degismis" diyerek her
+    /// farklı ID üretirdi ve EF Core "bu veri degismis" diyerek her
     /// seferinde yeni bir migration olusturmak isterdi.
     ///
-    /// Ayrica gelistirme, test ve production ortamlarinda Admin rolunun
-    /// ID'si farkli olurdu; veri tasima ve hata ayiklama zorlasirdi.
+    /// Ayrıca gelistirme, test ve production ortamlarinda Admin rolunun
+    /// ID'si farklı olurdu; veri tasima ve hata ayiklama zorlasirdi.
     ///
     /// Bunlar elle yazilmis sabit GUID'ler -- "well-known ID" denir.
     /// </summary>
@@ -67,7 +67,7 @@ public class Role : Entity
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Rol adi bos olamaz.", "role.name_required");
+            throw new DomainException("Rol adı boş olamaz.", "role.name_required");
         }
 
         return new Role(id, name.Trim()) { Description = description };

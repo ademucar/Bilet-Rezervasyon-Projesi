@@ -4,21 +4,21 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Odeme uzerindeki her denemenin kaydi. PDF'in ER diyagramindaki
+/// Ödeme uzerindeki her denemenin kaydı. PDF'in ER diyagramindaki
 /// PaymentTransactions tablosu.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN AYRI BIR TABLO? Payment'a birkac sutun eklesek olmaz miydi?
+/// NEDEN AYRI BIR TABLO? Payment'a birkaç sutun eklesek olmaz miydi?
 /// ------------------------------------------------------------------
-/// Olmazdi. Cunku bir odemede BIRDEN FAZLA islem olabilir:
-///   1. Tahsilat denemesi -> basarisiz (kart limiti)
-///   2. Tahsilat denemesi -> basarili
+/// Olmazdi. Çünkü bir odemede BIRDEN FAZLA işlem olabilir:
+///   1. Tahsilat denemesi -> başarısız (kart limiti)
+///   2. Tahsilat denemesi -> başarılı
 ///   3. Kismi iade (2 bilet)
 ///   4. Kalan iade
 ///
 /// Payment'ta tek bir "Status" ve tek bir "ProviderReference" var; bu
 /// dort adimi orada tutamayiz. Her adimin kendi zaman damgasi, kendi
-/// saglayici referansi ve kendi hata mesaji olmali.
+/// sağlayıcı referansı ve kendi hata mesaji olmalı.
 ///
 /// Bu tablo bir DENETIM IZIDIR (audit trail): "bu odemede ne oldu?"
 /// sorusunun cevabi burada. Kayitlar asla silinmez, asla guncellenmez;

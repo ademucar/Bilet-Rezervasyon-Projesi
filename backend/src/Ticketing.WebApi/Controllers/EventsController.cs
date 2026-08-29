@@ -10,22 +10,22 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Etkinlik ve oturum yonetimi. PDF Sprint 5.
+/// Etkinlik ve oturum yönetimi. PDF Sprint 5.
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/events")]
 public sealed class EventsController : ApiControllerBase
 {
     /// <summary>
-    /// Etkinlikleri sayfali listeler. Sehir, kategori, mekan ve tarih
-    /// araligina gore filtrelenebilir.
+    /// Etkinlikleri sayfali listeler. Şehir, kategori, mekan ve tarih
+    /// araligina göre filtrelenebilir.
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    // PDF Sprint 15: "Search endpointi" hiz siniri.
+    // PDF Sprint 15: "Search endpointi" hiz sınırı.
     //
-    // Bu uc ANONIM erisime acik ve pahali (LIKE sorgusu + JOIN'ler).
-    // Kimlik dogrulamasi olmadigi icin kota IP bazli calisiyor.
+    // Bu uc ANONIM erisime açık ve pahali (LIKE sorgusu + JOIN'ler).
+    // Kimlik dogrulamasi olmadığı için kota IP bazlı çalışıyor.
     [EnableRateLimiting(RateLimitingSetup.Policies.Search)]
     [ProducesResponseType<PagedResult<EventListItem>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetEvents(
@@ -36,15 +36,15 @@ public sealed class EventsController : ApiControllerBase
         // GORUNURLUK KARARI SUNUCUDA VERILIYOR
         // ==============================================================
         // IncludeUnpublished, GetEventsQuery uzerinde bir alan ve
-        // [FromQuery] ile baglaniyor. Yani istemci
+        // [FromQuery] ile bağlanıyor. Yani istemci
         //     GET /api/v1/events?includeUnpublished=true
         // yazip yayinlanmamis etkinlikleri istemeyi DENEYEBILIR.
         //
-        // Bu satir o denemeyi etkisiz kiliyor: gelen deger ne olursa
-        // olsun UZERINE YAZILIYOR ve yalnizca gercekten admin olanlar
+        // Bu satır o denemeyi etkisiz kiliyor: gelen deger ne olursa
+        // olsun UZERINE YAZILIYOR ve yalnızca gerçekten admin olanlar
         // true aliyor.
         //
-        // Bu, "istemciden gelen hicbir yetki bilgisine guvenme"
+        // Bu, "istemciden gelen hiçbir yetki bilgisine guvenme"
         // ilkesinin somut bir ornegi.
         // ==============================================================
         var effectiveQuery = query with
@@ -59,8 +59,8 @@ public sealed class EventsController : ApiControllerBase
     /// Etkinlik kategorileri. PDF Sprint 11.
     /// </summary>
     /// <remarks>
-    /// Redis te 24 saat onbellekleniyor. Filtre acilir listesi icin
-    /// her sayfa acilisinda cagriliyor; onbellek olmadan gereksiz
+    /// Redis te 24 saat onbellekleniyor. Filtre açılır listesi için
+    /// her sayfa acilisinda cagriliyor; önbellek olmadan gereksiz
     /// veritabani yuku olurdu.
     /// </remarks>
     [HttpGet("categories")]
@@ -72,18 +72,18 @@ public sealed class EventsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// En populer etkinlikler. PDF Sprint 11.
+    /// En popüler etkinlikler. PDF Sprint 11.
     /// </summary>
     /// <remarks>
     /// Redis te 10 dakika onbellekleniyor.
     ///
-    /// Neden ayri bir uc? Ana sayfada gosterilecek ve listeleme
-    /// ucundan farkli bir siralama mantigi var (bilet satisi).
+    /// Neden ayrı bir uc? Ana sayfada gösterilecek ve listeleme
+    /// ucundan farklı bir sıralama mantığı var (bilet satışı).
     /// Listeye "sortBy=popular" olarak eklemek de mumkundu ama o
-    /// zaman filtrelerle birlesince onbellek anahtari patlardi:
-    /// sehir + kategori + tarih + populer = binlerce kombinasyon.
+    /// zaman filtrelerle birlesince önbellek anahtari patlardi:
+    /// şehir + kategori + tarih + popüler = binlerce kombinasyon.
     ///
-    /// Ayri uc, tek ve sabit bir anahtar demek.
+    /// Ayrı uc, tek ve sabit bir anahtar demek.
     /// </remarks>
     [HttpGet("popular")]
     [AllowAnonymous]
@@ -95,7 +95,7 @@ public sealed class EventsController : ApiControllerBase
             .Send(new GetPopularEventsQuery(count), cancellationToken)
             .ConfigureAwait(false));
 
-    /// <summary>Etkinlik detayini oturumlariyla birlikte dondurur.</summary>
+    /// <summary>Etkinlik detayını oturumlariyla birlikte döndürür.</summary>
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
     [ProducesResponseType<EventDetail>(StatusCodes.Status200OK)]
@@ -108,8 +108,8 @@ public sealed class EventsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Yeni etkinlik olusturur. Etkinlik Draft durumunda baslar.
-    /// Organizator profili gerektirir.
+    /// Yeni etkinlik oluşturur. Etkinlik Draft durumunda başlar.
+    /// Organizatör profili gerektirir.
     /// </summary>
     [HttpPost]
     [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
@@ -126,28 +126,28 @@ public sealed class EventsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Etkinligin duzenlenebilir alanlarini gunceller.
+    /// Etkinligin duzenlenebilir alanlarini günceller.
     /// </summary>
     /// <remarks>
-    /// PDF is kurali: "Yayina alinmis etkinligin kritik alanlari
+    /// PDF is kuralı: "Yayina alinmis etkinliğin kritik alanlari
     /// KONTROLSUZ degistirilemez."
     ///
     /// Kural iki seviyede isliyor:
     ///
-    /// - **Baslik, aciklama, yas siniri**: yayindayken de
-    ///   degistirilebilir. Yazim hatasi duzeltmek yasak olmamali.
-    ///   Yalnizca iptal edilmis veya tamamlanmis etkinlikte kapali.
+    /// - **Başlık, açıklama, yaş sınırı**: yayindayken de
+    ///   degistirilebilir. Yazim hatası duzeltmek yasak olmamali.
+    ///   Yalnızca iptal edilmiş veya tamamlanmis etkinlikte kapalı.
     ///
-    /// - **Tarihler**: satis BASLADIYSA degistirilemez. Bilet almis
+    /// - **Tarihler**: satış BASLADIYSA degistirilemez. Bilet almis
     ///   kullanicilarin altindan tarihi cekmek kabul edilemez;
-    ///   o durumda dogru islem etkinligi iptal etmektir.
+    ///   o durumda doğru işlem etkinligi iptal etmektir.
     ///
     /// Tarih alanlarinin ucu birlikte gonderilmeli veya hicbiri
     /// gonderilmemelidir.
     /// </remarks>
     /// <response code="204">Guncellendi.</response>
-    /// <response code="404">Etkinlik bulunamadi.</response>
-    /// <response code="422">Satis baslamis; tarihler degistirilemez.</response>
+    /// <response code="404">Etkinlik bulunamadı.</response>
+    /// <response code="422">Satış baslamis; tarihler degistirilemez.</response>
     [HttpPut("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -161,14 +161,14 @@ public sealed class EventsController : ApiControllerBase
         ArgumentNullException.ThrowIfNull(request);
 
         // ==========================================================
-        // KIMLIK ADRESTEN, GOVDEDEN DEGIL
+        // KIMLIK ADRESTEN, GOVDEDEN DEĞİL
         // ==========================================================
         // Govdede de bir EventId tasisaydik, ikisi FARKLI olabilirdi:
         // adreste kendi etkinligini, govdede baskasininkini gonderen
         // bir istek EventOwner kontrolunu atlatabilirdi.
         //
         // Yetkilendirme adresteki kimlige bakiyor; komutu da ondan
-        // kuruyoruz. Boylece iki kaynak arasinda fark olusamiyor.
+        // kuruyoruz. Boylece iki kaynak arasında fark olusamiyor.
         // ==========================================================
         return HandleResult(await Sender
             .Send(
@@ -188,21 +188,21 @@ public sealed class EventsController : ApiControllerBase
     /// Etkinligi siler (soft delete).
     /// </summary>
     /// <remarks>
-    /// Yalnizca HIC BILET SATILMAMIS ve aktif rezervasyonu OLMAYAN
+    /// Yalnızca HİÇ BİLET SATILMAMIS ve aktif rezervasyonu OLMAYAN
     /// etkinlikler silinebilir.
     ///
-    /// Bileti olan bir etkinlik icin dogru islem SILMEK degil IPTAL
+    /// Bileti olan bir etkinlik için doğru işlem SILMEK değil İPTAL
     /// etmektir (`POST /events/{id}/cancel`): iptal, iade zincirini
-    /// ve kullanici bildirimlerini baslatir. Silmek ise o biletleri
-    /// sessizce gecersiz kilardi.
+    /// ve kullanıcı bildirimlerini baslatir. Silmek ise o biletleri
+    /// sessizce geçersiz kilardi.
     ///
-    /// Kayit fiziksel olarak silinmiyor: IsDeleted isaretleniyor ve
-    /// global sorgu filtresi gizliyor. Bilet, odeme ve denetim
+    /// Kayıt fiziksel olarak silinmiyor: IsDeleted isaretleniyor ve
+    /// global sorgu filtresi gizliyor. Bilet, ödeme ve denetim
     /// kayitlari korunuyor.
     /// </remarks>
     /// <response code="204">Silindi.</response>
-    /// <response code="404">Etkinlik bulunamadi.</response>
-    /// <response code="409">Bileti satilmis veya aktif rezervasyonu var.</response>
+    /// <response code="404">Etkinlik bulunamadı.</response>
+    /// <response code="409">Bileti satılmış veya aktif rezervasyonu var.</response>
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -216,7 +216,7 @@ public sealed class EventsController : ApiControllerBase
     /// <summary>
     /// Etkinlige oturum ekler. PDF: POST /api/v1/events/{id}/sessions
     ///
-    /// EventOwner policy'si: yalnizca etkinligin sahibi organizator
+    /// EventOwner policy'si: yalnızca etkinliğin sahibi organizatör
     /// (veya admin) oturum ekleyebilir.
     /// </summary>
     [HttpPost("{id:guid}/sessions")]
@@ -238,8 +238,8 @@ public sealed class EventsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Etkinligi admin onayina gonderir.
-    /// En az bir oturum ve bir bilet turu gerektirir.
+    /// Etkinligi admin onayina gönderir.
+    /// En az bir oturum ve bir bilet türü gerektirir.
     /// </summary>
     [HttpPost("{id:guid}/submit")]
     [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
@@ -251,7 +251,7 @@ public sealed class EventsController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Etkinligi yayina alir. PDF: POST /api/v1/events/{id}/publish
+    /// Etkinligi yayina alır. PDF: POST /api/v1/events/{id}/publish
     ///
     /// YALNIZCA ADMIN. Organizatorun kendi etkinligini onaylamasi,
     /// onay surecini anlamsiz kilardi.
@@ -267,7 +267,7 @@ public sealed class EventsController : ApiControllerBase
 
     /// <summary>
     /// Etkinligi iptal eder. PDF: POST /api/v1/events/{id}/cancel
-    /// Sahibi organizator veya admin yapabilir.
+    /// Sahibi organizatör veya admin yapabilir.
     /// </summary>
     [HttpPost("{id:guid}/cancel")]
     [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
@@ -290,13 +290,13 @@ public sealed record AddSessionRequest(
 
 public sealed record CancelEventRequest(string? Reason);
 
-/// <summary>Etkinlik guncelleme istegi.</summary>
-/// <param name="Title">Etkinlik basligi.</param>
-/// <param name="Description">Etkinlik aciklamasi.</param>
-/// <param name="MinimumAge">Yas siniri. null = sinir yok.</param>
+/// <summary>Etkinlik güncelleme isteği.</summary>
+/// <param name="Title">Etkinlik başlığı.</param>
+/// <param name="Description">Etkinlik açıklaması.</param>
+/// <param name="MinimumAge">Yaş sınırı. null = sinir yok.</param>
 /// <param name="EventDate">Etkinlik tarihi. Tarihler ucu birlikte gonderilmeli.</param>
-/// <param name="SalesStartDate">Satis baslangici.</param>
-/// <param name="SalesEndDate">Satis bitisi.</param>
+/// <param name="SalesStartDate">Satış baslangici.</param>
+/// <param name="SalesEndDate">Satış bitisi.</param>
 public sealed record UpdateEventRequest(
     string Title,
     string Description,

@@ -10,27 +10,27 @@ namespace Ticketing.Infrastructure.Reporting;
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// NEDEN VERITABANI DEGIL, DISK?
+/// NEDEN VERITABANI DEĞİL, DISK?
 /// ==================================================================
 /// Dosyalari veritabaninda bytea olarak da tutabilirdik. Tutmadim:
 ///
 ///   - Rapor dosyalari megabaytlarca olabilir. Veritabaninin her
 ///     yedegi bu dosyalari da tasir ve yedek boyutu hizla buyur.
-///   - PostgreSQL buyuk ikili veriyi TOAST tablolarina tasiyor;
+///   - PostgreSQL büyük ikili veriyi TOAST tablolarina tasiyor;
 ///     sorgular yavaslar.
 ///   - Rapor dosyasi GECICI bir cikti. Kaybolsa yeniden uretilebilir.
-///     Veritabani ise dogruluk kaynagimiz; oraya gecici veri koymak
-///     iki farkli sorumlulugu karistirmak olurdu.
+///     Veritabani ise dogruluk kaynagimiz; oraya geçici veri koymak
+///     iki farklı sorumlulugu karistirmak olurdu.
 ///
 /// ------------------------------------------------------------------
 /// URETIMDE NE DEGISIR?
 /// ------------------------------------------------------------------
 /// Birden fazla sunucuya olceklenirse disk PAYLASILMAZ: rapor
-/// sunucu-1'de uretilir, kullanici sunucu-2'ye baglanir ve dosyayi
+/// sunucu-1'de üretilir, kullanıcı sunucu-2'ye baglanir ve dosyayı
 /// bulamaz.
 ///
 /// O zaman bu sinifin yerine bir S3/Azure Blob uygulamasi gelir --
-/// arayuz (IReportFileStore) ayni kaldigi icin Application katmaninda
+/// arayüz (IReportFileStore) aynı kaldigi için Application katmaninda
 /// TEK SATIR degismez. Zaten arayuzun varlik sebebi bu.
 /// ==================================================================
 /// </remarks>
@@ -42,7 +42,7 @@ internal sealed class FileSystemReportStore : IReportFileStore
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
-        // Yapilandirilabilir; verilmezse uygulama klasoru altinda.
+        // Yapilandirilabilir; verilmezse uygulama klasörü altinda.
         _root = configuration["Reports:StoragePath"]
             ?? Path.Combine(AppContext.BaseDirectory, "report-exports");
 
@@ -50,18 +50,18 @@ internal sealed class FileSystemReportStore : IReportFileStore
     }
 
     /// <summary>
-    /// Dosya yolunu uretir.
+    /// Dosya yolunu üretir.
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// DOSYA ADI OLARAK GUID -- KULLANICI GIRDISI DEGIL
+    /// DOSYA ADI OLARAK GUID -- KULLANICI GIRDISI DEĞİL
     /// ==============================================================
-    /// Rapor basligini dosya adi yapsaydik, ilerde ozellestirilebilir
-    /// bir baslik "../../appsettings.json" olabilirdi ve dizin gecisi
+    /// Rapor basligini dosya adı yapsaydik, ilerde ozellestirilebilir
+    /// bir başlık "../../appsettings.json" olabilirdi ve dizin gecisi
     /// (path traversal) acigi olusurdu.
     ///
-    /// Guid.ToString("N") yalnizca 32 onaltilik karakter uretiyor --
-    /// tanim geregi guvenli. Gercek dosya adi ve icerik turu ayri bir
+    /// Guid.ToString("N") yalnızca 32 onaltilik karakter uretiyor --
+    /// tanim geregi güvenli. Gerçek dosya adı ve içerik türü ayrı bir
     /// meta dosyasinda duruyor.
     /// ==============================================================
     /// </remarks>
@@ -78,11 +78,11 @@ internal sealed class FileSystemReportStore : IReportFileStore
         await File.WriteAllBytesAsync(DosyaYolu(exportId, "bin"), report.Content, cancellationToken)
             .ConfigureAwait(false);
 
-        // Dosya adi ve icerik turu ayri bir meta dosyasinda.
+        // Dosya adı ve içerik türü ayrı bir meta dosyasinda.
         //
-        // Indirme sirasinda tarayiciya dogru Content-Type ve dosya adi
-        // vermek icin gerekli. Bunlari dosya adina gomseydik
-        // ayristirmak gerekirdi ve yukaridaki guvenlik faydasi
+        // Indirme sırasında tarayiciya doğru Content-Type ve dosya adı
+        // vermek için gerekli. Bunlari dosya adina gomseydik
+        // ayristirmak gerekirdi ve yukaridaki güvenlik faydasi
         // kaybolurdu.
         var meta = JsonSerializer.Serialize(new ReportFileMeta(
             report.FileName, report.ContentType, report.Content.Length));

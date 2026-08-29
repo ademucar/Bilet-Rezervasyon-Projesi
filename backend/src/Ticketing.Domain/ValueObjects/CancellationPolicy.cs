@@ -3,56 +3,56 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.ValueObjects;
 
 /// <summary>
-/// Bilet iade politikasi. PDF Sprint 1, soru 10'un karsiligi.
+/// Bilet iade politikasi. PDF Sprint 1, soru 10'un karşılığı.
 ///
-/// Etkinlik basina saklanir (Event.CancellationPolicy) cunku her organizator
+/// Etkinlik başına saklanir (Event.CancellationPolicy) çünkü her organizatör
 /// kendi politikasini belirleyebilmeli. Veritabaninda jsonb olarak tutulacak.
 ///
 /// ------------------------------------------------------------------
 /// NEDEN AYRI BIR VALUE OBJECT?
 /// ------------------------------------------------------------------
-/// Alternatif su olurdu: Event tablosuna uc ayri sutun koymak
+/// Alternatif su olurdu: Event tablosuna uc ayrı sutun koymak
 ///     FullRefundHours, PartialRefundHours, PartialRefundPercentage
 ///
-/// Bunu yapmadim cunku:
+/// Bunu yapmadim çünkü:
 ///
-/// 1) Bu uc deger BIRBIRINE BAGLIDIR. "7 gunden fazlaysa %100" kurali
-///    tek basina anlamsizdir; digerleriyle birlikte tutarli olmalidir.
-///    Ayri sutunlar olsaydi tutarliligi Event sinifinda kontrol etmem
+/// 1) Bu uc deger BIRBIRINE BAGLIDIR. "7 gunden fazlaysa %100" kuralı
+///    tek başına anlamsizdir; digerleriyle birlikte tutarli olmalıdır.
+///    Ayrı sutunlar olsaydı tutarliligi Event sinifinda kontrol etmem
 ///    gerekirdi ve Event zaten yeterince kalabalik.
 ///
-/// 2) Iade orani hesaplama mantigi (CalculateRefundRate) burada yasiyor.
-///    Ayri sutun olsaydi bu hesap ya Event'e ya da bir servise dagilirdi.
-///    Veri ve onu kullanan davranis ayni yerde durmali.
+/// 2) İade oranı hesaplama mantığı (CalculateRefundRate) burada yasiyor.
+///    Ayrı sutun olsaydı bu hesap ya Event'e ya da bir servise dagilirdi.
+///    Veri ve önü kullanan davranis aynı yerde durmali.
 ///
 /// 3) Test etmesi kolay: Event olusturmadan politikayi test edebiliyorum.
 /// </summary>
 public sealed record CancellationPolicy
 {
     /// <summary>
-    /// Bu saatten FAZLA sure varsa tam iade. Varsayilan: 168 saat (7 gun).
+    /// Bu saatten FAZLA süre varsa tam iade. Varsayılan: 168 saat (7 gün).
     /// </summary>
     public int FullRefundThresholdHours { get; init; }
 
     /// <summary>
-    /// Bu saatten FAZLA sure varsa kismi iade. Varsayilan: 48 saat.
+    /// Bu saatten FAZLA süre varsa kismi iade. Varsayılan: 48 saat.
     /// Bunun altinda iade yok.
     /// </summary>
     public int PartialRefundThresholdHours { get; init; }
 
-    /// <summary>Kismi iade orani (0-100 arasi yuzde). Varsayilan: 50.</summary>
+    /// <summary>Kismi iade oranı (0-100 arasi yüzde). Varsayılan: 50.</summary>
     public int PartialRefundPercentage { get; init; }
 
     /// <summary>
-    /// Parametre adlari, property adlarinin camelCase halidir. Bu ONEMLI:
+    /// Parametre adları, property adlarinin camelCase halidir. Bu ONEMLI:
     ///
     /// EF Core bir nesneyi veritabanindan olustururken uygun bir constructor
-    /// arar ve parametreleri PROPERTY ADLARINA gore eslestirir. Parametre adi
-    /// "fullHours" olsaydi EF onu "FullRefundThresholdHours" property'siyle
+    /// arar ve parametreleri PROPERTY ADLARINA göre eslestirir. Parametre adı
+    /// "fullHours" olsaydı EF önü "FullRefundThresholdHours" property'siyle
     /// eslestiremez ve su hatayi verirdi:
     ///     "No suitable constructor was found for entity type"
     ///
-    /// (Ilk yazisimda kisa adlar kullanmistim; migration uretirken tam da
+    /// (İlk yazisimda kisa adlar kullanmistim; migration uretirken tam da
     /// bu hatayi aldik. Kisa adlar okunakli gorunuyordu ama EF'in
     /// eslestirme kuralini bozuyordu.)
     /// </summary>
@@ -67,9 +67,9 @@ public sealed record CancellationPolicy
     }
 
     /// <summary>
-    /// Varsayilan politika (docs/01-is-analizi.md soru 10):
+    /// Varsayılan politika (docs/01-is-analizi.md soru 10):
     ///   7 gunden fazla  -> %100
-    ///   48 saat - 7 gun -> %50
+    ///   48 saat - 7 gün -> %50
     ///   48 saatten az   -> iade yok
     /// </summary>
     public static CancellationPolicy Default { get; } = new(168, 48, 50);
@@ -78,27 +78,27 @@ public sealed record CancellationPolicy
     {
         if (fullHours < 0 || partialHours < 0)
         {
-            throw new DomainException("Iade esikleri negatif olamaz.", "cancellation_policy.negative_threshold");
+            throw new DomainException("İade esikleri negatif olamaz.", "cancellation_policy.negative_threshold");
         }
 
-        // Tam iade esigi, kismi iade esiginden BUYUK olmali.
+        // Tam iade esigi, kismi iade esiginden BUYUK olmalı.
         // Tersi mantiksiz olurdu: "48 saatten fazlaysa tam iade,
-        // 168 saatten fazlaysa yarim iade" -- kullanici erken iptal
-        // ettigi icin CEZALANDIRILMIS olurdu.
+        // 168 saatten fazlaysa yarim iade" -- kullanıcı erken iptal
+        // ettigi için CEZALANDIRILMIS olurdu.
         //
-        // Bu kontrolu koymasaydim organizator yanlislikla ters degerler
+        // Bu kontrolü koymasaydim organizatör yanlislikla ters degerler
         // girebilir ve kimse fark etmezdi; sadece musteriler sikayet ederdi.
         if (fullHours <= partialHours)
         {
             throw new DomainException(
-                "Tam iade esigi, kismi iade esiginden buyuk olmalidir.",
+                "Tam iade esigi, kismi iade esiginden büyük olmalıdır.",
                 "cancellation_policy.invalid_thresholds");
         }
 
         if (partialPercentage is < 0 or > 100)
         {
             throw new DomainException(
-                "Kismi iade orani 0-100 arasinda olmalidir.",
+                "Kismi iade oranı 0-100 arasında olmalıdır.",
                 "cancellation_policy.invalid_percentage");
         }
 
@@ -106,22 +106,22 @@ public sealed record CancellationPolicy
     }
 
     /// <summary>
-    /// Iptal aninda uygulanacak iade oranini yuzde olarak dondurur (0-100).
+    /// İptal anında uygulanacak iade oranini yüzde olarak döndürür (0-100).
     /// </summary>
-    /// <param name="eventStartsAt">Etkinligin baslangic zamani (UTC).</param>
-    /// <param name="cancelledAt">Iptal talebinin yapildigi an (UTC).</param>
+    /// <param name="eventStartsAt">Etkinligin başlangıç zamani (UTC).</param>
+    /// <param name="cancelledAt">İptal talebinin yapildigi an (UTC).</param>
     public int CalculateRefundPercentage(DateTimeOffset eventStartsAt, DateTimeOffset cancelledAt)
     {
-        // "Simdi" degerini PARAMETRE olarak aliyorum, DateTimeOffset.UtcNow
+        // "Simdi" degerini PARAMETRE olarak alıyorum, DateTimeOffset.UtcNow
         // cagirmiyorum.
         //
-        // Sebep: zamana bagli mantigi test edebilmek. Iceride UtcNow
-        // cagirsaydim "etkinlige 3 gun kala iptal" senaryosunu test etmek
-        // icin sistem saatini degistirmem gerekirdi. Parametre olarak
-        // alinca istedigim ani verebiliyorum.
+        // Sebep: zamana bağlı mantığı test edebilmek. Iceride UtcNow
+        // cagirsaydim "etkinlige 3 gün kala iptal" senaryosunu test etmek
+        // için sistem saatini degistirmem gerekirdi. Parametre olarak
+        // alınca istedigim ani verebiliyorum.
         //
-        // Bu kalibin adi "dependency injection of time" veya kisaca
-        // zamani disaridan almak. Sprint 3'te bunu tum sisteme yaymak icin
+        // Bu kalibin adı "dependency injection of time" veya kisaca
+        // zamani disaridan almak. Sprint 3'te bunu tüm sisteme yaymak için
         // bir ITimeProvider arayuzu ekleyecegiz.
         var kalanSaat = (eventStartsAt - cancelledAt).TotalHours;
 

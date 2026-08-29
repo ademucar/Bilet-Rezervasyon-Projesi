@@ -21,7 +21,7 @@ const STATUS_LABELS: Record<number, { text: string; className: string }> = {
 }
 
 /**
- * Rezervasyonlarim.
+ * Rezervasyonlarım.
  *
  * Bu ekranin varlik sebebi somut: kullanıcı ödeme sayfasindayken
  * sekmeyi kapatirsa, koltukları HALA kilitli ama sayfaya donecek
@@ -42,7 +42,7 @@ export function MyReservationsPage() {
 
       <main className="mx-auto max-w-4xl px-4 py-8">
         <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-          Rezervasyonlarim
+          Rezervasyonlarım
         </h1>
 
         {reservationsQuery.isError && (

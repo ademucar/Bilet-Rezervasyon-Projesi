@@ -31,22 +31,22 @@ internal sealed class GetCurrentUserQueryHandler
         }
 
         // ------------------------------------------------------------------
-        // TOKEN'DAKI BILGIYI DEGIL VERITABANINI OKUYORUM
+        // TOKEN'DAKI BILGIYI DEĞİL VERITABANINI OKUYORUM
         // ------------------------------------------------------------------
         // ICurrentUser'da Email ve Roles zaten var (token'dan geliyor).
-        // Onlari dondurmek daha hizli olurdu -- veritabanina hic gitmezdik.
+        // Onlari dondurmek daha hizli olurdu -- veritabanina hiç gitmezdik.
         //
         // Ama YANLIS olurdu: token 15 dakika omurlu ve icindeki bilgi
-        // uretildigi ANI yansitir. Bu 15 dakika icinde:
-        //   - Admin kullaniciya Organizator rolu vermis olabilir
-        //   - Kullanici adini degistirmis olabilir
+        // uretildigi ANI yansitir. Bu 15 dakika içinde:
+        //   - Admin kullanıcıya Organizatör rolü vermis olabilir
+        //   - Kullanıcı adını degistirmis olabilir
         //   - E-postasini dogrulamis olabilir
         //
         // "/me" endpoint'i frontend'in profil ekranini besliyor ve
-        // GUNCEL veriyi gostermeli. Bayat veri gostermek, kullanicinin
+        // GUNCEL veriyi gostermeli. Bayat veri göstermek, kullanıcının
         // "rolum verilmedi mi?" diye destek acmasina yol acar.
         //
-        // Projeksiyon (Select) kullaniyorum: EF yalnizca ihtiyacimiz olan
+        // Projeksiyon (Select) kullanıyorum: EF yalnızca ihtiyacimiz olan
         // sutunlari cekiyor. Entity'nin tamamini yukleyip sonra donusturmek
         // gereksiz veri transferi olurdu (PasswordHash dahil!).
         var user = await _context.Users

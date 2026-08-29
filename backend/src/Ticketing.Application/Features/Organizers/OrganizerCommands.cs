@@ -13,10 +13,10 @@ namespace Ticketing.Application.Features.Organizers;
 internal static class OrganizerErrors
 {
     public static readonly Error ApplicationNotFound = Error.NotFound(
-        "organizer.application_not_found", "Basvuru bulunamadi.");
+        "organizer.application_not_found", "Basvuru bulunamadı.");
 
     public static readonly Error AlreadyOrganizer = Error.Conflict(
-        "organizer.already_organizer", "Zaten organizator yetkiniz var.");
+        "organizer.already_organizer", "Zaten organizatör yetkiniz var.");
 
     public static readonly Error PendingApplicationExists = Error.Conflict(
         "organizer.pending_application_exists",
@@ -24,14 +24,14 @@ internal static class OrganizerErrors
 
     public static readonly Error ProfileNotFound = Error.NotFound(
         "organizer.profile_not_found",
-        "Organizator profiliniz bulunamadi.");
+        "Organizatör profiliniz bulunamadı.");
 }
 
 // ===================================================================
-// BASVURU -- kullanici organizator olmak istiyor
+// BASVURU -- kullanıcı organizatör olmak istiyor
 // ===================================================================
 
-/// <summary>PDF sayfa 5: kullanici organizator basvurusu yapar.</summary>
+/// <summary>PDF sayfa 5: kullanıcı organizatör basvurusu yapar.</summary>
 public sealed record ApplyForOrganizerCommand(
     string CompanyName,
     string ContactEmail,
@@ -68,10 +68,10 @@ internal sealed class ApplyForOrganizerCommandHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+            return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // Zaten organizator mu?
+        // Zaten organizatör mu?
         var isOrganizer = await _context.UserRoles
             .AsNoTracking()
             .AnyAsync(ur => ur.UserId == userId && ur.RoleId == Role.Ids.Organizer, cancellationToken)
@@ -84,11 +84,11 @@ internal sealed class ApplyForOrganizerCommandHandler
 
         // Bekleyen basvuru varsa ikincisine izin verme.
         //
-        // Neden? Kullanici sabirsizlanip 10 basvuru gonderirse admin
-        // panelinde ayni kisiden 10 kayit birikir ve degerlendirme
-        // zorlasir. Ayrica hangisini onaylayacagi belirsizlesir.
+        // Neden? Kullanıcı sabirsizlanip 10 basvuru gonderirse admin
+        // panelinde aynı kisiden 10 kayıt birikir ve degerlendirme
+        // zorlasir. Ayrıca hangisini onaylayacagi belirsizlesir.
         //
-        // REDDEDILMIS basvuru varsa yenisine IZIN VERIYORUZ -- kullanici
+        // REDDEDILMIS basvuru varsa yenisine IZIN VERIYORUZ -- kullanıcı
         // eksiklerini giderip tekrar basvurabilmeli.
         var hasPending = await _context.OrganizerApplications
             .AsNoTracking()
@@ -149,8 +149,8 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         }
 
         // Kullaniciyi rolleriyle birlikte yukluyorum: AssignRole
-        // BELLEKTEKI koleksiyona bakip "zaten var mi" kontrolu yapiyor.
-        // Include etmezsem koleksiyon bos gelir ve ayni rol iki kez
+        // BELLEKTEKI koleksiyona bakip "zaten var mi" kontrolü yapiyor.
+        // Include etmezsem koleksiyon boş gelir ve aynı rol iki kez
         // eklenmeye calisilir -> composite key ihlali.
         var user = await _context.Users
             .Include(u => u.UserRoles)
@@ -170,16 +170,16 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // ONAY = UC ISLEM, TEK SaveChanges
         // ==============================================================
         //   1. Basvuruyu onayla
-        //   2. Organizator profilini olustur
-        //   3. Organizator rolunu ata
+        //   2. Organizatör profilini oluştur
+        //   3. Organizatör rolunu ata
         //
         // Ucu de AYNI SaveChangesAsync cagrisinda kaydediliyor. EF bunu
-        // tek bir transaction icinde calistirir.
+        // tek bir transaction içinde calistirir.
         //
-        // Ayri ayri kaydetseydik su risk olusurdu: basvuru onaylandi
-        // ama rol atanamadi (baglanti koptu). Kullanici "onaylandiniz"
-        // bildirimi alir ama hicbir sey yapamaz -- ve bu durumu
-        // duzeltmek icin elle mudahale gerekir.
+        // Ayrı ayrı kaydetseydik su risk olusurdu: basvuru onaylandı
+        // ama rol atanamadi (bağlantı koptu). Kullanıcı "onaylandiniz"
+        // bildirimi alır ama hiçbir sey yapamaz -- ve bu durumu
+        // duzeltmek için elle mudahale gerekir.
         // ==============================================================
         var profile = OrganizerProfile.Create(
             application.UserId, application.CompanyName, application.ContactEmail);
@@ -190,7 +190,7 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
             application.ContactPhone,
             application.Description);
 
-        // Admin onayladigi icin dogrulanmis sayiyoruz.
+        // Admin onayladigi için dogrulanmis sayiyoruz.
         profile.Verify();
 
         _context.OrganizerProfiles.Add(profile);
@@ -199,11 +199,11 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // NOT: Kullanicinin MEVCUT access token'inda hala eski roller var.
-        // Yeni rolu gorebilmesi icin token'ini yenilemesi gerekiyor --
-        // en gec 15 dakika icinde otomatik olacak.
+        // NOT: Kullanıcının MEVCUT access token'inda hâlâ eski roller var.
+        // Yeni rolü gorebilmesi için token'ini yenilemesi gerekiyor --
+        // en geç 15 dakika içinde otomatik olacak.
         //
-        // Frontend'e "rolunuz guncellendi, sayfayi yenileyin" bildirimi
+        // Frontend'e "rolunuz güncellendi, sayfayı yenileyin" bildirimi
         // gondermek Sprint 10'da SignalR ile yapilacak.
         return Result.Success();
     }
@@ -255,8 +255,8 @@ internal sealed class RejectOrganizerApplicationCommandHandler
             return Result.Failure(OrganizerErrors.ApplicationNotFound);
         }
 
-        // Entity, gerekcenin bos olmasini reddediyor.
-        // Gerekcesiz red, kullanicinin ne duzeltecegini bilmemesi demek.
+        // Entity, gerekcenin boş olmasini reddediyor.
+        // Gerekcesiz red, kullanıcının ne duzeltecegini bilmemesi demek.
         application.Reject(_currentUser.UserId ?? Guid.Empty, request.Reason, _clock.UtcNow);
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -303,9 +303,9 @@ internal sealed class GetOrganizerApplicationsQueryHandler
         }
 
         var applications = await query
-            // En eski basvuru en ustte: adil sira (FIFO).
+            // En eski basvuru en ustte: adil sıra (FIFO).
             // Yeniden eskiye siralasaydik eski basvurular listenin
-            // dibinde kalir ve surekli beklerdi.
+            // dibinde kalır ve surekli beklerdi.
             .OrderBy(a => a.CreatedAt)
             .Select(a => new OrganizerApplicationDto(
                 a.Id,

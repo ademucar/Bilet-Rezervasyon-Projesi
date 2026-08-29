@@ -3,19 +3,19 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Sistem kullanicisi. Rolleri UserRoles uzerinden tasir.
+/// Sistem kullanicisi. Rolleri UserRoles üzerinden tasir.
 /// </summary>
 public class User : AuditableEntity
 {
     /// <summary>
-    /// EF Core icin private parametresiz yapici.
+    /// EF Core için private parametresiz yapici.
     ///
-    /// EF veritabanindan satir okurken nesneyi olusturmak zorunda ama
-    /// bizim kurallarimizi (e-posta bos olamaz vb.) tekrar calistirmasina
+    /// EF veritabanindan satır okurken nesneyi olusturmak zorunda ama
+    /// bizim kurallarimizi (e-posta boş olamaz vb.) tekrar calistirmasina
     /// gerek yok -- o veriler zaten dogrulanmis halde kaydedilmisti.
     ///
-    /// private yaptim ki bizim kodumuz yanlislikla bos bir User uretemesin.
-    /// EF reflection kullandigi icin private yapiciyi gorebiliyor.
+    /// private yaptım ki bizim kodumuz yanlislikla boş bir User uretemesin.
+    /// EF reflection kullandigi için private yapiciyi gorebiliyor.
     /// </summary>
     private User()
     {
@@ -35,21 +35,21 @@ public class User : AuditableEntity
     }
 
     /// <summary>
-    /// Kullanicinin e-postasi. Her zaman kucuk harfe cevrilerek saklanir.
+    /// Kullanıcının e-postası. Her zaman küçük harfe cevrilerek saklanir.
     ///
-    /// Neden? "Ahmet@Gmail.com" ile "ahmet@gmail.com" ayni kisidir. Ham
-    /// haliyle saklarsak iki ayri hesap acilabilir ve unique index bunu
-    /// engellemez. Normalizasyonu TEK yerde (asagidaki Create metodunda)
-    /// yapiyorum; 20 ayri yerde ToLower() yazmak yerine.
+    /// Neden? "Ahmet@Gmail.com" ile "ahmet@gmail.com" aynı kisidir. Ham
+    /// haliyle saklarsak iki ayrı hesap acilabilir ve unique index bunu
+    /// engellemez. Normalizasyonu TEK yerde (aşağıdaki Create metodunda)
+    /// yapıyorum; 20 ayrı yerde ToLower() yazmak yerine.
     /// </summary>
     public string Email { get; private set; }
 
     /// <summary>
-    /// Sifrenin HASH'i. Sifrenin kendisi hicbir yerde saklanmaz.
+    /// Sifrenin HASH'i. Sifrenin kendisi hiçbir yerde saklanmaz.
     ///
-    /// Hash'leme islemi Domain'de DEGIL, Infrastructure'da yapilacak
-    /// (Sprint 3). Cunku hash algoritmasi (BCrypt, Argon2) bir altyapi
-    /// tercihidir ve Domain'in framework bagimsiz kalmasi gerekiyor.
+    /// Hash'leme islemi Domain'de DEĞİL, Infrastructure'da yapilacak
+    /// (Sprint 3). Çünkü hash algoritmasi (BCrypt, Argon2) bir altyapi
+    /// tercihidir ve Domain'in framework bağımsız kalmasi gerekiyor.
     /// Domain sadece "burada bir hash var" bilgisini tasir.
     /// </summary>
     public string PasswordHash { get; private set; }
@@ -63,7 +63,7 @@ public class User : AuditableEntity
     public bool IsEmailConfirmed { get; private set; }
 
     /// <summary>
-    /// Hesap aktif mi? Admin bir kullaniciyi pasife alabilir.
+    /// Hesap aktif mi? Admin bir kullanıcıyı pasife alabilir.
     /// Silmek yerine pasife almak, gecmis biletlerin ve raporlarin
     /// bozulmamasini saglar.
     /// </summary>
@@ -73,45 +73,45 @@ public class User : AuditableEntity
     // Brute force korumasi (PDF Sprint 15: "Brute force korumasi")
     // ---------------------------------------------------------------
 
-    /// <summary>Ust uste basarisiz giris denemesi sayisi.</summary>
+    /// <summary>Ust uste başarısız giriş denemesi sayısı.</summary>
     public int FailedLoginAttempts { get; private set; }
 
     /// <summary>
-    /// Hesabin kilitli kalacagi zamanin sonu. null ise kilitli degil.
+    /// Hesabin kilitli kalacagi zamanin sonu. null ise kilitli değil.
     /// </summary>
     public DateTimeOffset? LockoutEndAt { get; private set; }
 
     // ---------------------------------------------------------------
-    // Sifre sifirlama (PDF Sprint 3)
+    // Şifre sıfırlama (PDF Sprint 3)
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Sifre sifirlama tokeninin HASH'i.
+    /// Şifre sıfırlama tokeninin HASH'i.
     ///
-    /// Refresh token'da oldugu gibi burada da token'in KENDISI degil
-    /// hash'i saklaniyor. Sebep ayni: veritabani sizarsa saldirgan
+    /// Refresh token'da olduğu gibi burada da token'in KENDISI değil
+    /// hash'i saklaniyor. Sebep aynı: veritabani sizarsa saldirgan
     /// bu token'larla herkesin sifresini sifirlayabilirdi.
     ///
     /// ------------------------------------------------------------------
-    /// NEDEN AYRI TABLO DEGIL DE User UZERINDE IKI ALAN?
+    /// NEDEN AYRI TABLO DEĞİL DE User UZERINDE IKI ALAN?
     /// ------------------------------------------------------------------
-    /// Bir kullanicinin ayni anda en fazla BIR aktif sifre sifirlama
-    /// talebi olmali. Ayri tablo olsaydi birden fazla kayit olusabilir
-    /// ve "hangisi gecerli?" sorusu ortaya cikardi -- ayrica eskilerini
-    /// temizlemek icin bir job yazmak gerekirdi.
+    /// Bir kullanıcının aynı anda en fazla BIR aktif şifre sıfırlama
+    /// talebi olmalı. Ayrı tablo olsaydı birden fazla kayıt olusabilir
+    /// ve "hangisi geçerli?" sorusu ortaya çıkardı -- ayrıca eskilerini
+    /// temizlemek için bir job yazmak gerekirdi.
     ///
-    /// Tek alan oldugu icin yeni talep otomatik olarak eskisinin
-    /// USTUNE YAZIYOR; eski link aninda gecersiz oluyor. Bu davranis
-    /// hem daha basit hem de daha guvenli.
+    /// Tek alan olduğu için yeni talep otomatik olarak eskisinin
+    /// USTUNE YAZIYOR; eski link anında geçersiz oluyor. Bu davranis
+    /// hem daha basit hem de daha güvenli.
     ///
     /// PDF'in ER diyagramina yeni tablo eklememis olmamin sebebi de bu.
     /// </summary>
     public string? PasswordResetTokenHash { get; private set; }
 
     /// <summary>
-    /// PDF: "Sifre sifirlama tokeni SURELI olmalidir."
+    /// PDF: "Şifre sıfırlama tokeni SURELI olmalıdır."
     ///
-    /// Suresiz olsaydi, e-posta kutusuna bir kez erisen biri (eski
+    /// Suresiz olsaydı, e-posta kutusuna bir kez erisen biri (eski
     /// telefon, paylasilan bilgisayar, sizmis e-posta arsivi) aylar
     /// sonra bile hesabi ele gecirebilirdi.
     /// </summary>
@@ -120,12 +120,12 @@ public class User : AuditableEntity
     private readonly List<UserRole> _userRoles = [];
 
     /// <summary>
-    /// IReadOnlyCollection donuyorum, List degil.
+    /// IReadOnlyCollection donuyorum, List değil.
     ///
     /// List donseydim disaridan user.UserRoles.Add(...) yazilabilirdi ve
-    /// rol atama kurallarini (ornegin "Organizator rolu ancak basvuru
+    /// rol atama kurallarini (örneğin "Organizatör rolü ancak basvuru
     /// onaylanirsa verilir") atlamak mumkun olurdu. Rol ekleme yetkisi
-    /// sadece asagidaki AssignRole metodundadir.
+    /// sadece aşağıdaki AssignRole metodundadir.
     /// </summary>
     public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
 
@@ -138,40 +138,40 @@ public class User : AuditableEntity
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Yeni kullanici olusturur.
+    /// Yeni kullanıcı oluşturur.
     ///
     /// Neden yapici (constructor) yerine static factory metot?
     ///
-    /// 1) Isim verebiliyorum. "User.Create(...)" ile "new User(...)" arasinda
+    /// 1) Isim verebiliyorum. "User.Create(...)" ile "new User(...)" arasında
     ///    okunabilirlik farki var; ileride "User.CreateFromGoogleLogin(...)"
-    ///    gibi ikinci bir yol eklersem ikisini isimle ayirt edebilirim.
-    ///    Iki farkli yapici olsaydi imzalari karisirdi.
+    ///    gibi ikinci bir yol eklersem ikisini isimle ayırt edebilirim.
+    ///    Iki farklı yapici olsaydı imzalari karisirdi.
     ///
-    /// 2) Dogrulama ve normalizasyon tek kapida toplaniyor. Bu metodu
-    ///    kullanmadan gecerli bir User uretmek mumkun degil.
+    /// 2) Doğrulama ve normalizasyon tek kapida toplaniyor. Bu metodu
+    ///    kullanmadan geçerli bir User uretmek mumkun değil.
     /// </summary>
     public static User Create(string email, string passwordHash, string firstName, string lastName)
     {
         if (string.IsNullOrWhiteSpace(email))
         {
-            throw new DomainException("E-posta bos olamaz.", "user.email_required");
+            throw new DomainException("E-posta boş olamaz.", "user.email_required");
         }
 
         if (string.IsNullOrWhiteSpace(passwordHash))
         {
-            throw new DomainException("Sifre hash'i bos olamaz.", "user.password_required");
+            throw new DomainException("Şifre hash'i boş olamaz.", "user.password_required");
         }
 
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
-            throw new DomainException("Ad ve soyad bos olamaz.", "user.name_required");
+            throw new DomainException("Ad ve soyad boş olamaz.", "user.name_required");
         }
 
-        // ToLowerInvariant, ToLower degil.
+        // ToLowerInvariant, ToLower değil.
         //
-        // Turkce kulturde ToLower() "I" harfini "i" degil "ı" yapar
+        // Turkce kulturde ToLower() "I" harfini "i" değil "ı" yapar
         // (noktasiz i). "AHMET@X.COM" -> "ahmet@x.com" beklerken
-        // "ahmet@x.com" yerine farkli bir metin uretebilir.
+        // "ahmet@x.com" yerine farklı bir metin uretebilir.
         // Bu, meshur "Turkish I problem"idir ve e-posta eslesmesini bozar.
         // Invariant kultur bu tuzagi ortadan kaldirir.
         return new User(
@@ -185,9 +185,9 @@ public class User : AuditableEntity
     {
         ArgumentNullException.ThrowIfNull(role);
 
-        // Ayni rolu iki kez eklemeyi sessizce yok sayiyorum.
-        // Bunu hata yapmadim cunku "kullaniciya Admin rolu ver" istegi
-        // idempotent olmali: iki kez cagrilirsa sonuc ayni olmali.
+        // Aynı rolü iki kez eklemeyi sessizce yok sayiyorum.
+        // Bunu hata yapmadim çünkü "kullanıcıya Admin rolü ver" isteği
+        // idempotent olmalı: iki kez cagrilirsa sonuç aynı olmalı.
         if (_userRoles.Exists(ur => ur.RoleId == role.Id))
         {
             return;
@@ -208,36 +208,36 @@ public class User : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(newPasswordHash))
         {
-            throw new DomainException("Sifre hash'i bos olamaz.", "user.password_required");
+            throw new DomainException("Şifre hash'i boş olamaz.", "user.password_required");
         }
 
         PasswordHash = newPasswordHash;
 
-        // Sifre degistiginde basarisiz deneme sayacini sifirliyorum.
-        // Mantik: kullanici kimligini kanitlamis oldu, cezayi kaldiralim.
+        // Şifre degistiginde başarısız deneme sayacini sifirliyorum.
+        // Mantik: kullanıcı kimligini kanitlamis oldu, cezayi kaldiralim.
         ResetFailedLoginAttempts();
 
-        // Kullanilmamis bir sifirlama tokeni varsa GECERSIZ KIL.
+        // Kullanilmamis bir sıfırlama tokeni varsa GECERSIZ KIL.
         //
-        // Senaryo: kullanici "sifremi unuttum" dedi, e-posta geldi ama
+        // Senaryo: kullanıcı "sifremi unuttum" dedi, e-posta geldi ama
         // sonra sifresini hatirlayip normal yoldan degistirdi.
-        // O eski link hala calisiyor olsaydi, e-postasina erisen biri
+        // O eski link hâlâ çalışıyor olsaydı, e-postasina erisen biri
         // gunler sonra sifreyi tekrar degistirebilirdi.
         ClearPasswordResetToken();
     }
 
     // ---------------------------------------------------------------
-    // Sifre sifirlama akisi
+    // Şifre sıfırlama akışı
     // ---------------------------------------------------------------
 
     public void SetPasswordResetToken(string tokenHash, DateTimeOffset expiresAt)
     {
         if (string.IsNullOrWhiteSpace(tokenHash))
         {
-            throw new DomainException("Sifirlama token'i bos olamaz.", "user.reset_token_required");
+            throw new DomainException("Sıfırlama token'i boş olamaz.", "user.reset_token_required");
         }
 
-        // Yeni talep eskisinin USTUNE yazar -> eski link aninda gecersiz.
+        // Yeni talep eskisinin USTUNE yazar -> eski link anında geçersiz.
         PasswordResetTokenHash = tokenHash;
         PasswordResetTokenExpiresAt = expiresAt;
     }
@@ -249,17 +249,17 @@ public class User : AuditableEntity
     }
 
     /// <summary>
-    /// Verilen token hash'i gecerli mi?
+    /// Verilen token hash'i geçerli mi?
     ///
     /// Uc kosulun HEPSI saglanmali:
     ///   1. Aktif bir token var mi?
-    ///   2. Suresi dolmamis mi?
+    ///   2. Süresi dolmamis mi?
     ///   3. Hash'ler esitniyor mu?
     ///
-    /// Karsilastirmayi StringComparison.Ordinal ile yapiyorum.
-    /// Kulture duyarli karsilastirma (varsayilan) hem yavastir hem de
+    /// Karsilastirmayi StringComparison.Ordinal ile yapıyorum.
+    /// Kulture duyarli karsilastirma (varsayılan) hem yavastir hem de
     /// bazi kulturlerde beklenmedik esitlikler uretebilir. Hash'ler
-    /// metin degil, BAYT dizisinin metin gosterimidir; kultur kavrami
+    /// metin değil, BAYT dizisinin metin gosterimidir; kultur kavrami
     /// burada anlamsizdir.
     /// </summary>
     public bool IsPasswordResetTokenValid(string tokenHash, DateTimeOffset now)
@@ -281,7 +281,7 @@ public class User : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
-            throw new DomainException("Ad ve soyad bos olamaz.", "user.name_required");
+            throw new DomainException("Ad ve soyad boş olamaz.", "user.name_required");
         }
 
         FirstName = firstName.Trim();
@@ -290,10 +290,10 @@ public class User : AuditableEntity
     }
 
     /// <summary>
-    /// Basarisiz giris denemesini kaydeder ve gerekirse hesabi kilitler.
+    /// Başarısız giriş denemesini kaydeder ve gerekirse hesabi kilitler.
     /// </summary>
-    /// <param name="maxAttempts">Kilitlemeden once izin verilen deneme sayisi.</param>
-    /// <param name="lockoutDuration">Kilit suresi.</param>
+    /// <param name="maxAttempts">Kilitlemeden önce izin verilen deneme sayısı.</param>
+    /// <param name="lockoutDuration">Kilit süresi.</param>
     public void RegisterFailedLogin(int maxAttempts, TimeSpan lockoutDuration)
     {
         FailedLoginAttempts++;
@@ -305,7 +305,7 @@ public class User : AuditableEntity
     }
 
     /// <summary>
-    /// Basarili giristen sonra cagrilir.
+    /// Başarılı giristen sonra cagrilir.
     /// </summary>
     public void ResetFailedLoginAttempts()
     {
@@ -316,10 +316,10 @@ public class User : AuditableEntity
     /// <summary>
     /// Hesap su an kilitli mi?
     ///
-    /// Not: Bu bir METOT, property degil. Cunku sonuc ZAMANA bagli olarak
-    /// degisiyor -- ayni nesneye iki kez sordugunda farkli cevap alabilirsin.
-    /// Property'ler yan etkisiz ve kararli olmali; zamana bagli hesaplamalar
-    /// metot olarak yazilir ki cagiran kisi bunun bir hesaplama oldugunu bilsin.
+    /// Not: Bu bir METOT, property değil. Çünkü sonuç ZAMANA bağlı olarak
+    /// değişiyor -- aynı nesneye iki kez sordugunda farklı cevap alabilirsin.
+    /// Property'ler yan etkisiz ve kararli olmalı; zamana bağlı hesaplamalar
+    /// metot olarak yazilir ki cagiran kişi bunun bir hesaplama olduğunu bilsin.
     /// </summary>
     public bool IsLockedOut() => LockoutEndAt.HasValue && LockoutEndAt.Value > DateTimeOffset.UtcNow;
 

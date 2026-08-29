@@ -9,22 +9,22 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Etkinlik. PDF Sprint 5.
 ///
-/// ConcurrentEntity'den turuyor cunku organizator ve admin ayni etkinligi
-/// ayni anda duzenleyebilir (biri fiyat degistirirken digeri askiya alabilir).
+/// ConcurrentEntity'den turuyor çünkü organizatör ve admin aynı etkinligi
+/// aynı anda düzenleyebilir (biri fiyat degistirirken digeri askiya alabilir).
 /// Optimistic concurrency ile kaybeden istek 409 alacak.
 /// </summary>
 [SuppressMessage(
     "Naming",
     "CA1716:Identifiers should not match keywords",
     Justification =
-        "CA1716, 'Event' adinin VB.NET'te ayrilmis bir anahtar kelime olmasi " +
+        "CA1716, 'Event' adinin VB.NET'te ayrilmis bir anahtar kelime olmasını " +
         "sebebiyle uyarir. Bu kural, sinifin BASKA .NET dillerinden kullanilacagi " +
-        "senaryolar icin vardir. Projemiz tamamen C# ve baska bir dilden " +
+        "senaryolar için vardir. Projemiz tamamen C# ve başka bir dilden " +
         "tuketilmeyecek. " +
-        "Buna karsilik PDF'in ER diyagraminda tablo adi acikca 'Events' olarak " +
+        "Buna karsilik PDF'in ER diyagraminda tablo adı acikca 'Events' olarak " +
         "belirtilmis; sinifi TicketEvent gibi bir adla degistirmek sartnameden " +
         "sapma olurdu ve domain dilini (ubiquitous language) bozardi. " +
-        "Bu yuzden kurali EN DAR kapsamda, yalnizca bu sinif icin bastiriyorum -- " +
+        "Bu yüzden kuralı EN DAR kapsamda, yalnızca bu sinif için bastiriyorum -- " +
         "proje genelinde NoWarn ile kapatmak yerine.")]
 public class Event : ConcurrentEntity
 {
@@ -41,19 +41,19 @@ public class Event : ConcurrentEntity
 
     /// <summary>
     /// Izin verilen durum gecislerinin TEK kaynagi.
-    /// docs/01-is-analizi.md soru 4'teki tablonun birebir karsiligi.
+    /// docs/01-is-analizi.md soru 4'teki tablonun birebir karşılığı.
     ///
     /// Neden dev bir switch yerine Dictionary?
     ///
-    /// switch de calisirdi ama gecis kurallari koda dagilirdi. Burada tum
+    /// switch de calisirdi ama gecis kurallari koda dagilirdi. Burada tüm
     /// kurallar tek bir yerde, dokumandaki tabloyla yan yana konulup
-    /// karsilastirilabilir halde duruyor. Yeni bir gecis eklerken tek satir
-    /// ekliyorum ve baska bir yeri unutma ihtimalim yok.
+    /// karsilastirilabilir halde duruyor. Yeni bir gecis eklerken tek satır
+    /// ekliyorum ve başka bir yeri unutma ihtimalim yok.
     ///
-    /// Ayrica: bu sozlukte OLMAYAN her gecis YASAKTIR. Yani kural
-    /// "neyin yasak oldugunu say" degil, "neyin serbest oldugunu say"
-    /// seklinde. Yeni bir durum eklendiginde varsayilan davranis
-    /// "hicbir yere gecemez" olur -- guvenli taraf.
+    /// Ayrıca: bu sozlukte OLMAYAN her gecis YASAKTIR. Yani kural
+    /// "neyin yasak olduğunu say" değil, "neyin serbest olduğunu say"
+    /// seklinde. Yeni bir durum eklendiginde varsayılan davranis
+    /// "hiçbir yere gecemez" olur -- güvenli taraf.
     /// </summary>
     private static readonly Dictionary<EventStatus, EventStatus[]> AllowedTransitions = new()
     {
@@ -92,7 +92,7 @@ public class Event : ConcurrentEntity
         ],
 
         // Completed ve Cancelled bilerek YOK.
-        // Bunlar son durumlar; hicbir yere gecemezler.
+        // Bunlar son durumlar; hiçbir yere gecemezler.
     };
 
     // ---------------------------------------------------------------
@@ -114,20 +114,20 @@ public class Event : ConcurrentEntity
     public Guid HallId { get; private set; }
 
     /// <summary>
-    /// Afis gorselinin depolama yolu. Tam URL DEGIL, gorece yol saklariz.
+    /// Afis gorselinin depolama yolu. Tam URL DEĞİL, gorece yol saklariz.
     ///
     /// Neden? Bugun dosyalar yerel diskte, yarin S3'e tasinabilir.
     /// Tam URL saklasaydik ("https://eski-sunucu.com/img/1.jpg"), tasima
     /// gununde veritabanindaki binlerce satiri guncellememiz gerekirdi.
-    /// Gorece yol saklayip URL'i okuma aninda uretmek bizi buna baglanmaktan
+    /// Gorece yol saklayip URL'i okuma anında uretmek bizi buna baglanmaktan
     /// kurtarir.
     /// </summary>
     public string? PosterImagePath { get; private set; }
 
-    /// <summary>Yas siniri. 0 = sinir yok.</summary>
+    /// <summary>Yaş sınırı. 0 = sinir yok.</summary>
     public int MinimumAge { get; private set; }
 
-    /// <summary>Etkinlik suresi (dakika).</summary>
+    /// <summary>Etkinlik süresi (dakika).</summary>
     public int DurationMinutes { get; private set; }
 
     public DateTimeOffset SalesStartDate { get; private set; }
@@ -141,11 +141,11 @@ public class Event : ConcurrentEntity
     public CancellationPolicy CancellationPolicy { get; private set; }
 
     /// <summary>
-    /// Bir kullanicinin bu etkinlikten alabilecegi maksimum bilet sayisi.
-    /// PDF Sprint 7: "Bir kullanici ayni oturum icin belirlenen maksimum
-    /// bilet sayisini asamaz."
+    /// Bir kullanıcının bu etkinlikten alabilecegi maksimum bilet sayısı.
+    /// PDF Sprint 7: "Bir kullanıcı aynı oturum için belirlenen maksimum
+    /// bilet sayisini aşamaz."
     ///
-    /// Karaborsaciligi engellemek icin. Populer konserlerde tipik deger 4-6.
+    /// Karaborsaciligi engellemek için. Popüler konserlerde tipik deger 4-6.
     /// </summary>
     public int MaxTicketsPerUser { get; private set; }
 
@@ -191,24 +191,24 @@ public class Event : ConcurrentEntity
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new DomainException("Etkinlik basligi bos olamaz.", "event.title_required");
+            throw new DomainException("Etkinlik basligi boş olamaz.", "event.title_required");
         }
 
         if (durationMinutes <= 0)
         {
-            throw new DomainException("Etkinlik suresi sifirdan buyuk olmalidir.", "event.invalid_duration");
+            throw new DomainException("Etkinlik süresi sıfırdan büyük olmalıdır.", "event.invalid_duration");
         }
 
         if (maxTicketsPerUser <= 0)
         {
             throw new DomainException(
-                "Kullanici basina bilet limiti sifirdan buyuk olmalidir.",
+                "Kullanıcı başına bilet limiti sıfırdan büyük olmalıdır.",
                 "event.invalid_ticket_limit");
         }
 
         if (minimumAge < 0)
         {
-            throw new DomainException("Yas siniri negatif olamaz.", "event.invalid_minimum_age");
+            throw new DomainException("Yaş sınırı negatif olamaz.", "event.invalid_minimum_age");
         }
 
         ValidateDates(eventDate, salesStartDate, salesEndDate);
@@ -235,11 +235,11 @@ public class Event : ConcurrentEntity
 
     /// <summary>
     /// PDF sayfa 13'teki tarih kurallari:
-    ///   - "Satis baslangic tarihi satis bitis tarihinden sonra olamaz."
-    ///   - "Satis bitis tarihi etkinlik baslangicindan sonra olamaz."
+    ///   - "Satış başlangıç tarihi satış bitiş tarihinden sonra olamaz."
+    ///   - "Satış bitiş tarihi etkinlik baslangicindan sonra olamaz."
     ///
-    /// Bu metodu static ve private yaptim: hem Create hem UpdateDates
-    /// ayni kurali kullaniyor. Iki yerde ayri ayri yazsaydim biri
+    /// Bu metodu static ve private yaptım: hem Create hem UpdateDates
+    /// aynı kuralı kullaniyor. Iki yerde ayrı ayrı yazsaydim biri
     /// guncellenirken digeri unutulurdu -- klasik hata.
     /// </summary>
     private static void ValidateDates(
@@ -250,14 +250,14 @@ public class Event : ConcurrentEntity
         if (salesStartDate >= salesEndDate)
         {
             throw new DomainException(
-                "Satis baslangic tarihi, satis bitis tarihinden once olmalidir.",
+                "Satış başlangıç tarihi, satış bitiş tarihinden önce olmalıdır.",
                 "event.invalid_sales_period");
         }
 
         if (salesEndDate > eventDate)
         {
             throw new DomainException(
-                "Satis bitis tarihi, etkinlik baslangicindan sonra olamaz.",
+                "Satış bitiş tarihi, etkinlik baslangicindan sonra olamaz.",
                 "event.sales_end_after_event");
         }
     }
@@ -278,23 +278,23 @@ public class Event : ConcurrentEntity
         Status = target;
     }
 
-    /// <summary>Organizator etkinligi onaya gonderir.</summary>
+    /// <summary>Organizatör etkinligi onaya gönderir.</summary>
     public void SubmitForApproval()
     {
-        // Onaya gondermeden once en az bir oturum olmali.
-        // Oturumsuz etkinlik satilamaz; admin'in onune bos bir kayit
+        // Onaya gondermeden önce en az bir oturum olmalı.
+        // Oturumsuz etkinlik satilamaz; admin'in onune boş bir kayıt
         // gitmesinin anlami yok.
         if (_sessions.Count == 0)
         {
             throw new DomainException(
-                "Onaya gondermeden once en az bir oturum eklenmelidir.",
+                "Onaya gondermeden önce en az bir oturum eklenmelidir.",
                 "event.no_sessions");
         }
 
         if (_ticketTypes.Count == 0)
         {
             throw new DomainException(
-                "Onaya gondermeden once en az bir bilet turu tanimlanmalidir.",
+                "Onaya gondermeden önce en az bir bilet türü tanimlanmalidir.",
                 "event.no_ticket_types");
         }
 
@@ -307,16 +307,16 @@ public class Event : ConcurrentEntity
         TransitionTo(EventStatus.Published);
 
         // Domain event'i durum degistikten SONRA firlatiyorum.
-        // Once firlatsaydim, TransitionTo hata verdiginde "yayinlandi"
+        // Önce firlatsaydim, TransitionTo hata verdiginde "yayinlandi"
         // diye bir olay duyurmus olurduk -- oysa yayinlanmadi.
         Raise(new EventPublishedDomainEvent(Id, OrganizerId, Title, DateTimeOffset.UtcNow));
     }
 
-    /// <summary>Admin onayi reddeder, taslaga geri doner.</summary>
+    /// <summary>Admin onayı reddeder, taslaga geri döner.</summary>
     public void Reject() => TransitionTo(EventStatus.Draft);
 
     /// <summary>
-    /// Satisi acar. Normalde background job cagirir (dakikada bir kontrol).
+    /// Satışı acar. Normalde background job cagirir (dakikada bir kontrol).
     /// </summary>
     public void OpenSales() => TransitionTo(EventStatus.SalesOpen);
 
@@ -326,7 +326,7 @@ public class Event : ConcurrentEntity
 
     public void Suspend() => TransitionTo(EventStatus.Suspended);
 
-    /// <summary>Askidan cikarip yayina geri alir.</summary>
+    /// <summary>Askidan cikarip yayina geri alır.</summary>
     public void Reinstate() => TransitionTo(EventStatus.Published);
 
     public void Cancel(string? reason = null)
@@ -337,9 +337,9 @@ public class Event : ConcurrentEntity
         CancelledAt = DateTimeOffset.UtcNow;
 
         // Rezervasyon iptali, iade, bildirim... hicbirini BURADA yapmiyorum.
-        // Event sinifinin odeme servisini veya e-posta servisini bilmesi
+        // Event sinifinin ödeme servisini veya e-posta servisini bilmesi
         // gerekseydi Domain katmani altyapiya bagimli olurdu ve
-        // architecture testimiz kirmizi yanardi.
+        // architecture testimiz kırmızı yanardi.
         //
         // Sadece "iptal edildim" diyorum; gerisini Application katmanindaki
         // handler halleder.
@@ -351,19 +351,19 @@ public class Event : ConcurrentEntity
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Satis baslamis mi? Bu soru guncelleme kurallarinin merkezinde.
+    /// Satış baslamis mi? Bu soru güncelleme kurallarinin merkezinde.
     ///
-    /// Metot, property degil: Status'e bakan bir hesaplama ve ileride
-    /// daha karmasik hale gelebilir (ornegin satilmis bilet sayisi kontrolu).
+    /// Metot, property değil: Status'e bakan bir hesaplama ve ileride
+    /// daha karmasik hale gelebilir (örneğin satılmış bilet sayısı kontrolü).
     /// </summary>
     public bool HasSalesStarted()
         => Status is EventStatus.SalesOpen or EventStatus.SalesClosed or EventStatus.Completed;
 
     /// <summary>
-    /// PDF: "Yayina alinmis etkinligin kritik alanlari kontrolsuz degistirilemez."
+    /// PDF: "Yayina alinmis etkinliğin kritik alanlari kontrolsuz degistirilemez."
     ///
     /// Kritik alanlar: tarih, salon, mekan. Bunlar degisirse bilet almis
-    /// kullanicinin plani bozulur -- baska bir sehre gitmesi gerekebilir.
+    /// kullanıcının planı bozulur -- başka bir sehre gitmesi gerekebilir.
     /// </summary>
     public void UpdateDates(
         DateTimeOffset eventDate,
@@ -373,8 +373,8 @@ public class Event : ConcurrentEntity
         if (HasSalesStarted())
         {
             throw new DomainException(
-                "Satisi baslamis etkinligin tarihleri degistirilemez. " +
-                "Once etkinligi askiya alin veya iptal edin.",
+                "Satışı baslamis etkinliğin tarihleri degistirilemez. " +
+                "Önce etkinligi askiya alin veya iptal edin.",
                 "event.sales_started");
         }
 
@@ -386,22 +386,22 @@ public class Event : ConcurrentEntity
     }
 
     /// <summary>
-    /// Baslik ve aciklama gibi kritik OLMAYAN alanlar. Bunlar yayindayken
-    /// de degistirilebilir -- yazim hatasi duzeltmek yasak olmamali.
-    /// Iptal edilmis etkinlikte ise hicbir sey degismez.
+    /// Başlık ve açıklama gibi kritik OLMAYAN alanlar. Bunlar yayindayken
+    /// de degistirilebilir -- yazım hatası duzeltmek yasak olmamali.
+    /// İptal edilmiş etkinlikte ise hiçbir sey degismez.
     /// </summary>
     public void UpdateDetails(string title, string description, int? minimumAge = null)
     {
         if (Status is EventStatus.Cancelled or EventStatus.Completed)
         {
             throw new DomainException(
-                "Iptal edilmis veya tamamlanmis etkinlik duzenlenemez.",
+                "İptal edilmiş veya tamamlanmis etkinlik düzenlenemez.",
                 "event.not_editable");
         }
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new DomainException("Etkinlik basligi bos olamaz.", "event.title_required");
+            throw new DomainException("Etkinlik basligi boş olamaz.", "event.title_required");
         }
 
         Title = title.Trim();
@@ -411,7 +411,7 @@ public class Event : ConcurrentEntity
         {
             if (minimumAge.Value < 0)
             {
-                throw new DomainException("Yas siniri negatif olamaz.", "event.invalid_minimum_age");
+                throw new DomainException("Yaş sınırı negatif olamaz.", "event.invalid_minimum_age");
             }
 
             MinimumAge = minimumAge.Value;
@@ -426,11 +426,11 @@ public class Event : ConcurrentEntity
 
         if (HasSalesStarted())
         {
-            // Satis basladiktan sonra iade politikasini degistirmek
-            // sozlesme ihlalidir: kullanici bileti "7 gun kala tam iade"
+            // Satış basladiktan sonra iade politikasini degistirmek
+            // sozlesme ihlalidir: kullanıcı bileti "7 gün kala tam iade"
             // vaadiyle aldi. Sonradan degistirilmesi haksizlik olur.
             throw new DomainException(
-                "Satisi baslamis etkinligin iade politikasi degistirilemez.",
+                "Satışı baslamis etkinliğin iade politikasi degistirilemez.",
                 "event.sales_started");
         }
 
@@ -438,7 +438,7 @@ public class Event : ConcurrentEntity
     }
 
     // ---------------------------------------------------------------
-    // Oturum yonetimi
+    // Oturum yönetimi
     // ---------------------------------------------------------------
 
     public EventSession AddSession(
@@ -450,17 +450,17 @@ public class Event : ConcurrentEntity
         if (HasSalesStarted())
         {
             throw new DomainException(
-                "Satisi baslamis etkinlige yeni oturum eklenemez.",
+                "Satışı baslamis etkinlige yeni oturum eklenemez.",
                 "event.sales_started");
         }
 
-        // Ayni etkinlik icindeki oturumlar birbiriyle cakisamaz.
+        // Aynı etkinlik icindeki oturumlar birbiriyle cakisamaz.
         //
-        // DIKKAT: Bu kontrol sadece BU etkinligin oturumlarini kapsar.
-        // PDF'in "Ayni salon ayni zaman araliginda iki ETKINLIGE atanamaz"
-        // kurali FARKLI etkinlikler arasindaki cakismayi da kapsiyor ve
-        // onu buradan kontrol edemem -- diger etkinliklerin oturumlari
-        // bellekte degil, veritabaninda.
+        // DIKKAT: Bu kontrol sadece BU etkinliğin oturumlarini kapsar.
+        // PDF'in "Aynı salon aynı zaman araliginda iki ETKINLIGE atanamaz"
+        // kuralı FARKLI etkinlikler arasindaki cakismayi da kapsiyor ve
+        // önü buradan kontrol edemem -- diger etkinliklerin oturumlari
+        // bellekte değil, veritabaninda.
         //
         // O kural iki yerde uygulanacak (Sprint 5):
         //   1. Application handler'inda veritabani sorgusu ile
@@ -473,7 +473,7 @@ public class Event : ConcurrentEntity
         if (cakisan is not null)
         {
             throw new DomainException(
-                "Bu salonda ayni saatte baska bir oturum var.",
+                "Bu salonda aynı saatte başka bir oturum var.",
                 "event.session_overlap");
         }
 
@@ -484,14 +484,14 @@ public class Event : ConcurrentEntity
     }
 
     /// <summary>
-    /// Etkinlige bilet turu ekler.
+    /// Etkinlige bilet türü ekler.
     ///
-    /// AddSession ile ayni kalibi kullaniyorum: nesneyi disarida uretip
-    /// iceri vermek yerine, uretimi de bu metot yapiyor.
+    /// AddSession ile aynı kalibi kullanıyorum: nesneyi disarida uretip
+    /// iceri vermek yerine, üretimi de bu metot yapiyor.
     ///
-    /// Sebep: boylece cakisma kontrolu (ayni isimde iki bilet turu) ve
+    /// Sebep: boylece çakışma kontrolü (aynı isimde iki bilet türü) ve
     /// ekleme islemi atomik olarak burada kaliyor. Disarida uretilseydi
-    /// cagiran kisi kontrol etmeden dogrudan listeye ekleyebilirdi.
+    /// cagiran kişi kontrol etmeden doğrudan listeye ekleyebilirdi.
     /// </summary>
     public TicketType AddTicketType(
         string name,
@@ -502,7 +502,7 @@ public class Event : ConcurrentEntity
         if (HasSalesStarted())
         {
             throw new DomainException(
-                "Satisi baslamis etkinlige yeni bilet turu eklenemez.",
+                "Satışı baslamis etkinlige yeni bilet türü eklenemez.",
                 "event.sales_started");
         }
 

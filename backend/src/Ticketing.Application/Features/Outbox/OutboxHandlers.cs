@@ -13,7 +13,7 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Application.Features.Outbox;
 
 /// <summary>
-/// Outbox isleyicileri icin ortak yardimcilar.
+/// Outbox isleyicileri için ortak yardimcilar.
 /// </summary>
 internal static class OutboxPayload
 {
@@ -21,8 +21,8 @@ internal static class OutboxPayload
     /// Payload'i cozer. Bozuksa aciklayici bir istisna firlatir.
     /// </summary>
     /// <remarks>
-    /// Deserialize null dondurebilir ("null" metni gecerli JSON'dur).
-    /// Kontrol etmeseydik isleyicide NullReferenceException alirdik ve
+    /// Deserialize null dondurebilir ("null" metni geçerli JSON'dur).
+    /// Kontrol etmeseydik isleyicide NullReferenceException alırdık ve
     /// ErrorMessage sutununda "Object reference not set..." yazardi --
     /// hangi mesajin neden bozuldugunu anlamak imkansiz olurdu.
     /// </remarks>
@@ -35,19 +35,19 @@ internal static class OutboxPayload
     }
 
     /// <summary>
-    /// Bu bildirim daha once olusturulmus mu?
+    /// Bu bildirim daha önce olusturulmus mu?
     ///
     /// ==============================================================
     /// IDEMPOTENCY'NIN SOMUT UYGULAMASI
     /// ==============================================================
-    /// PDF: "Ayni Outbox kaydi iki kez islenmemelidir."
+    /// PDF: "Aynı Outbox kaydı iki kez islenmemelidir."
     ///
-    /// Outbox "en az bir kez" garantisi verir; ayni mesaj tekrar
+    /// Outbox "en az bir kez" garantisi verir; aynı mesaj tekrar
     /// islenebilir. Bunu tamamen ONLEMEK yerine ZARARSIZ kiliyoruz:
-    /// bildirim yazmadan once ayni turden, ayni varliga bagli bir
+    /// bildirim yazmadan önce aynı turden, aynı varliga bağlı bir
     /// bildirim var mi diye bakiyoruz.
     ///
-    /// Boylece kullanici "biletiniz hazir" bildirimini iki kez
+    /// Boylece kullanıcı "biletiniz hazır" bildirimini iki kez
     /// gormuyor.
     /// ==============================================================
     /// </summary>
@@ -67,33 +67,33 @@ internal static class OutboxPayload
 }
 
 // ===================================================================
-// 1) BILET SATIN ALINDI -- PDF: "Bilet satin alindi e-postasi"
+// 1) BİLET SATIN ALINDI -- PDF: "Bilet satin alındı e-postası"
 // ===================================================================
 
 /// <remarks>
 /// ==================================================================
 /// PDF'IN IKI MADDESI BURADA CAKISIYOR -- VERDIGIM KARAR
 /// ==================================================================
-/// PDF Sprint 9, Outbox senaryolari arasinda "QR bilet olusturma
-/// islemi"ni sayiyor. Ama ayni PDF'in Sprint 8 bolumu, odeme basarili
-/// oldugunda su alti isin TEK BIR SUREC ICINDE calismasini istiyor ve
-/// listede "Bilet olusturma" da var.
+/// PDF Sprint 9, Outbox senaryolari arasında "QR bilet oluşturma
+/// islemi"ni sayiyor. Ama aynı PDF'in Sprint 8 bolumu, ödeme başarılı
+/// olduğunda su alti isin TEK BIR SUREC ICINDE calismasini istiyor ve
+/// listede "Bilet oluşturma" da var.
 ///
-/// Ikisini birden yapmak mumkun degil: bilet olusturma islemi tek
-/// transaction icindeyse, QR uretimi de oradadir.
+/// Ikisini birden yapmak mumkun değil: bilet oluşturma islemi tek
+/// transaction icindeyse, QR üretimi de oradadir.
 /// </remarks>
 /// <summary>
-/// KARARIM: QR, bilet ile birlikte transaction icinde uretiliyor
-/// (Sprint 8 kurali). Outbox'a birakilan sey QR'in URETIMI degil,
+/// KARARIM: QR, bilet ile birlikte transaction içinde uretiliyor
+/// (Sprint 8 kuralı). Outbox'a birakilan sey QR'in URETIMI değil,
 /// TESLIMI -- yani QR'i iceren e-postanin gonderilmesi.
 ///
-/// Gerekce: QR'siz bilet YARIM bir kayittir. Kullanici odemeyi yapip
-/// "Biletlerim" ekranina gittiginde QR'i gormek zorunda; arka plan
-/// job'inin calismasini beklemesi kabul edilemez. Ayrica QR uretimi
-/// bir dis servise cikmiyor -- birkac mikrosaniyelik yerel bir hesap.
+/// Gerekce: QR'siz bilet YARIM bir kayittir. Kullanıcı ödemeyi yapip
+/// "Biletlerim" ekranına gittiginde QR'i gormek zorunda; arka plan
+/// job'inin calismasini beklemesi kabul edilemez. Ayrıca QR üretimi
+/// bir dis servise cikmiyor -- birkaç mikrosaniyelik yerel bir hesap.
 /// Outbox'in varlik sebebi olan "dis sistem cagrisi" burada yok.
 ///
-/// Yani sapma bilincli: PDF'in AMACI (kullanici istegi dis servis
+/// Yani sapma bilinçli: PDF'in AMACI (kullanıcı isteği dis servis
 /// beklemesin) korunuyor, e-posta gonderimi Outbox'a aliniyor.
 /// </summary>
 internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
@@ -118,12 +118,12 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
     {
         var data = OutboxPayload.Parse<TicketsIssuedPayload>(payload);
 
-        // Biletleri payload'daki Id listesinden DEGIL, veritabanindan
+        // Biletleri payload'daki Id listesinden DEĞİL, veritabanindan
         // okuyorum.
         //
         // Sebep: payload mesaj yazildigi andaki durumu tasiyor. Aradan
-        // gecen surede bilet iptal edilmis olabilir. Iptal edilmis bir
-        // bilet icin "biletiniz hazir" e-postasi gondermek yanlis olur.
+        // gecen surede bilet iptal edilmiş olabilir. İptal edilmiş bir
+        // bilet için "biletiniz hazır" e-postası gondermek yanlış olur.
         var tickets = await _context.Tickets
             .AsNoTracking()
             .Where(t => data.TicketIds.Contains(t.Id) && t.Status == TicketStatus.Active)
@@ -144,8 +144,8 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
         if (tickets.Count == 0)
         {
             // Gonderilecek aktif bilet kalmamis (hepsi iptal/iade
-            // edilmis olabilir). Bu bir HATA DEGIL -- istisna
-            // firlatirsak mesaj bosuna 5 kez denenip dead letter olur.
+            // edilmiş olabilir). Bu bir HATA DEĞİL -- istisna
+            // firlatirsak mesaj boşuna 5 kez denenip dead letter olur.
             return;
         }
 
@@ -159,7 +159,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
         if (user is null)
         {
             throw new InvalidOperationException(
-                $"Bilet e-postasi icin kullanici bulunamadi: {data.UserId}");
+                $"Bilet e-postasi için kullanıcı bulunamadı: {data.UserId}");
         }
 
         // ==============================================================
@@ -168,8 +168,8 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
         // Bu blok onceden StringBuilder ile HTML uretiyordu. Sprint
         // 14'te sablon sistemine tasidim.
         //
-        // Kazanc: e-postanin GORUNUMU artik burada degil, tek bir
-        // yerde (EmailTemplateRenderer). Alt bilgiye bir satir eklemek
+        // Kazanc: e-postanin GORUNUMU artık burada değil, tek bir
+        // yerde (EmailTemplateRenderer). Alt bilgiye bir satır eklemek
         // gerekseydi sekiz dosya yerine bir dosya degisecek.
         //
         // Burada kalan tek sey VERI hazirlamak -- handler'in isi bu.
@@ -209,7 +209,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
 }
 
 // ===================================================================
-// 2) ODEME BASARI BILDIRIMI -- PDF: "Odeme basari bildirimi"
+// 2) ÖDEME BASARI BILDIRIMI -- PDF: "Ödeme basari bildirimi"
 // ===================================================================
 
 internal sealed class PaymentSucceededOutboxHandler : IOutboxMessageHandler
@@ -236,8 +236,8 @@ internal sealed class PaymentSucceededOutboxHandler : IOutboxMessageHandler
         _context.Notifications.Add(Notification.Create(
             data.UserId,
             NotificationType.PaymentSucceeded,
-            "Odemeniz alindi",
-            $"{data.Amount} {data.Currency} tutarindaki odemeniz basariyla tamamlandi.",
+            "Ödemeniz alındı",
+            $"{data.Amount} {data.Currency} tutarindaki ödemeniz basariyla tamamlandı.",
             data.PaymentId,
             "/biletlerim"));
 
@@ -246,7 +246,7 @@ internal sealed class PaymentSucceededOutboxHandler : IOutboxMessageHandler
 }
 
 // ===================================================================
-// 3) REZERVASYON SURESI DOLDU -- PDF: "Rezervasyon suresi doldu bildirimi"
+// 3) REZERVASYON SURESI DOLDU -- PDF: "Rezervasyon süresi doldu bildirimi"
 // ===================================================================
 
 internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
@@ -283,8 +283,8 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
         _context.Notifications.Add(Notification.Create(
             data.UserId,
             NotificationType.ReservationExpired,
-            "Rezervasyon suresi doldu",
-            $"{data.ReservationCode} numarali rezervasyonunuzun odeme suresi doldu. " +
+            "Rezervasyon süresi doldu",
+            $"{data.ReservationCode} numarali rezervasyonunuzun ödeme süresi doldu. " +
             $"{data.SeatCount} koltuk serbest birakildi.",
             data.ReservationId,
             "/rezervasyonlarim"));
@@ -306,35 +306,35 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
         // ==============================================================
         // BILDIRIM ONCE, E-POSTA SONRA -- SIRA ONEMLI
         // ==============================================================
-        // E-posta once gonderilseydi ve SaveChanges basarisiz olsaydi,
-        // mesaj yeniden denenirdi ve kullanici IKINCI bir e-posta
-        // alirdi.
+        // E-posta önce gonderilseydi ve SaveChanges başarısız olsaydı,
+        // mesaj yeniden denenirdi ve kullanıcı IKINCI bir e-posta
+        // alırdı.
         //
-        // Bu sirada ise kotu senaryo "bildirim yazildi ama e-posta
+        // Bu sırada ise kötü senaryo "bildirim yazildi ama e-posta
         // gitmedi" olur: tekrar denendiginde bildirim zaten var diye
         // atlanir ve e-posta... o da gitmez.
         //
-        // Ikisi de kusurlu. E-posta bir HATIRLATMA oldugu ve
-        // uygulamadaki bildirim asil kayit oldugu icin, "iki kez
+        // Ikisi de kusurlu. E-posta bir HATIRLATMA olduğu ve
+        // uygulamadaki bildirim asil kayıt olduğu için, "iki kez
         // e-posta" yerine "e-posta kacirilabilir" tarafini sectim.
         // Kullaniciyi rahatsiz etmemek, ikinci bir kanaldan haber
-        // vermekten onemli.
+        // vermekten önemli.
         // ==============================================================
-        // Sure dolmasi icin PDF'te ayri bir sablon YOK.
+        // Süre dolmasi için PDF'te ayrı bir sablon YOK.
         //
-        // "Rezervasyon olusturuldu" sablonunu kullanmak yanlis olurdu
-        // (metni tam tersini soyluyor). Bu yuzden burada kisa ve
-        // dogrudan bir mesaj uretiyorum -- sablon sisteminin
+        // "Rezervasyon oluşturuldu" sablonunu kullanmak yanlış olurdu
+        // (metni tam tersini söylüyor). Bu yüzden burada kisa ve
+        // doğrudan bir mesaj uretiyorum -- sablon sisteminin
         // Layout'unu kullanmadan.
         //
         // Alternatif dokuzuncu bir sablon eklemekti; PDF'in listesine
         // sadik kalmayi tercih ettim ve karari buraya yazdim.
         await _emailService.SendAsync(
             user.Email,
-            "Rezervasyon sureniz doldu",
+            "Rezervasyon süreniz doldu",
             $"<p>Merhaba {WebUtility.HtmlEncode(user.FirstName)},</p>" +
-            $"<p>{WebUtility.HtmlEncode(data.EventTitle)} etkinligi icin olusturdugunuz " +
-            $"{WebUtility.HtmlEncode(data.ReservationCode)} numarali rezervasyonun odeme " +
+            $"<p>{WebUtility.HtmlEncode(data.EventTitle)} etkinligi için olusturdugunuz " +
+            $"{WebUtility.HtmlEncode(data.ReservationCode)} numarali rezervasyonun ödeme " +
             "suresi doldu ve koltuklariniz serbest birakildi.</p>" +
             $"<p><a href=\"{_urls.FrontendUrl}/etkinlikler\">Tekrar koltuk secmek icin tiklayin</a></p>",
             cancellationToken).ConfigureAwait(false);
@@ -342,7 +342,7 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
 }
 
 // ===================================================================
-// 4) ETKINLIK IPTAL -- PDF: "Etkinlik iptal bildirimi"
+// 4) ETKİNLİK İPTAL -- PDF: "Etkinlik iptal bildirimi"
 // ===================================================================
 
 /// <summary>
@@ -360,10 +360,10 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
     {
         var data = OutboxPayload.Parse<EventCancelledPayload>(payload);
 
-        // Etkilenen kullanicilar: bu etkinlige AKTIF bileti olanlar.
+        // Etkilenen kullanıcılar: bu etkinlige AKTIF bileti olanlar.
         //
-        // Distinct SART: bir kullanici 4 bilet almis olabilir ve
-        // 4 ayri bildirim gondermek istemeyiz.
+        // Distinct ŞART: bir kullanıcı 4 bilet almis olabilir ve
+        // 4 ayrı bildirim gondermek istemeyiz.
         var userIds = await _context.Tickets
             .AsNoTracking()
             .Where(t => t.EventSeat.EventSession.EventId == data.EventId
@@ -378,10 +378,10 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
             return;
         }
 
-        // Zaten bildirim almis olanlari cikar (idempotency).
+        // Zaten bildirim almis olanlari çıkar (idempotency).
         //
-        // Tek sorguda cekiyorum; kullanici basina sorgu atsaydik
-        // 500 bilet sahibi icin 500 gidis donus olurdu.
+        // Tek sorguda cekiyorum; kullanıcı başına sorgu atsaydik
+        // 500 bilet sahibi için 500 gidis donus olurdu.
         var alreadyNotified = await _context.Notifications
             .AsNoTracking()
             .Where(n => n.Type == NotificationType.EventCancelled
@@ -398,9 +398,9 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
         }
 
         var message = string.IsNullOrWhiteSpace(data.Reason)
-            ? $"{data.EventTitle} etkinligi iptal edildi. Odemeniz iade edilecektir."
+            ? $"{data.EventTitle} etkinligi iptal edildi. Ödemeniz iade edilecektir."
             : $"{data.EventTitle} etkinligi iptal edildi. Sebep: {data.Reason}. " +
-              "Odemeniz iade edilecektir.";
+              "Ödemeniz iade edilecektir.";
 
         foreach (var userId in pending)
         {
@@ -418,7 +418,7 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
 }
 
 // ===================================================================
-// 5) YAKLASAN ETKINLIK HATIRLATMASI
+// 5) YAKLASAN ETKİNLİK HATIRLATMASI
 //    PDF Background Job: "Yaklasan etkinlik hatirlatmasi"
 // ===================================================================
 
@@ -434,13 +434,13 @@ internal sealed class EventReminderOutboxHandler : IOutboxMessageHandler
     {
         var data = OutboxPayload.Parse<EventReminderPayload>(payload);
 
-        // RelatedEntityId olarak OTURUM kimligini kullaniyorum,
-        // etkinlik kimligini degil.
+        // RelatedEntityId olarak OTURUM kimligini kullanıyorum,
+        // etkinlik kimligini değil.
         //
-        // Sebep: bir etkinligin bes oturumu olabilir ve kullanici
+        // Sebep: bir etkinliğin bes oturumu olabilir ve kullanıcı
         // bunlarin ucune bilet almis olabilir. Etkinlik kimligiyle
         // kontrol etseydik, ilk hatirlatmadan sonra digerleri
-        // "zaten gonderilmis" sayilip hic gitmezdi.
+        // "zaten gonderilmis" sayilip hiç gitmezdi.
         var exists = await OutboxPayload.NotificationExistsAsync(
             _context, data.UserId, NotificationType.EventReminder, data.EventSessionId, cancellationToken)
             .ConfigureAwait(false);
@@ -455,7 +455,7 @@ internal sealed class EventReminderOutboxHandler : IOutboxMessageHandler
             NotificationType.EventReminder,
             "Etkinliginiz yaklasiyor",
             $"{data.EventTitle} etkinligi {data.StartDate:dd.MM.yyyy HH:mm} tarihinde " +
-            $"{data.VenueName} adresinde basliyor. QR kodunuzu yaninizda bulundurun.",
+            $"{data.VenueName} adresinde başlıyor. QR kodunuzu yaninizda bulundurun.",
             data.EventSessionId,
             "/biletlerim"));
 
@@ -468,10 +468,10 @@ internal sealed class EventReminderOutboxHandler : IOutboxMessageHandler
 // ===================================================================
 
 /// <summary>
-/// Gunluk satis ozetini adminlere bildirim olarak yazar.
+/// Günlük satış ozetini adminlere bildirim olarak yazar.
 ///
-/// Raporun kendisi job icinde HESAPLANIYOR, burada yalnizca TESLIM
-/// ediliyor. Boylece rapor uretimi ile dagitimi ayri ayri yeniden
+/// Raporun kendisi job içinde HESAPLANIYOR, burada yalnızca TESLIM
+/// ediliyor. Boylece rapor üretimi ile dagitimi ayrı ayrı yeniden
 /// denenebiliyor: e-posta servisi cokerse rapor kaybolmuyor,
 /// payload'da duruyor.
 /// </summary>
@@ -499,19 +499,19 @@ internal sealed class DailySalesSummaryOutboxHandler : IOutboxMessageHandler
             return;
         }
 
-        var title = $"{data.Date:dd.MM.yyyy} satis ozeti";
+        var title = $"{data.Date:dd.MM.yyyy} satış özeti";
 
         var message =
             $"Bilet: {data.TicketCount} adet. " +
             $"Brut: {data.GrossAmount} {data.Currency}. " +
-            $"Iade: {data.RefundedAmount} {data.Currency}. " +
+            $"İade: {data.RefundedAmount} {data.Currency}. " +
             $"Net: {data.GrossAmount - data.RefundedAmount} {data.Currency}. " +
-            $"Rezervasyon: {data.ReservationCount} (suresi dolan: {data.ExpiredReservationCount}).";
+            $"Rezervasyon: {data.ReservationCount} (süresi dolan: {data.ExpiredReservationCount}).";
 
-        // Idempotency icin ayni gunun raporunun daha once yazilip
+        // Idempotency için aynı gunun raporunun daha önce yazilip
         // yazilmadigina bakiyorum. RelatedEntityId'yi tarihten
-        // TURETILMIS deterministik bir Guid ile uretiyorum ki ayni
-        // gun icin ayni deger ciksin.
+        // TURETILMIS deterministik bir Guid ile uretiyorum ki aynı
+        // gün için aynı deger ciksin.
         var reportKey = DeterministicGuidFromDate(data.Date);
 
         var already = await _context.Notifications
@@ -535,11 +535,11 @@ internal sealed class DailySalesSummaryOutboxHandler : IOutboxMessageHandler
     }
 
     /// <summary>
-    /// Tarihten sabit bir Guid uretir: 2026-08-27 -> 20260827-0000-...
+    /// Tarihten sabit bir Guid üretir: 2026-08-27 -> 20260827-0000-...
     ///
-    /// Rastgele Guid kullansaydik idempotency kontrolu HIC calismazdi:
-    /// her calismada yeni bir anahtar uretilir, "bu rapor zaten var mi"
-    /// sorusu her zaman "hayir" cevabini alirdi.
+    /// Rastgele Guid kullansaydık idempotency kontrolü HİÇ calismazdi:
+    /// her calismada yeni bir anahtar üretilir, "bu rapor zaten var mi"
+    /// sorusu her zaman "hayir" cevabini alırdı.
     /// </summary>
     private static Guid DeterministicGuidFromDate(DateOnly date)
     {
@@ -554,26 +554,26 @@ internal sealed class DailySalesSummaryOutboxHandler : IOutboxMessageHandler
 
 // ===================================================================
 // 7) REZERVASYON OLUSTURULDU E-POSTASI
-//    PDF Sprint 14 sablonu: "Rezervasyon olusturuldu"
+//    PDF Sprint 14 sablonu: "Rezervasyon oluşturuldu"
 // ===================================================================
 
 /// <summary>
-/// Rezervasyon olusturuldugunda bilgilendirme e-postasi gonderir.
+/// Rezervasyon olusturuldugunda bilgilendirme e-postası gönderir.
 /// </summary>
 /// <remarks>
 /// ==================================================================
 /// UYGULAMA ICI BILDIRIM ILE E-POSTA AYRI YERLERDE -- BILINCLI
 /// ==================================================================
 /// Uygulama ici bildirim, rezervasyonla AYNI transaction'da yaziliyor
-/// (CreateReservationCommandHandler icinde). E-posta ise burada,
-/// Outbox uzerinden.
+/// (CreateReservationCommandHandler içinde). E-posta ise burada,
+/// Outbox üzerinden.
 ///
 /// Sebep: bildirim kendi veritabanimiza yaziliyor -- atomik olabilir
-/// ve olmali. E-posta DIS bir servise cikiyor ve yavas olabilir;
+/// ve olmalı. E-posta DIS bir servise cikiyor ve yavas olabilir;
 /// rezervasyon olusturmayi bekletmemeli.
 ///
-/// Kullanici acisindan sonuc: koltuklar aninda ayriliyor, e-posta
-/// birkac saniye sonra geliyor. Dogru oncelik.
+/// Kullanıcı acisindan sonuç: koltuklar anında ayriliyor, e-posta
+/// birkaç saniye sonra geliyor. Dogru oncelik.
 /// ==================================================================
 /// </remarks>
 internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
@@ -600,9 +600,9 @@ internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
 
         // Rezervasyonu veritabanindan OKUYORUM, payload'a guvenmiyorum.
         //
-        // Aradan gecen surede rezervasyon iptal edilmis veya odenmis
-        // olabilir. "Odemeyi tamamlayin" e-postasi gondermek, zaten
-        // odemis bir kullanici icin kafa karistirici olurdu.
+        // Aradan gecen surede rezervasyon iptal edilmiş veya odenmis
+        // olabilir. "Ödemeyi tamamlayin" e-postası gondermek, zaten
+        // odemis bir kullanıcı için kafa karistirici olurdu.
         var rezervasyon = await _context.Reservations
             .AsNoTracking()
             .Where(r => r.Id == data.ReservationId)
@@ -616,10 +616,10 @@ internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // Rezervasyon artik odeme beklemiyorsa e-posta GONDERMIYORUZ.
+        // Rezervasyon artık ödeme beklemiyorsa e-posta GONDERMIYORUZ.
         //
-        // Bu bir HATA DEGIL: istisna firlatirsak mesaj bes kez denenip
-        // dead letter olur ve operatoru bosuna mesgul eder.
+        // Bu bir HATA DEĞİL: istisna firlatirsak mesaj bes kez denenip
+        // dead letter olur ve operatoru boşuna mesgul eder.
         if (rezervasyon is null || rezervasyon.Status != ReservationStatus.Locked)
         {
             return;
@@ -635,7 +635,7 @@ internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
         if (user is null)
         {
             throw new InvalidOperationException(
-                $"Rezervasyon e-postasi icin kullanici bulunamadi: {data.UserId}");
+                $"Rezervasyon e-postasi için kullanıcı bulunamadı: {data.UserId}");
         }
 
         var mail = _templates.Render(EmailTemplate.ReservationCreated, new Dictionary<string, string>

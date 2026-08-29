@@ -1,12 +1,12 @@
 namespace Ticketing.Application.Abstractions.Payments;
 
 /// <summary>
-/// Odeme saglayicisina gonderilen istek.
+/// Ödeme saglayicisina gonderilen istek.
 /// </summary>
-/// <param name="PaymentId">Bizim tarafimizdaki odeme kaydinin kimligi.</param>
+/// <param name="PaymentId">Bizim tarafimizdaki ödeme kaydinin kimliği.</param>
 /// <param name="Amount">Tutar.</param>
 /// <param name="Currency">ISO 4217 para birimi.</param>
-/// <param name="Description">Odeme aciklamasi (ekstre satirinda gorunur).</param>
+/// <param name="Description">Ödeme açıklaması (ekstre satirinda görünür).</param>
 public sealed record PaymentRequest(
     Guid PaymentId,
     decimal Amount,
@@ -14,19 +14,19 @@ public sealed record PaymentRequest(
     string Description);
 
 /// <summary>
-/// Saglayicidan donen sonuc.
+/// Saglayicidan donen sonuç.
 /// </summary>
-/// <param name="IsSuccess">Islem basarili mi?</param>
+/// <param name="IsSuccess">İşlem başarılı mi?</param>
 /// <param name="ProviderReference">
-/// Saglayicinin verdigi islem numarasi.
+/// Saglayicinin verdiği işlem numarasi.
 ///
-/// Bu alan MUTABAKAT (reconciliation) icin kritik: ay sonunda
+/// Bu alan MUTABAKAT (reconciliation) için kritik: ay sonunda
 /// saglayicidan gelen ekstreyi kendi kayitlarimizla eslestirirken
-/// bu numarayi kullaniyoruz. Ayrica destek talebinde "su islemde
+/// bu numarayi kullanıyoruz. Ayrıca destek talebinde "su islemde
 /// ne oldu" diye sorarken saglayiciya bu numarayi veriyoruz.
 /// </param>
-/// <param name="ErrorCode">Basarisizsa saglayicinin hata kodu.</param>
-/// <param name="ErrorMessage">Kullaniciya gosterilebilir hata mesaji.</param>
+/// <param name="ErrorCode">Basarisizsa sağlayıcının hata kodu.</param>
+/// <param name="ErrorMessage">Kullanıcıya gosterilebilir hata mesaji.</param>
 public sealed record PaymentResult(
     bool IsSuccess,
     string? ProviderReference,
@@ -42,11 +42,11 @@ public sealed record PaymentResult(
 
 /// <summary>
 /// ==================================================================
-/// ODEME SAGLAYICI SOYUTLAMASI
+/// ÖDEME SAGLAYICI SOYUTLAMASI
 /// ==================================================================
 /// PDF Sprint 8:
-///   "Gercek odeme saglayicisi kullanilmak zorunda degildir. Ancak
-///    odeme saglayicisi entegrasyonuna BENZER bir yapi kurulmalidir."
+///   "Gerçek ödeme sağlayıcısı kullanilmak zorunda degildir. Ancak
+///    ödeme sağlayıcısı entegrasyonuna BENZER bir yapi kurulmalidir."
 ///
 /// Istenen metotlar: CreatePayment, VerifyPayment, RefundPayment,
 /// CancelPayment.
@@ -56,56 +56,56 @@ public sealed record PaymentResult(
 /// ------------------------------------------------------------------
 /// Uc sebep:
 ///
-/// 1) TEST EDILEBILIRLIK. Gercek saglayiciyi cagiran bir kod, testte
-///    de gercek para hareketi denerdi. Soyutlama sayesinde testte
-///    "her zaman basarili" veya "her zaman basarisiz" bir uygulama
+/// 1) TEST EDILEBILIRLIK. Gerçek saglayiciyi cagiran bir kod, testte
+///    de gerçek para hareketi denerdi. Soyutlama sayesinde testte
+///    "her zaman başarılı" veya "her zaman başarısız" bir uygulama
 ///    gecebiliyoruz.
 ///
-/// 2) SAGLAYICI DEGISTIRME. Iyzico'dan Stripe'a gecmek, yalnizca yeni
+/// 2) SAGLAYICI DEGISTIRME. Iyzico'dan Stripe'a gecmek, yalnızca yeni
 ///    bir uygulama yazip DI kaydini degistirmek demek. Application
-///    katmaninda tek satir degismez.
+///    katmaninda tek satır degismez.
 ///
 /// 3) KATMAN KURALI. Application katmani HTTP istemcisi, API anahtari,
-///    imza dogrulama gibi ALTYAPI detaylarini bilmemeli. Bu arayuz
+///    imza doğrulama gibi ALTYAPI detaylarini bilmemeli. Bu arayüz
 ///    o detaylari Infrastructure'da tutuyor.
 ///
 /// PDF'in istedigi iki uygulama:
-///   - MockPaymentProvider     -> her zaman basarili
-///   - FailedPaymentProvider   -> her zaman basarisiz
+///   - MockPaymentProvider     -> her zaman başarılı
+///   - FailedPaymentProvider   -> her zaman başarısız
 /// ==================================================================
 /// </summary>
 public interface IPaymentService
 {
-    /// <summary>Saglayicinin adi. Payment kaydina yazilir.</summary>
+    /// <summary>Saglayicinin adı. Payment kaydina yazilir.</summary>
     string ProviderName { get; }
 
     /// <summary>
-    /// Odemeyi baslatir.
+    /// Ödemeyi baslatir.
     ///
-    /// Gercek bir saglayicida bu, kullanicinin yonlendirilecegi bir
-    /// odeme sayfasi URL'i dondururdu (3D Secure akisi).
-    /// Simulasyonda dogrudan sonuc donuyor.
+    /// Gerçek bir saglayicida bu, kullanıcının yonlendirilecegi bir
+    /// ödeme sayfası URL'i dondururdu (3D Secure akışı).
+    /// Simulasyonda doğrudan sonuç dönüyor.
     /// </summary>
     Task<PaymentResult> CreatePaymentAsync(
         PaymentRequest request,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Odemenin gercekten gerceklestigini SAGLAYICIYA SORARAK dogrular.
+    /// Odemenin gerçekten gerceklestigini SAGLAYICIYA SORARAK dogrular.
     ///
     /// ==============================================================
     /// BU METOT NEDEN VAR? -- Guvenligin temel tasi
     /// ==============================================================
-    /// Gercek entegrasyonlarda saglayici, odeme sonucunu bize bir
+    /// Gerçek entegrasyonlarda sağlayıcı, ödeme sonucunu bize bir
     /// "callback" (webhook) ile bildirir. AMA o callback'e KORU KORUNE
-    /// GUVENILMEZ: saldirgan callback adresini bulup "odeme basarili"
+    /// GUVENILMEZ: saldirgan callback adresini bulup "ödeme başarılı"
     /// diye sahte bir istek gonderebilir ve bedava bilet alabilir.
     ///
-    /// Dogru akis: callback geldiginde saglayiciya GERI SORARIZ --
-    /// "gercekten bu odeme basarili mi?" Yalnizca saglayici onaylarsa
+    /// Dogru akis: callback geldiğinde saglayiciya GERİ SORARIZ --
+    /// "gerçekten bu ödeme başarılı mi?" Yalnızca sağlayıcı onaylarsa
     /// bileti uretiriz.
     ///
-    /// Simulasyonda da bu adimi ISLETIYORUZ ki gercek saglayiciya
+    /// Simulasyonda da bu adimi ISLETIYORUZ ki gerçek saglayiciya
     /// gecerken akis degismesin.
     /// ==============================================================
     /// </summary>
@@ -113,17 +113,17 @@ public interface IPaymentService
         string providerReference,
         CancellationToken cancellationToken = default);
 
-    /// <summary>Iade. Kismi iade destekler.</summary>
+    /// <summary>İade. Kismi iade destekler.</summary>
     Task<PaymentResult> RefundPaymentAsync(
         string providerReference,
         decimal amount,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Henuz tahsil edilmemis bir odemeyi iptal eder.
+    /// Henüz tahsil edilmemis bir ödemeyi iptal eder.
     ///
-    /// Iade'den farki: iade tahsil edilmis parayi geri gonderir
-    /// (ve genelde komisyon iade edilmez); iptal ise para hic
+    /// İade'den farki: iade tahsil edilmiş parayi geri gönderir
+    /// (ve genelde komisyon iade edilmez); iptal ise para hiç
     /// hareket etmeden islemi durdurur.
     /// </summary>
     Task<PaymentResult> CancelPaymentAsync(

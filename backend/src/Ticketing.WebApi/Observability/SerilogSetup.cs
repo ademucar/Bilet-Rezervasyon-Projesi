@@ -20,18 +20,18 @@ namespace Ticketing.WebApi.Observability;
 /// Kazandigimiz sey YAPILANDIRILMIS (structured) log. Fark su:
 ///
 ///   Duz metin:
-///     "Rezervasyon olusturuldu. Id: abc-123, Koltuk: 4"
-///     -> tek bir metin. Aramak icin grep, ayristirmak icin regex.
+///     "Rezervasyon oluşturuldu. Id: abc-123, Koltuk: 4"
+///     -> tek bir metin. Aramak için grep, ayristirmak için regex.
 ///
 ///   Yapilandirilmis (JSON):
 ///     { "Message": "...", "ReservationId": "abc-123", "SeatCount": 4,
 ///       "CorrelationId": "9f2c...", "Level": "Information" }
-///     -> ALANLARI olan bir kayit. "SeatCount > 3 olan rezervasyonlar"
+///     -> ALANLARI olan bir kayıt. "SeatCount > 3 olan rezervasyonlar"
 ///        diye SORGU yazilabiliyor.
 ///
 /// Mesaj sablonundaki {ReservationId} gibi yer tutucular otomatik
-/// olarak alan adina donusuyor. Yani bu bicimi kazanmak icin ekstra
-/// hicbir sey yazmiyoruz -- zaten dogru sekilde logluyorduk.
+/// olarak alan adina donusuyor. Yani bu bicimi kazanmak için ekstra
+/// hiçbir sey yazmiyoruz -- zaten doğru şekilde logluyorduk.
 /// ==================================================================
 /// </remarks>
 internal static class SerilogSetup
@@ -49,24 +49,24 @@ internal static class SerilogSetup
                 // ======================================================
                 // SEVIYELER
                 // ======================================================
-                // Varsayilan Information; framework gurultusu bastirilmis.
+                // Varsayılan Information; framework gurultusu bastirilmis.
                 //
                 // Microsoft.AspNetCore Information seviyesinde her istek
-                // icin 2-3 satir uretiyor ("Request starting",
+                // için 2-3 satır uretiyor ("Request starting",
                 // "Executing endpoint", "Request finished"). Bunlari
-                // zaten kendi istek logumuzla (asagida) tek satirda
+                // zaten kendi istek logumuzla (aşağıda) tek satirda
                 // topluyoruz.
                 //
-                // Bastirmasaydik: gunde milyonlarca gereksiz satir,
-                // hem maliyet hem de GERCEK loglarin gorunmez olmasi.
+                // Bastirmasaydik: günde milyonlarca gereksiz satır,
+                // hem maliyet hem de GERCEK loglarin gorunmez olmasını.
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
                 .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
 
-                // Hangfire her is icin birden fazla Information satiri
+                // Hangfire her is için birden fazla Information satiri
                 // uretiyor. Bizim kendi is loglarimiz (9101-9106) zaten
-                // anlamli olani soyluyor.
+                // anlamlı olani söylüyor.
                 .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
 
                 // ======================================================
@@ -75,7 +75,7 @@ internal static class SerilogSetup
                 // Her log satirina otomatik olarak eklenen alanlar.
                 //
                 // Neden gerekli? Uretimde birden fazla sunucu (instance)
-                // calisiyor ve loglar TEK bir yerde toplaniyor. "Bu hata
+                // çalışıyor ve loglar TEK bir yerde toplaniyor. "Bu hata
                 // hangi makinede oldu?" sorusunu cevaplayamazsak, tek
                 // bir bozuk sunucuyu bulmak imkansiz olur.
                 .Enrich.FromLogContext()
@@ -85,13 +85,13 @@ internal static class SerilogSetup
                 // ======================================================
                 // KONSOL
                 // ======================================================
-                // Gelistirmede insan tarafindan okunuyor, o yuzden duz
-                // metin. JSON yazsaydik gelistirme deneyimi berbat
-                // olurdu -- her satir 400 karakterlik bir JSON blogu.
+                // Gelistirmede insan tarafından okunuyor, o yüzden duz
+                // metin. JSON yazsaydık gelistirme deneyimi berbat
+                // olurdu -- her satır 400 karakterlik bir JSON blogu.
                 .WriteTo.Console(
-                    // CA1305: bicimlendirme kullanicinin yerel ayarina
-                    // gore degismemeli. Log zaman damgalari ve sayilar
-                    // MAKINE tarafindan okunuyor; Turkce yerel ayarda
+                    // CA1305: bicimlendirme kullanıcının yerel ayarina
+                    // göre degismemeli. Log zaman damgalari ve sayilar
+                    // MAKINE tarafından okunuyor; Turkce yerel ayarda
                     // ondalik ayirici virgul olur ve ayristirma bozulur.
                     formatProvider: System.Globalization.CultureInfo.InvariantCulture,
                     outputTemplate:
@@ -99,18 +99,18 @@ internal static class SerilogSetup
                         "{Properties:j}{NewLine}{Exception}")
 
                 // ======================================================
-                // DOSYA -- JSON, gunluk donen
+                // DOSYA -- JSON, günlük donen
                 // ======================================================
-                // Burada JSON kullaniyorum cunku bu dosyalar MAKINE
-                // tarafindan okunuyor: merkezi log sistemine (Seq, ELK)
+                // Burada JSON kullanıyorum çünkü bu dosyalar MAKINE
+                // tarafından okunuyor: merkezi log sistemine (Seq, ELK)
                 // aktarilacak veya jq ile sorgulanacak.
                 //
-                // rollingInterval: gunluk yeni dosya. Tek bir dev dosya
-                // olsaydi acmak bile zor olurdu.
+                // rollingInterval: günlük yeni dosya. Tek bir dev dosya
+                // olsaydı acmak bile zor olurdu.
                 //
-                // retainedFileCountLimit: 14 gun. Sinirsiz birakmak
+                // retainedFileCountLimit: 14 gün. Sinirsiz birakmak
                 // diski doldurur -- Sprint 15'te dosya yuklemede
-                // konustugumuz sorunun aynisi, ama bu kez KENDI
+                // konustugumuz sorunun aynisi, ama bu kez KENDİ
                 // urettigimiz veriyle.
                 .WriteTo.File(
                     formatter: new Serilog.Formatting.Compact.CompactJsonFormatter(),
@@ -118,27 +118,27 @@ internal static class SerilogSetup
                     rollingInterval: Serilog.RollingInterval.Day,
                     retainedFileCountLimit: 14,
 
-                    // Tek gunde bir dosyanin buyuyebilecegi ust sinir.
-                    // Asilirsa ayni gun icinde yeni dosya aciliyor.
+                    // Tek günde bir dosyanin buyuyebilecegi ust sinir.
+                    // Asilirsa aynı gün içinde yeni dosya aciliyor.
                     fileSizeLimitBytes: 100 * 1024 * 1024,
                     rollOnFileSizeLimit: true);
         });
     }
 
     /// <summary>
-    /// Her HTTP istegi icin TEK satirlik ozet log ekler.
+    /// Her HTTP isteği için TEK satirlik özet log ekler.
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// NEDEN KENDI OZETIMIZ?
+    /// NEDEN KENDİ OZETIMIZ?
     /// ==============================================================
-    /// ASP.NET Core'un yerlesik istek loglamasi ayni istek icin
-    /// birden fazla satir uretiyor ve hicbiri sureyi net vermiyor.
+    /// ASP.NET Core'un yerlesik istek loglamasi aynı istek için
+    /// birden fazla satır uretiyor ve hicbiri süreyi net vermiyor.
     /// Serilog'un UseSerilogRequestLogging'i ise tek satirda
-    /// yol + durum kodu + sure veriyor.
+    /// yol + durum kodu + süre veriyor.
     ///
     /// Ustune kendi alanlarimizi ekliyorum: CorrelationId ve
-    /// kullanici kimligi. Boylece tek bir satirdan "kim, neyi, ne
+    /// kullanıcı kimliği. Boylece tek bir satirdan "kim, neyi, ne
     /// kadar surede" sorularinin hepsi cevaplaniyor.
     /// ==============================================================
     /// </remarks>
@@ -155,8 +155,8 @@ internal static class SerilogSetup
             // SEVIYE, DURUM KODUNA GORE
             // ==========================================================
             // Hepsini Information yapsaydik 500'ler normal isteklerin
-            // arasinda kaybolurdu. Sprint 15'te "alarm yorgunlugu"
-            // baglaminda konustugumuz ayrimin ayni si.
+            // arasında kaybolurdu. Sprint 15'te "alarm yorgunlugu"
+            // baglaminda konustugumuz ayrimin aynı si.
             options.GetLevel = (httpContext, elapsed, ex) =>
             {
                 if (ex is not null || httpContext.Response.StatusCode >= 500)
@@ -170,10 +170,10 @@ internal static class SerilogSetup
                 }
 
                 // Saglik kontrolleri saniyede bir cagriliyor (Kubernetes
-                // probe'lari). Information yapsaydik loglarin buyuk
+                // probe'lari). Information yapsaydik loglarin büyük
                 // kismi bu gurultu olurdu.
                 //
-                // Debug'a dusuruyorum: sorun oldugunda acilabiliyor,
+                // Debug'a dusuruyorum: sorun olduğunda acilabiliyor,
                 // normalde gorunmuyor.
                 if (httpContext.Request.Path.StartsWithSegments("/health"))
                 {
@@ -185,19 +185,19 @@ internal static class SerilogSetup
 
             options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
             {
-                // PDF: correlation ID "Application log" icinde olmali.
+                // PDF: correlation ID "Application log" içinde olmalı.
                 if (httpContext.Response.Headers.TryGetValue(
                         CorrelationIdMiddleware.HeaderName, out var correlationId))
                 {
                     diagnosticContext.Set("CorrelationId", correlationId.ToString());
                 }
 
-                // Kullanici KIMLIGI (Guid), e-postasi DEGIL.
+                // Kullanıcı KIMLIGI (Guid), e-postası DEĞİL.
                 //
                 // Sprint 15'te konustugumuz gerekce: e-posta kisisel
                 // veri. Guid ise anlamsiz bir tanimlayici -- destek
-                // gerektiginde veritabanindan kullaniciya cevrilebilir
-                // ama log dosyasi tek basina bir kullanici listesi
+                // gerektiginde veritabanindan kullanıcıya cevrilebilir
+                // ama log dosyasi tek başına bir kullanıcı listesi
                 // olmaz.
                 var userId = httpContext.User?.FindFirst("sub")?.Value;
 

@@ -13,10 +13,10 @@ namespace Ticketing.Application.Features.Reports;
 // ORTAK TIPLER
 // ===================================================================
 
-/// <summary>Gunluk satis grafigi noktasi.</summary>
+/// <summary>Günlük satış grafigi noktasi.</summary>
 public sealed record DailySalesPoint(DateOnly Date, int TicketCount, decimal Revenue);
 
-/// <summary>Ad + deger ciftleri (en populer sehirler, kategoriler...).</summary>
+/// <summary>Ad + deger ciftleri (en popüler şehirler, kategoriler...).</summary>
 public sealed record NamedCount(string Name, int Count);
 
 public sealed record EventRevenue(Guid EventId, string Title, int TicketCount, decimal Revenue);
@@ -28,7 +28,7 @@ public sealed record SectionOccupancy(
     double OccupancyRate);
 
 // ===================================================================
-// ORGANIZATOR DASHBOARD -- PDF Sprint 13 (10 metrik)
+// ORGANİZATÖR DASHBOARD -- PDF Sprint 13 (10 metrik)
 // ===================================================================
 
 public sealed record OrganizerDashboard(
@@ -45,7 +45,7 @@ public sealed record OrganizerDashboard(
     IReadOnlyList<SectionOccupancy> SectionOccupancies,
     string Currency);
 
-/// <param name="Days">Gunluk grafik kac gunu kapsasin. Varsayilan 30.</param>
+/// <param name="Days">Günlük grafik kac gunu kapsasin. Varsayılan 30.</param>
 public sealed record GetOrganizerDashboardQuery(int Days = 30)
     : IRequest<Result<OrganizerDashboard>>;
 
@@ -73,22 +73,22 @@ internal sealed class GetOrganizerDashboardQueryHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<OrganizerDashboard>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         // ==============================================================
         // BU PANELIN EN KRITIK SATIRI: KAPSAM SINIRI
         // ==============================================================
-        // Organizator YALNIZCA kendi etkinliklerinin verisini gorebilir.
+        // Organizatör YALNIZCA kendi etkinliklerinin verisini görebilir.
         //
-        // Bu filtreyi unutsaydik, herhangi bir organizator RAKIPLERININ
+        // Bu filtreyi unutsaydik, herhangi bir organizatör RAKIPLERININ
         // gelir rakamlarini, bilet satislarini ve doluluk oranlarini
         // gorurdu. Ticari acidan felaket bir sizinti olurdu -- ve
-        // arayuzde hicbir hata gorunmezdi, sadece "cok fazla veri".
+        // arayüzde hiçbir hata gorunmezdi, sadece "çok fazla veri".
         //
-        // Organizator profili yoksa panel bos degil, HATA doner:
-        // "verisi olmayan bir panel" ile "yetkisiz erisim" farkli
-        // seyler ve kullaniciya dogrusunu soylemek gerekiyor.
+        // Organizatör profili yoksa panel boş değil, HATA döner:
+        // "verisi olmayan bir panel" ile "yetkisiz erişim" farklı
+        // şeyler ve kullanıcıya dogrusunu söylemek gerekiyor.
         // ==============================================================
         var organizerId = await _context.OrganizerProfiles
             .AsNoTracking()
@@ -101,13 +101,13 @@ internal sealed class GetOrganizerDashboardQueryHandler
         {
             return Result.Failure<OrganizerDashboard>(Error.Forbidden(
                 "report.not_organizer",
-                "Bu panel yalnizca organizatorlere aciktir."));
+                "Bu panel yalnızca organizatorlere aciktir."));
         }
 
         var events = _context.Events.AsNoTracking().Where(e => e.OrganizerId == organizerId);
 
-        // Bu organizatorun etkinliklerine ait TUM biletler.
-        // Asagidaki metriklerin cogu bu kumeden turetiliyor.
+        // Bu organizatorun etkinliklerine ait TÜM biletler.
+        // Aşağıdaki metriklerin çoğu bu kumeden turetiliyor.
         var tickets = _context.Tickets
             .AsNoTracking()
             .Where(t => t.EventSeat.EventSession.Event.OrganizerId == organizerId);
@@ -123,21 +123,21 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 cancellationToken)
             .ConfigureAwait(false);
 
-        // ---- 3, 4 ve 5: satis, gelir, iade ----
+        // ---- 3, 4 ve 5: satış, gelir, iade ----
         //
-        // GELIRI BILETLERDEN hesapliyorum, odemelerden degil.
+        // GELIRI BILETLERDEN hesapliyorum, odemelerden değil.
         //
-        // Sebep: bir odeme birden fazla bileti kapsayabilir ve
-        // organizator bazinda ayristirmak icin yine biletlere inmek
-        // gerekir. Bilet basina fiyat zaten kayitli.
+        // Sebep: bir ödeme birden fazla bileti kapsayabilir ve
+        // organizatör bazinda ayristirmak için yine biletlere inmek
+        // gerekir. Bilet başına fiyat zaten kayıtlı.
         var soldTickets = tickets.Where(t => t.Status == TicketStatus.Active
                                           || t.Status == TicketStatus.Used);
 
         var totalTicketsSold = await soldTickets.CountAsync(cancellationToken).ConfigureAwait(false);
 
-        // SumAsync bos kumede 0 doner (SQL SUM null doner ama EF
-        // decimal icin 0'a cevirir). Yine de ?? 0 yazmiyorum cunku
-        // decimal (nullable degil) donuyor.
+        // SumAsync boş kumede 0 döner (SQL SUM null döner ama EF
+        // decimal için 0'a cevirir). Yine de ?? 0 yazmiyorum çünkü
+        // decimal (nullable değil) dönüyor.
         var totalRevenue = await soldTickets
             .SumAsync(t => t.Price.Amount, cancellationToken)
             .ConfigureAwait(false);
@@ -146,14 +146,14 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .CountAsync(t => t.Status == TicketStatus.Refunded, cancellationToken)
             .ConfigureAwait(false);
 
-        // ---- 6: doluluk orani ----
+        // ---- 6: doluluk oranı ----
         //
-        // Tanim: satilan koltuk / uretilmis toplam koltuk.
+        // Tanim: satılan koltuk / üretilmiş toplam koltuk.
         //
-        // Payda olarak SALON KAPASITESINI degil URETILMIS KOLTUK
-        // sayisini aliyorum. Fark onemli: organizator salonun bir
-        // bolumunu satisa hic acmamis olabilir. Kapasiteyi payda
-        // yapsaydik doluluk haksiz yere dusuk gorunurdu.
+        // Payda olarak SALON KAPASITESINI değil URETILMIS KOLTUK
+        // sayisini alıyorum. Fark önemli: organizatör salonun bir
+        // bolumunu satışa hiç acmamis olabilir. Kapasiteyi payda
+        // yapsaydik doluluk haksiz yere düşük görünürdü.
         var totalSeats = await _context.EventSeats
             .AsNoTracking()
             .CountAsync(
@@ -169,17 +169,17 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 cancellationToken)
             .ConfigureAwait(false);
 
-        // Sifira bolme korumasi: henuz koltuk uretilmemisse 0.
+        // Sifira bolme korumasi: henüz koltuk uretilmemisse 0.
         var occupancyRate = totalSeats == 0
             ? 0
             : Math.Round((double)soldSeats / totalSeats * 100, 1);
 
-        // ---- 7: en cok satan bilet turu ----
+        // ---- 7: en çok satan bilet türü ----
         // NOT: GroupBy sonucunu ANONIM tipe projelendiriyoruz.
         //
-        // Dogrudan "new NamedCount(...)" yazsaydik EF Core bunu SQL'e
-        // ceviremezdi (bkz. RevenueByEvent'teki ayrintili aciklama).
-        // Bu dosyadaki dort gruplamada da ayni desen uygulaniyor.
+        // Dogrudan "new NamedCount(...)" yazsaydık EF Core bunu SQL'e
+        // ceviremezdi (bkz. RevenueByEvent'teki ayrintili açıklama).
+        // Bu dosyadaki dort gruplamada da aynı desen uygulaniyor.
         var topTicketType = await soldTickets
             .GroupBy(t => t.EventSeat.TicketType.Name)
             .Select(g => new { Name = g.Key, Count = g.Count() })
@@ -187,13 +187,13 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // ---- 8: gunluk satis grafigi ----
+        // ---- 8: günlük satış grafigi ----
         var since = _clock.UtcNow.AddDays(-request.Days);
 
         var dailyRaw = await soldTickets
             .Where(t => t.CreatedAt >= since)
 
-            // Gune gore gruplamak icin DateOnly'ye indirgiyorum.
+            // Gune göre gruplamak için DateOnly'ye indirgiyorum.
             // Npgsql bunu SQL'de DATE(...) olarak cevirebiliyor.
             .GroupBy(t => DateOnly.FromDateTime(t.CreatedAt.UtcDateTime))
             .Select(g => new
@@ -206,14 +206,14 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .ConfigureAwait(false);
 
         // ==============================================================
-        // BOS GUNLERI DOLDUR
+        // BOŞ GUNLERI DOLDUR
         // ==============================================================
-        // Veritabani yalnizca satis OLAN gunleri donduruyor. Grafige
-        // oldugu gibi verseydik, satis olmayan gunler ATLANIRDI ve
-        // cizgi grafik yaniltici olurdu: 1 Ocak ile 15 Ocak yan yana
-        // cizilir, aradaki 13 gunluk durgunluk gorunmezdi.
+        // Veritabani yalnızca satış OLAN gunleri döndürüyor. Grafige
+        // olduğu gibi verseydik, satış olmayan gunler ATLANIRDI ve
+        // cizgi grafik yanıltıcı olurdu: 1 Ocak ile 15 Ocak yan yana
+        // cizilir, aradaki 13 günlük durgunluk gorunmezdi.
         //
-        // Sifir degerli gunleri ekleyerek zaman eksenini gercek
+        // Sifir degerli gunleri ekleyerek zaman eksenini gerçek
         // kiliyoruz.
         // ==============================================================
         var bugun = DateOnly.FromDateTime(_clock.UtcNow.UtcDateTime);
@@ -230,7 +230,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             })
             .ToList();
 
-        // ---- 9: etkinlik bazli gelir ----
+        // ---- 9: etkinlik bazlı gelir ----
         var revenueRaw = await soldTickets
             .GroupBy(t => new
             {
@@ -241,7 +241,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             // ==========================================================
             // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
             // ==========================================================
-            // Once dogrudan "new EventRevenue(...)" yaziyordum ve uc
+            // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:
             //
             //   InvalidOperationException: The LINQ expression ...
@@ -251,12 +251,12 @@ internal sealed class GetOrganizerDashboardQueryHandler
             // projelendiremiyor (anonim tipe ise sorunsuz cevirebiliyor).
             //
             // Cozum: SQL'e cevrilebilen anonim tiple gruplayip,
-            // record'a bellekte gecmek. Gruplama sonucu zaten kucuk
-            // (etkinlik sayisi kadar satir), yani bellekte islemenin
+            // record'a bellekte gecmek. Gruplama sonucu zaten küçük
+            // (etkinlik sayısı kadar satır), yani bellekte islemenin
             // maliyeti yok.
             //
-            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEGIL.
-            // Gruplama ve toplama HALA SQL'de yapiliyor; yalnizca
+            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
+            // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
             // ==========================================================
             .Select(g => new
@@ -274,7 +274,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
         var revenueByEvent = revenueRaw.ConvertAll(
             r => new EventRevenue(r.Id, r.Title, r.Count, r.Revenue));
 
-        // ---- 10: bolum bazli doluluk ----
+        // ---- 10: bölüm bazlı doluluk ----
         var sectionOccupancies = await _context.EventSeats
             .AsNoTracking()
             .Where(es => es.EventSession.Event.OrganizerId == organizerId)
@@ -292,7 +292,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
         //
         // SQL'de yapsaydik tam sayi bolmesi tuzagina duserdik:
         // PostgreSQL'de 3/4 = 0 (integer division). Cast eklemek
-        // mumkun ama okunakli degil ve satir sayisi zaten az.
+        // mumkun ama okunakli değil ve satır sayısı zaten az.
         var sections = sectionOccupancies
             .Select(s => new SectionOccupancy(
                 s.SectionName,
@@ -302,11 +302,11 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .OrderByDescending(s => s.OccupancyRate)
             .ToList();
 
-        // Para birimi: ilk satilan biletten.
+        // Para birimi: ilk satılan biletten.
         //
         // Coklu para birimi bu panelde DESTEKLENMIYOR ve bunu
-        // sessizce toplamak yerine acikca yaziyorum. Sprint 11'de
-        // gunluk satis ozetinde de ayni karari vermistim.
+        // sessizce toplamak yerine acikca yazıyorum. Sprint 11'de
+        // günlük satış ozetinde de aynı karari vermistim.
         var currency = await soldTickets
             .Select(t => t.Price.Currency)
             .FirstOrDefaultAsync(cancellationToken)
@@ -358,8 +358,8 @@ internal sealed class GetAdminDashboardQueryHandler
         GetAdminDashboardQuery request,
         CancellationToken cancellationToken)
     {
-        // Yetki kontrolu CONTROLLER'da (AdminOnly policy).
-        // Burada tekrar kontrol etmiyorum: tek bir yerde olmasi,
+        // Yetki kontrolü CONTROLLER'da (AdminOnly policy).
+        // Burada tekrar kontrol etmiyorum: tek bir yerde olmasını,
         // iki yerde tutup birini guncellemeyi unutmaktan iyi.
 
         var totalUsers = await _context.Users
@@ -388,15 +388,15 @@ internal sealed class GetAdminDashboardQueryHandler
             .CountAsync(e => e.Status == EventStatus.Cancelled, cancellationToken)
             .ConfigureAwait(false);
 
-        // ---- Toplam islem hacmi ----
+        // ---- Toplam işlem hacmi ----
         //
-        // Basarili odemelerin toplami. IADELERI DUSMUYORUM.
+        // Başarılı odemelerin toplami. IADELERI DUSMUYORUM.
         //
-        // Sebep: "islem hacmi" (transaction volume) finansal bir
+        // Sebep: "işlem hacmi" (transaction volume) finansal bir
         // terim ve sistemden GECEN paranin toplamini anlatir. Net
-        // gelir farkli bir metriktir ve karistirilmamali.
+        // gelir farklı bir metriktir ve karistirilmamali.
         //
-        // Iade bilgisi ayrica raporlarda mevcut.
+        // İade bilgisi ayrıca raporlarda mevcut.
         var successfulPayments = _context.Payments
             .AsNoTracking()
             .Where(p => p.Status == PaymentStatus.Successful
@@ -406,14 +406,14 @@ internal sealed class GetAdminDashboardQueryHandler
             .SumAsync(p => p.Amount.Amount, cancellationToken)
             .ConfigureAwait(false);
 
-        // ---- Basarisiz odeme orani ----
+        // ---- Başarısız ödeme oranı ----
         //
-        // Payda: SONUCLANMIS odemeler (basarili + basarisiz).
+        // Payda: SONUCLANMIS ödemeler (başarılı + başarısız).
         //
         // Pending ve Processing durumundakileri HARIC tutuyorum:
-        // henuz sonuclanmamis bir odeme "basarisiz" sayilamaz.
-        // Dahil etseydik oran, o anda islemde olan odeme sayisina
-        // gore dalgalanirdi ve hicbir sey ifade etmezdi.
+        // henüz sonuclanmamis bir ödeme "başarısız" sayilamaz.
+        // Dahil etseydik oran, o anda islemde olan ödeme sayısına
+        // göre dalgalanirdi ve hiçbir sey ifade etmezdi.
         var finalizedPayments = await _context.Payments
             .AsNoTracking()
             .CountAsync(
@@ -432,13 +432,13 @@ internal sealed class GetAdminDashboardQueryHandler
             ? 0
             : Math.Round((double)failedPayments / finalizedPayments * 100, 1);
 
-        // ---- En populer sehirler ve kategoriler ----
+        // ---- En popüler şehirler ve kategoriler ----
         //
-        // "Populer" olcutu: SATILAN BILET sayisi.
+        // "Popüler" olcutu: SATILAN BİLET sayısı.
         //
-        // Etkinlik sayisina gore de siralanabilirdi ama o, talebi
-        // degil ARZI olcerdi: 50 etkinligi olup hicbiri satmayan bir
-        // sehir "populer" gorunurdu.
+        // Etkinlik sayısına göre de siralanabilirdi ama o, talebi
+        // değil ARZI olcerdi: 50 etkinligi olup hicbiri satmayan bir
+        // şehir "popüler" görünürdü.
         var topCities = await _context.Tickets
             .AsNoTracking()
             .Where(t => t.Status == TicketStatus.Active || t.Status == TicketStatus.Used)
@@ -462,29 +462,29 @@ internal sealed class GetAdminDashboardQueryHandler
         // ==============================================================
         // "SISTEM HATA SAYISI" -- PDF'in TANIMLAMADIGI METRIK
         // ==============================================================
-        // PDF bu metrigi istiyor ama neyin "sistem hatasi" sayilacagini
-        // soylemiyor. Tanimi ben veriyorum ve acikca yaziyorum:
+        // PDF bu metriği istiyor ama neyin "sistem hatası" sayilacagini
+        // soylemiyor. Tanimi ben veriyorum ve acikca yazıyorum:
         //
         //   DEAD LETTER OLMUS OUTBOX MESAJLARI
         //
-        // Neden bu? Cunku dead letter, sistemde GERCEKTEN yanlis giden
+        // Neden bu? Çünkü dead letter, sistemde GERCEKTEN yanlış giden
         // ve INSAN MUDAHALESI bekleyen tek kalici kayittir. Bes kez
-        // denenmis ve hala basarisiz bir mesaj, gonderilmemis bir
+        // denenmis ve hâlâ başarısız bir mesaj, gonderilmemis bir
         // e-posta veya olusmamis bir bildirim demektir.
         //
         // Elemediklerim ve sebepleri:
         //
-        //   HTTP 500 sayisi -> loglarda, veritabaninda degil. Sayabilmek
-        //   icin log toplama altyapisi gerekir (PDF Sprint 16).
+        //   HTTP 500 sayısı -> loglarda, veritabaninda değil. Sayabilmek
+        //   için log toplama altyapisi gerekir (PDF Sprint 16).
         //
-        //   Basarisiz odemeler -> bunlar SISTEM hatasi degil, IS
-        //   sonucudur. Kart limiti yetmemesi bizim hatamiz degil.
-        //   Ayrica zaten ayri bir metrik olarak yukarida var.
+        //   Başarısız ödemeler -> bunlar SISTEM hatası değil, IS
+        //   sonucudur. Kart limiti yetmemesi bizim hatamiz değil.
+        //   Ayrıca zaten ayrı bir metrik olarak yukarida var.
         //
         //   Eszamanlilik cakismalari (409) -> bunlar sistemin DOGRU
-        //   calistiginin kaniti. Hata saymak yaniltici olurdu.
+        //   calistiginin kaniti. Hata saymak yanıltıcı olurdu.
         //
-        // Yani bu sayi "operatorun bakmasi gereken is sayisi".
+        // Yani bu sayi "operatorun bakmasi gereken is sayısı".
         // Sifirdan buyukse Hangfire panelinde islenecek bir sey var.
         // ==============================================================
         var systemErrors = await _context.OutboxMessages

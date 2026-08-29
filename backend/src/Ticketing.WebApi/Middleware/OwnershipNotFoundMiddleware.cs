@@ -5,45 +5,45 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Middleware;
 
 /// <summary>
-/// Sahiplik politikalari reddettiginde 403 yerine 404 dondurur.
+/// Sahiplik politikalari reddettiginde 403 yerine 404 döndürür.
 /// </summary>
 /// <remarks>
 /// ==================================================================
-/// NEDEN 403 DEGIL DE 404?
+/// NEDEN 403 DEĞİL DE 404?
 /// ==================================================================
 /// Sprint 19'da TicketOwner ve ReservationOwner politikalarini
 /// tamamladiktan sonra bir celiski fark ettim.
 ///
 /// Politikayi uca eklemek savunmayi iki katmanli yapiyor (iyi), ama
-/// varsayilan reddetme 403 Forbidden. Ve 403 bir BILGI sizdiriyor:
+/// varsayılan reddetme 403 Forbidden. Ve 403 bir BILGI sizdiriyor:
 ///
-///   403 -> "bu rezervasyon VAR ama senin degil"
-///   404 -> "boyle bir rezervasyon yok"   (hicbir sey soylemiyor)
+///   403 -> "bu rezervasyon VAR ama senin değil"
+///   404 -> "boyle bir rezervasyon yok"   (hiçbir sey soylemiyor)
 ///
 /// Ilginc olan: handler'larimiz ZATEN 404 donuyordu. Bunu Sprint 19
-/// guvenlik testinde olctum -- baska bir kullanicinin rezervasyonuna
-/// erisim denemesi 404 aliyordu.
+/// güvenlik testinde olctum -- başka bir kullanıcının rezervasyonuna
+/// erişim denemesi 404 aliyordu.
 ///
-/// Yani politikayi kosulsuz eklemek, daha guvenli olan bu davranisi
+/// Yani politikayi kosulsuz eklemek, daha güvenli olan bu davranisi
 /// BOZACAKTI: bir iyilestirme yaparken bir gerileme uretecektim.
 ///
 /// ------------------------------------------------------------------
-/// NEDEN MIDDLEWARE, IAuthorizationMiddlewareResultHandler DEGIL?
+/// NEDEN MIDDLEWARE, IAuthorizationMiddlewareResultHandler DEĞİL?
 /// ------------------------------------------------------------------
-/// Once o arayuzu uygulamayi denedim -- bu isin "resmi" yolu. Ama
-/// derleyici tipi cozemedi (CS0246): arayuz bu cerceve surumunde
-/// projeden erisilebilir degil.
+/// Önce o arayuzu uygulamayi denedim -- bu isin "resmi" yolu. Ama
+/// derleyici tipi cozemedi (CS0246): arayüz bu cerceve surumunde
+/// projeden erişilebilir değil.
 ///
-/// Middleware ayni sonucu veriyor ve daha az cerceve ic ayrintisina
-/// bagli. Bedeli: yaniti DEGIL, yalnizca durum kodunu ve govdeyi
-/// yeniden yaziyoruz -- ki zaten istedigimiz tam olarak bu.
+/// Middleware aynı sonucu veriyor ve daha az cerceve ic ayrintisina
+/// bağlı. Bedeli: yaniti DEĞİL, yalnızca durum kodunu ve govdeyi
+/// yeniden yazıyoruz -- ki zaten istedigimiz tam olarak bu.
 ///
 /// ------------------------------------------------------------------
 /// KAPSAM: YALNIZCA SAHIPLIK POLITIKALARI
 /// ------------------------------------------------------------------
-/// Rol bazli reddetmelerde (AdminOnly, OrganizerOnly) 403 KALIYOR.
-/// Orada sizinti yok: "admin degilsin" bilgisi kullanicinin kendisi
-/// hakkinda. Onu 404 ile karsilamak yaniltici olurdu -- kullanici
+/// Rol bazlı reddetmelerde (AdminOnly, OrganizerOnly) 403 KALIYOR.
+/// Orada sizinti yok: "admin degilsin" bilgisi kullanıcının kendisi
+/// hakkında. Onu 404 ile karsilamak yanıltıcı olurdu -- kullanıcı
 /// "sayfa silinmis mi?" diye dusunurdu.
 /// ==================================================================
 /// </remarks>
@@ -67,10 +67,10 @@ internal sealed class OwnershipNotFoundMiddleware
         await _next(context).ConfigureAwait(false);
 
         // ==============================================================
-        // YALNIZCA 403 -- 401 DEGIL
+        // YALNIZCA 403 -- 401 DEĞİL
         // ==============================================================
-        // 401 "kim oldugunu bilmiyorum" demek; kullanici giris
-        // yapmamis. Ona "yok" demek yanlis olurdu: giris yapmasi
+        // 401 "kim olduğunu bilmiyorum" demek; kullanıcı giriş
+        // yapmamis. Ona "yok" demek yanlış olurdu: giriş yapmasi
         // gerektigini soylemeliyiz.
         // ==============================================================
         if (context.Response.StatusCode != StatusCodes.Status403Forbidden)
@@ -87,11 +87,11 @@ internal sealed class OwnershipNotFoundMiddleware
         // YANIT BASLAMISSA DOKUNAMAYIZ
         // ==============================================================
         // Yetkilendirme reddi govde YAZMADAN durum kodu ayarliyor, bu
-        // yuzden pratikte buraya her zaman "baslamamis" olarak
+        // yüzden pratikte buraya her zaman "baslamamis" olarak
         // geliyoruz.
         //
         // Yine de kontrol ediyorum: aksi halde ilerde araya giren
-        // baska bir middleware govde yazarsa burasi
+        // başka bir middleware govde yazarsa burasi
         // InvalidOperationException firlatirdi.
         // ==============================================================
         if (context.Response.HasStarted)
@@ -103,7 +103,7 @@ internal sealed class OwnershipNotFoundMiddleware
         {
             Title = "NotFound",
             Status = StatusCodes.Status404NotFound,
-            Detail = "Kayit bulunamadi.",
+            Detail = "Kayıt bulunamadı.",
             Instance = $"{context.Request.Method} {context.Request.Path}",
         };
 
@@ -120,12 +120,12 @@ internal sealed class OwnershipNotFoundMiddleware
     /// Bu ucun yetkilendirmesi bir SAHIPLIK politikasina mi dayaniyor?
     /// </summary>
     /// <remarks>
-    /// Endpoint metadata'sindan okuyoruz. Yol desenine gore karar
+    /// Endpoint metadata'sindan okuyoruz. Yol desenine göre karar
     /// verseydik ("/reservations/ ile basliyorsa") yeni bir uc
-    /// eklendiginde kural sessizce yanlis yere uygulanabilirdi.
+    /// eklendiginde kural sessizce yanlış yere uygulanabilirdi.
     ///
     /// Metadata, ucun GERCEKTEN hangi politikayi kullandigini
-    /// soyluyor.
+    /// söylüyor.
     /// </remarks>
     private static bool SahiplikPolitikasiMi(HttpContext context)
     {

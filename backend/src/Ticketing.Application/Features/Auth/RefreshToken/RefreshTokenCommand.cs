@@ -24,35 +24,35 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 /// ==================================================================
 ///
 /// PDF Sprint 3 uc kural istiyor:
-///   - "Refresh Token rotation uygulanmalidir."
+///   - "Refresh Token rotation uygulanmalıdır."
 ///   - "Eski Refresh Token tekrar kullanilamamalidir."
 ///   - "Logout isleminde token iptal edilmelidir."
 ///
 /// ROTATION NEDIR?
-/// Her yenilemede eski token IPTAL EDILIR ve yeni bir token uretilir.
-/// Yani bir refresh token yalnizca BIR KEZ kullanilabilir.
+/// Her yenilemede eski token İPTAL EDILIR ve yeni bir token üretilir.
+/// Yani bir refresh token yalnızca BIR KEZ kullanilabilir.
 ///
-/// PEKI NEDEN? Asagidaki saldiri senaryosu bunu aciklar:
+/// PEKI NEDEN? Aşağıdaki saldiri senaryosu bunu aciklar:
 ///
-///   1. Saldirgan, kullanicinin token2'sini caldi (XSS, kotu amacli
-///      tarayici eklentisi, ele gecirilmis cihaz...).
+///   1. Saldirgan, kullanıcının token2'sini caldi (XSS, kötü amacli
+///      tarayıcı eklentisi, ele gecirilmis cihaz...).
 ///
-///   2. Gercek kullanici token2 ile yenileme yapti -> token3 aldi.
-///      token2 artik IPTAL, ama veritabaninda kaydi DURUYOR ve
+///   2. Gerçek kullanıcı token2 ile yenileme yapti -> token3 aldi.
+///      token2 artık İPTAL, ama veritabaninda kaydı DURUYOR ve
 ///      "yerine token3 gecti" bilgisini tasiyor.
 ///
 ///   3. Saldirgan da token2 ile yenileme denedi.
 ///
-///   4. Sistem bakiyor: "bu token iptal edilmis ama biri hala
-///      kullanmaya calisiyor". Bunun iki acikamasi var: ya token
+///   4. Sistem bakiyor: "bu token iptal edilmiş ama biri hâlâ
+///      kullanmaya çalışıyor". Bunun iki acikamasi var: ya token
 ///      calindi ya da ciddi bir hata var. IKISI DE ALARM SEBEBI.
 ///
-///   5. O kullanicinin TUM aktif token'larini iptal ediyoruz.
-///      Hem saldirgan hem gercek kullanici disari atiliyor.
-///      Kullanici tekrar giris yapabilir; saldirgan yapamaz
+///   5. O kullanıcının TÜM aktif token'larini iptal ediyoruz.
+///      Hem saldirgan hem gerçek kullanıcı disari atiliyor.
+///      Kullanıcı tekrar giriş yapabilir; saldirgan yapamaz
 ///      (sifreyi bilmiyor).
 ///
-/// Rotation OLMASAYDI: calinan token, suresi dolana kadar (7 gun)
+/// Rotation OLMASAYDI: calinan token, süresi dolana kadar (7 gün)
 /// sessizce kullanilirdi ve kimse fark etmezdi.
 ///
 /// Bu, RefreshToken entity'sindeki ReplacedByTokenHash alaninin
@@ -85,10 +85,10 @@ internal sealed class RefreshTokenCommandHandler
     {
         // Gelen ham token'i hash'leyip veritabaninda ARIYORUZ.
         //
-        // Veritabaninda token'in kendisi degil hash'i saklandigi icin
-        // dogrudan arayamayiz. Hash fonksiyonu deterministik oldugu
-        // (ayni girdi -> ayni cikti) ve salt kullanmadigimiz icin bu
-        // arama calisir ve TokenHash uzerindeki unique index'ten
+        // Veritabaninda token'in kendisi değil hash'i saklandigi için
+        // doğrudan arayamayiz. Hash fonksiyonu deterministik olduğu
+        // (aynı girdi -> aynı cikti) ve salt kullanmadigimiz için bu
+        // arama çalışır ve TokenHash uzerindeki unique index'ten
         // faydalanir.
         var tokenHash = _tokenService.HashRefreshToken(request.RefreshToken);
 
@@ -105,12 +105,12 @@ internal sealed class RefreshTokenCommandHandler
         // ==============================================================
         // CALINMA TESPITI
         // ==============================================================
-        // Iptal edilmis bir token tekrar kullanilmaya calisiliyor.
+        // İptal edilmiş bir token tekrar kullanilmaya calisiliyor.
         //
         // Mesru bir istemci bunu YAPMAZ: yenileme yaptiktan sonra eski
         // token'i atar. Dolayisiyla burasi ya saldiri ya da ciddi bir
-        // istemci hatasidir. Ikisinde de en guvenli davranis ayni:
-        // tum oturumlari kapat.
+        // istemci hatasidir. Ikisinde de en güvenli davranis aynı:
+        // tüm oturumlari kapat.
         if (storedToken.IsRevoked())
         {
             await RevokeAllUserTokensAsync(storedToken.UserId, cancellationToken)
@@ -128,13 +128,13 @@ internal sealed class RefreshTokenCommandHandler
 
         var user = storedToken.User;
 
-        // Kullanici bu arada pasife alinmis veya kilitlenmis olabilir.
+        // Kullanıcı bu arada pasife alinmis veya kilitlenmis olabilir.
         //
         // Bu kontrol KRITIK: access token 15 dakika omurlu ve iptal
         // edilemez, ama refresh yenilemesi veritabanina gidiyor.
-        // Yani bir hesabi kapattigimizda en gec 15 dakika icinde
-        // kullanici tamamen disari atiliyor. Bu kontrol olmasaydi
-        // kapatilan hesap 7 gun boyunca token yenilemeye devam ederdi.
+        // Yani bir hesabi kapattigimizda en geç 15 dakika içinde
+        // kullanıcı tamamen disari atiliyor. Bu kontrol olmasaydı
+        // kapatilan hesap 7 gün boyunca token yenilemeye devam ederdi.
         if (!user.IsActive)
         {
             return Result.Failure<AuthResponse>(AuthErrors.AccountInactive);
@@ -185,7 +185,7 @@ internal sealed class RefreshTokenCommandHandler
     }
 
     /// <summary>
-    /// Kullanicinin TUM aktif token'larini iptal eder.
+    /// Kullanıcının TÜM aktif token'larini iptal eder.
     /// Calinma supheli durumunda cagrilir.
     /// </summary>
     private async Task RevokeAllUserTokensAsync(Guid userId, CancellationToken cancellationToken)
@@ -194,13 +194,13 @@ internal sealed class RefreshTokenCommandHandler
 
         // ExecuteUpdateAsync KULLANMIYORUM, bilerek.
         //
-        // O metot tek bir UPDATE sorgusu uretir ve daha hizlidir ama
+        // O metot tek bir UPDATE sorgusu üretir ve daha hizlidir ama
         // entity'leri ATLAR -- yani RefreshToken.Revoke() metodundaki
-        // "zaten iptal edilmisse ilk iptal zamanini koru" kurali
+        // "zaten iptal edilmisse ilk iptal zamanini koru" kuralı
         // calismaz ve denetim izi bozulur.
         //
-        // Bu yol nadiren calisiyor (yalnizca calinma supheli durumda)
-        // ve bir kullanicinin aktif token sayisi az. Dogrulugu
+        // Bu yol nadiren çalışıyor (yalnızca calinma supheli durumda)
+        // ve bir kullanıcının aktif token sayısı az. Dogrulugu
         // hizin onune koyuyorum.
         var activeTokens = await _context.RefreshTokens
             .Where(rt => rt.UserId == userId

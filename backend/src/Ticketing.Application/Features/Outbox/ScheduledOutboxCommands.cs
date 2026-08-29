@@ -10,16 +10,16 @@ using Ticketing.Domain.Enums;
 namespace Ticketing.Application.Features.Outbox;
 
 // ===================================================================
-// YAKLASAN ETKINLIK HATIRLATMASI
+// YAKLASAN ETKİNLİK HATIRLATMASI
 // PDF Sprint 9 Background Job: "Yaklasan etkinlik hatirlatmasi"
 // ===================================================================
 
 /// <param name="WithinHours">
-/// Kac saat icinde baslayan oturumlar icin hatirlatma gonderilecek.
+/// Kac saat içinde baslayan oturumlar için hatirlatma gonderilecek.
 ///
-/// 24 saat sectim: kullanicinin hala plan yapabilecegi (izin almak,
+/// 24 saat sectim: kullanıcının hâlâ plan yapabilecegi (izin almak,
 /// yol ayarlamak) ama etkinligi unutmus olabilecegi araliktir.
-/// 1 saat cok gec, 1 hafta cok erken olurdu.
+/// 1 saat çok geç, 1 hafta çok erken olurdu.
 /// </param>
 public sealed record SendEventRemindersCommand(int WithinHours = 24)
     : IRequest<Result<int>>;
@@ -46,12 +46,12 @@ internal sealed class SendEventRemindersCommandHandler
         // ==============================================================
         // GECMIS OTURUMLARI DISLA (StartDate > now)
         // ==============================================================
-        // Yalnizca "StartDate <= upperBound" yazsaydik, GECMISTEKI tum
-        // oturumlar da kosula uyardi ve sistem bir yil onceki
-        // etkinlikler icin hatirlatma gondermeye calisirdi.
+        // Yalnızca "StartDate <= upperBound" yazsaydık, GECMISTEKI tüm
+        // oturumlar da kosula uyardi ve sistem bir yil önceki
+        // etkinlikler için hatirlatma gondermeye calisirdi.
         //
-        // Bu, kolay atlanan ama sonucu utanc verici bir hata: musteri
-        // "gecen yilki konseriniz yarin basliyor" e-postasi alir.
+        // Bu, kolay atlanan ama sonucu utanc verici bir hata: müşteri
+        // "gecen yilki konseriniz yarin başlıyor" e-postası alır.
         // ==============================================================
         var sessions = await _context.EventSessions
             .AsNoTracking()
@@ -76,15 +76,15 @@ internal sealed class SendEventRemindersCommandHandler
         var sessionIds = sessions.ConvertAll(s => s.Id);
 
         // ==============================================================
-        // BILET SAHIPLERI TEK SORGUDA -- OTURUM BASINA DEGIL
+        // BİLET SAHIPLERI TEK SORGUDA -- OTURUM BASINA DEĞİL
         // ==============================================================
-        // Ilk yazimda bunu oturum projeksiyonunun icine gomecektim.
-        // Ayirdim cunku ic ice koleksiyon projeksiyonu EF'te ya
-        // cevrilemez ya da her oturum icin ayri sorgu uretir (N+1):
+        // İlk yazimda bunu oturum projeksiyonunun icine gomecektim.
+        // Ayirdim çünkü ic ice koleksiyon projeksiyonu EF'te ya
+        // cevrilemez ya da her oturum için ayrı sorgu üretir (N+1):
         // 50 oturum = 51 gidis donus.
         //
-        // Distinct SUNUCUDA calisiyor: bir kullanicinin ayni oturuma
-        // 4 bileti varsa 4 degil 1 satir doner ve 1 hatirlatma alir.
+        // Distinct SUNUCUDA çalışıyor: bir kullanıcının aynı oturuma
+        // 4 bileti varsa 4 değil 1 satır döner ve 1 hatirlatma alır.
         // ==============================================================
         var ticketHolders = await _context.Tickets
             .AsNoTracking()
@@ -112,19 +112,19 @@ internal sealed class SendEventRemindersCommandHandler
                 // ==================================================
                 // JOB DOGRUDAN BILDIRIM YAZMIYOR, OUTBOX'A YAZIYOR
                 // ==================================================
-                // Neden dolayli yol? Cunku PDF'in kurali su:
-                // "Job islemleri kullanici istegini gereksiz yere
-                // bekletmemelidir" ve "Basarisiz islem yeniden
+                // Neden dolayli yol? Çünkü PDF'in kuralı su:
+                // "Job islemleri kullanıcı istegini gereksiz yere
+                // bekletmemelidir" ve "Başarısız işlem yeniden
                 // denenmelidir".
                 //
-                // Bildirimi burada yazsaydik ve e-posta gonderimi
-                // basarisiz olsaydi, yeniden deneme mekanizmasi
-                // olmazdi -- job bir sonraki gun calisana kadar
-                // hicbir sey olmazdi ve o zaman da etkinlik gecmis
+                // Bildirimi burada yazsaydık ve e-posta gonderimi
+                // başarısız olsaydı, yeniden deneme mekanizmasi
+                // olmazdi -- job bir sonraki gün calisana kadar
+                // hiçbir sey olmazdi ve o zaman da etkinlik gecmis
                 // olurdu.
                 //
-                // Outbox'a yazinca, isleyici basarisiz olursa ustel
-                // geri cekilme ile dakikalar icinde tekrar denenir.
+                // Outbox'a yazinca, isleyici başarısız olursa ustel
+                // geri cekilme ile dakikalar içinde tekrar denenir.
                 // ==================================================
                 _context.OutboxMessages.Add(OutboxMessage.Create(
                     OutboxMessageTypes.EventReminder,
@@ -149,14 +149,14 @@ internal sealed class SendEventRemindersCommandHandler
 }
 
 // ===================================================================
-// GUNLUK SATIS OZETI -- PDF: "Gunluk satis ozeti olusturma"
+// GUNLUK SATIS OZETI -- PDF: "Günlük satış özeti oluşturma"
 // ===================================================================
 
 /// <param name="Date">
-/// Raporlanacak gun. null ise DUNU raporlar.
+/// Raporlanacak gün. null ise DUNU raporlar.
 ///
-/// Neden dun, bugun degil? Cunku job gece yarisindan sonra calisiyor
-/// ve "bugun" henuz baslamis, verisi bos olurdu. Ayrica tamamlanmis
+/// Neden dun, bugun değil? Çünkü job gece yarisindan sonra çalışıyor
+/// ve "bugun" henüz baslamis, verisi boş olurdu. Ayrıca tamamlanmis
 /// bir gunun rakamlari bir daha degismez -- rapor sabittir.
 /// </param>
 public sealed record GenerateDailySalesSummaryCommand(DateOnly? Date = null)
@@ -182,17 +182,17 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
     {
         var date = request.Date ?? DateOnly.FromDateTime(_clock.UtcNow.UtcDateTime.AddDays(-1));
 
-        // Gunun sinirlari UTC olarak. Veritabaninda her sey UTC
-        // sakladigimiz icin karsilastirma tutarli.
+        // Gunun sınırları UTC olarak. Veritabaninda her sey UTC
+        // sakladigimiz için karsilastirma tutarli.
         var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
         var end = start.AddDays(1);
 
         // ==============================================================
         // TEK SORGU, IKI TOPLAM -- GroupBy ile
         // ==============================================================
-        // Brut ve iade tutarini ayri sorgularla da alabilirdim ama o
+        // Brüt ve iade tutarini ayrı sorgularla da alabilirdim ama o
         // zaman iki tur veritabani gidis donusu olurdu. Daha onemlisi:
-        // iki sorgu arasinda yeni bir odeme gelirse rakamlar birbiriyle
+        // iki sorgu arasında yeni bir ödeme gelirse rakamlar birbiriyle
         // TUTARSIZ olurdu.
         var payments = await _context.Payments
             .AsNoTracking()
@@ -210,14 +210,14 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // Coklu para birimi bu ozette DESTEKLENMIYOR: en cok islem
+        // Coklu para birimi bu ozette DESTEKLENMIYOR: en çok işlem
         // yapilan para birimini raporluyorum.
         //
-        // Dogru cozum para birimi basina ayri satir olurdu ama PDF
-        // Sprint 13'te gercek raporlama ekrani gelecek; burada
-        // gunluk bir ozet bildirimi yeterli. Bunu sessizce
-        // toplamiyorum -- farkli para birimlerini toplamak
-        // (100 TRY + 50 USD = 150) acik bir hata olurdu.
+        // Dogru çözüm para birimi başına ayrı satır olurdu ama PDF
+        // Sprint 13'te gerçek raporlama ekrani gelecek; burada
+        // günlük bir özet bildirimi yeterli. Bunu sessizce
+        // toplamiyorum -- farklı para birimlerini toplamak
+        // (100 TRY + 50 USD = 150) açık bir hata olurdu.
         var main = payments.OrderByDescending(p => p.Count).FirstOrDefault();
 
         var ticketCount = await _context.Tickets
@@ -248,7 +248,7 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
             reservationCount,
             expiredCount);
 
-        // Raporu Outbox'a yaziyorum: hesaplama ile dagitim ayri.
+        // Raporu Outbox'a yazıyorum: hesaplama ile dagitim ayrı.
         _context.OutboxMessages.Add(OutboxMessage.Create(
             OutboxMessageTypes.DailySalesSummary,
             JsonSerializer.Serialize(summary)));

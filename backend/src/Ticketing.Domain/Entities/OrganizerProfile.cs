@@ -3,13 +3,13 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Organizator profili. Bir kullanicinin organizator olarak ek bilgileri.
+/// Organizatör profili. Bir kullanıcının organizatör olarak ek bilgileri.
 ///
 /// Neden User tablosuna sutun eklemedik?
-/// Cunku bu alanlar kullanicilarin YALNIZCA KUCUK BIR KISMI icin doludur.
+/// Çünkü bu alanlar kullanicilarin YALNIZCA KUCUK BIR KISMI için doludur.
 /// 100.000 kullanicidan 50'si organizatorse, User tablosunda 99.950 satirda
-/// bos duran 8 sutun olurdu. Ayri tablo hem yer tasarrufu saglar hem de
-/// "bu kullanici organizator mu?" sorusunu netlestirir.
+/// boş duran 8 sutun olurdu. Ayrı tablo hem yer tasarrufu saglar hem de
+/// "bu kullanıcı organizatör mu?" sorusunu netlestirir.
 ///
 /// User ile 1-1 iliski: UserId hem PK hem FK.
 /// </summary>
@@ -39,7 +39,7 @@ public class OrganizerProfile : AuditableEntity
     public string? Description { get; private set; }
 
     /// <summary>
-    /// Admin tarafindan dogrulanmis mi? Dogrulanmamis organizatorun
+    /// Admin tarafından dogrulanmis mi? Dogrulanmamis organizatorun
     /// etkinlikleri her seferinde onaydan gecer.
     /// </summary>
     public bool IsVerified { get; private set; }
@@ -50,12 +50,12 @@ public class OrganizerProfile : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(companyName))
         {
-            throw new DomainException("Firma adi bos olamaz.", "organizer_profile.company_required");
+            throw new DomainException("Firma adı boş olamaz.", "organizer_profile.company_required");
         }
 
         if (string.IsNullOrWhiteSpace(contactEmail))
         {
-            throw new DomainException("Iletisim e-postasi bos olamaz.", "organizer_profile.email_required");
+            throw new DomainException("İletişim e-postası boş olamaz.", "organizer_profile.email_required");
         }
 
         return new OrganizerProfile
@@ -72,7 +72,7 @@ public class OrganizerProfile : AuditableEntity
     {
         if (string.IsNullOrWhiteSpace(companyName))
         {
-            throw new DomainException("Firma adi bos olamaz.", "organizer_profile.company_required");
+            throw new DomainException("Firma adı boş olamaz.", "organizer_profile.company_required");
         }
 
         CompanyName = companyName.Trim();

@@ -8,14 +8,14 @@ using Ticketing.WebApi.Security;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Organizator basvurulari. PDF sayfa 5:
-/// "Admin organizator basvurularini onaylayabilir."
+/// Organizatör basvurulari. PDF sayfa 5:
+/// "Admin organizatör basvurularini onaylayabilir."
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/organizer-applications")]
 public sealed class OrganizersController : ApiControllerBase
 {
-    /// <summary>Giris yapmis kullanici organizator olmak icin basvurur.</summary>
+    /// <summary>Giriş yapmış kullanıcı organizatör olmak için basvurur.</summary>
     [HttpPost]
     [Authorize]
     [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
@@ -29,7 +29,7 @@ public sealed class OrganizersController : ApiControllerBase
         return HandleCreated(result, "/api/v1/organizer-applications");
     }
 
-    /// <summary>Basvurulari listeler. Duruma gore filtrelenebilir.</summary>
+    /// <summary>Basvurulari listeler. Duruma göre filtrelenebilir.</summary>
     [HttpGet]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
     [ProducesResponseType<IReadOnlyList<OrganizerApplicationDto>>(StatusCodes.Status200OK)]
@@ -41,8 +41,8 @@ public sealed class OrganizersController : ApiControllerBase
             .ConfigureAwait(false));
 
     /// <summary>
-    /// Basvuruyu onaylar: organizator profili olusturur ve rolu atar.
-    /// Uc islem de tek transaction icinde.
+    /// Basvuruyu onaylar: organizatör profili oluşturur ve rolü atar.
+    /// Uc işlem de tek transaction içinde.
     /// </summary>
     [HttpPost("{id:guid}/approve")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]

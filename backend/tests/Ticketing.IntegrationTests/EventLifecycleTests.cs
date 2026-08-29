@@ -311,7 +311,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
     /// PDF Sprint 11: yayinlanmamis etkinlik listede GORUNMEMELI.
     ///
     /// Bu bir yetkilendirme testi kadar onemli: taslak etkinliklerin
-    /// baslik ve fiyatlari, organizatorun henuz duyurmak istemedigi
+    /// başlık ve fiyatlari, organizatorun henuz duyurmak istemedigi
     /// bilgiler.
     /// </remarks>
     [Fact]

@@ -5,7 +5,7 @@ namespace Ticketing.Infrastructure.Security;
 /// <summary>
 /// JWT yapilandirmasi. appsettings veya environment variable'dan okunur.
 ///
-/// PDF Sprint 2: "JWT secret, Access token suresi, Refresh token suresi
+/// PDF Sprint 2: "JWT secret, Access token süresi, Refresh token süresi
 /// environment variable olarak yonetilmelidir."
 /// </summary>
 public sealed class JwtOptions
@@ -16,48 +16,48 @@ public sealed class JwtOptions
     /// Token imzalama anahtari.
     ///
     /// MinimumLength = 32 ZORUNLU.
-    /// HMAC-SHA256 icin 256 bit (32 byte) anahtar gerekir. Daha kisa bir
+    /// HMAC-SHA256 için 256 bit (32 byte) anahtar gerekir. Daha kisa bir
     /// anahtarla kutuphane zaten hata verir -- ama o hata calisma zamaninda,
-    /// ilk giris denemesinde ortaya cikar.
+    /// ilk giriş denemesinde ortaya çıkar.
     ///
     /// Burada dogrulayarak uygulamanin BASLANGICTA patlamasini sagliyoruz.
     /// Yanlis yapilandirmayla ayaga kalkip trafik almaya baslamasindansa
-    /// hic kalkmamasi iyidir.
+    /// hiç kalkmamasi iyidir.
     /// </summary>
     [Required]
-    [MinLength(32, ErrorMessage = "JWT anahtari en az 32 karakter olmalidir (HMAC-SHA256 icin 256 bit).")]
+    [MinLength(32, ErrorMessage = "JWT anahtari en az 32 karakter olmalıdır (HMAC-SHA256 için 256 bit).")]
     public string Secret { get; set; } = string.Empty;
 
     /// <summary>Token'i kim uretti. Dogrulamada kontrol edilir.</summary>
     [Required]
     public string Issuer { get; set; } = string.Empty;
 
-    /// <summary>Token kimin icin uretildi. Dogrulamada kontrol edilir.</summary>
+    /// <summary>Token kimin için üretildi. Dogrulamada kontrol edilir.</summary>
     [Required]
     public string Audience { get; set; } = string.Empty;
 
     /// <summary>
-    /// Access token omru (dakika). Varsayilan 15.
+    /// Access token omru (dakika). Varsayılan 15.
     ///
     /// NEDEN BU KADAR KISA?
-    /// Access token IPTAL EDILEMEZ -- imzasi gecerli oldugu surece kabul
+    /// Access token İPTAL EDILEMEZ -- imzasi geçerli olduğu surece kabul
     /// edilir; veritabanina bakilmaz (zaten amaci budur, her istekte
     /// veritabani sorgusu yapmamak).
     ///
-    /// Dolayisiyla calinan bir access token, suresi dolana kadar
+    /// Dolayisiyla calinan bir access token, süresi dolana kadar
     /// kullanilabilir. 15 dakika, saldirganin elindeki zamani sinirlar.
-    /// Kullanici deneyimi bozulmaz cunku refresh token sessizce
+    /// Kullanıcı deneyimi bozulmaz çünkü refresh token sessizce
     /// yenileme yapar.
     ///
-    /// 24 saat verseydik, calinan bir token bir gun boyunca gecerli olurdu.
+    /// 24 saat verseydik, calinan bir token bir gün boyunca geçerli olurdu.
     /// </summary>
     [Range(1, 1440)]
     public int AccessTokenMinutes { get; set; } = 15;
 
     /// <summary>
-    /// Refresh token omru (gun). Varsayilan 7.
-    /// Bu token IPTAL EDILEBILIR (veritabaninda kaydi var), o yuzden
-    /// daha uzun olmasi kabul edilebilir.
+    /// Refresh token omru (gün). Varsayılan 7.
+    /// Bu token İPTAL EDILEBILIR (veritabaninda kaydı var), o yüzden
+    /// daha uzun olmasını kabul edilebilir.
     /// </summary>
     [Range(1, 365)]
     public int RefreshTokenDays { get; set; } = 7;

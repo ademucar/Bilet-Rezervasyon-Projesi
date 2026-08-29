@@ -3,30 +3,30 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// Outbox Pattern kaydi. PDF Sprint 9.
+/// Outbox Pattern kaydı. PDF Sprint 9.
 ///
 /// ==================================================================
 /// OUTBOX PATTERN NEDIR VE NEDEN GEREKLI?
 /// ==================================================================
-/// Problem: Odeme basarili oldugunda iki sey yapmamiz gerekiyor:
-///   1. Veritabanina yaz (rezervasyon onayla, bilet uret)
-///   2. E-posta gonder
+/// Problem: Ödeme başarılı olduğunda iki sey yapmamiz gerekiyor:
+///   1. Veritabanina yaz (rezervasyon onayla, bilet üret)
+///   2. E-posta gönder
 ///
 /// Bunlar IKI FARKLI SISTEM. Aralarinda ortak bir transaction yok.
 /// Dolayisiyla su iki senaryo kacinilmaz:
 ///
-///   A) Once DB yaz, sonra e-posta gonder:
-///      DB yazildi ama e-posta servisi cokmus -> kullanici biletini
+///   A) Önce DB yaz, sonra e-posta gönder:
+///      DB yazildi ama e-posta servisi cokmus -> kullanıcı biletini
 ///      aldi ama haberi yok.
 ///
-///   B) Once e-posta gonder, sonra DB yaz:
-///      E-posta gitti ama DB transaction'i geri alindi -> kullanici
-///      "biletiniz hazir" maili aldi ama bilet YOK.
+///   B) Önce e-posta gönder, sonra DB yaz:
+///      E-posta gitti ama DB transaction'i geri alındı -> kullanıcı
+///      "biletiniz hazır" maili aldi ama bilet YOK.
 ///
-/// Ikisi de kabul edilemez. B daha da kotu: geri alinamaz.
+/// Ikisi de kabul edilemez. B daha da kötü: geri alinamaz.
 ///
 /// COZUM: E-postayi gondermek yerine, "e-posta gonderilecek" NIYETINI
-/// ayni veritabanina, AYNI TRANSACTION icinde yaz.
+/// aynı veritabanina, AYNI TRANSACTION içinde yaz.
 ///
 ///   BEGIN TRANSACTION
 ///     UPDATE Reservations SET Status = Confirmed
@@ -34,14 +34,14 @@ namespace Ticketing.Domain.Entities;
 ///     INSERT INTO OutboxMessages (Type='SendTicketEmail', Payload='{...}')
 ///   COMMIT
 ///
-/// Artik tek bir transaction var: ya hepsi olur ya hicbiri.
+/// Artık tek bir transaction var: ya hepsi olur ya hicbiri.
 /// Arkada calisan bir job OutboxMessages tablosunu okur ve e-postayi
-/// gonderir. Job cokerse mesaj tabloda kalir, bir sonraki calismada
+/// gönderir. Job cokerse mesaj tabloda kalır, bir sonraki calismada
 /// tekrar denenir.
 ///
-/// Bu, "en az bir kez teslim" (at-least-once delivery) garantisidir.
-/// Mesaj iki kez islenebilir; bu yuzden isleyicilerin IDEMPOTENT olmasi
-/// sarttir (PDF: "Ayni Outbox kaydi iki kez islenmemelidir").
+/// Bu, "en az bir kez teslim" (at-least-önce delivery) garantisidir.
+/// Mesaj iki kez islenebilir; bu yüzden isleyicilerin IDEMPOTENT olmasını
+/// sarttir (PDF: "Aynı Outbox kaydı iki kez islenmemelidir").
 /// ==================================================================
 /// </summary>
 public class OutboxMessage : Entity
@@ -53,17 +53,17 @@ public class OutboxMessage : Entity
     }
 
     /// <summary>
-    /// Mesaj turu. Ornek: "ReservationCreated", "PaymentSucceeded".
+    /// Mesaj türü. Ornek: "ReservationCreated", "PaymentSucceeded".
     /// Isleyici bu degere bakarak ne yapacagina karar verir.
     /// </summary>
     public string Type { get; private set; }
 
     /// <summary>
-    /// Mesaj icerigi (JSON). Veritabaninda jsonb olarak saklanacak.
+    /// Mesaj içeriği (JSON). Veritabaninda jsonb olarak saklanacak.
     ///
-    /// Neden nesne degil de metin? Cunku Outbox tablosu GENEL amaclidir:
-    /// icinde 20 farkli mesaj turu olacak ve her birinin alanlari farkli.
-    /// Tek bir tabloda tutmanin yolu, icerigi serilestirilmis olarak saklamak.
+    /// Neden nesne değil de metin? Çünkü Outbox tablosu GENEL amaclidir:
+    /// içinde 20 farklı mesaj türü olacak ve her birinin alanlari farklı.
+    /// Tek bir tabloda tutmanin yolu, içeriği serilestirilmis olarak saklamak.
     /// </summary>
     public string Payload { get; private set; }
 
@@ -73,41 +73,41 @@ public class OutboxMessage : Entity
     /// Basariyla islendigi an. null ise HENUZ ISLENMEDI.
     ///
     /// Job'in sorgusu: WHERE "ProcessedAt" IS NULL ORDER BY "CreatedAt"
-    /// Bu yuzden (ProcessedAt, CreatedAt) uzerinde composite index var.
+    /// Bu yüzden (ProcessedAt, CreatedAt) uzerinde composite index var.
     /// </summary>
     public DateTimeOffset? ProcessedAt { get; private set; }
 
-    /// <summary>Kac kez denendi. PDF: "Basarisiz islem yeniden denenmelidir."</summary>
+    /// <summary>Kac kez denendi. PDF: "Başarısız işlem yeniden denenmelidir."</summary>
     public int RetryCount { get; private set; }
 
     public string? ErrorMessage { get; private set; }
 
     /// <summary>
     /// Bir sonraki deneme zamani. Ustel geri cekilme (exponential backoff)
-    /// icin kullanilir: 1dk, 2dk, 4dk, 8dk...
+    /// için kullanilir: 1dk, 2dk, 4dk, 8dk...
     ///
     /// Neden geri cekilme? E-posta servisi cokmusse her 10 saniyede bir
-    /// denemek onu daha da yorar ve loglari doldurur. Aralari acmak
-    /// hem servise nefes aldirir hem de gecici sorunlarin kendiliginden
+    /// denemek önü daha da yorar ve loglari doldurur. Aralari acmak
+    /// hem servise nefes aldirir hem de geçici sorunlarin kendiliginden
     /// duzelmesine zaman tanir.
     /// </summary>
     public DateTimeOffset? NextRetryAt { get; private set; }
 
     /// <summary>
-    /// Kalici olarak basarisiz. PDF: "Belirli deneme sayisindan sonra
-    /// hata kaydi olusturulmalidir."
+    /// Kalici olarak başarısız. PDF: "Belirli deneme sayisindan sonra
+    /// hata kaydı olusturulmalidir."
     ///
     /// Bu isaret konulunca mesaj bir daha denenmez; manuel mudahale bekler.
-    /// Sonsuza kadar denemek, kuyrugu tikar ve gercek sorunu gizler.
+    /// Sonsuza kadar denemek, kuyrugu tikar ve gerçek sorunu gizler.
     /// </summary>
     public bool IsDeadLettered { get; private set; }
 
     /// <summary>
-    /// PDF Sprint 16: Correlation ID "Outbox kaydi icerisinde kullanilmalidir."
+    /// PDF Sprint 16: Correlation ID "Outbox kaydı icerisinde kullanılmalıdır."
     ///
-    /// Bu sayede "kullanicinin su istegi hangi e-postayi tetikledi?"
-    /// sorusunu loglardan cevaplayabiliyoruz. Arka plan job'i ile onu
-    /// tetikleyen HTTP istegi arasindaki bagi kuran tek sey budur.
+    /// Bu sayede "kullanıcının su isteği hangi e-postayi tetikledi?"
+    /// sorusunu loglardan cevaplayabiliyoruz. Arka plan job'i ile önü
+    /// tetikleyen HTTP isteği arasindaki bagi kuran tek sey budur.
     /// </summary>
     public string? CorrelationId { get; private set; }
 
@@ -115,12 +115,12 @@ public class OutboxMessage : Entity
     {
         if (string.IsNullOrWhiteSpace(type))
         {
-            throw new DomainException("Outbox mesaj turu bos olamaz.", "outbox.type_required");
+            throw new DomainException("Outbox mesaj türü boş olamaz.", "outbox.type_required");
         }
 
         if (string.IsNullOrWhiteSpace(payload))
         {
-            throw new DomainException("Outbox mesaj icerigi bos olamaz.", "outbox.payload_required");
+            throw new DomainException("Outbox mesaj içeriği boş olamaz.", "outbox.payload_required");
         }
 
         return new OutboxMessage
@@ -143,14 +143,14 @@ public class OutboxMessage : Entity
     /// NEDEN "SADECE BOSSA" YAZIYOR?
     /// ==============================================================
     /// Bu metodu OutboxCorrelationInterceptor cagiriyor: kaydetme
-    /// aninda, degeri atanmamis her Outbox mesajini o anki HTTP
+    /// anında, değeri atanmamis her Outbox mesajini o anki HTTP
     /// isteginin ID'siyle dolduruyor.
     ///
-    /// Ama bazi cagri yerleri degeri ACIKCA veriyor (ornegin
-    /// TicketTypeCommands). Kosulsuz yazsaydik, interceptor o bilincli
-    /// secimi EZERDI.
+    /// Ama bazi cagri yerleri değeri ACIKCA veriyor (örneğin
+    /// TicketTypeCommands). Kosulsuz yazsaydık, interceptor o bilinçli
+    /// seçimi EZERDI.
     ///
-    /// Ilke: otomatik doldurma, acik niyeti gecersiz kilmamali.
+    /// Ilke: otomatik doldurma, açık niyeti geçersiz kilmamali.
     /// ==============================================================
     /// </remarks>
     public void SetCorrelationIdIfMissing(string? correlationId)
@@ -166,11 +166,11 @@ public class OutboxMessage : Entity
     {
         if (ProcessedAt.HasValue)
         {
-            // PDF: "Ayni Outbox kaydi iki kez islenmemelidir."
+            // PDF: "Aynı Outbox kaydı iki kez islenmemelidir."
             //
             // Burada HATA FIRLATMIYORUM, sessizce donuyorum. Sebep:
-            // at-least-once teslimde ayni mesajin iki kez islenmesi
-            // BEKLENEN bir durumdur, hata degil. Hata firlatsaydim
+            // at-least-önce teslimde aynı mesajin iki kez islenmesi
+            // BEKLENEN bir durumdur, hata değil. Hata firlatsaydim
             // job loglari gereksiz alarmlarla dolardi.
             //
             // Asil koruma isleyicinin kendisinde: e-posta gonderen kod
@@ -184,7 +184,7 @@ public class OutboxMessage : Entity
     }
 
     /// <summary>
-    /// Isleme basarisiz oldu, yeniden denenecek.
+    /// Isleme başarısız oldu, yeniden denenecek.
     /// </summary>
     /// <param name="maxRetries">Bu sayiya ulasinca dead letter olur.</param>
     public void MarkAsFailed(string error, int maxRetries, DateTimeOffset now)
@@ -204,13 +204,13 @@ public class OutboxMessage : Entity
         // 1. hata -> 2 dk, 2. hata -> 4 dk, 3. hata -> 8 dk...
         //
         // Math.Min ile ust sinir koyuyorum: 10 denemeden sonra
-        // 2^10 = 1024 dakika (17 saat) beklerdik ki bu cok uzun.
+        // 2^10 = 1024 dakika (17 saat) beklerdik ki bu çok uzun.
         var bekleme = Math.Min(Math.Pow(2, RetryCount), 60);
         NextRetryAt = now.AddMinutes(bekleme);
     }
 
     /// <summary>
-    /// Bu mesaj su an islenmeye hazir mi?
+    /// Bu mesaj su an islenmeye hazır mi?
     /// </summary>
     public bool IsReadyToProcess(DateTimeOffset now)
     {
@@ -219,7 +219,7 @@ public class OutboxMessage : Entity
             return false;
         }
 
-        // Hic denenmemisse hemen hazir; denenmisse bekleme suresi gecmis olmali.
+        // Hic denenmemisse hemen hazır; denenmisse bekleme süresi gecmis olmalı.
         return !NextRetryAt.HasValue || NextRetryAt.Value <= now;
     }
 }

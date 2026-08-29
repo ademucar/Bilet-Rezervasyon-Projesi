@@ -329,7 +329,7 @@ export function ReservationPage() {
                     isLoading={startPayment.isPending}
                     onClick={() => startPayment.mutate()}
                   >
-                    {formatMoney(reservation.totalAmount, reservation.currency)} ode
+                    {formatMoney(reservation.totalAmount, reservation.currency)} öde
                   </Button>
                 </>
               ) : (

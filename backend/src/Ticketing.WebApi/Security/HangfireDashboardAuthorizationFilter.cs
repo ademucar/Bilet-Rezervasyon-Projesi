@@ -8,20 +8,20 @@ namespace Ticketing.WebApi.Security;
 /// HANGFIRE IZLEME EKRANI ERISIM KONTROLU
 /// ==================================================================
 /// Hangfire'in /hangfire ekrani VARSAYILAN OLARAK YALNIZCA
-/// localhost'tan erisilebilir. Yani uretime cikildiginda ekran
-/// calisir gorunur ama uzaktan acilmaz.
+/// localhost'tan erişilebilir. Yani uretime cikildiginda ekran
+/// çalışır görünür ama uzaktan acilmaz.
 ///
-/// Bu iyi bir varsayilan gibi duruyor ama TEHLIKELI bir yanilsama
+/// Bu iyi bir varsayılan gibi duruyor ama TEHLIKELI bir yanilsama
 /// yaratiyor: bir yetkilendirme filtresi tanimladiginiz anda
-/// localhost kisiti KALKAR. Yani filtreyi yanlis yazmak, ekrani
-/// tum internete acmak demektir.
+/// localhost kisiti KALKAR. Yani filtreyi yanlış yazmak, ekrani
+/// tüm internete acmak demektir.
 ///
-/// Bu ekran ne gosteriyor? Calisan tum isleri, PARAMETRELERINI
-/// (rezervasyon kimlikleri, kullanici kimlikleri), hata yiginlarini
-/// ve veritabani baglanti hatalarini. Ustelik ekrandan is SILINEBILIR
+/// Bu ekran ne gosteriyor? Calisan tüm isleri, PARAMETRELERINI
+/// (rezervasyon kimlikleri, kullanıcı kimlikleri), hata yiginlarini
+/// ve veritabani bağlantı hatalarini. Ustelik ekrandan is SILINEBILIR
 /// ve YENIDEN CALISTIRILABILIR.
 ///
-/// Yani burasi salt okunur bir gosterge paneli degil, bir YONETIM
+/// Yani burasi salt okunur bir gosterge paneli değil, bir YONETIM
 /// arayuzu. Yanlis yapilandirilirsa saldirgan istedigi is'i istedigi
 /// zaman tetikleyebilir.
 /// ==================================================================
@@ -36,13 +36,13 @@ public sealed class HangfireDashboardAuthorizationFilter : IDashboardAuthorizati
 
         // Iki kosul da SAGLANMALI:
         //
-        // 1) Kimlik dogrulanmis olmali
-        // 2) Admin rolunde olmali
+        // 1) Kimlik dogrulanmis olmalı
+        // 2) Admin rolunde olmalı
         //
-        // Yalnizca ikincisine baksaydik ve IsInRole kimliksiz bir
-        // kullanici icin beklenmedik bir sey donduseydi, ekran acilirdi.
+        // Yalnızca ikincisine baksaydik ve IsInRole kimliksiz bir
+        // kullanıcı için beklenmedik bir sey donduseydi, ekran acilirdi.
         // Iki kosulu da acikca yazmak, tek satirlik bir hatanin
-        // tum paneli acmasini engelliyor.
+        // tüm paneli acmasini engelliyor.
         if (httpContext.User.Identity?.IsAuthenticated != true)
         {
             return false;

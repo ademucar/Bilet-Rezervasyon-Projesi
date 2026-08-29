@@ -10,15 +10,15 @@ namespace Ticketing.Application.Features.Sessions;
 internal static class SessionErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "session.not_found", "Etkinlik oturumu bulunamadi.");
+        "session.not_found", "Etkinlik oturumu bulunamadı.");
 
     public static readonly Error SeatsAlreadyGenerated = Error.Conflict(
-        "session.seats_already_generated", "Bu oturum icin koltuklar zaten uretilmis.");
+        "session.seats_already_generated", "Bu oturum için koltuklar zaten üretilmiş.");
 
     public static readonly Error NoTicketTypeForSection = Error.Conflict(
         "session.no_ticket_type_for_section",
-        "Oturma planindaki bazi bolumlere bilet turu atanmamis. " +
-        "Koltuk uretmeden once tum bolumleri bir bilet turune atayin.");
+        "Oturma planindaki bazi bolumlere bilet türü atanmamis. " +
+        "Koltuk uretmeden önce tüm bolumleri bir bilet turune atayin.");
 }
 
 // ===================================================================
@@ -26,7 +26,7 @@ internal static class SessionErrors
 // ===================================================================
 
 /// <summary>
-/// Bir oturum icin EventSeat kayitlarini uretir.
+/// Bir oturum için EventSeat kayitlarini üretir.
 ///
 /// Bu, rezervasyonun ON KOSULUDUR: EventSeat olmadan koltuk
 /// kilitlenemez, satilamaz.
@@ -59,7 +59,7 @@ internal sealed class GenerateSessionSeatsCommandHandler
             return Result.Failure<int>(SessionErrors.SeatsAlreadyGenerated);
         }
 
-        // Oturma planindaki fiziksel koltuklari, BOLUMLERIYLE birlikte cek.
+        // Oturma planindaki fiziksel koltukları, BOLUMLERIYLE birlikte cek.
         var seats = await _context.Seats
             .AsNoTracking()
             .Where(s => s.SeatSection.SeatLayoutId == session.SeatLayoutId)
@@ -70,18 +70,18 @@ internal sealed class GenerateSessionSeatsCommandHandler
         {
             return Result.Failure<int>(Error.Conflict(
                 "session.layout_has_no_seats",
-                "Secilen oturma planinda hic koltuk yok."));
+                "Secilen oturma planinda hiç koltuk yok."));
         }
 
         // ==============================================================
-        // BOLUM -> BILET TURU ESLESTIRMESI
+        // BOLUM -> BİLET TURU ESLESTIRMESI
         // ==============================================================
-        // Her koltugun fiyati, ait oldugu BOLUMUN bilet turunden gelir.
-        // Bu eslestirme olmadan koltugun fiyati belirsiz kalir.
+        // Her koltuğun fiyati, ait olduğu BOLUMUN bilet turunden gelir.
+        // Bu eslestirme olmadan koltuğun fiyati belirsiz kalır.
         //
-        // Sozluge (Dictionary) donusturuyorum: asagidaki dongude her
-        // koltuk icin liste taramasi yapmak yerine O(1) arama.
-        // 2000 koltuk x 5 bolum = 10.000 karsilastirma yerine 2000 arama.
+        // Sozluge (Dictionary) donusturuyorum: aşağıdaki dongude her
+        // koltuk için liste taramasi yapmak yerine O(1) arama.
+        // 2000 koltuk x 5 bölüm = 10.000 karsilastirma yerine 2000 arama.
         var sectionToTicketType = await _context.TicketTypeSections
             .AsNoTracking()
             .Where(ts => ts.TicketType.EventId == session.EventId && ts.TicketType.IsActive)
@@ -89,11 +89,11 @@ internal sealed class GenerateSessionSeatsCommandHandler
             .ToDictionaryAsync(x => x.SeatSectionId, cancellationToken)
             .ConfigureAwait(false);
 
-        // TUM bolumlerin bir bilet turune atanmis oldugunu dogrula.
+        // TÜM bolumlerin bir bilet turune atanmis olduğunu dogrula.
         //
-        // Eksik atama varsa URETIMI HIC BASLATMIYORUM. Yarim uretim
+        // Eksik atama varsa URETIMI HİÇ BASLATMIYORUM. Yarim üretim
         // yapip "bu koltuklarin fiyati yok" durumuna dusmek, sonradan
-        // temizlenmesi cok zor bir tutarsizlik olurdu.
+        // temizlenmesi çok zor bir tutarsizlik olurdu.
         var sectionIds = seats.Select(s => s.SeatSectionId).Distinct().ToList();
         var unmapped = sectionIds.Where(id => !sectionToTicketType.ContainsKey(id)).ToList();
 
@@ -106,11 +106,11 @@ internal sealed class GenerateSessionSeatsCommandHandler
         // KOLTUK URETIMI
         // ==============================================================
         // Fiyatlandirmayi bir FONKSIYON olarak geciyorum. Boylece her
-        // koltuk, ait oldugu bolumun bilet turu ve fiyatiyla DOGUYOR --
-        // once uretip sonra duzeltmek gerekmiyor.
+        // koltuk, ait olduğu bölümün bilet türü ve fiyatiyla DOGUYOR --
+        // önce uretip sonra duzeltmek gerekmiyor.
         //
         // Eslestirme eksikse entity DomainException firlatiyor ve
-        // hicbir sey kaydedilmiyor ("ya hep ya hic").
+        // hiçbir sey kaydedilmiyor ("ya hep ya hiç").
         var generated = session.GenerateSeats(
             seats,
             seat => sectionToTicketType.TryGetValue(seat.SeatSectionId, out var m)
@@ -209,17 +209,17 @@ internal sealed class GetSeatAvailabilityQueryHandler
         // ==============================================================
         // SURESI DOLMUS KILITLERI "MUSAIT" GOSTER
         // ==============================================================
-        // Temizlik job'i dakikada bir calisiyor. Kilidi 10:10'da dolan
-        // bir koltuk, job 10:11'de gelene kadar veritabaninda hala
-        // "Locked" gorunur.
+        // Temizlik job'i dakikada bir çalışıyor. Kilidi 10:10'da dolan
+        // bir koltuk, job 10:11'de gelene kadar veritabaninda hâlâ
+        // "Locked" görünür.
         //
-        // Bu bir dakikalik pencerede koltugu dolu gostermek, populer
-        // bir konserde yuzlerce kullanicinin bos koltugu gorememesi
+        // Bu bir dakikalik pencerede koltuğu dolu göstermek, popüler
+        // bir konserde yuzlerce kullanıcının boş koltuğu gorememesi
         // demektir.
         //
-        // Bu donusumu SUNUCUDA yapiyorum, frontend'de degil. Frontend'e
-        // biraksaydik her istemcinin saati farkli olurdu ve bazi
-        // kullanicilar koltugu musait, bazilari dolu gorurdu.
+        // Bu donusumu SUNUCUDA yapıyorum, frontend'de değil. Frontend'e
+        // biraksaydik her istemcinin saati farklı olurdu ve bazi
+        // kullanıcılar koltuğu musait, bazilari dolu gorurdu.
         var items = seats
             .Select(s => new SeatAvailabilityItem(
                 s.Id,

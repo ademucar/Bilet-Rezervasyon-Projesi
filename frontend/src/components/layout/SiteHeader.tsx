@@ -51,7 +51,7 @@ export function SiteHeader() {
             Etkinlikler
           </NavLink>
           <NavLink to="/rezervasyonlarim" className={linkClass}>
-            Rezervasyonlarim
+            Rezervasyonlarım
           </NavLink>
           <NavLink to="/biletlerim" className={linkClass}>
             Biletlerim

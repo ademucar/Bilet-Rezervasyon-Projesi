@@ -1,36 +1,36 @@
 namespace Ticketing.Application.Abstractions.Messaging;
 
 /// <summary>
-/// Bir Outbox mesaj turunu isleyen bilesen. PDF Sprint 9.
+/// Bir Outbox mesaj turunu isleyen bileşen. PDF Sprint 9.
 ///
 /// ==================================================================
-/// NEDEN AYRI BIR ARAYUZ? Neden processor'in icinde dev bir switch degil?
+/// NEDEN AYRI BIR ARAYUZ? Neden processor'in içinde dev bir switch değil?
 /// ==================================================================
 /// En kolay yol soyle olurdu:
 ///
 ///     switch (mesaj.Type)
 ///     {
-///         case "TicketsIssued":       ... 40 satir ...
-///         case "ReservationExpired":  ... 30 satir ...
-///         case "EventCancelled":      ... 50 satir ...
+///         case "TicketsIssued":       ... 40 satır ...
+///         case "ReservationExpired":  ... 30 satır ...
+///         case "EventCancelled":      ... 50 satır ...
 ///     }
 ///
-/// PDF Sprint 9 alti farkli senaryo sayiyor ve ilerideki sprintlerde
-/// daha da artacak. O switch birkac yuz satirlik, test edilemez bir
-/// blok haline gelirdi: tek bir senaryoyu test etmek icin processor'in
+/// PDF Sprint 9 alti farklı senaryo sayiyor ve ilerideki sprintlerde
+/// daha da artacak. O switch birkaç yuz satirlik, test edilemez bir
+/// blok haline gelirdi: tek bir senaryoyu test etmek için processor'in
 /// tamamini ayaga kaldirmak gerekirdi.
 ///
-/// Ayri arayuz ile her senaryo kendi sinifinda, kendi bagimliliklariyla
-/// ve tek basina test edilebilir. Processor ise hicbir senaryoyu
-/// tanimadan calisir -- yeni bir mesaj turu eklemek icin processor'a
+/// Ayrı arayüz ile her senaryo kendi sinifinda, kendi bagimliliklariyla
+/// ve tek başına test edilebilir. Processor ise hiçbir senaryoyu
+/// tanimadan çalışır -- yeni bir mesaj türü eklemek için processor'a
 /// DOKUNULMAZ.
 /// ==================================================================
 /// </summary>
 public interface IOutboxMessageHandler
 {
     /// <summary>
-    /// Bu isleyicinin ilgilendigi mesaj turu.
-    /// OutboxMessageTypes sabitlerinden biri olmalidir.
+    /// Bu isleyicinin ilgilendigi mesaj türü.
+    /// OutboxMessageTypes sabitlerinden biri olmalıdır.
     /// </summary>
     string MessageType { get; }
 
@@ -41,22 +41,22 @@ public interface IOutboxMessageHandler
     /// ==============================================================
     /// ISLEYICILER IDEMPOTENT OLMAK ZORUNDA
     /// ==============================================================
-    /// Outbox "en az bir kez teslim" (at-least-once) garantisi verir,
-    /// "tam olarak bir kez" (exactly-once) DEGIL.
+    /// Outbox "en az bir kez teslim" (at-least-önce) garantisi verir,
+    /// "tam olarak bir kez" (exactly-önce) DEĞİL.
     ///
     /// Somut senaryo: isleyici e-postayi gonderdi, tam o anda sunucu
     /// coktu ve ProcessedAt yazilamadi. Sistem ayaga kalkinca mesaj
-    /// hala islenmemis gorunur ve tekrar denenir.
+    /// hâlâ islenmemis görünür ve tekrar denenir.
     ///
-    /// Exactly-once, dagitik sistemlerde e-posta gibi DIS servislerle
+    /// Exactly-önce, dagitik sistemlerde e-posta gibi DIS servislerle
     /// teorik olarak imkansizdir (mesaji gonderdikten sonra "gonderdim"
-    /// kaydini yazmak ayri bir islemdir; ikisi atomik olamaz).
+    /// kaydini yazmak ayrı bir islemdir; ikisi atomik olamaz).
     ///
-    /// Bu yuzden cozum tarafi degistiriyoruz: mesaji iki kez islemek
-    /// ZARARSIZ olmali. Ornegin bildirim yazmadan once "bu bildirim
+    /// Bu yüzden çözüm tarafi degistiriyoruz: mesaji iki kez islemek
+    /// ZARARSIZ olmalı. Ornegin bildirim yazmadan önce "bu bildirim
     /// zaten var mi?" diye bakariz.
     ///
-    /// Hata firlatilirsa mesaj basarisiz sayilir, RetryCount artar ve
+    /// Hata firlatilirsa mesaj başarısız sayilir, RetryCount artar ve
     /// ustel geri cekilme ile yeniden denenir.
     /// ==============================================================
     /// </remarks>

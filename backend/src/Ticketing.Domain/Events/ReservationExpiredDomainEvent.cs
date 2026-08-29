@@ -3,8 +3,8 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Domain.Events;
 
 /// <summary>
-/// Rezervasyon suresi doldugunda firlatilir (background job tarafindan).
-/// Dinleyenler: SignalR SeatReleased yayini, kullaniciya bildirim.
+/// Rezervasyon süresi doldugunda firlatilir (background job tarafından).
+/// Dinleyenler: SignalR SeatReleased yayini, kullanıcıya bildirim.
 /// </summary>
 public sealed record ReservationExpiredDomainEvent(
     Guid ReservationId,

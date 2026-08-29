@@ -1,8 +1,8 @@
 namespace Ticketing.Domain.Enums;
 
 /// <summary>
-/// Odeme uzerindeki islem turu.
-/// Bir odemenin birden fazla islemi olabilir: tahsilat denemesi,
+/// Ödeme uzerindeki işlem türü.
+/// Bir ödemenin birden fazla islemi olabilir: tahsilat denemesi,
 /// sonra iade, sonra ikinci kismi iade...
 /// </summary>
 public enum PaymentTransactionType
@@ -10,9 +10,9 @@ public enum PaymentTransactionType
     /// <summary>Tahsilat.</summary>
     Charge = 1,
 
-    /// <summary>Iade.</summary>
+    /// <summary>İade.</summary>
     Refund = 2,
 
-    /// <summary>Iptal (henuz tahsil edilmemis islemin geri alinmasi).</summary>
+    /// <summary>İptal (henüz tahsil edilmemis islemin geri alinmasi).</summary>
     Void = 3,
 }

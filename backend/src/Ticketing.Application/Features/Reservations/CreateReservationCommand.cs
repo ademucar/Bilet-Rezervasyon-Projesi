@@ -19,34 +19,34 @@ namespace Ticketing.Application.Features.Reservations;
 internal static class ReservationErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-        "reservation.not_found", "Rezervasyon bulunamadi.");
+        "reservation.not_found", "Rezervasyon bulunamadı.");
 
     public static readonly Error SessionNotFound = Error.NotFound(
-        "reservation.session_not_found", "Etkinlik oturumu bulunamadi.");
+        "reservation.session_not_found", "Etkinlik oturumu bulunamadı.");
 
     public static readonly Error SalesNotOpen = Error.Conflict(
         "reservation.sales_not_open",
-        "Bu etkinlik icin bilet satisi su anda acik degil.");
+        "Bu etkinlik için bilet satışı su anda açık değil.");
 
     public static readonly Error SeatsNotFound = Error.Validation(
         "reservation.seats_not_found",
-        "Secilen koltuklardan bazilari bu oturuma ait degil.");
+        "Secilen koltuklardan bazilari bu oturuma ait değil.");
 
     public static readonly Error TicketLimitExceeded = Error.Conflict(
         "reservation.ticket_limit_exceeded",
-        "Bu etkinlik icin alabileceginiz maksimum bilet sayisini asiyorsunuz.");
+        "Bu etkinlik için alabileceginiz maksimum bilet sayisini asiyorsunuz.");
 
     public static readonly Error NotOwner = Error.Forbidden(
-        "reservation.not_owner", "Bu rezervasyon size ait degil.");
+        "reservation.not_owner", "Bu rezervasyon size ait değil.");
 
     /// <summary>
     /// PROJENIN EN KRITIK HATASI.
-    /// Iki kullanici ayni koltugu ayni anda aldiginda kaybedene doner.
+    /// Iki kullanıcı aynı koltuğu aynı anda aldiginda kaybedene döner.
     /// </summary>
     public static readonly Error SeatConflict = Error.Concurrency(
         "reservation.seat_conflict",
-        "Sectiginiz koltuklardan bazilari az once baskasi tarafindan alindi. " +
-        "Lutfen koltuk planini yenileyip tekrar deneyin.");
+        "Seçtiğiniz koltuklardan bazilari az önce başkası tarafından alındı. " +
+        "Lütfen koltuk planini yenileyip tekrar deneyin.");
 }
 
 // ===================================================================
@@ -58,9 +58,9 @@ internal static class ReservationErrors
 ///
 /// DIKKAT: Bu komutta TOPLAM TUTAR ALANI YOK -- bilerek.
 ///
-/// PDF Sprint 6: "Frontend tarafindan gonderilen toplam tutara
-/// guvenilmemelidir." Alan hic olmadigi icin istemci tutar
-/// GONDEREMIYOR. Guvenligi kural ile degil TIP SISTEMI ile
+/// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
+/// güvenilmemelidir." Alan hiç olmadığı için istemci tutar
+/// GONDEREMIYOR. Guvenligi kural ile değil TIP SISTEMI ile
 /// sagliyoruz; unutulmasi imkansiz.
 /// </summary>
 public sealed record CreateReservationCommand(
@@ -76,7 +76,7 @@ public sealed class CreateReservationCommandValidator : AbstractValidator<Create
             .NotEmpty().WithMessage("En az bir koltuk secmelisiniz.")
             // Ust sinir: MaxTicketsPerUser zaten kontrol ediliyor ama o
             // veritabanina gitmeyi gerektiriyor. Buradaki kaba sinir,
-            // 10.000 koltuk iceren bir istegin veritabanina hic
+            // 10.000 koltuk iceren bir istegin veritabanina hiç
             // ulasmamasini sagliyor.
             .Must(ids => ids is null || ids.Count <= 50)
             .WithMessage("Tek seferde en fazla 50 koltuk secilebilir.");
@@ -116,14 +116,14 @@ internal sealed partial class CreateReservationCommandHandler
     // ==============================================================
     // PDF Sprint 16: "Koltuk kilitleme"
     // ==============================================================
-    // PDF bunu rezervasyondan AYRI bir madde olarak istiyor ve hakli:
+    // PDF bunu rezervasyondan AYRI bir madde olarak istiyor ve haklı:
     // koltuk kilitleme, projedeki en yogun yaris kosulunun yasandigi
     // nokta.
     // ==============================================================
     [LoggerMessage(
         EventId = LogEvents.KoltuklarKilitlendi,
         Level = LogLevel.Information,
-        Message = "Koltuklar kilitlendi. Oturum: {SessionId}, Koltuk: {SeatCount}, Sure: {LockMinutes} dk")]
+        Message = "Koltuklar kilitlendi. Oturum: {SessionId}, Koltuk: {SeatCount}, Süre: {LockMinutes} dk")]
     private static partial void LogSeatsLocked(
         ILogger logger, Guid sessionId, int seatCount, int lockMinutes);
 
@@ -131,17 +131,17 @@ internal sealed partial class CreateReservationCommandHandler
     /// ==============================================================
     /// CAKISMA NEDEN AYRI VE NEDEN WARNING?
     /// ==============================================================
-    /// Bu satir olmadan "koltugu secmistim ama alamadim" sikayetini
-    /// arastirmak imkansiz: kullanicinin ekraninda koltuk BOSTU,
+    /// Bu satır olmadan "koltuğu secmistim ama alamadim" sikayetini
+    /// arastirmak imkansiz: kullanıcının ekraninda koltuk BOSTU,
     /// veritabaninda ise baskasina ait. Log olmadan hangi iki istegin
     /// carpistigini goremeyiz.
     ///
-    /// Warning cunku bu bir HATA DEGIL -- sistem tam olarak dogru
-    /// calisti ve veri butunlugunu korudu. Ama SIKLIGI onemli:
-    /// cakisma orani aniden artiyorsa ya bot trafigi var ya da bir
-    /// etkinlik beklenenden populer. Ikisi de mudahale gerektirir.
+    /// Warning çünkü bu bir HATA DEĞİL -- sistem tam olarak doğru
+    /// calisti ve veri butunlugunu korudu. Ama SIKLIGI önemli:
+    /// çakışma oranı aniden artiyorsa ya bot trafigi var ya da bir
+    /// etkinlik beklenenden popüler. Ikisi de mudahale gerektirir.
     ///
-    /// Error yapsaydik izleme panosu surekli alarm calardi ve gercek
+    /// Error yapsaydik izleme panosu surekli alarm calardi ve gerçek
     /// hatalar bu gurultude kaybolurdu (Sprint 15'te konustugumuz
     /// alarm yorgunlugu).
     /// </remarks>
@@ -154,7 +154,7 @@ internal sealed partial class CreateReservationCommandHandler
     [LoggerMessage(
         EventId = LogEvents.RezervasyonOlusturuldu,
         Level = LogLevel.Information,
-        Message = "Rezervasyon olusturuldu. Id: {ReservationId}, Kod: {Code}, Koltuk: {SeatCount}")]
+        Message = "Rezervasyon oluşturuldu. Id: {ReservationId}, Kod: {Code}, Koltuk: {SeatCount}")]
     private static partial void LogReservationCreated(
         ILogger logger, Guid reservationId, string code, int seatCount);
 
@@ -165,7 +165,7 @@ internal sealed partial class CreateReservationCommandHandler
         if (_currentUser.UserId is not Guid userId)
         {
             return Result.Failure<ReservationDto>(
-                Error.Unauthorized("auth.required", "Giris yapmalisiniz."));
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
         var now = _clock.UtcNow;
@@ -173,17 +173,17 @@ internal sealed partial class CreateReservationCommandHandler
         // ==============================================================
         // 1. IDEMPOTENCY -- ONCE KONTROL
         // ==============================================================
-        // PDF Sprint 15: "Ayni istegin tekrar gonderilmesine karsi
-        // idempotency uygulanmalidir."
+        // PDF Sprint 15: "Aynı istegin tekrar gonderilmesine karsi
+        // idempotency uygulanmalıdır."
         //
-        // Kullanici butona iki kez bastiysa AYNI rezervasyonu donuyoruz,
+        // Kullanıcı butona iki kez bastiysa AYNI rezervasyonu donuyoruz,
         // yenisini olusturmuyoruz.
         //
-        // Bu kontrol yarisa acik (iki istek ayni anda gelirse ikisi de
-        // "yok" gorebilir) -- ama sorun degil: veritabanindaki partial
-        // unique index ikincisini reddedecek ve asagida yakalayacagiz.
-        // Buradaki kontrol YAYGIN durumu (kullanici 2 saniye sonra
-        // tekrar bastı) ucuz sekilde cozuyor.
+        // Bu kontrol yarisa açık (iki istek aynı anda gelirse ikisi de
+        // "yok" görebilir) -- ama sorun değil: veritabanindaki partial
+        // unique index ikincisini reddedecek ve aşağıda yakalayacagiz.
+        // Buradaki kontrol YAYGIN durumu (kullanıcı 2 saniye sonra
+        // tekrar bastı) ucuz şekilde cozuyor.
         if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
         {
             var existing = await _context.Reservations
@@ -223,8 +223,8 @@ internal sealed partial class CreateReservationCommandHandler
 
         // Rezervasyon YALNIZCA SalesOpen durumunda yapilabilir.
         //
-        // Bu kontrol olmasaydi kullanici, henuz yayinlanmamis veya
-        // satisi kapanmis bir etkinlige rezervasyon yapabilirdi --
+        // Bu kontrol olmasaydı kullanıcı, henüz yayinlanmamis veya
+        // satışı kapanmis bir etkinlige rezervasyon yapabilirdi --
         // Id'yi bir yerden bulmasi yeterdi.
         if (sessionInfo.EventStatus != EventStatus.SalesOpen ||
             sessionInfo.Status != EventSessionStatus.Scheduled)
@@ -233,13 +233,13 @@ internal sealed partial class CreateReservationCommandHandler
         }
 
         // ==============================================================
-        // 3. KULLANICI BILET LIMITI
+        // 3. KULLANICI BİLET LIMITI
         // ==============================================================
-        // PDF: "Bir kullanici ayni oturum icin belirlenen maksimum
-        // bilet sayisini asamaz."
+        // PDF: "Bir kullanıcı aynı oturum için belirlenen maksimum
+        // bilet sayisini aşamaz."
         //
-        // Karaborsaciligi engellemek icin. Mevcut AKTIF rezervasyonlari
-        // da sayiyorum -- yoksa kullanici 4'er 4'er 10 rezervasyon
+        // Karaborsaciligi engellemek için. Mevcut AKTIF rezervasyonları
+        // da sayiyorum -- yoksa kullanıcı 4'er 4'er 10 rezervasyon
         // yapip limiti atlatirdi.
         var activeTicketCount = await _context.ReservationItems
             .AsNoTracking()
@@ -260,17 +260,17 @@ internal sealed partial class CreateReservationCommandHandler
         // ==============================================================
         // 4. KOLTUKLARI YUKLE -- TAKIP EDILEREK (AsNoTracking YOK!)
         // ==============================================================
-        // Bu koltuklari DEGISTIRECEGIZ (kilitleyecegiz). AsNoTracking
-        // kullansaydik EF degisiklikleri fark etmez ve SaveChanges
-        // hicbir sey yazmazdi -- kilit sessizce uygulanmazdi.
+        // Bu koltukları DEGISTIRECEGIZ (kilitleyecegiz). AsNoTracking
+        // kullansaydık EF değişiklikleri fark etmez ve SaveChanges
+        // hiçbir sey yazmazdi -- kilit sessizce uygulanmazdi.
         //
-        // ORDER BY Id: bu satir DEADLOCK'U ENGELLIYOR.
+        // ORDER BY Id: bu satır DEADLOCK'U ENGELLIYOR.
         //
-        // Iki kullanici {A, B} ve {B, A} koltuklarini isterse ve biz
-        // istedikleri sirada kilitlersek, birinci A'yi ikinci B'yi
+        // Iki kullanıcı {A, B} ve {B, A} koltuklarini isterse ve biz
+        // istedikleri sırada kilitlersek, birinci A'yi ikinci B'yi
         // kilitler ve ikisi de digerini bekler -> deadlock.
         //
-        // Her zaman AYNI sirada (Id'ye gore) islem yaparak bu
+        // Her zaman AYNI sırada (Id'ye göre) işlem yaparak bu
         // ihtimali tamamen ortadan kaldiriyoruz. Bu, kilit
         // siralamasinin klasik cozumudur.
         var seats = await _context.EventSeats
@@ -282,9 +282,9 @@ internal sealed partial class CreateReservationCommandHandler
 
         // Istenen koltuklarin HEPSI bulundu mu?
         //
-        // Bulunamayan varsa ya baska oturuma ait ya da hic yok.
-        // Kismi rezervasyon YAPMIYORUZ: kullanici 4 koltuk istedi,
-        // 3'unu alip "al bakalim" demek kotu bir deneyim olurdu.
+        // Bulunamayan varsa ya başka oturuma ait ya da hiç yok.
+        // Kismi rezervasyon YAPMIYORUZ: kullanıcı 4 koltuk istedi,
+        // 3'unu alip "al bakalim" demek kötü bir deneyim olurdu.
         if (seats.Count != request.EventSeatIds.Distinct().Count())
         {
             return Result.Failure<ReservationDto>(ReservationErrors.SeatsNotFound);
@@ -293,11 +293,11 @@ internal sealed partial class CreateReservationCommandHandler
         // ==============================================================
         // 5. REZERVASYONU OLUSTUR
         // ==============================================================
-        // Reservation.Create koltuklari KILITLIYOR ve toplam tutari
-        // koltuklarin KENDI fiyatlarindan hesapliyor.
+        // Reservation.Create koltukları KILITLIYOR ve toplam tutarı
+        // koltuklarin KENDİ fiyatlarindan hesapliyor.
         //
         // Koltuklardan biri musait degilse DomainException firlar ve
-        // hicbir sey kaydedilmez -- "ya hep ya hic".
+        // hiçbir sey kaydedilmez -- "ya hep ya hiç".
         Reservation reservation;
 
         try
@@ -315,9 +315,9 @@ internal sealed partial class CreateReservationCommandHandler
         {
             // Koltuk BELLEKTE dolu gorundu (yaygin durum).
             //
-            // DomainException'i disari birakmiyorum cunku global handler
-            // onu 422 yapardi. Burada 409 Conflict daha dogru: bu bir
-            // CAKISMA, is kurali ihlali degil. Frontend 409'da koltuk
+            // DomainException'i disari birakmiyorum çünkü global handler
+            // önü 422 yapardi. Burada 409 Conflict daha doğru: bu bir
+            // CAKISMA, is kuralı ihlali değil. Frontend 409'da koltuk
             // haritasini yeniliyor.
             return Result.Failure<ReservationDto>(ReservationErrors.SeatConflict);
         }
@@ -334,8 +334,8 @@ internal sealed partial class CreateReservationCommandHandler
             // PDF Sprint 16: "Koltuk kilitleme".
             //
             // SaveChanges'ten SONRA: kilit ancak veritabani onayladiysa
-            // gercek. Once loglasaydik, asagidaki catch'e dusen her
-            // cakismada logda "kilitlendi" satiri kalirdi -- ve o satir
+            // gerçek. Önce loglasaydik, aşağıdaki catch'e dusen her
+            // cakismada logda "kilitlendi" satiri kalırdı -- ve o satır
             // yalan olurdu.
             LogSeatsLocked(
                 _logger,
@@ -350,28 +350,28 @@ internal sealed partial class CreateReservationCommandHandler
             // ==========================================================
             // OPTIMISTIC CONCURRENCY DEVREDE
             // ==========================================================
-            // Biz koltugu okuduktan SONRA baska bir istek onu kilitledi.
+            // Biz koltuğu okuduktan SONRA başka bir istek önü kilitledi.
             //
             // EF'in urettigi UPDATE:
             //     UPDATE "EventSeats" SET "Status" = 2, ...
             //     WHERE "Id" = @id AND xmin = @okudugumDeger
             //
-            // xmin degistigi icin 0 satir etkilendi -> exception.
+            // xmin degistigi için 0 satır etkilendi -> exception.
             //
-            // KRITIK NOKTA: bizim istegimiz KAYBETTI ama hicbir veriyi
+            // KRITIK NOKTA: bizim istegimiz KAYBETTI ama hiçbir veriyi
             // BOZMADI. Digerinin kilidinin uzerine YAZMADIK.
             //
-            // Bu kontrol olmasaydi "son yazan kazanir" davranisi
-            // olusur ve ayni koltuk iki kisiye satilirdi.
+            // Bu kontrol olmasaydı "son yazan kazanir" davranisi
+            // olusur ve aynı koltuk iki kisiye satilirdi.
             return Result.Failure<ReservationDto>(ReservationErrors.SeatConflict);
         }
         catch (DbUpdateException)
         {
-            // Unique index ihlali: ya idempotency key cakismasi ya da
-            // baska bir kisit.
+            // Unique index ihlali: ya idempotency key çakışması ya da
+            // başka bir kisit.
             //
             // Idempotency key ise, ILK istegin sonucunu donmeliyiz --
-            // kullanicinin iki kez basmasi hata degil.
+            // kullanıcının iki kez basmasi hata değil.
             if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
             {
                 var existing = await _context.Reservations
@@ -393,22 +393,22 @@ internal sealed partial class CreateReservationCommandHandler
         // ==============================================================
         // BILDIRIM -- PDF Sprint 14: "Rezervasyon olusturuldugunda"
         // ==============================================================
-        // Uygulama ici bildirim BURADA, ayni transaction'da yaziliyor.
+        // Uygulama ici bildirim BURADA, aynı transaction'da yaziliyor.
         //
-        // Neden Outbox degil? Cunku bu bildirim DIS bir sisteme
+        // Neden Outbox değil? Çünkü bu bildirim DIS bir sisteme
         // gitmiyor -- kendi veritabanimiza yaziliyor. Outbox'in varlik
-        // sebebi "iki sistem arasinda atomiklik saglamak"; burada tek
+        // sebebi "iki sistem arasında atomiklik saglamak"; burada tek
         // sistem var.
         //
-        // E-POSTA ise Outbox'a gidiyor (asagida): o gercekten dis bir
+        // E-POSTA ise Outbox'a gidiyor (aşağıda): o gerçekten dis bir
         // servise cikiyor ve yavas olabilir.
         // ==============================================================
         _context.Notifications.Add(Notification.Create(
             userId,
             Domain.Enums.NotificationType.ReservationCreated,
-            "Rezervasyonunuz olusturuldu",
-            $"{reservation.ReservationCode} numarali rezervasyonunuz icin " +
-            $"{seats.Count} koltuk ayrildi. Odemeyi tamamlamak icin " +
+            "Rezervasyonunuz oluşturuldu",
+            $"{reservation.ReservationCode} numarali rezervasyonunuz için " +
+            $"{seats.Count} koltuk ayrildi. Ödemeyi tamamlamak için " +
             $"{_options.LockDurationMinutes} dakikaniz var.",
             reservation.Id,
             "/rezervasyonlarim"));
@@ -427,17 +427,17 @@ internal sealed partial class CreateReservationCommandHandler
         // ==============================================================
         // GERCEK ZAMANLI BILDIRIM -- PDF Sprint 10: "SeatLocked"
         // ==============================================================
-        // SaveChangesAsync'ten SONRA cagriliyor. Bu sira ZORUNLU.
+        // SaveChangesAsync'ten SONRA cagriliyor. Bu sıra ZORUNLU.
         //
-        // Once bildirseydik ve kayit DbUpdateConcurrencyException ile
-        // basarisiz olsaydi, oturumu izleyen herkes koltugu KILITLI
+        // Önce bildirseydik ve kayıt DbUpdateConcurrencyException ile
+        // başarısız olsaydı, oturumu izleyen herkes koltuğu KILITLI
         // gorurdu -- oysa koltuk bosta. Kimse alamazdi ve kimse
         // nedenini anlayamazdi.
         //
-        // Commit sonrasi bildirmek, "gordugunu soyle" ilkesi:
-        // yalnizca GERCEKLESMIS bir seyi duyuruyoruz.
+        // Commit sonrası bildirmek, "gordugunu soyle" ilkesi:
+        // yalnızca GERCEKLESMIS bir seyi duyuruyoruz.
         //
-        // PDF is kurali: "Bir koltuk baska kullanici tarafindan
+        // PDF is kuralı: "Bir koltuk başka kullanıcı tarafından
         // secildiginde ekran guncellenmelidir."
         // ==============================================================
         await _seatNotifier.SeatsLockedAsync(
@@ -445,11 +445,11 @@ internal sealed partial class CreateReservationCommandHandler
             seats.ConvertAll(s => s.Id),
             cancellationToken).ConfigureAwait(false);
 
-        // PDF Sprint 16: "Rezervasyon olusturma".
+        // PDF Sprint 16: "Rezervasyon oluşturma".
         //
-        // Rezervasyon KODUNU logluyorum cunku destek talebinde
-        // kullanicinin elindeki tek tanimlayici o ("ABC-123 numarali
-        // rezervasyonum"). Guid'i kullanici bilmiyor.
+        // Rezervasyon KODUNU logluyorum çünkü destek talebinde
+        // kullanıcının elindeki tek tanimlayici o ("ABC-123 numarali
+        // rezervasyonum"). Guid'i kullanıcı bilmiyor.
         LogReservationCreated(
             _logger, reservation.Id, reservation.ReservationCode, seats.Count);
 

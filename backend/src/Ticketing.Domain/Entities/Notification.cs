@@ -5,8 +5,8 @@ namespace Ticketing.Domain.Entities;
 
 /// <summary>
 /// Uygulama ici bildirim. PDF Sprint 14.
-/// E-posta AYRI bir kanaldir ve Outbox uzerinden gider; bu tablo
-/// yalnizca uygulama icindeki zil ikonunun icerigini tutar.
+/// E-posta AYRI bir kanaldir ve Outbox üzerinden gider; bu tablo
+/// yalnızca uygulama icindeki zil ikonunun icerigini tutar.
 /// </summary>
 public class Notification : Entity
 {
@@ -26,13 +26,13 @@ public class Notification : Entity
 
     /// <summary>
     /// Tiklandiginda gidilecek uygulama ici yol. Ornek: "/biletlerim/8f3a".
-    /// Tam URL degil gorece yol: alan adi degisirse veriler bozulmasin.
+    /// Tam URL değil gorece yol: alan adı degisirse veriler bozulmasin.
     /// </summary>
     public string? ActionPath { get; private set; }
 
     /// <summary>
     /// Ilgili kaydin Id'si (rezervasyon, bilet, etkinlik...).
-    /// Tur bilgisi Type alaninda oldugu icin ayrica EntityType tutmuyorum.
+    /// Tur bilgisi Type alaninda olduğu için ayrıca EntityType tutmuyorum.
     /// </summary>
     public Guid? RelatedEntityId { get; private set; }
 
@@ -54,7 +54,7 @@ public class Notification : Entity
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new DomainException("Bildirim basligi bos olamaz.", "notification.title_required");
+            throw new DomainException("Bildirim başlığı boş olamaz.", "notification.title_required");
         }
 
         return new Notification

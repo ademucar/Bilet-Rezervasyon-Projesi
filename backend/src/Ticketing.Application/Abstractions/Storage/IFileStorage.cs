@@ -7,28 +7,28 @@ namespace Ticketing.Application.Abstractions.Storage;
 /// ==================================================================
 /// NEDEN SOYUTLAMA? DISKE YAZMAK ZATEN BASIT
 /// ==================================================================
-/// File.WriteAllBytes cagirmak bir satir. O zaman bu arayuz niye?
+/// File.WriteAllBytes cagirmak bir satır. O zaman bu arayüz niye?
 ///
 /// 1) Application katmani File API'sini BILMEMELI. Onion mimarisinde
-///    is mantigi altyapiya bagimli olamaz -- mimari testimiz bunu
+///    is mantığı altyapiya bagimli olamaz -- mimari testimiz bunu
 ///    zaten zorluyor.
 ///
 /// 2) Uretimde diske yazmak CALISMAZ. Birden fazla sunucu olunca
-///    kullanici A sunucusuna yukler, B sunucusundan indirmeye
-///    calisir ve dosya bulunamaz. Uretimde S3/Azure Blob gerekiyor.
-///    O gun yalnizca bu arayuzun yeni bir uygulamasi yazilacak.
+///    kullanıcı A sunucusuna yukler, B sunucusundan indirmeye
+///    çalışır ve dosya bulunamaz. Uretimde S3/Azure Blob gerekiyor.
+///    O gün yalnızca bu arayuzun yeni bir uygulamasi yazilacak.
 ///
-/// 3) Test edilebilirlik: handler'i gercek disk olmadan test
+/// 3) Test edilebilirlik: handler'i gerçek disk olmadan test
 ///    edebiliyoruz.
 /// ==================================================================
 /// </remarks>
 public interface IFileStorage
 {
     /// <summary>
-    /// Dosyayi kaydeder ve depolama yolunu doner.
+    /// Dosyayi kaydeder ve depolama yolunu döner.
     /// </summary>
     /// <param name="storedFileName">
-    /// URETILMIS guvenli dosya adi. Kullanicidan gelen ad ASLA
+    /// URETILMIS güvenli dosya adı. Kullanicidan gelen ad ASLA
     /// buraya gecmemeli -- cagiran taraf bunu garanti etmeli.
     /// </param>
     Task<string> SaveAsync(

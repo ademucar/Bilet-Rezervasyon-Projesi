@@ -5,7 +5,7 @@ using Ticketing.Application.Common.Results;
 namespace Ticketing.WebApi.Controllers;
 
 /// <summary>
-/// Tum controller'larin ortak atasi.
+/// Tüm controller'larin ortak atasi.
 ///
 /// Iki is yapiyor:
 ///   1. MediatR'i tek bir yerden saglar
@@ -21,13 +21,13 @@ public abstract class ApiControllerBase : ControllerBase
     /// MediatR gonderici.
     ///
     /// Yapicidan enjekte etmek yerine tembel (lazy) cozumleme
-    /// kullaniyorum. Neden? Yapicidan alsaydim TUM turetilmis
+    /// kullanıyorum. Neden? Yapicidan alsaydim TÜM turetilmis
     /// controller'lar ISender'i yapicilarinda tasiyip base'e
-    /// gecirmek zorunda kalirdi:
+    /// gecirmek zorunda kalırdı:
     ///
     ///     public EventsController(ISender sender) : base(sender) { }
     ///
-    /// 20 controller'da bu 20 gereksiz satir demek. Boyle daha temiz.
+    /// 20 controller'da bu 20 gereksiz satır demek. Boyle daha temiz.
     /// </summary>
     protected ISender Sender
         => _sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
@@ -42,13 +42,13 @@ public abstract class ApiControllerBase : ControllerBase
     /// HTTP'ye cevirme isi Presentation katmaninin sorumlulugunda ve
     /// tam olarak burada yapiliyor.
     ///
-    /// Bu ayrim sayesinde ayni handler'lari yarin bir gRPC servisinden
+    /// Bu ayrim sayesinde aynı handler'lari yarin bir gRPC servisinden
     /// veya bir konsol uygulamasindan cagirabiliriz; onlar da kendi
     /// hata kodlarina cevirir.
     ///
     /// Tek yerde toplamanin ikinci faydasi: 100 endpoint'te
     /// "if (result.IsFailure) return BadRequest(...)" yazmiyoruz.
-    /// Bir gun 422 yerine 409 donmeye karar verirsek tek satir
+    /// Bir gün 422 yerine 409 donmeye karar verirsek tek satır
     /// degistiriyoruz.
     /// ==================================================================
     /// </summary>
@@ -67,10 +67,10 @@ public abstract class ApiControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Olusturma islemlerinde 201 Created dondurur.
+    /// Olusturma islemlerinde 201 Created döndürür.
     ///
     /// 200 yerine 201 donmek REST'in gerektirdigi davranistir ve
-    /// "Location" header'i istemciye yeni kaynagin adresini soyler.
+    /// "Location" header'i istemciye yeni kaynagin adresini söyler.
     /// </summary>
     protected IActionResult HandleCreated<T>(Result<T> result, string locationUri)
     {
@@ -91,16 +91,16 @@ public abstract class ApiControllerBase : ControllerBase
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Concurrency => StatusCodes.Status409Conflict,
 
-            // 422 Unprocessable Entity: istek BICIMSEL olarak dogru ama
+            // 422 Unprocessable Entity: istek BICIMSEL olarak doğru ama
             // IS KURALI geregi islenemiyor.
             //
             // 400 ile karisir; fark su:
-            //   400 -> "gonderdigin veri hatali" (eksik alan, yanlis tip)
-            //   422 -> "verin dogru ama bu islem su an yapilamaz"
-            //          (ornegin: rezervasyon suresi dolmus)
+            //   400 -> "gonderdigin veri hatalı" (eksik alan, yanlış tip)
+            //   422 -> "verin doğru ama bu işlem su an yapılamaz"
+            //          (örneğin: rezervasyon süresi dolmuş)
             //
-            // Frontend icin bu ayrim onemli: 400'de formu duzelt,
-            // 422'de kullaniciya durum acikla.
+            // Frontend için bu ayrim önemli: 400'de formu duzelt,
+            // 422'de kullanıcıya durum acikla.
             ErrorType.Conflict => StatusCodes.Status422UnprocessableEntity,
 
             _ => StatusCodes.Status500InternalServerError
@@ -115,7 +115,7 @@ public abstract class ApiControllerBase : ControllerBase
         };
 
         // Frontend "detail" METNINE bakarak karar vermemeli -- metni
-        // degistirdigimiz gun frontend bozulur. Bu kod sabit kalir.
+        // degistirdigimiz gün frontend bozulur. Bu kod sabit kalır.
         problem.Extensions["errorCode"] = error.Code;
 
         return StatusCode(statusCode, problem);

@@ -16,16 +16,16 @@ namespace Ticketing.WebApi.Documentation;
 /// BU SINIF NEDEN VAR? -- .NET 9'UN EKSIGI
 /// ==================================================================
 /// GenerateDocumentationFile'i acip Swagger'a baktim: 78 ucun
-/// HICBIRINDE aciklama yoktu.
+/// HICBIRINDE açıklama yoktu.
 ///
 /// Sebep: .NET 9'un yerlesik OpenAPI ureticisi
 /// (Microsoft.AspNetCore.OpenApi) XML yorumlarini OKUMUYOR. O
 /// ozellik .NET 10 ile geldi.
 ///
-/// Swashbuckle kullansaydik hazir gelirdi -- ama o zaman iki ayri
-/// OpenAPI ureticisi calisir ve iki farkli belge uretirdi.
+/// Swashbuckle kullansaydık hazır gelirdi -- ama o zaman iki ayrı
+/// OpenAPI ureticisi çalışır ve iki farklı belge üretirdi.
 ///
-/// Bu yuzden XML dosyalarini kendim okuyup belgeye bagliyorum.
+/// Bu yüzden XML dosyalarini kendim okuyup belgeye bagliyorum.
 /// Kod, cercevenin bir sonraki surumunde gereksiz hale gelecek;
 /// o zaman silinebilir.
 ///
@@ -38,24 +38,24 @@ namespace Ticketing.WebApi.Documentation;
 ///       System.Guid,System.Threading.CancellationToken)
 ///
 /// Bu imzayi Reflection'dan birebir uretmek generic tipler, ref
-/// parametreler ve dizi turleri yuzunden hataya cok acik.
+/// parametreler ve dizi türleri yuzunden hataya çok açık.
 ///
-/// Bunun yerine "tip adi + metot adi" ile esliyorum. Bedeli: ASIRI
+/// Bunun yerine "tip adı + metot adı" ile esliyorum. Bedeli: ASIRI
 /// YUKLENMIS (overload) metotlarda ilk eslesme kullanilir.
 ///
-/// Bu bedeli kabul ediyorum cunku controller'larimizda asiri yukleme
-/// YOK -- her uc kendi adiyla duruyor. Ilerde eklenirse aciklama
-/// yanlis uca gider; bu bir belge sorunu olur, calisma zamani
-/// hatasi degil.
+/// Bu bedeli kabul ediyorum çünkü controller'larimizda asiri yukleme
+/// YOK -- her uc kendi adiyla duruyor. Ilerde eklenirse açıklama
+/// yanlış uca gider; bu bir belge sorunu olur, calisma zamani
+/// hatası değil.
 /// ==================================================================
 /// </remarks>
 internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTransformer
 {
-    /// <summary>Uye kimligi -> XML dugumu.</summary>
+    /// <summary>Uye kimliği -> XML dugumu.</summary>
     private static readonly Lazy<Dictionary<string, XElement>> Belgeler =
         new(Yukle, LazyThreadSafetyMode.ExecutionAndPublication);
 
-    /// <summary>Ayni metot birden fazla kez sorulmasin.</summary>
+    /// <summary>Aynı metot birden fazla kez sorulmasin.</summary>
     private static readonly ConcurrentDictionary<string, XElement?> Onbellek = new();
 
     public Task TransformAsync(
@@ -83,7 +83,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             return Task.CompletedTask;
         }
 
-        // ---- <summary> -> ozet ----
+        // ---- <summary> -> özet ----
         var ozet = Metin(dugum.Element("summary"));
 
         if (!string.IsNullOrWhiteSpace(ozet))
@@ -91,10 +91,10 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             operation.Summary = ozet;
         }
 
-        // ---- <remarks> -> aciklama ----
+        // ---- <remarks> -> açıklama ----
         //
         // Aciklamayi EKLIYORUM, ustune yazmiyorum: AuthorizationTransformer
-        // buraya yetki notunu koyuyor olabilir ve onu silmek istemiyoruz.
+        // buraya yetki notunu koyuyor olabilir ve önü silmek istemiyoruz.
         var aciklama = Metin(dugum.Element("remarks"));
 
         if (!string.IsNullOrWhiteSpace(aciklama))
@@ -107,8 +107,8 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
         // ---- <response code="..."> -> yanit aciklamalari ----
         //
         // PDF: "Response ornekleri". Controller'larda zaten
-        // <response code="201">Rezervasyon olusturuldu...</response>
-        // yaziliydi ama hicbir yere gitmiyordu.
+        // <response code="201">Rezervasyon oluşturuldu...</response>
+        // yaziliydi ama hiçbir yere gitmiyordu.
         foreach (var yanit in dugum.Elements("response"))
         {
             var kod = yanit.Attribute("code")?.Value;
@@ -156,7 +156,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
         return Task.CompletedTask;
     }
 
-    /// <summary>Metodun XML dugumunu bulur (tip adi + metot adi ile).</summary>
+    /// <summary>Metodun XML dugumunu bulur (tip adı + metot adı ile).</summary>
     private static XElement? Bul(MethodInfo metot)
     {
         var anahtar = $"{metot.DeclaringType!.FullName}.{metot.Name}";
@@ -180,20 +180,20 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     }
 
     /// <summary>
-    /// Uygulama klasorundeki TUM XML dokumantasyon dosyalarini okur.
+    /// Uygulama klasorundeki TÜM XML dokumantasyon dosyalarini okur.
     /// </summary>
     /// <remarks>
-    /// Yalnizca WebApi.xml'i okusaydik, Application katmanindaki
-    /// DTO ve komut aciklamalari disarida kalirdi. Hepsini okumak
-    /// daha fazla is degil ve belgeyi belirgin sekilde
+    /// Yalnızca WebApi.xml'i okusaydik, Application katmanindaki
+    /// DTO ve komut aciklamalari disarida kalırdı. Hepsini okumak
+    /// daha fazla is değil ve belgeyi belirgin şekilde
     /// zenginlestiriyor.
     ///
     /// Dosya okunamazsa SESSIZCE geciyoruz: dokumantasyon eksikligi
-    /// uygulamanin acilmasini engellememeli. Swagger'da bir aciklama
-    /// gorunmemesi can sikici; API'nin hic acilmamasi felaket.
+    /// uygulamanin acilmasini engellememeli. Swagger'da bir açıklama
+    /// gorunmemesi can sıkıcı; API'nin hiç acilmamasi felaket.
     ///
-    /// CA1859: donus turu somut Dictionary. Analizor hakli --
-    /// yalnizca bu sinif kullaniyor ve arayuz uzerinden erisim
+    /// CA1859: donus türü somut Dictionary. Analizor haklı --
+    /// yalnızca bu sinif kullaniyor ve arayüz üzerinden erişim
     /// gereksiz bir dolayli cagri (interface dispatch) ekliyor.
     /// </remarks>
     private static Dictionary<string, XElement> Yukle()
@@ -218,7 +218,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             }
             catch (Exception ex) when (ex is IOException or System.Xml.XmlException)
             {
-                // Bozuk veya kilitli dosya: bu dosyayi atla.
+                // Bozuk veya kilitli dosya: bu dosyayı atla.
             }
         }
 
@@ -233,13 +233,13 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     /// YORUMLARIMIZ UZUN VE COK SATIRLI -- TEMIZLENMESI GEREKIYOR
     /// ==============================================================
     /// Kodda yazdigimiz yorumlar "=====" cizgileri ve girintiler
-    /// iceriyor. Ham haliyle Swagger'a koysaydik okunamaz olurdu.
+    /// iceriyor. Ham haliyle Swagger'a koysaydık okunamaz olurdu.
     ///
     /// Yaptiklarim:
     ///   - Her satirin bas/son bosluklarini kirp
     ///   - "=====" ve "-----" ayirici satirlarini at
     ///   - see cref etiketlerini sade metne cevir
-    ///   - Ardisik bos satirlari tekile indir
+    ///   - Ardisik boş satirlari tekile indir
     /// ==============================================================
     /// </remarks>
     private static string Metin(XElement? dugum)
@@ -249,7 +249,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             return string.Empty;
         }
 
-        // <see cref="X"/> -> X (yalnizca son parca)
+        // <see cref="X"/> -> X (yalnızca son parca)
         foreach (var see in dugum.Descendants("see").ToList())
         {
             var hedef = see.Attribute("cref")?.Value ?? see.Attribute("langword")?.Value ?? string.Empty;
@@ -265,7 +265,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
             .Split('\n')
             .Select(s => s.Trim())
 
-            // Gorsel ayiricilar Swagger'da anlamsiz.
+            // Görsel ayiricilar Swagger'da anlamsiz.
             .Where(s => !AyiriciRegex().IsMatch(s))
             .ToList();
 

@@ -14,26 +14,26 @@ namespace Ticketing.Infrastructure.BackgroundJobs;
 /// ARKA PLAN ISLERI -- PDF Sprint 9
 /// ==================================================================
 /// PDF'in istedigi bes is:
-///   1. Suresi dolan rezervasyonlari iptal etme
+///   1. Süresi dolan rezervasyonları iptal etme
 ///   2. Outbox mesajlarini isleme
-///   3. Basarisiz mesajlari yeniden deneme
+///   3. Başarısız mesajlari yeniden deneme
 ///   4. Yaklasan etkinlik hatirlatmasi
-///   5. Gunluk satis ozeti olusturma
+///   5. Günlük satış özeti oluşturma
 ///
 /// ------------------------------------------------------------------
 /// BU SINIFLAR NEDEN BU KADAR INCE?
 /// ------------------------------------------------------------------
-/// Her is yalnizca bir MediatR komutu gonderiyor ve sonucu logluyor.
-/// Is mantiginin TEK SATIRI bile burada degil.
+/// Her is yalnızca bir MediatR komutu gönderiyor ve sonucu logluyor.
+/// Is mantiginin TEK SATIRI bile burada değil.
 ///
 /// Sebep mimari: Infrastructure katmani "isin nasil tetiklendigini"
-/// bilir, "isin ne oldugunu" bilmez. Zamanlayiciyi Hangfire'dan
+/// bilir, "isin ne olduğunu" bilmez. Zamanlayiciyi Hangfire'dan
 /// Quartz'a ya da bir Kubernetes CronJob'ina cevirmek istersek
-/// yalnizca bu dosya degisir.
+/// yalnızca bu dosya degisir.
 ///
-/// Ikinci fayda: is mantigi Application'da oldugu icin HTTP ucundan
+/// Ikinci fayda: is mantığı Application'da olduğu için HTTP ucundan
 /// da tetiklenebiliyor (admin "simdi calistir" diyebiliyor) ve birim
-/// testlerinde Hangfire'a hic ihtiyac duyulmuyor.
+/// testlerinde Hangfire'a hiç ihtiyac duyulmuyor.
 /// ==================================================================
 /// </summary>
 public sealed partial class TicketingJobs
@@ -48,30 +48,30 @@ public sealed partial class TicketingJobs
     }
 
     // ==================================================================
-    // 1) SURESI DOLAN REZERVASYONLARI IPTAL ETME
+    // 1) SURESI DOLAN REZERVASYONLARI İPTAL ETME
     // ==================================================================
 
     /// <summary>
-    /// Suresi dolmus rezervasyonlari iptal eder ve koltuklari serbest birakir.
+    /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// [DisableConcurrentExecution] -- NEDEN SART?
+    /// [DisableConcurrentExecution] -- NEDEN ŞART?
     /// ==============================================================
-    /// Bu is dakikada bir calisiyor. Bir calisma 70 saniye surerse
-    /// (cok rezervasyon birikmisse olur) Hangfire varsayilan olarak
+    /// Bu is dakikada bir çalışıyor. Bir calisma 70 saniye surerse
+    /// (çok rezervasyon birikmisse olur) Hangfire varsayılan olarak
     /// IKINCISINI de baslatir.
     ///
-    /// O anda iki calisma AYNI rezervasyonlari secer ve ikisi de
+    /// O anda iki calisma AYNI rezervasyonları secer ve ikisi de
     /// Expire() cagirir. Birinci kaydeder, ikinci
-    /// DbUpdateConcurrencyException alir (xmin eslesmez) ve TUM
-    /// partisi basarisiz olur.
+    /// DbUpdateConcurrencyException alır (xmin eslesmez) ve TÜM
+    /// partisi başarısız olur.
     ///
-    /// Yani sistem yanlis veri uretmez -- eszamanlilik korumamiz
-    /// calisir -- ama is bosuna basarisiz olur ve loglar gurultuye
+    /// Yani sistem yanlış veri uretmez -- eszamanlilik korumamiz
+    /// çalışır -- ama is boşuna başarısız olur ve loglar gurultuye
     /// bogulur.
     ///
-    /// timeoutInSeconds: kilidi bekleme suresi. 0 verirsek beklemez,
+    /// timeoutInSeconds: kilidi bekleme süresi. 0 verirsek beklemez,
     /// hemen atlar. 60 saniye beklemesi daha iyi: uzun suren bir
     /// calismanin ardindan bir sonraki hemen devam eder.
     /// ==============================================================
@@ -80,9 +80,9 @@ public sealed partial class TicketingJobs
 
     // AutomaticRetry KAPALI.
     //
-    // Bu is dakikada bir zaten calisiyor. Hangfire'in ayrica
-    // 10 kez yeniden denemesi, gecici bir veritabani sorunu
-    // aninda 10 kopya olusturmak demek. Basarisiz olsun, bir
+    // Bu is dakikada bir zaten çalışıyor. Hangfire'in ayrıca
+    // 10 kez yeniden denemesi, geçici bir veritabani sorunu
+    // anında 10 kopya olusturmak demek. Başarısız olsun, bir
     // dakika sonra normal turunda tekrar denesin.
     [AutomaticRetry(Attempts = 0)]
     public async Task ExpireReservationsAsync(CancellationToken cancellationToken)
@@ -91,12 +91,12 @@ public sealed partial class TicketingJobs
         // PDF Sprint 16: "Background job islemleri" izlenmelidir.
         // ==========================================================
         // Her is kendi izleme kapsamini aciyor. Boylece izleme
-        // arayuzunde is, HTTP isteklerinden ayri bir kok (root)
-        // olarak gorunuyor ve icindeki veritabani/Redis cagrilari
-        // ona baglaniyor.
+        // arayuzunde is, HTTP isteklerinden ayrı bir kok (root)
+        // olarak görünüyor ve icindeki veritabani/Redis cagrilari
+        // ona bağlanıyor.
         //
         // Kapsam olmadan: isin urettigi SQL sorgulari izlemede
-        // SAHIPSIZ gorunurdu -- "bu sorgu nereden geldi?"
+        // SAHIPSIZ görünürdü -- "bu sorgu nereden geldi?"
         // sorusunun cevabi olmazdi.
         //
         // activity null olabilir (dinleyici yoksa); using bunu
@@ -112,12 +112,12 @@ public sealed partial class TicketingJobs
         {
             // Basarisizligi ISTISNA olarak firlatiyorum.
             //
-            // Sessizce loglasaydik Hangfire is'i "basarili" sayar ve
-            // izleme ekraninda yesil gorunurdu. Arka plan islerinde
-            // en tehlikeli durum, calismadigi halde calisiyor
+            // Sessizce loglasaydik Hangfire is'i "başarılı" sayar ve
+            // izleme ekraninda yesil görünürdü. Arka plan islerinde
+            // en tehlikeli durum, calismadigi halde çalışıyor
             // gorunmektir.
             throw new InvalidOperationException(
-                $"Rezervasyon temizligi basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Rezervasyon temizligi başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         // PDF: "Job sonuclari loglanmalidir."
@@ -136,24 +136,24 @@ public sealed partial class TicketingJobs
     /// </summary>
     /// <remarks>
     /// ==============================================================
-    /// "BASARISIZ MESAJLARI YENIDEN DENEME" NEDEN AYRI BIR IS DEGIL?
+    /// "BASARISIZ MESAJLARI YENIDEN DENEME" NEDEN AYRI BIR IS DEĞİL?
     /// ==============================================================
-    /// PDF bu ikisini ayri maddeler olarak sayiyor. Ayri iki is
+    /// PDF bu ikisini ayrı maddeler olarak sayiyor. Ayrı iki is
     /// yazmayi dusundum ve VAZGECTIM.
     ///
-    /// Sebep: yeniden denenecek mesaj, bekleyen bir mesajdan yalnizca
+    /// Sebep: yeniden denenecek mesaj, bekleyen bir mesajdan yalnızca
     /// RetryCount > 0 olmasiyla ayriliyor. Processor'in sorgusu
-    /// zaten "islenmemis VE (NextRetryAt bos VEYA zamani gelmis)"
+    /// zaten "islenmemis VE (NextRetryAt boş VEYA zamani gelmis)"
     /// diyor -- yani yeni mesajlar ile yeniden denenecekleri AYNI
     /// sorgu topluyor.
     ///
-    /// Ayri bir is yazsaydik ayni tabloyu ayni kosulla tarayan iki
-    /// is olurdu ve ikisi ayni anda calisip ayni mesaji islemeye
+    /// Ayrı bir is yazsaydık aynı tabloyu aynı kosulla tarayan iki
+    /// is olurdu ve ikisi aynı anda calisip aynı mesaji islemeye
     /// calisirdi.
     ///
-    /// PDF'in istedigi DAVRANIS (basarisiz mesaj yeniden denenmeli)
-    /// tam olarak karsilaniyor; ayri bir zamanlayici gerekmiyor.
-    /// Ustel geri cekilme OutboxMessage.MarkAsFailed icinde.
+    /// PDF'in istedigi DAVRANIS (başarısız mesaj yeniden denenmeli)
+    /// tam olarak karsilaniyor; ayrı bir zamanlayici gerekmiyor.
+    /// Ustel geri cekilme OutboxMessage.MarkAsFailed içinde.
     /// ==============================================================
     /// </remarks>
     [DisableConcurrentExecution(timeoutInSeconds: 30)]
@@ -169,16 +169,16 @@ public sealed partial class TicketingJobs
         if (!result.IsSuccess)
         {
             throw new InvalidOperationException(
-                $"Outbox islemesi basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Outbox işlemesi başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         var summary = result.Value;
 
         // Sifir mesaj islendiginde LOG YAZMIYORUZ.
         //
-        // Bu is 30 saniyede bir calisiyor: gunde 2880 kez. Her
-        // calismada "0 mesaj islendi" yazsaydik loglar gunde 2880
-        // anlamsiz satirla dolar ve gercek hatalar arasinda
+        // Bu is 30 saniyede bir çalışıyor: günde 2880 kez. Her
+        // calismada "0 mesaj islendi" yazsaydık loglar günde 2880
+        // anlamsiz satirla dolar ve gerçek hatalar arasında
         // kaybolurdu.
         if (summary.Processed > 0 || summary.Failed > 0 || summary.DeadLettered > 0)
         {
@@ -187,7 +187,7 @@ public sealed partial class TicketingJobs
     }
 
     // ==================================================================
-    // 4) YAKLASAN ETKINLIK HATIRLATMASI
+    // 4) YAKLASAN ETKİNLİK HATIRLATMASI
     // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 120)]
@@ -203,7 +203,7 @@ public sealed partial class TicketingJobs
         if (!result.IsSuccess)
         {
             throw new InvalidOperationException(
-                $"Etkinlik hatirlatmasi basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Etkinlik hatirlatmasi başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         LogRemindersQueued(_logger, result.Value);
@@ -212,10 +212,10 @@ public sealed partial class TicketingJobs
     // ==================================================================
     // 5c) SURESI DOLMAK UZERE OLAN REZERVASYONLARI UYAR
     // ==================================================================
-    // PDF Sprint 14: "Rezervasyon suresi dolmak uzereyken" bildirim.
+    // PDF Sprint 14: "Rezervasyon süresi dolmak uzereyken" bildirim.
     //
-    // DAKIKADA BIR calisiyor -- uyarinin zamaninda gitmesi icin sart.
-    // Bes dakikada bir calissaydi, 3 dakikalik uyari penceresini
+    // DAKIKADA BIR çalışıyor -- uyarinin zamaninda gitmesi için sart.
+    // Bes dakikada bir calissaydi, 3 dakikalik uyarı penceresini
     // tamamen KACIRABILIRDI.
     // ==================================================================
 
@@ -232,7 +232,7 @@ public sealed partial class TicketingJobs
         if (!result.IsSuccess)
         {
             throw new InvalidOperationException(
-                $"Sure uyarisi basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Süre uyarısı başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         if (result.Value > 0)
@@ -242,16 +242,16 @@ public sealed partial class TicketingJobs
     }
 
     // ==================================================================
-    // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 icin eklendi
+    // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 için eklendi
     // ==================================================================
     // PDF Sprint 9 bu isi SAYMIYOR. Sprint 12'yi yazarken ortaya cikti:
-    // "Etkinlik tamamlanmadan yorum yapilamaz" kurali, etkinlikleri
-    // Completed durumuna gecirecek bir mekanizma OLMADAN hicbir zaman
+    // "Etkinlik tamamlanmadan yorum yapılamaz" kuralı, etkinlikleri
+    // Completed durumuna gecirecek bir mekanizma OLMADAN hiçbir zaman
     // saglanamazdi.
     //
-    // Yani PDF'in bir sprintteki kurali, baska bir sprintte olmayan bir
-    // isi zorunlu kiliyor. Sprintleri tek tek okuyup "bu gercekten
-    // calisir mi?" diye sormanin karsiligi.
+    // Yani PDF'in bir sprintteki kuralı, başka bir sprintte olmayan bir
+    // isi zorunlu kiliyor. Sprintleri tek tek okuyup "bu gerçekten
+    // çalışır mi?" diye sormanin karşılığı.
     // ==================================================================
 
     [DisableConcurrentExecution(timeoutInSeconds: 60)]
@@ -267,7 +267,7 @@ public sealed partial class TicketingJobs
         if (!result.IsSuccess)
         {
             throw new InvalidOperationException(
-                $"Etkinlik tamamlama basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Etkinlik tamamlama başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         if (result.Value > 0)
@@ -293,7 +293,7 @@ public sealed partial class TicketingJobs
         if (!result.IsSuccess)
         {
             throw new InvalidOperationException(
-                $"Gunluk satis ozeti basarisiz: {result.Error.Code} - {result.Error.Message}");
+                $"Günlük satış özeti başarısız: {result.Error.Code} - {result.Error.Message}");
         }
 
         var summary = result.Value;
@@ -302,9 +302,9 @@ public sealed partial class TicketingJobs
         // cevirmeden.
         //
         // CA1873 bunu yakaladi: parametreyi burada bicimlendirseydik,
-        // log seviyesi kapali olsa BILE her calismada bir metin
+        // log seviyesi kapalı olsa BILE her calismada bir metin
         // ureterek bosa tahsis yapardik. Kaynak ureteci, metni
-        // yalnizca log gercekten yazilacaksa olusturuyor.
+        // yalnızca log gerçekten yazilacaksa olusturuyor.
         LogDailySummary(
             _logger,
             summary.Date,
@@ -320,38 +320,38 @@ public sealed partial class TicketingJobs
     [LoggerMessage(
         EventId = 9101,
         Level = LogLevel.Information,
-        Message = "{Count} rezervasyonun suresi doldu, koltuklari serbest birakildi.")]
+        Message = "{Count} rezervasyonun süresi doldu, koltukları serbest birakildi.")]
     private static partial void LogReservationsExpired(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9102,
         Level = LogLevel.Information,
-        Message = "Outbox islendi. Basarili: {Processed}, Basarisiz: {Failed}, Dead letter: {DeadLettered}")]
+        Message = "Outbox islendi. Başarılı: {Processed}, Başarısız: {Failed}, Dead letter: {DeadLettered}")]
     private static partial void LogOutboxSummary(
         ILogger logger, int processed, int failed, int deadLettered);
 
     [LoggerMessage(
         EventId = 9103,
         Level = LogLevel.Information,
-        Message = "{Count} etkinlik hatirlatmasi kuyruga alindi.")]
+        Message = "{Count} etkinlik hatirlatmasi kuyruga alındı.")]
     private static partial void LogRemindersQueued(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9106,
         Level = LogLevel.Information,
-        Message = "{Count} rezervasyon icin sure uyarisi gonderildi.")]
+        Message = "{Count} rezervasyon için süre uyarısı gönderildi.")]
     private static partial void LogExpiringWarned(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9105,
         Level = LogLevel.Information,
-        Message = "{Count} etkinlik tamamlandi olarak isaretlendi.")]
+        Message = "{Count} etkinlik tamamlandı olarak isaretlendi.")]
     private static partial void LogEventsCompleted(ILogger logger, int count);
 
     [LoggerMessage(
         EventId = 9104,
         Level = LogLevel.Information,
-        Message = "{Date} satis ozeti hazir. Bilet: {TicketCount}, Brut: {GrossAmount} {Currency}")]
+        Message = "{Date} satış özeti hazır. Bilet: {TicketCount}, Brut: {GrossAmount} {Currency}")]
     private static partial void LogDailySummary(
         ILogger logger, DateOnly date, int ticketCount, decimal grossAmount, string currency);
 }

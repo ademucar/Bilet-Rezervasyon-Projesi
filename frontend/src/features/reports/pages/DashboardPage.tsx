@@ -183,7 +183,7 @@ function OrganizerPanel() {
         <MetricCard
           label="Doluluk oranı"
           value={`%${d.occupancyRate}`}
-          hint="Satilan / uretilmis koltuk"
+          hint="Satılan / üretilmiş koltuk"
         />
         <MetricCard
           label="En çok satan bilet türü"

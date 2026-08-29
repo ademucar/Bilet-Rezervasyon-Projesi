@@ -157,8 +157,8 @@ export function VenuesPage() {
         /* ==========================================================
            LİSTE DEĞİL TABLO
            ==========================================================
-           Önceki hâl, her mekân için ayrı çerçeveli bir kutuydu.
-           Yönetim ekranında asıl iş KARŞILAŞTIRMAK: hangi mekânda
+           Önceki hâl, her mekan için ayrı çerçeveli bir kutuydu.
+           Yönetim ekranında asıl iş KARŞILAŞTIRMAK: hangi mekanda
            kaç salon var, hangi şehirde yığılma var.
 
            Ayrı kutular bunu zorlaştırıyordu; her satır kendi
@@ -173,7 +173,7 @@ export function VenuesPage() {
            ========================================================== */
         <div className="overflow-x-auto rounded-[4px] border border-slate-300 bg-white">
           <div className="flex items-center gap-2.5 border-b border-slate-300 bg-slate-50 px-3.5 py-2.5">
-            <span className="font-display text-sm font-semibold text-slate-900">Mekânlar</span>
+            <span className="font-display text-sm font-semibold text-slate-900">Mekanlar</span>
             <span className="num border border-slate-300 bg-white px-1.5 py-px text-[11px] text-slate-600">
               {venuesQuery.data.totalCount}
             </span>
@@ -183,7 +183,7 @@ export function VenuesPage() {
             <thead>
               <tr className="border-b border-slate-200">
                 <th scope="col" className="label-xs px-3.5 py-2 text-left">
-                  Mekân
+                  Mekan
                 </th>
                 <th scope="col" className="label-xs px-3.5 py-2 text-left">
                   Şehir

@@ -9,14 +9,14 @@ namespace Ticketing.Domain.Entities;
 /// PROJENIN KALBI
 /// ==================================================================
 ///
-/// Bir koltugun BELIRLI BIR ETKINLIK OTURUMUNDAKI durumu.
-/// PDF'in "es zamanli rezervasyon" problemi tam olarak bu satirlarda cozuluyor.
+/// Bir koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
+/// PDF'in "es zamanlı rezervasyon" problemi tam olarak bu satirlarda cozuluyor.
 ///
 /// Seat (fiziksel koltuk) ile karistirma:
-///   Seat      = "Salon A, Orta Blok, C sirasi, 12 numara" -- degismez
-///   EventSeat = "12 Mart 20:00 seansinda C-12: satilmis, 450 TL, VIP"
+///   Seat      = "Salon A, Orta Blok, C sırası, 12 numara" -- degismez
+///   EventSeat = "12 Mart 20:00 seansinda C-12: satılmış, 450 TL, VIP"
 ///
-/// Her oturum icin Seat tablosundan kopyalanarak uretilir.
+/// Her oturum için Seat tablosundan kopyalanarak üretilir.
 /// 1000 koltuklu salon + 3 oturum = 3000 EventSeat satiri.
 /// Bu kasitli bir veri cogaltmasidir: her satirin BAGIMSIZ olarak
 /// kilitlenebilmesi gerekiyor.
@@ -24,20 +24,20 @@ namespace Ticketing.Domain.Entities;
 /// ------------------------------------------------------------------
 /// UC KATMANLI SAVUNMA
 /// ------------------------------------------------------------------
-/// Ayni koltugun iki kisiye satilmasini uc ayri katman engelliyor:
+/// Aynı koltuğun iki kisiye satilmasini uc ayrı katman engelliyor:
 ///
-///   1. Bu sinifin metotlari (Lock/MarkAsSold) durum kontrolu yapar.
-///      -> Kullaniciya anlamli hata mesaji vermek icin.
+///   1. Bu sinifin metotlari (Lock/MarkAsSold) durum kontrolü yapar.
+///      -> Kullanıcıya anlamlı hata mesaji vermek için.
 ///
 ///   2. RowVersion (PostgreSQL xmin) optimistic concurrency.
-///      -> Iki istek ayni anda gelirse biri DbUpdateConcurrencyException alir.
+///      -> Iki istek aynı anda gelirse biri DbUpdateConcurrencyException alır.
 ///
 ///   3. UNIQUE (EventSessionId, SeatId) index'i.
 ///      -> Yukaridakilerin hepsi atlansa bile veritabani ikinci satiri
 ///         olusturmaz. SON savunma hatti.
 ///
-/// Uc katmanin da olmasi gerekiyor. Biri "gereksiz" degil: her biri
-/// farkli bir hata sinifini yakaliyor.
+/// Uc katmanin da olmasını gerekiyor. Biri "gereksiz" değil: her biri
+/// farklı bir hata sinifini yakaliyor.
 /// ==================================================================
 /// </summary>
 public class EventSeat : ConcurrentEntity
@@ -58,41 +58,41 @@ public class EventSeat : ConcurrentEntity
     public Guid SeatId { get; private set; }
 
     /// <summary>
-    /// Bu koltugun hangi bilet turune (dolayisiyla hangi fiyata) ait oldugu.
+    /// Bu koltuğun hangi bilet turune (dolayisiyla hangi fiyata) ait olduğu.
     ///
-    /// PDF: "Ayni koltuk birden fazla aktif bilet turune atanamaz."
-    /// Bu alan tekil oldugu icin kural yapisal olarak garanti -- bir koltuk
-    /// ayni anda iki turde olamaz cunku tek bir TicketTypeId var.
+    /// PDF: "Aynı koltuk birden fazla aktif bilet turune atanamaz."
+    /// Bu alan tekil olduğu için kural yapisal olarak garanti -- bir koltuk
+    /// aynı anda iki turde olamaz çünkü tek bir TicketTypeId var.
     /// </summary>
     public Guid TicketTypeId { get; private set; }
 
     public EventSeatStatus Status { get; private set; }
 
     /// <summary>
-    /// Koltugu kilitleyen rezervasyon. Status = Locked iken dolu olmali.
+    /// Koltugu kilitleyen rezervasyon. Status = Locked iken dolu olmalı.
     /// </summary>
     public Guid? LockedByReservationId { get; private set; }
 
     /// <summary>
-    /// Kilidin bitis zamani.
+    /// Kilidin bitiş zamani.
     ///
     /// Neden Redis TTL'ine ek olarak burada da tutuluyor?
     /// Redis bir CACHE'tir; cokebilir, temizlenebilir, restart edilebilir.
-    /// Kilidin tek kaynagi Redis olsaydi Redis restart edildiginde tum
-    /// kilitler kaybolur ve ayni koltuk iki kisiye satilabilirdi.
+    /// Kilidin tek kaynagi Redis olsaydı Redis restart edildiginde tüm
+    /// kilitler kaybolur ve aynı koltuk iki kisiye satilabilirdi.
     ///
-    /// Dogruluk kaynagi (source of truth) her zaman veritabani olmali.
-    /// Redis hizlandirma icin var, dogruluk icin degil.
+    /// Dogruluk kaynagi (source of truth) her zaman veritabani olmalı.
+    /// Redis hizlandirma için var, dogruluk için değil.
     /// </summary>
     public DateTimeOffset? LockedUntil { get; private set; }
 
     /// <summary>
-    /// Satis anindaki fiyat. TicketType.Price'tan KOPYALANIR.
+    /// Satış anindaki fiyat. TicketType.Price'tan KOPYALANIR.
     ///
     /// Neden kopyaliyorum, her seferinde TicketType'tan okumuyorum?
-    /// Cunku organizator yarin fiyati degistirebilir. Kullanicinin bugun
+    /// Çünkü organizatör yarin fiyati degistirebilir. Kullanıcının bugun
     /// 450 TL'ye aldigi biletin fiyati, iade hesabinda 600 TL gorunmemeli.
-    /// Satis anindaki fiyat SABIT kalmali -- bu bir muhasebe gerekliligi.
+    /// Satış anindaki fiyat SABIT kalmali -- bu bir muhasebe gerekliligi.
     /// </summary>
     public Money Price { get; private set; }
 
@@ -112,12 +112,12 @@ public class EventSeat : ConcurrentEntity
     /// <summary>
     /// Koltuk su an satin alinabilir mi?
     ///
-    /// DIKKAT: "Status == Available" demek YETMEZ. Suresi dolmus bir kilit
-    /// de aslinda musait demektir -- background job henuz gelip temizlememis
-    /// olabilir. Job dakikada bir calisiyor; o bir dakika icinde koltuk
-    /// gereksiz yere dolu gorunurdu.
+    /// DIKKAT: "Status == Available" demek YETMEZ. Süresi dolmuş bir kilit
+    /// de aslında musait demektir -- background job henüz gelip temizlememis
+    /// olabilir. Job dakikada bir çalışıyor; o bir dakika içinde koltuk
+    /// gereksiz yere dolu görünürdü.
     ///
-    /// Bu yuzden "kilitli ama suresi gecmis" durumunu da musait sayiyorum.
+    /// Bu yüzden "kilitli ama süresi gecmis" durumunu da musait sayiyorum.
     /// </summary>
     public bool IsAvailableAt(DateTimeOffset moment)
     {
@@ -142,38 +142,38 @@ public class EventSeat : ConcurrentEntity
     // ---------------------------------------------------------------
 
     /// <summary>
-    /// Koltugu bir rezervasyon icin kilitler.
+    /// Koltugu bir rezervasyon için kilitler.
     ///
-    /// Bu metot BASARILI dondugunde is bitmis DEGILDIR. Nesne bellekte
-    /// degisti; asil kritik an SaveChangesAsync cagrisi. Orada
+    /// Bu metot BASARILI dondugunde is bitmis DEĞİLDİR. Nesne bellekte
+    /// değişti; asil kritik an SaveChangesAsync cagrisi. Orada
     /// PostgreSQL su sorguyu calistiracak:
     ///
     ///     UPDATE "EventSeats" SET "Status" = 2, ...
     ///     WHERE "Id" = @id AND xmin = @okunanDeger
     ///
-    /// Araya baskasi girip satiri degistirmisse 0 satir etkilenir ve
+    /// Araya başkası girip satiri degistirmisse 0 satır etkilenir ve
     /// EF Core DbUpdateConcurrencyException firlatir. Bizim istegimiz
     /// kaybeder ama VERI BOZULMAZ -- ustune yazmayiz.
     /// </summary>
     /// <param name="reservationId">Kilidi alan rezervasyon.</param>
     /// <param name="lockedUntil">Kilidin bitecegi an (UTC).</param>
-    /// <param name="now">Su anki zaman. Test edilebilirlik icin disaridan aliniyor.</param>
+    /// <param name="now">Su anki zaman. Test edilebilirlik için disaridan aliniyor.</param>
     public void Lock(Guid reservationId, DateTimeOffset lockedUntil, DateTimeOffset now)
     {
         if (!IsAvailableAt(now))
         {
-            // Kullaniciya HANGI koltugun kapildigini soyleyebilmek icin
-            // hata kodunu ayirt edici tutuyorum. Frontend bu kodu gorunce
+            // Kullanıcıya HANGI koltuğun kapildigini soyleyebilmek için
+            // hata kodunu ayırt edici tutuyorum. Frontend bu kodu gorunce
             // koltuk haritasini yenileyecek.
             throw new DomainException(
-                "Koltuk su anda musait degil.",
+                "Koltuk su anda musait değil.",
                 Status == EventSeatStatus.Sold ? "seat.already_sold" : "seat.already_locked");
         }
 
         if (lockedUntil <= now)
         {
             throw new DomainException(
-                "Kilit bitis zamani gelecekte olmalidir.",
+                "Kilit bitiş zamani gelecekte olmalıdır.",
                 "seat.invalid_lock_expiry");
         }
 
@@ -185,24 +185,24 @@ public class EventSeat : ConcurrentEntity
     /// <summary>
     /// Kilit suresini uzatir.
     ///
-    /// Rezervasyon suresi uzatildiginda koltugun suresi de uzatilmali;
-    /// aksi halde rezervasyon gecerli gorunurken koltuk musait olur ve
-    /// baskasi alabilir.
+    /// Rezervasyon süresi uzatildiginda koltuğun süresi de uzatilmali;
+    /// aksi halde rezervasyon geçerli gorunurken koltuk musait olur ve
+    /// başkası alabilir.
     /// </summary>
     public void ExtendLock(DateTimeOffset newLockedUntil)
     {
         if (Status != EventSeatStatus.Locked)
         {
             throw new DomainException(
-                "Yalnizca kilitli koltugun suresi uzatilabilir.",
+                "Yalnızca kilitli koltuğun süresi uzatilabilir.",
                 "seat.not_locked");
         }
 
-        // Suresi KISALTMAYI engelliyorum.
+        // Süresi KISALTMAYI engelliyorum.
         //
-        // Neden? Uzatma islemi yalnizca ileriye dogru olmali. Yanlis
-        // bir cagri sureyi kisaltsaydi kullanici koltugunu beklenenden
-        // once kaybederdi -- ve sebebi hic anlasilmazdi.
+        // Neden? Uzatma islemi yalnızca ileriye doğru olmalı. Yanlis
+        // bir cagri süreyi kisaltsaydi kullanıcı koltuğunu beklenenden
+        // önce kaybederdi -- ve sebebi hiç anlasilmazdi.
         if (LockedUntil.HasValue && newLockedUntil <= LockedUntil.Value)
         {
             return;
@@ -212,19 +212,19 @@ public class EventSeat : ConcurrentEntity
     }
 
     /// <summary>
-    /// Kilidi kaldirir, koltugu tekrar satisa acar.
-    /// Cagrilma yerleri: rezervasyon iptali, odeme basarisizligi,
-    /// sure asimi job'i.
+    /// Kilidi kaldirir, koltuğu tekrar satışa acar.
+    /// Cagrilma yerleri: rezervasyon iptali, ödeme basarisizligi,
+    /// süre asimi job'i.
     /// </summary>
     public void Release()
     {
         if (Status == EventSeatStatus.Sold)
         {
-            // Satilmis koltugu "serbest birakmak" ciddi bir veri bozulmasi
-            // olurdu: bileti olan kullanicinin koltugu baskasina satilirdi.
-            // Iade sureci ayri bir metot (Refund) uzerinden isler.
+            // Satılmış koltuğu "serbest birakmak" ciddi bir veri bozulmasi
+            // olurdu: bileti olan kullanıcının koltuğu baskasina satilirdi.
+            // İade sureci ayrı bir metot (Refund) üzerinden isler.
             throw new DomainException(
-                "Satilmis koltuk serbest birakilamaz. Iade sureci kullanilmalidir.",
+                "Satilmis koltuk serbest birakilamaz. İade sureci kullanılmalıdır.",
                 "seat.already_sold");
         }
 
@@ -234,42 +234,42 @@ public class EventSeat : ConcurrentEntity
     }
 
     /// <summary>
-    /// Odeme basarili olduktan sonra koltugu satilmis olarak isaretler.
+    /// Ödeme başarılı olduktan sonra koltuğu satılmış olarak isaretler.
     ///
-    /// reservationId parametresini DOGRULAMA icin aliyorum, atama icin degil.
-    /// Amac: A rezervasyonunun kilitledigi koltugu B rezervasyonunun
-    /// satmasini engellemek. Bu kontrol olmasaydi, ödeme akisindaki bir
-    /// mantik hatasi baskasinin koltugunu satabilirdi.
+    /// reservationId parametresini DOGRULAMA için alıyorum, atama için değil.
+    /// Amac: A rezervasyonunun kilitledigi koltuğu B rezervasyonunun
+    /// satmasini engellemek. Bu kontrol olmasaydı, ödeme akisindaki bir
+    /// mantik hatası baskasinin koltuğunu satabilirdi.
     /// </summary>
     public void MarkAsSold(Guid reservationId)
     {
         if (Status != EventSeatStatus.Locked)
         {
             throw new DomainException(
-                $"Yalnizca kilitli koltuk satilabilir. Mevcut durum: {Status}",
+                $"Yalnızca kilitli koltuk satilabilir. Mevcut durum: {Status}",
                 "seat.not_locked");
         }
 
         if (LockedByReservationId != reservationId)
         {
             throw new DomainException(
-                "Bu koltuk baska bir rezervasyon tarafindan kilitlenmis.",
+                "Bu koltuk başka bir rezervasyon tarafından kilitlenmis.",
                 "seat.locked_by_another_reservation");
         }
 
         Status = EventSeatStatus.Sold;
-        LockedUntil = null;   // artik sure kavrami yok, koltuk kalici olarak satildi
+        LockedUntil = null;   // artık süre kavrami yok, koltuk kalici olarak satıldı
     }
 
     /// <summary>
-    /// Iade sonrasi koltugu tekrar satisa acar.
+    /// İade sonrası koltuğu tekrar satışa acar.
     /// </summary>
     public void Refund()
     {
         if (Status != EventSeatStatus.Sold)
         {
             throw new DomainException(
-                "Yalnizca satilmis koltuk iade edilebilir.",
+                "Yalnızca satilmis koltuk iade edilebilir.",
                 "seat.not_sold");
         }
 
@@ -279,14 +279,14 @@ public class EventSeat : ConcurrentEntity
     }
 
     /// <summary>
-    /// Koltugu satisa kapatir (ses masasi, kirik koltuk, protokol yeri).
+    /// Koltugu satışa kapatır (ses masasi, kırık koltuk, protokol yeri).
     /// </summary>
     public void Block()
     {
         if (Status == EventSeatStatus.Sold)
         {
             throw new DomainException(
-                "Satilmis koltuk bloke edilemez.",
+                "Satılmış koltuk bloke edilemez.",
                 "seat.already_sold");
         }
 
@@ -299,7 +299,7 @@ public class EventSeat : ConcurrentEntity
     {
         if (Status != EventSeatStatus.Blocked)
         {
-            throw new DomainException("Koltuk bloke degil.", "seat.not_blocked");
+            throw new DomainException("Koltuk bloke değil.", "seat.not_blocked");
         }
 
         Status = EventSeatStatus.Available;

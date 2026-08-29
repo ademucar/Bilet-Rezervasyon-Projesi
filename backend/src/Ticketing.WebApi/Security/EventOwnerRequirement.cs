@@ -6,9 +6,9 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.WebApi.Security;
 
 /// <summary>
-/// "Bu etkinligin sahibi misin?" gereksinimi.
+/// "Bu etkinliğin sahibi misin?" gereksinimi.
 ///
-/// PDF Sprint 3: "Resource based authorization uygulanmalidir."
+/// PDF Sprint 3: "Resource based authorization uygulanmalıdır."
 /// PDF Sprint 5: "Sadece kendi etkinliklerini guncelleyebilir."
 /// </summary>
 public sealed class EventOwnerRequirement : IAuthorizationRequirement;
@@ -17,23 +17,23 @@ public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 /// ==================================================================
 /// ROL BAZLI ile KAYNAK BAZLI YETKILENDIRME ARASINDAKI FARK
 /// ==================================================================
-/// Rol bazli:    "Organizator musun?"        -> token'a bakar, DB'ye gitmez
-/// Kaynak bazli: "BU etkinligin sahibi misin?" -> DB'ye BAKMAK ZORUNDA
+/// Rol bazlı:    "Organizatör musun?"        -> token'a bakar, DB'ye gitmez
+/// Kaynak bazlı: "BU etkinliğin sahibi misin?" -> DB'ye BAKMAK ZORUNDA
 ///
-/// Ikincisi olmadan su acik olusur: Organizator rolune sahip herkes,
-/// BASKA organizatorlerin etkinliklerini duzenleyebilir. Rakip bir
+/// Ikincisi olmadan su açık olusur: Organizatör rolune sahip herkes,
+/// BASKA organizatorlerin etkinliklerini düzenleyebilir. Rakip bir
 /// organizatorun konserini iptal edebilir.
 ///
-/// [Authorize(Roles = "Organizer")] bunu ENGELLEYEMEZ -- cunku token
-/// yalnizca "bu kisi organizator" der, "bu etkinlik onun" demez.
+/// [Authorize(Roles = "Organizer")] bunu ENGELLEYEMEZ -- çünkü token
+/// yalnızca "bu kişi organizatör" der, "bu etkinlik onun" demez.
 /// ==================================================================
 ///
-/// NEDEN Application katmaninda degil de BURADA?
-/// Handler icinde de kontrol edebilirdik. Ama o zaman her handler'da
+/// NEDEN Application katmaninda değil de BURADA?
+/// Handler içinde de kontrol edebilirdik. Ama o zaman her handler'da
 /// tekrar yazmamiz gerekirdi ve birinde unutmak yeterdi. Burada,
-/// endpoint'e girmeden once calisiyor ve unutulmasi imkansiz --
-/// policy adini yazmayi unutursan endpoint zaten korumasiz kalir ve
-/// bu code review'da hemen gorunur.
+/// endpoint'e girmeden önce çalışıyor ve unutulmasi imkansiz --
+/// policy adını yazmayi unutursan endpoint zaten korumasiz kalır ve
+/// bu code review'da hemen görünür.
 /// </summary>
 internal sealed class EventOwnerAuthorizationHandler
     : AuthorizationHandler<EventOwnerRequirement>
@@ -57,13 +57,13 @@ internal sealed class EventOwnerAuthorizationHandler
 
         if (httpContext is null)
         {
-            return;   // Basarisiz sayilir; Succeed cagrilmadi.
+            return;   // Başarısız sayilir; Succeed cagrilmadi.
         }
 
         // ---- Admin her seye erisir ----
         //
-        // Bu satir olmasaydi admin, uygunsuz bir etkinligi askiya
-        // alamazdi -- cunku sahibi degil. Destek islerini yapamazdi.
+        // Bu satır olmasaydı admin, uygunsuz bir etkinligi askiya
+        // alamazdi -- çünkü sahibi değil. Destek islerini yapamazdi.
         if (context.User.IsInRole(Role.Names.Admin))
         {
             context.Succeed(requirement);
@@ -86,24 +86,24 @@ internal sealed class EventOwnerAuthorizationHandler
         }
 
         // ==============================================================
-        // KENDI KAPSAMIMI (scope) OLUSTURUYORUM
+        // KENDİ KAPSAMIMI (scope) OLUSTURUYORUM
         // ==============================================================
         // AuthorizationHandler SINGLETON olarak kaydedilir; DbContext ise
         // SCOPED. Singleton bir servise scoped bagimlilik enjekte etmek
         // "captive dependency" hatasidir: DbContext uygulama omru boyunca
-        // yasar, baglantiyi tutar ve es zamanli isteklerde bozulur.
+        // yasar, baglantiyi tutar ve es zamanlı isteklerde bozulur.
         //
-        // IServiceScopeFactory ile istek basina kendi kapsamimi acip
+        // IServiceScopeFactory ile istek başına kendi kapsamimi acip
         // kapatiyorum. Bu, singleton'dan scoped servise erismenin
-        // dogru yolu.
+        // doğru yolu.
         // ==============================================================
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
-        // Kullanicinin organizator profili -> etkinligin sahibi mi?
+        // Kullanıcının organizatör profili -> etkinliğin sahibi mi?
         //
-        // Tek sorguda birlestiriyorum: iki ayri sorgu yapsaydik
-        // (once profil, sonra etkinlik) her yetkilendirmede iki
+        // Tek sorguda birlestiriyorum: iki ayrı sorgu yapsaydik
+        // (önce profil, sonra etkinlik) her yetkilendirmede iki
         // gidis-donus olurdu.
         var isOwner = await dbContext.Events
             .AsNoTracking()
@@ -117,13 +117,13 @@ internal sealed class EventOwnerAuthorizationHandler
             context.Succeed(requirement);
         }
 
-        // Sahip degilse Succeed CAGIRMIYORUZ -> yetkilendirme basarisiz
+        // Sahip degilse Succeed CAGIRMIYORUZ -> yetkilendirme başarısız
         // -> 403 Forbidden.
         //
         // context.Fail() de cagirabilirdik ama o, DIGER handler'larin
-        // basarili olmasini da engeller. Sessizce basarisiz olmak,
-        // ileride bu policy'ye alternatif bir yol eklersek (ornegin
-        // "etkinlige atanmis yardimci kullanici") onun calismasina
+        // başarılı olmasini da engeller. Sessizce başarısız olmak,
+        // ileride bu policy'ye alternatif bir yol eklersek (örneğin
+        // "etkinlige atanmis yardimci kullanıcı") onun calismasina
         // izin verir.
     }
 
