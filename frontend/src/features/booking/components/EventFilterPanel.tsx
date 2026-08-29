@@ -71,9 +71,9 @@ export function EventFilterPanel({
   const labelClass = 'block text-xs font-medium text-slate-600'
 
   return (
-    <aside className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <aside className="rounded-[4px] border border-slate-300 bg-white p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-slate-900">Filtreler</h2>
+        <h2 className="font-display font-semibold text-slate-900">Filtreler</h2>
 
         {activeCount > 0 && (
           <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">

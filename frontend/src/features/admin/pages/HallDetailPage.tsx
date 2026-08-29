@@ -52,7 +52,7 @@ export function HallDetailPage() {
           setFormError(null)
           createLayout.mutate({ name: data.name, description: data.description || undefined })
         })}
-        className="mb-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6"
+        className="mb-6 space-y-4 rounded-[4px] border border-slate-300 bg-white p-6"
         noValidate
       >
         <h2 className="text-sm font-semibold text-slate-900">Yeni oturma planı</h2>
@@ -78,11 +78,11 @@ export function HallDetailPage() {
       </form>
 
       {layoutsQuery.isPending && (
-        <div className="h-32 animate-pulse rounded-xl bg-slate-200" aria-busy="true" />
+        <div className="h-32 animate-pulse rounded-[4px] bg-slate-200" aria-busy="true" />
       )}
 
       {layoutsQuery.data?.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+        <div className="rounded-[4px] border border-slate-300 bg-slate-50 p-12 text-center">
           <p className="text-sm text-slate-500">Bu salonda henüz oturma planı yok.</p>
         </div>
       )}
@@ -93,7 +93,7 @@ export function HallDetailPage() {
             <li key={l.id}>
               <Link
                 to={`/admin/oturma-planlari/${l.id}`}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300"
+                className="flex items-center justify-between rounded-[4px] border border-slate-300 bg-white p-4 transition-colors hover:border-brand-300"
               >
                 <div>
                   <p className="font-medium text-slate-900">{l.name}</p>

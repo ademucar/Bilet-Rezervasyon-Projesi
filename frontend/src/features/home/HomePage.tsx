@@ -33,11 +33,11 @@ export function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-10">
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
           Hos geldiniz{user ? `, ${user.firstName}` : ''}
         </h1>
         <p className="mt-1 text-sm text-slate-500">Nereden devam etmek istersiniz?</p>
@@ -47,17 +47,17 @@ export function HomePage() {
             <Link
               key={card.to}
               to={card.to}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+              className="rounded-[4px] border border-slate-300 bg-white p-5 transition-shadow hover:shadow-md"
             >
-              <h2 className="font-semibold text-slate-900">{card.title}</h2>
+              <h2 className="font-display font-semibold text-slate-900">{card.title}</h2>
               <p className="mt-2 text-sm text-slate-500">{card.description}</p>
             </Link>
           ))}
         </div>
 
         {user && (
-          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">Hesabım</h2>
+          <section className="mt-8 rounded-[4px] border border-slate-300 bg-white p-6">
+            <h2 className="font-display text-lg font-semibold text-slate-900">Hesabım</h2>
 
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex gap-2">

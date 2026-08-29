@@ -5,15 +5,20 @@ import { QRCodeSVG } from 'qrcode.react'
 import { SiteHeader } from '../../../components/layout/SiteHeader'
 import { Alert } from '../../../components/ui/Alert'
 import { toProblem } from '../../../lib/api/client'
-import { formatDateTime, formatMoney } from '../../../lib/format'
+import { formatDateParts, formatDateTime, formatMoney } from '../../../lib/format'
 import { bookingApi, TicketStatus, type TicketDto } from '../api/bookingApi'
 
-const STATUS_LABELS: Record<number, { text: string; className: string }> = {
-  [TicketStatus.Active]: { text: 'Geçerli', className: 'bg-emerald-50 text-emerald-700' },
-  [TicketStatus.Used]: { text: 'Kullanıldı', className: 'bg-slate-100 text-slate-600' },
-  [TicketStatus.Cancelled]: { text: 'İptal', className: 'bg-red-50 text-red-700' },
-  [TicketStatus.Refunded]: { text: 'İade edildi', className: 'bg-amber-50 text-amber-700' },
-  [TicketStatus.Expired]: { text: 'Süresi doldu', className: 'bg-slate-100 text-slate-600' },
+// Durum -> etiket metni + NOKTA rengi.
+//
+// Rozet artık dolgu değil: koçanın sol üstünde küçük bir nokta ve
+// büyük harf etiket duruyor. Dolgu rozet, biletin kendi zemini
+// (beyaz kâğıt) üzerinde ikinci bir kart gibi duruyordu.
+const STATUS_LABELS: Record<number, { text: string; dot: string; tone: string }> = {
+  [TicketStatus.Active]: { text: 'Geçerli', dot: 'bg-emerald-600', tone: 'text-emerald-700' },
+  [TicketStatus.Used]: { text: 'Kullanıldı', dot: 'bg-slate-400', tone: 'text-slate-500' },
+  [TicketStatus.Cancelled]: { text: 'İptal', dot: 'bg-red-600', tone: 'text-red-700' },
+  [TicketStatus.Refunded]: { text: 'İade edildi', dot: 'bg-amber-600', tone: 'text-amber-700' },
+  [TicketStatus.Expired]: { text: 'Süresi doldu', dot: 'bg-slate-400', tone: 'text-slate-500' },
 }
 
 /**
@@ -33,11 +38,13 @@ export function MyTicketsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Biletlerim</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          Biletlerim
+        </h1>
 
         {isFreshPurchase && (
           <div className="mt-4">
@@ -82,13 +89,13 @@ export function MyTicketsPage() {
         {ticketsQuery.isPending && (
           <div className="mt-6 space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-44 animate-pulse rounded-2xl bg-slate-200" />
+              <div key={i} className="h-44 animate-pulse rounded-[4px] bg-slate-200" />
             ))}
           </div>
         )}
 
         {ticketsQuery.data?.length === 0 && (
-          <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <div className="mt-6 rounded-[4px] border border-slate-300 bg-white p-12 text-center">
             <p className="text-sm text-slate-500">Bu filtrede bilet yok.</p>
             <Link
               to="/etkinlikler"
@@ -114,90 +121,125 @@ export function MyTicketsPage() {
 function TicketCard({ ticket }: { ticket: TicketDto }) {
   const badge = STATUS_LABELS[ticket.status] ?? {
     text: 'Bilinmiyor',
-    className: 'bg-slate-100 text-slate-600',
+    dot: 'bg-slate-400',
+    tone: 'text-slate-500',
   }
 
+  // Kullanılmış / iptal / iade biletler SOLUK. Kullanıcının
+  // listesinde asıl aradığı şey geçerli bilet; diğerleri arşiv.
+  const olu = ticket.status !== TicketStatus.Active
+  const tarih = formatDateParts(ticket.sessionStartDate)
+
   return (
-    <article className="flex flex-wrap gap-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="min-w-56 flex-1">
-        <div className="flex items-start justify-between gap-2">
-          <h2 className="font-semibold text-slate-900">{ticket.eventTitle}</h2>
-          <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${badge.className}`}
-          >
+    /* ==============================================================
+       BİLET, KART GİBİ DEĞİL BİLET GİBİ GÖRÜNMELİ
+       ==============================================================
+       Önceki hâl köşesi 16px yuvarlatılmış, gölgeli bir kutuydu --
+       sitedeki diğer her kutuyla aynı. Oysa bu ekrandaki nesne
+       gerçek dünyada bir KOÇAN: kapıda uzatılan şey.
+
+       O hissi veren iki ayrıntı var ve ikisi de bedava:
+         1. Sağda koparma çizgisi (dashed) ile ayrılmış QR koçanı
+         2. Keskin köşe + tek çizgi çerçeve, gölge yok
+
+       Gradyan, emoji veya süs ikonu koymadım; yapı zaten söylüyor.
+       ============================================================== */
+    <article
+      className={`flex overflow-hidden rounded-[4px] border ${
+        olu ? 'border-slate-200 bg-slate-50 opacity-75' : 'border-slate-300 bg-white'
+      }`}
+    >
+      {/* ---- SOL GÖVDE ---- */}
+      <div className="min-w-0 flex-grow p-4">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className={`size-1.5 shrink-0 rounded-full ${badge.dot}`} aria-hidden="true" />
+          <span className={`label-xs ${badge.tone}`}>
             {badge.text}
+            {ticket.usedAt && ` \u00b7 ${formatDateTime(ticket.usedAt)}`}
           </span>
         </div>
 
-        <p className="mt-1 text-sm text-slate-500">
-          {formatDateTime(ticket.sessionStartDate)} &middot; {ticket.venueName}
+        <h2 className="font-display text-lg font-bold leading-tight tracking-tight text-slate-900">
+          {ticket.eventTitle}
+        </h2>
+        <p className="num mt-1 text-xs font-medium text-brand-600">
+          {tarih.gun} {tarih.ay.toLocaleUpperCase('tr-TR')} {tarih.yil} &middot; {tarih.saat}
         </p>
 
-        <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+        {/* Koltuk / blok / tür: üç sütun, hepsi aynı hizada.
+            Eski hâlde bunlar iki sütunlu bir dl idi ve "Koltuk"
+            satırı "Bilet no" ile aynı görsel ağırlıktaydı.
+            Kapıda sorulan şey KOLTUK; en iri rakam o olmalı. */}
+        <dl className="mt-3.5 grid grid-cols-3 gap-3">
           <div>
-            <dt className="text-slate-500">Koltuk</dt>
-            <dd className="font-medium text-slate-900">
-              {ticket.seatLabel} ({ticket.sectionName})
+            <dt className="label-xs">Koltuk</dt>
+            <dd className="num mt-1 text-[17px] font-semibold text-slate-900">
+              {ticket.seatLabel}
             </dd>
           </div>
-          <div>
-            <dt className="text-slate-500">Bilet türü</dt>
-            <dd className="font-medium text-slate-900">{ticket.ticketTypeName}</dd>
-          </div>
-          <div>
-            <dt className="text-slate-500">Tutar</dt>
-            <dd className="font-medium text-slate-900">
-              {formatMoney(ticket.price, ticket.currency)}
+          <div className="min-w-0">
+            <dt className="label-xs">Blok</dt>
+            <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
+              {ticket.sectionName}
             </dd>
           </div>
-          <div>
-            <dt className="text-slate-500">Bilet no</dt>
-            <dd className="font-mono text-xs text-slate-700">{ticket.ticketNumber}</dd>
+          <div className="min-w-0">
+            <dt className="label-xs">Tür</dt>
+            <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
+              {ticket.ticketTypeName}
+            </dd>
           </div>
         </dl>
 
-        {ticket.usedAt && (
-          <p className="mt-3 text-xs text-slate-500">
-            {formatDateTime(ticket.usedAt)} tarihinde girişte okutuldu.
-          </p>
-        )}
+        <div className="mt-3.5 flex items-end justify-between gap-3 border-t border-dashed border-slate-300 pt-3">
+          <div className="min-w-0">
+            <p className="label-xs">Mekân</p>
+            <p className="truncate text-[13px] text-slate-700">{ticket.venueName}</p>
+          </div>
+          <span className="num shrink-0 text-base font-semibold text-slate-900">
+            {formatMoney(ticket.price, ticket.currency)}
+          </span>
+        </div>
       </div>
 
       {/* ============================================================
-          QR KODU
+          SAĞ: QR KOÇANI
           ============================================================
-          Backend qrValue'yu YALNIZCA aktif biletlerde dönüyor
-          (GetMyTicketsQueryHandler). İptal edilmiş biletin QR'ini
-          gondermenin faydasi yok ve hassas bir değeri gereksiz yere
-          yaymak olurdu.
+          Koparma çizgisi (border-l-dashed) biletin tamamını "koçan"
+          yapan tek ayrıntı.
 
-          Bu yuzden burada `qrValue` null olabilir ve bunu bir HATA
-          gibi değil, beklenen bir durum gibi ele alıyorum.
+          Backend qrValue'yu YALNIZCA aktif biletlerde dönüyor
+          (GetMyTicketsQueryHandler). İptal edilmiş biletin QR
+          değerini göndermenin faydası yok ve hassas bir değeri
+          gereksiz yere yaymak olurdu. Bu yüzden `qrValue` null
+          olabilir ve bunu bir HATA gibi değil, beklenen bir durum
+          gibi ele alıyorum.
 
           QRCodeSVG kullanıyorum, QRCodeCanvas değil:
-            - SVG vektorel; yakinlastirinca veya yazdirinca bulanmaz.
-              Turnikedeki okuyucunun keskin kenarlara ihtiyaci var.
+            - SVG vektörel; yakınlaştırınca veya yazdırınca bulanmaz.
+              Turnikedeki okuyucunun keskin kenarlara ihtiyacı var.
             - Canvas ise sabit piksel; büyük ekranda kareli görünür.
 
-          level="M": hata duzeltme seviyesi. Karekodun bir kismi
-          zarar gorse bile (ekran cizigi, parmak izi) okunabilir.
-          "H" daha dayanikli ama kodu yogunlastirir; telefon
-          ekranindan okutmada M yeterli.
+          level="M": hata düzeltme seviyesi. Karekodun bir kısmı
+          zarar görse bile (ekran çiziği, parmak izi) okunabilir.
+          "H" daha dayanıklı ama kodu yoğunlaştırır; telefon
+          ekranından okutmada M yeterli.
           ============================================================ */}
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex w-[140px] shrink-0 flex-col items-center justify-center gap-2.5 border-l border-dashed border-slate-400 bg-slate-50 p-4">
         {ticket.qrValue ? (
           <>
-            <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <QRCodeSVG value={ticket.qrValue} size={132} level="M" />
+            <div className="border border-slate-300 bg-white p-1.5">
+              <QRCodeSVG value={ticket.qrValue} size={96} level="M" />
             </div>
-            <p className="mt-2 text-xs text-slate-500">Girişte okutun</p>
+            <div className="text-center">
+              <p className="label-xs">Bilet no</p>
+              <p className="num mt-1 break-all text-[10px] text-slate-600">{ticket.ticketNumber}</p>
+            </div>
           </>
         ) : (
-          <div className="flex h-[156px] w-[156px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center">
-            <p className="text-xs text-slate-500">
-              Bu bilet artık geçerli olmadığı için QR kodu gösterilmiyor.
-            </p>
-          </div>
+          <p className="text-center text-[11px] leading-relaxed text-slate-500">
+            Bu bilet artık geçerli olmadığı için QR kodu gösterilmiyor.
+          </p>
         )}
       </div>
     </article>

@@ -170,10 +170,10 @@ export function ReservationPage() {
 
   if (reservationQuery.isPending) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-100">
         <SiteHeader />
         <div className="mx-auto max-w-3xl px-4 py-8">
-          <div className="h-80 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-80 animate-pulse rounded-[4px] bg-slate-200" />
         </div>
       </div>
     )
@@ -181,7 +181,7 @@ export function ReservationPage() {
 
   if (reservationQuery.isError || !reservation) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-100">
         <SiteHeader />
         <div className="mx-auto max-w-3xl px-4 py-8">
           <Alert variant="error">{toProblem(reservationQuery.error).detail}</Alert>
@@ -263,8 +263,8 @@ export function ReservationPage() {
         )}
 
         {/* ---- OZET ---- */}
-        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="font-semibold text-slate-900">{reservation.eventTitle}</h2>
+        <section className="mt-6 rounded-[4px] border border-slate-300 bg-white p-6">
+          <h2 className="font-display font-semibold text-slate-900">{reservation.eventTitle}</h2>
           <p className="mt-1 text-sm text-slate-500">
             {formatDateTime(reservation.sessionStartDate)} &middot; {reservation.venueName}
           </p>
@@ -285,7 +285,7 @@ export function ReservationPage() {
 
           <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
             <span className="text-sm text-slate-500">Toplam</span>
-            <span className="text-xl font-semibold text-slate-900">
+            <span className="font-display text-xl font-semibold tracking-tight text-slate-900">
               {formatMoney(reservation.totalAmount, reservation.currency)}
             </span>
           </div>
@@ -303,8 +303,8 @@ export function ReservationPage() {
           </div>
         ) : (
           !isDead && (
-            <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="font-semibold text-slate-900">Ödeme</h2>
+            <section className="mt-6 rounded-[4px] border border-slate-300 bg-white p-6">
+              <h2 className="font-display font-semibold text-slate-900">Ödeme</h2>
 
               {startPayment.isError && (
                 <div className="mt-3">
@@ -412,7 +412,7 @@ function PaymentSimulation({
   }
 
   return (
-    <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5">
+    <div className="mt-3 rounded-[4px] border border-slate-300 bg-slate-50 p-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
         Ödeme simülasyonu
       </p>

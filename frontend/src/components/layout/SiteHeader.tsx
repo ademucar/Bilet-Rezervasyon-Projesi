@@ -40,9 +40,9 @@ export function SiteHeader() {
     }`
 
   return (
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-slate-300 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
-        <NavLink to="/" className="text-lg font-bold text-slate-900">
+        <NavLink to="/" className="font-display text-lg font-bold tracking-tight text-slate-900">
           Biletim
         </NavLink>
 

@@ -37,11 +37,13 @@ export function MyReservationsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Rezervasyonlarim</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          Rezervasyonlarim
+        </h1>
 
         {reservationsQuery.isError && (
           <div className="mt-6">
@@ -52,13 +54,13 @@ export function MyReservationsPage() {
         {reservationsQuery.isPending && (
           <div className="mt-6 space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-32 animate-pulse rounded-2xl bg-slate-200" />
+              <div key={i} className="h-32 animate-pulse rounded-[4px] bg-slate-200" />
             ))}
           </div>
         )}
 
         {reservationsQuery.data?.length === 0 && (
-          <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <div className="mt-6 rounded-[4px] border border-slate-300 bg-white p-12 text-center">
             <p className="text-sm text-slate-500">Henüz rezervasyonunuz yok.</p>
             <Link
               to="/etkinlikler"
@@ -89,10 +91,10 @@ export function MyReservationsPage() {
               r.remainingSeconds > 0
 
             return (
-              <li key={r.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <li key={r.id} className="rounded-[4px] border border-slate-300 bg-white p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-semibold text-slate-900">{r.eventTitle}</h2>
+                    <h2 className="font-display font-semibold text-slate-900">{r.eventTitle}</h2>
                     <p className="mt-1 text-sm text-slate-500">
                       {formatDateTime(r.sessionStartDate)} &middot; {r.venueName}
                     </p>
@@ -110,7 +112,7 @@ export function MyReservationsPage() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-display font-semibold text-slate-900">
                     {formatMoney(r.totalAmount, r.currency)}
                   </span>
 

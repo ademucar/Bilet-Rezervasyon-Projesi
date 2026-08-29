@@ -16,11 +16,13 @@ export function MyFavoritesPage() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Favorilerim</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          Favorilerim
+        </h1>
 
         {favoritesQuery.isError && (
           <div className="mt-6">
@@ -31,13 +33,13 @@ export function MyFavoritesPage() {
         {favoritesQuery.isPending && (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {[1, 2].map((i) => (
-              <div key={i} className="h-36 animate-pulse rounded-2xl bg-slate-200" />
+              <div key={i} className="h-36 animate-pulse rounded-[4px] bg-slate-200" />
             ))}
           </div>
         )}
 
         {favoritesQuery.data?.length === 0 && (
-          <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <div className="mt-6 rounded-[4px] border border-slate-300 bg-white p-12 text-center">
             <p className="text-sm text-slate-500">
               Henüz favori etkinliğiniz yok. Etkinlik sayfasındaki kalp ikonuna dokunarak
               ekleyebilirsiniz.
@@ -74,7 +76,7 @@ export function MyFavoritesPage() {
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="font-semibold text-slate-900">{ev.title}</h2>
+                    <h2 className="font-display font-semibold text-slate-900">{ev.title}</h2>
 
                     {iptalEdildi && (
                       <span className="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">

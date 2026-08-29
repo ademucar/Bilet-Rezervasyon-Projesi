@@ -54,7 +54,7 @@ export function VenueDetailPage() {
   if (venueQuery.isPending) {
     return (
       <AdminLayout title="Yükleniyor...">
-        <div className="h-40 animate-pulse rounded-xl bg-slate-200" aria-busy="true" />
+        <div className="h-40 animate-pulse rounded-[4px] bg-slate-200" aria-busy="true" />
       </AdminLayout>
     )
   }
@@ -76,7 +76,7 @@ export function VenueDetailPage() {
       backTo={{ label: 'Mekanlar', to: '/admin/mekanlar' }}
     >
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Salonlar</h2>
+        <h2 className="font-display text-lg font-semibold text-slate-900">Salonlar</h2>
 
         <Button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Vazgeç' : 'Yeni salon'}</Button>
       </div>
@@ -88,7 +88,7 @@ export function VenueDetailPage() {
             // valueAsNumber ile capacity zaten sayi geliyor.
             createHall.mutate(data)
           })}
-          className="mb-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6"
+          className="mb-6 space-y-4 rounded-[4px] border border-slate-300 bg-white p-6"
           noValidate
         >
           {formError && <Alert variant="error">{formError}</Alert>}
@@ -121,7 +121,7 @@ export function VenueDetailPage() {
       )}
 
       {venue.halls.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+        <div className="rounded-[4px] border border-slate-300 bg-slate-50 p-12 text-center">
           <p className="text-sm text-slate-500">
             Bu mekanda henüz salon yok. Etkinlik oluşturabilmek için en az bir salon gerekir.
           </p>
@@ -132,7 +132,7 @@ export function VenueDetailPage() {
             <li key={h.id}>
               <Link
                 to={`/admin/salonlar/${h.id}`}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300"
+                className="flex items-center justify-between rounded-[4px] border border-slate-300 bg-white p-4 transition-colors hover:border-brand-300"
               >
                 <div>
                   <p className="font-medium text-slate-900">{h.name}</p>

@@ -86,7 +86,7 @@ export function VenuesPage() {
             setFormError(null)
             createMutation.mutate(data)
           })}
-          className="mb-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6"
+          className="mb-6 space-y-4 rounded-[4px] border border-slate-300 bg-white p-6"
           noValidate
         >
           <h2 className="text-sm font-semibold text-slate-900">Yeni mekan ekle</h2>
@@ -146,7 +146,7 @@ export function VenuesPage() {
       )}
 
       {venuesQuery.data?.items.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+        <div className="rounded-[4px] border border-slate-300 bg-slate-50 p-12 text-center">
           <p className="text-sm text-slate-500">
             {search ? `"${search}" için sonuç bulunamadı.` : 'Henüz mekan eklenmemiş.'}
           </p>
@@ -159,7 +159,7 @@ export function VenuesPage() {
             <li key={v.id}>
               <Link
                 to={`/admin/mekanlar/${v.id}`}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300"
+                className="flex items-center justify-between rounded-[4px] border border-slate-300 bg-white p-4 transition-colors hover:border-brand-300"
               >
                 <div>
                   <p className="font-medium text-slate-900">{v.name}</p>
@@ -181,7 +181,7 @@ function SkeletonList() {
   return (
     <ul className="space-y-2" aria-busy="true" aria-label="Yükleniyor">
       {[1, 2, 3].map((i) => (
-        <li key={i} className="h-[74px] animate-pulse rounded-xl bg-slate-200" />
+        <li key={i} className="h-[74px] animate-pulse rounded-[4px] bg-slate-200" />
       ))}
     </ul>
   )

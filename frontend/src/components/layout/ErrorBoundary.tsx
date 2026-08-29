@@ -47,8 +47,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center px-4">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-            <h1 className="text-lg font-semibold text-slate-900">Bir şeyler ters gitti</h1>
+          <div className="w-full max-w-md rounded-[4px] border border-slate-300 bg-white p-8 text-center shadow-sm">
+            <h1 className="font-display text-lg font-semibold text-slate-900">
+              Bir şeyler ters gitti
+            </h1>
             <p className="mt-2 text-sm text-slate-500">
               Beklenmeyen bir hata oluştu. Sayfayı yenilemeyi deneyin.
             </p>

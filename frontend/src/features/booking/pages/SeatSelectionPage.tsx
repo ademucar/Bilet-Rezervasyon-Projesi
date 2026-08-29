@@ -35,12 +35,23 @@ import {
 // olan kullanıcı fareyle uzerine gelince veya ekran okuyucuyla
 // durumu ogrenebiliyor.
 // ===================================================================
+// KOYU ZEMIN PALETI -- harita artik slate-900 uzerinde duruyor.
+//
+// Acik zemindeki eski degerler (bos: #cbd5e1, satildi: #475569)
+// koyu zeminde ters calisiyordu: bos koltuklar en parlak sey
+// oluyordu ve harita "her yer dolu" gibi gorunuyordu.
+//
+// Yeni siralama, PARLAKLIGI anlamla eslestiriyor:
+//   satildi   en koyu  -- zeminle neredeyse ayni, gorulmesi gerekmiyor
+//   bos       orta     -- tiklanabilir, ama one cikmiyor
+//   tutuluyor kehribar -- "simdilik degil"
+//   secili    marka moru + halka -- sayfanin tek mor lekesi
 const SEAT_COLORS = {
-  available: '#cbd5e1',
-  selected: '#16a34a',
-  locked: '#fbbf24',
-  sold: '#475569',
-  blocked: '#e2e8f0',
+  available: '#334155',
+  selected: '#4f46e5',
+  locked: '#b45309',
+  sold: '#1e293b',
+  blocked: '#131c2e',
 } as const
 
 function seatStatusLabel(status: number): string {
@@ -435,12 +446,14 @@ export function SeatSelectionPage() {
   const problem = createReservation.isError ? toProblem(createReservation.error) : null
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-bold text-slate-900">Koltuk seçimi</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+            Koltuk seçimi
+          </h1>
 
           {/* PDF Sprint 10: "Bağlantı durumu göstergesi" */}
           <ConnectionIndicator status={hubStatus} />
@@ -510,7 +523,7 @@ export function SeatSelectionPage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div>
             {availabilityQuery.isPending ? (
-              <div className="h-96 animate-pulse rounded-2xl bg-slate-200" />
+              <div className="h-96 animate-pulse rounded-[4px] bg-slate-200" />
             ) : availabilityQuery.isError ? (
               <Alert variant="error">{toProblem(availabilityQuery.error).detail}</Alert>
             ) : (
@@ -519,6 +532,7 @@ export function SeatSelectionPage() {
                 onSeatClick={toggleSeat}
                 selectedSeatIds={activeSelected}
                 emptyMessage="Bu oturum için koltuk üretilmemiş."
+                tone="dark"
                 legend={[
                   { label: 'Boş', color: SEAT_COLORS.available },
                   { label: 'Seçiminiz', color: SEAT_COLORS.selected },
@@ -531,8 +545,8 @@ export function SeatSelectionPage() {
           </div>
 
           {/* ---- OZET PANELİ ---- */}
-          <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-6">
-            <h2 className="font-semibold text-slate-900">Seçiminiz</h2>
+          <aside className="h-fit rounded-[4px] border border-slate-300 bg-white p-5 lg:sticky lg:top-6">
+            <h2 className="font-display font-semibold text-slate-900">Seçiminiz</h2>
 
             {selectedSeats.length === 0 ? (
               <p className="mt-3 text-sm text-slate-500">
@@ -574,7 +588,7 @@ export function SeatSelectionPage() {
 
                 <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
                   <span className="text-sm text-slate-500">Toplam</span>
-                  <span className="text-lg font-semibold text-slate-900">
+                  <span className="font-display text-lg font-semibold text-slate-900">
                     {formatMoney(total, currency)}
                   </span>
                 </div>

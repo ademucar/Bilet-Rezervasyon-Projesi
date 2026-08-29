@@ -90,7 +90,7 @@ export function SeatLayoutPage() {
   if (layoutQuery.isPending) {
     return (
       <AdminLayout title="Yükleniyor...">
-        <div className="h-64 animate-pulse rounded-xl bg-slate-200" aria-busy="true" />
+        <div className="h-64 animate-pulse rounded-[4px] bg-slate-200" aria-busy="true" />
       </AdminLayout>
     )
   }
@@ -141,7 +141,7 @@ export function SeatLayoutPage() {
           {/* ---- Bölüm ekleme ---- */}
           <form
             onSubmit={sectionForm.handleSubmit((d) => addSection.mutate(d))}
-            className="space-y-4 rounded-xl border border-slate-200 bg-white p-6"
+            className="space-y-4 rounded-[4px] border border-slate-300 bg-white p-6"
             noValidate
           >
             <h2 className="text-sm font-semibold text-slate-900">1. Bölüm ekle</h2>
@@ -181,7 +181,7 @@ export function SeatLayoutPage() {
           {/* ---- Koltuk üretimi ---- */}
           <form
             onSubmit={seatsForm.handleSubmit((d) => generateSeats.mutate(d))}
-            className="space-y-4 rounded-xl border border-slate-200 bg-white p-6"
+            className="space-y-4 rounded-[4px] border border-slate-300 bg-white p-6"
             noValidate
           >
             <h2 className="text-sm font-semibold text-slate-900">2. Koltuk üret</h2>

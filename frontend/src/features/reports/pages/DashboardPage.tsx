@@ -23,7 +23,27 @@ import { useAuthStore } from '../../../stores/authStore'
 import { Roles } from '../../../types/auth'
 import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
 
-/** Tek bir metrik karti. */
+/**
+ * ==================================================================
+ * TEK BİR METRİK KARTI
+ * ==================================================================
+ * Çıplak bir sayı hiçbir şey anlatmıyor. "Bugün 50 bilet satıldı"
+ * iyi mi kötü mü? Dün 5 satıldıysa harika, 500 satıldıysa felaket.
+ *
+ * Bu yüzden karta ikinci bir satır ekledim: `hint`. Zaten vardı ama
+ * yalnızca gri küçük yazıydı; şimdi yön bilgisi taşıyabiliyor.
+ *
+ * ------------------------------------------------------------------
+ * RENK KUTUYU BOYAMIYOR
+ * ------------------------------------------------------------------
+ * Önceki hâlde uyarı tonundaki kartın TÜM zemini sarıya boyanıyordu.
+ * Dört kartlık bir sırada biri sarı biri kırmızı olunca panel
+ * alarm paneline dönüşüyordu -- oysa "%2 iade" normal bir sayı.
+ *
+ * Artık zemin her kartta beyaz; renk yalnızca SOL KENAR ÇİZGİSİNDE
+ * ve sayının kendisinde. Aynı bilgi, onda bir gürültü.
+ * ==================================================================
+ */
 function MetricCard({
   label,
   value,
@@ -35,17 +55,23 @@ function MetricCard({
   hint?: string
   tone?: 'default' | 'warning' | 'danger'
 }) {
-  const tonlar = {
-    default: 'border-slate-200',
-    warning: 'border-amber-200 bg-amber-50/50',
-    danger: 'border-red-200 bg-red-50/50',
+  const kenar = {
+    default: 'border-l-slate-300',
+    warning: 'border-l-amber-500',
+    danger: 'border-l-red-500',
+  }
+
+  const rakam = {
+    default: 'text-slate-900',
+    warning: 'text-amber-700',
+    danger: 'text-red-700',
   }
 
   return (
-    <div className={`rounded-2xl border bg-white p-4 shadow-sm ${tonlar[tone]}`}>
-      <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-slate-400">{hint}</p>}
+    <div className={`rounded-[4px] border border-l-2 border-slate-300 bg-white p-4 ${kenar[tone]}`}>
+      <p className="label-xs">{label}</p>
+      <p className={`num mt-2 text-[26px] font-semibold leading-none ${rakam[tone]}`}>{value}</p>
+      {hint && <p className="mt-2 text-xs text-slate-500">{hint}</p>}
     </div>
   )
 }
@@ -77,11 +103,11 @@ export function DashboardPage() {
   const [tab, setTab] = useState<'organizer' | 'admin'>('organizer')
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Panel</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">Panel</h1>
 
         {isAdmin && (
           <div className="mt-4 flex gap-2">
@@ -125,7 +151,7 @@ function OrganizerPanel() {
     return (
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-200" />
+          <div key={i} className="h-24 animate-pulse rounded-[4px] bg-slate-200" />
         ))}
       </div>
     )
@@ -170,8 +196,8 @@ function OrganizerPanel() {
       </div>
 
       {/* ---- 8) Günlük satış grafigi ---- */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="font-semibold text-slate-900">Günlük satış (son 30 gün)</h2>
+      <section className="rounded-[4px] border border-slate-300 bg-white p-5">
+        <h2 className="font-display font-semibold text-slate-900">Günlük satış (son 30 gün)</h2>
 
         {/* ResponsiveContainer: grafik kapsayicinin genisligine uyum
             saglar. Sabit genislik verseydik mobilde tasardi. */}
@@ -208,8 +234,8 @@ function OrganizerPanel() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ---- 9) Etkinlik bazlı gelir ---- */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Etkinlik bazlı gelir</h2>
+        <section className="rounded-[4px] border border-slate-300 bg-white p-5">
+          <h2 className="font-display font-semibold text-slate-900">Etkinlik bazlı gelir</h2>
 
           {d.revenueByEvent.length === 0 ? (
             <p className="mt-4 text-sm text-slate-500">Henüz satış yok.</p>
@@ -235,8 +261,8 @@ function OrganizerPanel() {
         </section>
 
         {/* ---- 10) Bölüm bazlı doluluk ---- */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Bölüm bazlı doluluk</h2>
+        <section className="rounded-[4px] border border-slate-300 bg-white p-5">
+          <h2 className="font-display font-semibold text-slate-900">Bölüm bazlı doluluk</h2>
 
           {d.sectionOccupancies.length === 0 ? (
             <p className="mt-4 text-sm text-slate-500">Henüz koltuk üretilmemiş.</p>
@@ -277,7 +303,7 @@ function AdminPanel() {
     return (
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-200" />
+          <div key={i} className="h-24 animate-pulse rounded-[4px] bg-slate-200" />
         ))}
       </div>
     )
@@ -329,8 +355,8 @@ function AdminPanel() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">En popüler sehirler</h2>
+        <section className="rounded-[4px] border border-slate-300 bg-white p-5">
+          <h2 className="font-display font-semibold text-slate-900">En popüler sehirler</h2>
           <p className="mt-0.5 text-xs text-slate-500">Satılan bilet sayısına göre</p>
 
           {d.topCities.length === 0 ? (
@@ -350,8 +376,8 @@ function AdminPanel() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-slate-900">En popüler kategoriler</h2>
+        <section className="rounded-[4px] border border-slate-300 bg-white p-5">
+          <h2 className="font-display font-semibold text-slate-900">En popüler kategoriler</h2>
           <p className="mt-0.5 text-xs text-slate-500">Satılan bilet sayısına göre</p>
 
           {d.topCategories.length === 0 ? (
@@ -399,8 +425,8 @@ function ReportExportPanel() {
     'transition-colors focus:border-brand-500'
 
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="font-semibold text-slate-900">Rapor indir</h2>
+    <section className="mt-6 rounded-[4px] border border-slate-300 bg-white p-5">
+      <h2 className="font-display font-semibold text-slate-900">Rapor indir</h2>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="space-y-1.5">

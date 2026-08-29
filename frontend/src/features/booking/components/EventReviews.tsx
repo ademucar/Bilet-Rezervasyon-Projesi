@@ -189,9 +189,9 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
       : null
 
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="mt-6 rounded-[4px] border border-slate-300 bg-white p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-slate-900">Yorumlar</h2>
+        <h2 className="font-display text-lg font-semibold text-slate-900">Yorumlar</h2>
 
         {ozet && ozet.totalCount > 0 && (
           <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
       {reviewsQuery.isPending && (
         <div className="mt-5 space-y-3">
           {[1, 2].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-100" />
+            <div key={i} className="h-20 animate-pulse rounded-[4px] bg-slate-100" />
           ))}
         </div>
       )}

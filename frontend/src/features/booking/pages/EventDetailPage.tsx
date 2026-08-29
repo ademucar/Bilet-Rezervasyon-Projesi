@@ -27,10 +27,10 @@ export function EventDetailPage() {
 
   if (eventQuery.isPending) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-100">
         <SiteHeader />
         <div className="mx-auto max-w-4xl px-4 py-8">
-          <div className="h-64 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-64 animate-pulse rounded-[4px] bg-slate-200" />
         </div>
       </div>
     )
@@ -38,7 +38,7 @@ export function EventDetailPage() {
 
   if (eventQuery.isError || !eventQuery.data) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-100">
         <SiteHeader />
         <div className="mx-auto max-w-4xl px-4 py-8">
           <Alert variant="error">{toProblem(eventQuery.error).detail}</Alert>
@@ -66,7 +66,7 @@ export function EventDetailPage() {
   const isCancelled = ev.status === EventStatus.Cancelled
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
@@ -76,7 +76,9 @@ export function EventDetailPage() {
 
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{ev.title}</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+              {ev.title}
+            </h1>
             <p className="mt-1 text-sm text-slate-500">
               {ev.venueName} - {ev.venueAddress}, {ev.cityName}
             </p>
@@ -104,7 +106,7 @@ export function EventDetailPage() {
           </div>
         )}
 
-        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="mt-6 rounded-[4px] border border-slate-300 bg-white p-6">
           <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">
             {ev.description}
           </p>
@@ -140,10 +142,10 @@ export function EventDetailPage() {
         </section>
 
         <section className="mt-6">
-          <h2 className="text-lg font-semibold text-slate-900">Oturumlar</h2>
+          <h2 className="font-display text-lg font-semibold text-slate-900">Oturumlar</h2>
 
           {ev.sessions.length === 0 ? (
-            <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
+            <div className="mt-3 rounded-[4px] border border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
               Bu etkinlik için henüz oturum tanımlanmamış.
             </div>
           ) : (
@@ -159,7 +161,7 @@ export function EventDetailPage() {
                 return (
                   <li
                     key={session.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-[4px] border border-slate-300 bg-white p-4"
                   >
                     <div>
                       <p className="font-medium text-slate-900">

@@ -204,9 +204,9 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:w-96">
+        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-[4px] border border-slate-300 bg-white shadow-lg sm:w-96">
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-            <span className="font-semibold text-slate-900">Bildirimler</span>
+            <span className="font-display font-semibold text-slate-900">Bildirimler</span>
 
             {count > 0 && (
               <button

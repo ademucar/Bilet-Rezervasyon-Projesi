@@ -61,6 +61,27 @@ interface SeatMapProps {
   selectedSeatIds?: ReadonlySet<string>
   legend?: SeatMapLegendItem[]
   emptyMessage?: string
+  /**
+   * Haritanin zemini.
+   *
+   * ================================================================
+   * NEDEN İKİ TON VAR?
+   * ================================================================
+   * Bilet alma ekranında harita KOYU zeminde duruyor: salon
+   * karanlıktır, koltuklar ışıklı okunur. Koyu zemin ayrıca
+   * koltukları sayfanın geri kalanından ayırıyor -- göz "burası
+   * harita" diye anlıyor.
+   *
+   * Ama admin tarafında bölüm renkleri KULLANICININ seçtiği renkler
+   * (colorHex). Biri açık sarı bir bölüm tanımlarsa koyu zeminde
+   * gözü alır, biri lacivert seçerse zemine karışır. Orada zemini
+   * açık bırakmak zorundayız.
+   *
+   * Varsayılan 'light' -- yani bu prop'u vermeyen mevcut çağrılar
+   * (admin) hiç değişmiyor.
+   * ================================================================
+   */
+  tone?: 'light' | 'dark'
 }
 
 interface PositionedRow {
@@ -101,6 +122,7 @@ export function SeatMap({
   selectedSeatIds,
   legend,
   emptyMessage = 'Gösterilecek koltuk yok.',
+  tone = 'light',
 }: SeatMapProps) {
   const isInteractive = Boolean(onSeatClick)
 
@@ -176,19 +198,43 @@ export function SeatMap({
     // PDF Sprint 18: "Empty state" zorunlu.
     // Boş bir alan göstermek yerine ne olduğunu soyluyoruz.
     return (
-      <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+      <div className="rounded-[4px] border border-slate-300 bg-white p-10 text-center">
         <p className="text-sm text-slate-500">{emptyMessage}</p>
       </div>
     )
   }
 
+  const koyu = tone === 'dark'
+
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white p-4">
-      {/* SAHNE göstergesi: kullanıcının yönünü bulmasi için.
-          Koltuk haritasında "on taraf neresi?" sorusu cevapsiz kalirsa
-          kullanıcı hangi koltuğun sahneye yakın olduğunu anlayamaz. */}
-      <div className="mb-6 rounded-lg bg-slate-800 py-2 text-center text-xs font-medium tracking-widest text-white">
-        SAHNE
+    <div
+      className={`overflow-x-auto rounded-[4px] border p-5 ${
+        koyu ? 'border-slate-800 bg-slate-900' : 'border-slate-300 bg-white'
+      }`}
+    >
+      {/* ============================================================
+          SAHNE -- düz çubuk değil, YAY
+          ============================================================
+          Kullanıcının yönünü bulması için: koltuk haritasında "ön
+          taraf neresi?" sorusu cevapsız kalırsa hangi koltuğun
+          sahneye yakın olduğu anlaşılmaz.
+
+          Önceki hâl "SAHNE" yazan dolu bir dikdörtgendi ve koltuk
+          sıralarıyla aynı görsel ağırlıktaydı -- uzaktan bakınca
+          bir koltuk sırası gibi görünüyordu.
+
+          Yay, gerçek bir salonun perspektifini taklit ediyor:
+          seyirci sahneyi çevreliyor. Tek bir kenarlık çizgisi
+          olduğu için de hiçbir koltukla karışmıyor.
+          ============================================================ */}
+      <div className="mb-6 flex justify-center">
+        <div
+          className={`flex h-8 w-[min(300px,70%)] justify-center rounded-t-full border-t-2 pt-1.5 ${
+            koyu ? 'border-slate-600' : 'border-slate-400'
+          }`}
+        >
+          <span className={`label-xs ${koyu ? 'text-slate-500' : 'text-slate-400'}`}>Sahne</span>
+        </div>
       </div>
 
       <svg
@@ -202,7 +248,11 @@ export function SeatMap({
       >
         {layout.sections.map(({ section, rows, top }) => (
           <g key={section.id} transform={`translate(0, ${top})`}>
-            <text x={0} y={14} className="fill-slate-700 text-[13px] font-semibold">
+            <text
+              x={0}
+              y={14}
+              className={`text-[13px] font-semibold ${koyu ? 'fill-slate-300' : 'fill-slate-700'}`}
+            >
               {section.name}
             </text>
 
@@ -211,7 +261,11 @@ export function SeatMap({
 
               return (
                 <g key={row.label}>
-                  <text x={0} y={y + SEAT_SIZE * 0.75} className="fill-slate-400 text-[11px]">
+                  <text
+                    x={0}
+                    y={y + SEAT_SIZE * 0.75}
+                    className={`text-[11px] ${koyu ? 'fill-slate-500' : 'fill-slate-400'}`}
+                  >
                     {row.label}
                   </text>
 
@@ -227,9 +281,12 @@ export function SeatMap({
                         y={y}
                         width={SEAT_SIZE}
                         height={SEAT_SIZE}
-                        rx={3}
+                        rx={2}
                         fill={seat.fill}
-                        stroke={isSelected ? '#15803d' : 'transparent'}
+                        // Seçili koltuğa halka: rengi göremeyen kullanıcı
+                        // (ve koyu zeminde renk körü olan) için ikinci
+                        // bir işaret. Renk tek başına asla yeterli değil.
+                        stroke={isSelected ? (koyu ? '#a5b4fc' : '#15803d') : 'transparent'}
                         strokeWidth={2}
                         className={
                           clickable ? 'cursor-pointer transition-opacity hover:opacity-70' : ''
@@ -274,11 +331,15 @@ export function SeatMap({
       </svg>
 
       {legend && legend.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-4 text-xs text-slate-600">
+        <div
+          className={`mt-6 flex flex-wrap gap-4 border-t pt-3.5 text-xs ${
+            koyu ? 'border-slate-800 text-slate-300' : 'border-slate-200 text-slate-600'
+          }`}
+        >
           {legend.map((item) => (
-            <span key={item.label} className="inline-flex items-center gap-1.5">
+            <span key={item.label} className="inline-flex items-center gap-2">
               <span
-                className="h-3 w-3 rounded-sm border border-slate-300"
+                className={`size-3 border ${koyu ? 'border-slate-600' : 'border-slate-300'}`}
                 style={{ backgroundColor: item.color }}
                 aria-hidden="true"
               />
