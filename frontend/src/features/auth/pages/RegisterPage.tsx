@@ -107,7 +107,7 @@ export function RegisterPage() {
       }
       footer={
         <>
-          Zaten hesabınız var mi?{' '}
+          Zaten hesabınız var mı?{' '}
           <Link to="/giris" className="font-medium text-brand-600 hover:underline">
             Giriş yapın
           </Link>

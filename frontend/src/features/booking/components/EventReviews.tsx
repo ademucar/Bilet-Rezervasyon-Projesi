@@ -176,7 +176,7 @@ export function EventReviews({ eventId, eventStatus }: EventReviewsProps) {
   // PDF: "Etkinlik tamamlanmadan yorum yapılamaz."
   const yorumYapilabilir = eventStatus === EventStatus.Completed
 
-  // Kullanıcının zaten bir yorumu var mi?
+  // Kullanıcının zaten bir yorumu var mı?
   //
   // Varsa "yeni yorum" formunu gostermiyorum -- backend zaten
   // reddedecek ve kullanıcı boşuna yazmis olacakti.
