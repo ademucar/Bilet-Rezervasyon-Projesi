@@ -324,6 +324,38 @@ public sealed class EventsController : ApiControllerBase
         => HandleResult(await Sender
             .Send(new CancelEventCommand(id, request.Reason), cancellationToken)
             .ConfigureAwait(false));
+
+    /// <summary>
+    /// Uygunsuz etkinligi askiya alir. PDF sayfa 5:
+    /// "Admin: Uygunsuz etkinlikleri pasiflestirebilir."
+    /// </summary>
+    /// <remarks>
+    /// EventOwner degil AdminOnly: bu ucun tum anlami, etkinligi
+    /// SAHIBI OLMAYAN birinin durdurabilmesi. Organizatorun kendi
+    /// etkinligini askiya almasi zaten mumkun ve gereksiz -- silmesi
+    /// ya da iptal etmesi var.
+    /// </remarks>
+    [HttpPost("{id:guid}/suspend")]
+    [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Suspend(
+        Guid id,
+        [FromBody] SuspendEventRequest request,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new SuspendEventCommand(id, request.Reason), cancellationToken)
+            .ConfigureAwait(false));
+
+    /// <summary>Askidaki etkinligi yayina geri alir. Yalnizca admin.</summary>
+    [HttpPost("{id:guid}/reinstate")]
+    [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Reinstate(Guid id, CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new ReinstateEventCommand(id), cancellationToken)
+            .ConfigureAwait(false));
 }
 
 public sealed record AddSessionRequest(
@@ -333,6 +365,8 @@ public sealed record AddSessionRequest(
     Guid SeatLayoutId);
 
 public sealed record CancelEventRequest(string? Reason);
+
+public sealed record SuspendEventRequest(string Reason);
 
 public sealed record SetPosterRequest(string? PosterPath);
 

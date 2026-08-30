@@ -88,7 +88,14 @@ export function SiteHeader() {
           )}
 
           {user?.roles.includes(Roles.Admin) && (
-            <NavLink to="/admin/mekanlar" className={linkClass}>
+            // "Yonetim" artik Mekanlar'a degil Etkinlikler'e gidiyor.
+            //
+            // Onceden mekan listesine dusuyordu ve bu yanlisti: menude
+            // "Yonetim" yaziyor, acilan sayfada "Mekanlar" -- tiklayan
+            // kisi yanlis yere geldigini saniyor. Ustelik adminin bu
+            // panele girme sebebi neredeyse her zaman onay bekleyen bir
+            // etkinlik; mekan duzenlemek nadir bir is.
+            <NavLink to="/admin/etkinlikler" className={linkClass}>
               Yönetim
             </NavLink>
           )}

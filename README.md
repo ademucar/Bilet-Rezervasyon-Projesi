@@ -131,6 +131,11 @@ Dürüst olmak gerekirse tamamlanmayanlar:
 - **SonarQube CI'da sürekli çalışmıyor.** Yerelde Docker ile
   çalıştırıldı; sürekli çalışması için sunucu veya SonarCloud hesabı
   gerekiyor.
+- **Askıya alma sebebi organizatöre gösterilmiyor.** Admin bir
+  etkinliği askıya alırken sebep yazmak zorunda ve bu sebep denetim
+  kaydına (log 1106) yazılıyor; ama `Event` üzerinde sebep sütunu yok,
+  bu yüzden organizatör panelinde yalnızca "askıya alındı" görünüyor.
+  Göstermek için migration gerekiyor.
 - **Ödeme simülasyon.** PDF gerçek sağlayıcı istemiyor; `IPaymentService`
   arkasında soyutlandı, gerçek entegrasyon tek sınıf değiştirmekle
   gelir.

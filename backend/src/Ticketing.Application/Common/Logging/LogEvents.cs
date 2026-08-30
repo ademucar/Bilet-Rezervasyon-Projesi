@@ -85,6 +85,28 @@ public static class LogEvents
     /// <summary>Etkinlik iptal edildi.</summary>
     public const int EtkinlikIptalEdildi = 1103;
 
+    // TUZAK: mesaj sablonunda {EventId} yer tutucusu KULLANMAYIN.
+    //
+    // Askiya alma ozelligini yazarken fark ettim: bu dosyadaki
+    // etkinlik olaylarinin HICBIRI loglara dusmuyordu. Ne
+    // "yayinlandi" ne "iptal edildi" -- 19 sprint boyunca tek satir
+    // yazilmamis.
+    //
+    // Sebep: sablonlar "Id: {EventId}" diye yaziliyordu. Serilog'un
+    // Microsoft.Extensions.Logging koprusu, her kayda MEL'in kendi
+    // olay kimligini "EventId" adiyla zaten ekliyor. Ayni adda ikinci
+    // bir alan gelince cakisma oluyor ve Serilog kaydi sessizce
+    // dusuruyor -- hata vermeden, uyarmadan.
+    //
+    // Sessiz olmasi isin en kotu tarafi: kod dogru gorunuyor, derleme
+    // temiz, testler yesil, uc 204 donuyor. Yalnizca log dosyasina
+    // bakip "burada bir sey olmasi gerekmiyor muydu?" diye soran biri
+    // fark edebilir.
+    //
+    // Cozum: yer tutucuyu {EtkinlikId} yaptim. Ayni sebeple
+    // {SourceContext}, {Timestamp}, {Level}, {Message}, {Exception}
+    // adlari da kullanilmamali -- hepsi Serilog'un ayirdigi adlar.
+
     /// <summary>Etkinlik güncellendi.</summary>
     public const int EtkinlikGuncellendi = 1104;
 
@@ -97,6 +119,22 @@ public static class LogEvents
     /// verdigim kararin aynisi (Sprint 16).
     /// </remarks>
     public const int EtkinlikSilindi = 1105;
+
+    /// <summary>
+    /// Admin etkinligi uygunsuz bulup askiya aldi.
+    /// </summary>
+    /// <remarks>
+    /// Warning seviyesinde. Bunu bilerek yayinlama (Information) ile
+    /// ayni seviyede tutmadim: askiya alma, bir BASKASININ isini
+    /// durduran tek tarafli bir mudahale. "Kim, ne zaman, neden
+    /// askiya aldi?" sorusunun cevabi loglarda kolay bulunabilmeli --
+    /// cunku bu sorunun sorulacagi an, genellikle organizatorun itiraz
+    /// ettigi andir.
+    /// </remarks>
+    public const int EtkinlikAskiyaAlindi = 1106;
+
+    /// <summary>Askiya alinan etkinlik yayina geri alindi.</summary>
+    public const int EtkinlikAskidanCikarildi = 1107;
 
     // REZERVASYON -- PDF: "Rezervasyon oluşturma", "Koltuk kilitleme"
 

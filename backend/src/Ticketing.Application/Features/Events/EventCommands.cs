@@ -137,9 +137,9 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
     [LoggerMessage(
         EventId = LogEvents.EtkinlikOlusturuldu,
         Level = LogLevel.Information,
-        Message = "Etkinlik oluşturuldu. Id: {EventId}, Baslik: {Title}, Organizatör: {OrganizerProfileId}")]
+        Message = "Etkinlik oluşturuldu. Id: {EtkinlikId}, Baslik: {Title}, Organizatör: {OrganizerProfileId}")]
     private static partial void LogEventCreated(
-        ILogger logger, Guid eventId, string title, Guid organizerProfileId);
+        ILogger logger, Guid etkinlikId, string title, Guid organizerProfileId);
 
     public async Task<Result<Guid>> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
@@ -336,10 +336,55 @@ public sealed record PublishEventCommand(Guid EventId) : IRequest<Result>;
 /// <summary>PDF: POST /api/v1/events/{id}/cancel</summary>
 public sealed record CancelEventCommand(Guid EventId, string? Reason) : IRequest<Result>;
 
+/// <summary>
+/// Admin uygunsuz bir etkinligi askiya alir.
+/// PDF sayfa 5: "Admin: Uygunsuz etkinlikleri pasiflestirebilir."
+/// </summary>
+/// <remarks>
+/// Askiya alma ile IPTAL neden ayri iki islem?
+///
+/// Cancelled bir SON durum: geri donusu yok, para iadesi zinciri
+/// baslar, bileti olan herkese bildirim gider. Suspended ise geri
+/// alinabilir (Suspended -> Published gecisi tanimli) ve hicbir
+/// zincir tetiklemez.
+///
+/// Admin "bu afis uygunsuz" dedigi zaman istedigi sey etkinligi yok
+/// etmek degil, satisi durdurup organizatorden duzeltme beklemek.
+/// Iptal kullansaydim tek cikis yolu etkinligi bastan olusturmak
+/// olurdu -- ve satilmis biletler bosu bosuna iade edilirdi.
+/// </remarks>
+public sealed record SuspendEventCommand(Guid EventId, string Reason) : IRequest<Result>;
+
+/// <summary>Askidaki etkinligi yayina geri alir.</summary>
+public sealed record ReinstateEventCommand(Guid EventId) : IRequest<Result>;
+
+/// <summary>
+/// Askiya alma sebebi ZORUNLU.
+/// </summary>
+/// <remarks>
+/// Iptalde (CancelEventCommand) sebep istege bagli, burada zorunlu.
+/// Tutarsiz gorunuyor ama kasitli: iptali cogu zaman etkinligin
+/// SAHIBI yapiyor ve kendi kararinin sebebini kimseye aciklamak
+/// zorunda degil. Askiya almayi ise her zaman bir BASKASI yapiyor.
+/// Sebepsiz askiya alma, organizator icin "sitem calismiyor" ile
+/// ayirt edilemez.
+/// </remarks>
+public sealed class SuspendEventCommandValidator : AbstractValidator<SuspendEventCommand>
+{
+    public SuspendEventCommandValidator()
+    {
+        RuleFor(x => x.Reason)
+            .NotEmpty().WithMessage("Askiya alma sebebi zorunludur.")
+            .MaximumLength(500);
+    }
+}
+
 internal sealed partial class EventStatusCommandHandler
     : IRequestHandler<SubmitEventForApprovalCommand, Result>,
       IRequestHandler<PublishEventCommand, Result>,
-      IRequestHandler<CancelEventCommand, Result>
+      IRequestHandler<CancelEventCommand, Result>,
+      IRequestHandler<SuspendEventCommand, Result>,
+      IRequestHandler<ReinstateEventCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly ISeatNotifier _seatNotifier;
@@ -359,8 +404,8 @@ internal sealed partial class EventStatusCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikYayinlandi,
         Level = LogLevel.Information,
-        Message = "Etkinlik yayinlandi. Id: {EventId}, Baslik: {Title}")]
-    private static partial void LogEventPublished(ILogger logger, Guid eventId, string title);
+        Message = "Etkinlik yayinlandi. Id: {EtkinlikId}, Baslik: {Title}")]
+    private static partial void LogEventPublished(ILogger logger, Guid etkinlikId, string title);
 
     // İptal, Warning seviyesinde -- hata olduğu için değil,
     // GORULMESI gerektigi için.
@@ -372,9 +417,27 @@ internal sealed partial class EventStatusCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikIptalEdildi,
         Level = LogLevel.Warning,
-        Message = "Etkinlik İPTAL edildi. Id: {EventId}, Baslik: {Title}, Sebep: {Reason}")]
+        Message = "Etkinlik İPTAL edildi. Id: {EtkinlikId}, Baslik: {Title}, Sebep: {Reason}")]
     private static partial void LogEventCancelled(
-        ILogger logger, Guid eventId, string title, string? reason);
+        ILogger logger, Guid etkinlikId, string title, string? reason);
+
+    // Sebep, mesajin icinde AYRI bir parametre olarak duruyor
+    // ({Reason}), metne yapistirilmis degil. Serilog bunu yapisal
+    // alan olarak kaydediyor; boylece "sebebinde 'telif' gecen
+    // askiya almalar" gibi bir sorgu mumkun oluyor.
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikAskiyaAlindi,
+        Level = LogLevel.Warning,
+        Message = "Etkinlik ASKIYA alindi. Id: {EtkinlikId}, Baslik: {Title}, Sebep: {Reason}")]
+    private static partial void LogEventSuspended(
+        ILogger logger, Guid etkinlikId, string title, string reason);
+
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikAskidanCikarildi,
+        Level = LogLevel.Information,
+        Message = "Etkinlik askidan cikarildi. Id: {EtkinlikId}, Baslik: {Title}")]
+    private static partial void LogEventReinstated(
+        ILogger logger, Guid etkinlikId, string title);
 
     public EventStatusCommandHandler(
         IApplicationDbContext context,
@@ -568,6 +631,73 @@ internal sealed partial class EventStatusCommandHandler
         // ve bildirim servislerini bilmek zorunda kalmiyor.
         //
         // Domain event dagitimi Sprint 9'da (Outbox) kurulacak.
+        return Result.Success();
+    }
+
+    public async Task<Result> Handle(SuspendEventCommand request, CancellationToken cancellationToken)
+    {
+        var evt = await _context.Events
+            .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (evt is null)
+        {
+            return Result.Failure(EventErrors.NotFound);
+        }
+
+        // Gecis kurali entity'de: yalnizca Published ve SalesOpen
+        // askiya alinabilir. Taslak bir etkinligi askiya almak
+        // anlamsiz -- zaten kimse goremiyor. Ihlal -> DomainException
+        // -> 422.
+        evt.Suspend();
+
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        // Sebep su an YALNIZCA loga yaziliyor, veritabaninda tutulmuyor.
+        //
+        // Bilinçli bir sinir: Event uzerinde askiya alma sebebi diye
+        // bir sutun yok ve bunun icin migration acmadim. Sonucu su:
+        // organizator panelinde "askiya alindi" gorunuyor ama sebebi
+        // gorunmuyor; sebebi ancak loglara bakan biri okuyabiliyor.
+        //
+        // Ileride sebebi organizatore gostermek istersem
+        // SuspensionReason sutunu + migration gerekecek. Simdilik
+        // PDF'in istedigi sey (pasiflestirme) calisiyor, denetim izi
+        // de duruyor. README'deki "bilinen eksikler" listesine ekledim.
+        LogEventSuspended(_logger, evt.Id, evt.Title, request.Reason);
+
+        // Onbellek temizligi burada kritik: askiya alinan etkinlik
+        // onbellekte "SalesOpen" kalirsa kullanicilar dakikalarca
+        // satista gorur ve koltuk secmeye calisir.
+        await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> Handle(ReinstateEventCommand request, CancellationToken cancellationToken)
+    {
+        var evt = await _context.Events
+            .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (evt is null)
+        {
+            return Result.Failure(EventErrors.NotFound);
+        }
+
+        // Published'a geri donuyor, SalesOpen'a degil -- etkinlik
+        // askiya alinmadan once satista olsa bile. Satisi yeniden
+        // acmak background job'in isi: satis tarih araligini o
+        // kontrol ediyor. Buradan dogrudan SalesOpen'a atsaydim,
+        // satis bitis tarihi gecmis bir etkinligi tekrar satisa
+        // acmis olabilirdim.
+        evt.Reinstate();
+
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        LogEventReinstated(_logger, evt.Id, evt.Title);
+        await ClearEventCacheAsync(cancellationToken).ConfigureAwait(false);
+
         return Result.Success();
     }
 }

@@ -37,14 +37,14 @@
 | Etkinlik raporlarını inceleyebilir | ✅ | ✅ `/panel` |
 | Etkinliği yayına alabilir veya iptal edebilir | ✅ `submit` / `publish` / `cancel` | ✅ yönetim ekranı |
 
-## Admin — 3/7
+## Admin — 5/7
 
 | PDF yetkisi | Backend | Ekran |
 |---|---|---|
 | **Tüm kullanıcıları yönetebilir** | ❌ uç yok | ❌ |
 | Organizatör başvurularını onaylayabilir | ✅ 3 uç | ✅ `/admin/basvurular` |
-| **Tüm etkinlikleri görüntüleyebilir** | ⚠️ genel liste var, durum filtresi yok | ❌ |
-| **Uygunsuz etkinlikleri pasif hâle getirebilir** | ✅ `cancel` | ❌ |
+| Tüm etkinlikleri görüntüleyebilir | ✅ `GET /events` admine taslakları da döner | ✅ `/admin/etkinlikler` |
+| Uygunsuz etkinlikleri pasif hâle getirebilir | ✅ `suspend` / `reinstate` (yeni) | ✅ `/admin/etkinlikler` |
 | Kategori, şehir ve salon yönetimi | salon ✅ / kategori-şehir ❌ | salon ✅ |
 | Sistem raporlarını görüntüleyebilir | ✅ | ✅ `/panel` → Yönetici |
 | **Audit log kayıtlarını inceleyebilir** | ❌ uç yok | ❌ |
@@ -71,16 +71,22 @@ Diğer sprintlerin frontend listeleri (3, 4, 7, 10) **tam**.
 ## Özet
 
 **Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Organizatörün
-dördü ve adminin başvuru onayı tamamlandı; 7 madde kaldı.**
+dördü, adminin başvuru onayı, etkinlik listesi ve pasifleştirmesi
+tamamlandı; 5 madde kaldı.**
 
 Boşluklar ikiye ayrılıyor:
 
-**Yalnızca arayüz eksik** (backend hazır, iş sadece ekran):
+**Yalnızca arayüz eksikti** (backend hazırdı, iş sadece ekrandı) —
+**hepsi tamamlandı:**
 - Etkinlik oluşturma / düzenleme / oturum ekleme / görsel yükleme /
   önizleme / yayına alma / iptal
 - Bilet türü ve fiyat tanımlama
 - Organizatör başvuru onayı
-- Admin etkinlik listesi ve pasifleştirme
+- Admin etkinlik listesi
+
+Pasifleştirme bu listede değildi: `Event.Suspend()` ve `Reinstate()`
+domain'de duruyordu ama onları çağıran komut da, uç da, ekran da
+yoktu. Üçünü birden yazdım.
 
 **Hem uç hem ekran eksik** (tam yığın iş):
 - Bilet iptali

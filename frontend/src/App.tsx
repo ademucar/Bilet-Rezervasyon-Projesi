@@ -133,6 +133,12 @@ const OrganizerApplicationsPage = lazy(() =>
   })),
 )
 
+const AdminEventsPage = lazy(() =>
+  import('./features/admin/pages/AdminEventsPage').then((m) => ({
+    default: m.AdminEventsPage,
+  })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -264,6 +270,7 @@ export default function App() {
                   Gerçek kontrol backend'de AdminOnly policy'sinde. */}
               <Route element={<ProtectedRoute roles={[Roles.Admin]} />}>
                 <Route path="/admin/basvurular" element={<OrganizerApplicationsPage />} />
+                <Route path="/admin/etkinlikler" element={<AdminEventsPage />} />
                 <Route path="/admin/mekanlar" element={<VenuesPage />} />
                 <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
                 <Route path="/admin/salonlar/:hallId" element={<HallDetailPage />} />

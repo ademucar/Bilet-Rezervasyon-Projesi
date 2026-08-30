@@ -196,6 +196,81 @@ public class EventTests
         evt.Invoking(e => e.Suspend()).Should().Throw<DomainException>();
     }
 
+    // Askiya alma -- PDF sayfa 5:
+    // "Admin: Uygunsuz etkinlikleri pasiflestirebilir."
+    //
+    // Bu gecisi yazana kadar Suspend() hicbir yerden cagrilmiyordu:
+    // varolan tek test, YANLIS durumda hata firlattigini kontrol
+    // ediyordu. Yani "askiya alma calisiyor mu?" sorusu hic
+    // sorulmamisti.
+
+    [Fact]
+    public void Suspend_YayindakiEtkinlik_AskiyaAlinmali()
+    {
+        var evt = YayinaHazirEtkinlik();
+        evt.SubmitForApproval();
+        evt.Publish();
+
+        evt.Suspend();
+
+        evt.Status.Should().Be(EventStatus.Suspended);
+    }
+
+    [Fact]
+    public void Suspend_SatistakiEtkinlik_AskiyaAlinmali()
+    {
+        // Satis basladiktan sonra da askiya alinabilmeli: uygunsuz
+        // icerik cogu zaman etkinlik gorunur olduktan SONRA fark
+        // ediliyor.
+        var evt = YayinaHazirEtkinlik();
+        evt.SubmitForApproval();
+        evt.Publish();
+        evt.OpenSales();
+
+        evt.Suspend();
+
+        evt.Status.Should().Be(EventStatus.Suspended);
+    }
+
+    [Fact]
+    public void Suspend_TaslakEtkinlik_HataFirlatmali()
+    {
+        // Taslagi askiya almak anlamsiz: zaten kimse goremiyor.
+        var evt = YayinaHazirEtkinlik();   // hala Draft
+
+        evt.Invoking(e => e.Suspend()).Should().Throw<DomainException>();
+    }
+
+    [Fact]
+    public void Reinstate_AskidakiEtkinlik_YayinaDonmeli()
+    {
+        var evt = YayinaHazirEtkinlik();
+        evt.SubmitForApproval();
+        evt.Publish();
+        evt.OpenSales();
+        evt.Suspend();
+
+        evt.Reinstate();
+
+        // SalesOpen'a degil Published'a donuyor -- etkinlik askiya
+        // alinmadan once satista olsa bile. Satisi yeniden acmak
+        // background job'in isi; satis tarih araligini o kontrol
+        // ediyor. Dogrudan SalesOpen'a atsaydik, satis bitis tarihi
+        // gecmis bir etkinligi tekrar satisa acabilirdik.
+        evt.Status.Should().Be(EventStatus.Published);
+    }
+
+    [Fact]
+    public void Reinstate_IptalEdilmisEtkinlik_HataFirlatmali()
+    {
+        var evt = YayinaHazirEtkinlik();
+        evt.SubmitForApproval();
+        evt.Publish();
+        evt.Cancel("organizator vazgecti");
+
+        evt.Invoking(e => e.Reinstate()).Should().Throw<DomainException>();
+    }
+
     // Guncelleme kisitlari (PDF sayfa 13)
 
     [Fact]

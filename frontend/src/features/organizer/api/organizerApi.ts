@@ -159,6 +159,27 @@ export const organizerApi = {
   cancelEvent: async (id: string, reason: string): Promise<void> => {
     await api.post(`/events/${id}/cancel`, { reason })
   },
+
+  /**
+   * Uygunsuz etkinligi askiya alir -- YALNIZCA ADMIN.
+   *
+   * Iptalden farki: Cancelled bir son durum, geri donusu yok ve para
+   * iadesi zincirini baslatiyor. Suspended geri alinabilir ve hicbir
+   * zincir tetiklemiyor. Admin "bu afis uygunsuz" dedigi zaman
+   * istedigi sey etkinligi yok etmek degil, satisi durdurup
+   * organizatorden duzeltme beklemek.
+   *
+   * Sebep burada ZORUNLU (iptalde degildi): askiya almayi her zaman
+   * bir baskasi yapiyor ve organizator neyi duzeltecegini bilmeli.
+   */
+  suspendEvent: async (id: string, reason: string): Promise<void> => {
+    await api.post(`/events/${id}/suspend`, { reason })
+  },
+
+  /** Askidaki etkinligi yayina geri alir -- yalnizca admin. */
+  reinstateEvent: async (id: string): Promise<void> => {
+    await api.post(`/events/${id}/reinstate`)
+  },
 }
 
 export interface TicketTypeDto {
