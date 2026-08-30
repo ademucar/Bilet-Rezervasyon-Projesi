@@ -6,18 +6,15 @@ import {
   LogLevel,
 } from '@microsoft/signalr'
 
-/**
- * gercek zamanli koltuk guncelleme -- PDF Sprint 10
- *
- * Sprint 7'de koltuk haritasini 10 saniyede bir yokluyorduk
- * (refetchInterval). O zaman koda su notu birakmistim:
- *
- *   "Bu bir GECICI çözüm. PDF Sprint 10'da SignalR gelecek ve
- *    sunucu değişiklikleri ANINDA itecek."
- *
- * Bu kanca o notun karşılığı.
- *
- */
+// Gercek zamanli koltuk guncelleme -- PDF Sprint 10.
+//
+// Sprint 7'de koltuk haritasini 10 saniyede bir yokluyordum
+// (refetchInterval) ve koda su notu birakmistim:
+//
+//   "Bu bir gecici cozum. PDF Sprint 10'da SignalR gelecek ve
+//    sunucu degisiklikleri aninda itecek."
+//
+// Bu kanca o notun karsiligi.
 
 /** Sunucudan gelen olaylar. Adlar backend'deki sabitlerle birebir aynı. */
 export interface SeatHubHandlers {

@@ -1,20 +1,14 @@
-/**
- * Bicimlendirme yardimcilari
- *
- * Tarih ve para bicimlendirmesini tek yerde topluyorum.
- *
- * Neden? Çünkü bunlari her bileşende elle yazmak iki somut hataya
- * yol aciyor:
- *
- *   1) Tutarlilik: bir ekranda "1.250,00 TL", digerinde "1250 TRY"
- *      görünür. Kullanıcı aynı uygulamada oldugundan suphe eder.
- *
- *   2) Performans: Intl.NumberFormat NESNESI olusturmak pahalidir.
- *      Her render'da `new Intl.NumberFormat(...)` yazmak, 100
- *      biletlik listede 100 nesne üretir. Asagida bir kez olusturup
- *      yeniden kullanıyorum.
- *
- */
+// Tarih ve para bicimlendirmesini tek yerde topladim. Ilk basta
+// her bilesende elle yaziyordum ve iki sorun cikti.
+//
+// Once tutarlilik bozuldu: bir ekranda "1.250,00 TL", digerinde
+// "1250 TRY" gorunuyordu. Kullanici ayni uygulamada oldugundan
+// suphe eder.
+//
+// Sonra performans: Intl.NumberFormat nesnesi olusturmak pahali bir
+// is. Her render'da `new Intl.NumberFormat(...)` yazinca 100
+// biletlik listede 100 nesne uretiyordum. Asagida bir kez olusturup
+// tekrar kullaniyorum.
 
 // Modul yuklenirken bir kez oluşturuluyor.
 const dateTimeFormatter = new Intl.DateTimeFormat('tr-TR', {

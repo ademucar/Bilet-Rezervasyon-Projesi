@@ -38,12 +38,13 @@ api.interceptors.request.use((config) => {
 
 // Yanit interceptor'I -- 401 alınca sessizce token yenile
 //
-// En onemli problem: es zamanli istekler
+// Buradaki asil zorluk es zamanli istekler oldu.
 //
-// Sayfa acilirken 4 istek aynı anda gidiyor ve access token'in süresi
-// yeni dolmuş. Dordu de 401 aliyor.
+// Sayfa acilirken dort istek ayni anda gidiyor ve access token'in
+// suresi yeni dolmus; dordu de 401 aliyor.
 //
-// Naif bir çözüm her 401'de yenileme yapardi -> DORT yenileme isteği.
+// Ilk yazdigim hal her 401'de yenileme yapiyordu, yani dort ayri
+// yenileme istegi.
 //
 // Bu benim backend'imde FELAKET olurdu, çünkü refresh token
 // ROTATION uyguluyorum:

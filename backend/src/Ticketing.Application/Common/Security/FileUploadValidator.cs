@@ -76,14 +76,14 @@ public static class FileUploadValidator
     private static readonly Dictionary<string, byte[]> Imzalar =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            // JPEG: ff D8 ff
+            // JPEG: FF D8 FF
             [".jpg"] = [0xFF, 0xD8, 0xFF],
             [".jpeg"] = [0xFF, 0xD8, 0xFF],
 
-            // PNG: 89 "PNG" cr lf 1A lf
+            // PNG: 89 "PNG" CR LF 1A LF
             [".png"] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
 
-            // WebP: "riff" ile başlar. Bu imza wav ve avi ile ortak --
+            // WebP: "RIFF" ile başlar. Bu imza WAV ve AVI ile ortak --
             // bu yüzden aşağıda 8. bayttan itibaren "WEBP" de aranyor.
             [".webp"] = [0x52, 0x49, 0x46, 0x46],
 
@@ -244,7 +244,7 @@ public static class FileUploadValidator
             return false;
         }
 
-        // WebP ozel durumu: "riff" baslangici wav ve avi bicimlerinde
+        // WebP ozel durumu: "RIFF" baslangici WAV ve AVI bicimlerinde
         // de var. Gercekten WebP olduğunu 8. bayttan itibaren "WEBP"
         // yazisiyla dogruluyorum.
         if (uzanti.Equals(".webp", StringComparison.OrdinalIgnoreCase))
