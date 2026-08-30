@@ -6,7 +6,7 @@
 ## Ne yapıldı?
 
 PDF'in 19 sprintlik kapsamı: .NET 9 Web API (Onion Architecture, CQRS)
-+ React/TypeScript arayüz. 48 commit, 324 dosya.
++ React/TypeScript arayüz. 69 commit, 363 dosya.
 
 Sprint 1 `main` üzerinde tamamlanmıştı; bu PR Sprint 2–19 arasını
 getiriyor.
@@ -83,18 +83,27 @@ docker build              →  başarılı (364 MB)
 ## Notlar
 
 **Dal adı yanıltıcı.** `feature/sprint-2-domain-entities` olarak
-başladı ama Sprint 2–19 arasını içeriyor. Yeni bir dal açıp
-commit'leri taşımak geçmişi yeniden yazardı; PDF *"sahte commit
-geçmişi oluşturmak"* diyerek bunu yasaklıyor. Adı olduğu gibi
-bırakmayı, geçmişi düzeltmeye tercih ettim.
+başladı ama Sprint 2–19 arasını içeriyor.
+`docs/04-git-stratejisi.md` her sprint için ayrı dal yazıyor ve buna
+uymadım. Sebebi sprintler arası bağımlılıklar oldu: Sprint 7 koltuk
+kilidi Sprint 4 oturma planına, Sprint 8 ödeme Sprint 7 rezervasyona
+dayanıyor. Her birini ayrı dala alsaydım sürekli birbirini bekleyen
+PR'lar çıkacaktı.
+
+Doğrusu yine de ayrı dal + ayrı PR'dı. Geriye dönük bölmek geçmişi
+yeniden yazmayı gerektirir; PDF *"sahte commit geçmişi oluşturmak"*
+diyerek bunu yasaklıyor. Olduğu gibi bırakıp burada yazmayı tercih
+ettim. Commit geçmişi sprint sprint ilerliyor, incelemede o sıra
+takip edilebilir.
 
 **Bilinçli olarak ertelenenler** (her biri ilgili belgede yazılı):
 
 - SonarQube — yapılandırma hazır, hesap/token olmadığı için
   çalıştırılmadı (`docs/16`)
 - E2E testleri CI'da değil — ayrı test veritabanı gerekiyor
-- `TicketOwner`/`ReservationOwner` politikaları hâlâ yalnızca kimlik
-  doğrulaması istiyor (Sprint 2'den kalan TODO)
+- Etkinlik listesi giriş istiyor; anonim gezinme için ayrı bir üst
+  çubuk gerekiyordu, yapmadım. Bedeli: etkinlik sayfaları arama
+  motoruna kapalı
 - Harici HTTP çağrısı izlemesi kayıtlı ama ölçülemedi — mevcut kod
   yollarında giden HTTP çağrısı yok (`docs/13`)
 - SignalR gerçek bağlantısı elle doğrulanıyor; jsdom'da WebSocket yok
@@ -113,5 +122,11 @@ PDF'in izin verdiği kapsamda kullanıldı: kavram araştırma, hata mesajı
 anlama, alternatif yaklaşımlar, test senaryosu fikirleri, kod
 inceleme, doküman taslağı.
 
-Kod birinci ağızdan açıklamalı yazıldı ve her sprintte çalıştırılarak
-doğrulandı; 48 ayrı commit'te teslim edildi.
+Katkının görünür olması için ilgili commit'lerde `Co-Authored-By`
+satırı bırakıldı. PDF'in yasak listesinde *"kod kaynağını gizlemek"*
+maddesi var; o satırı silmek tam olarak bu olurdu.
+
+Kod birinci ağızdan açıklamalı yazıldı, her sprintte çalıştırılarak
+doğrulandı ve 69 ayrı commit'te teslim edildi. Karşılaştığım
+hataların ve fikir değiştirdiğim yerlerin kaydı hem commit
+mesajlarında hem kod içindeki açıklamalarda duruyor.
