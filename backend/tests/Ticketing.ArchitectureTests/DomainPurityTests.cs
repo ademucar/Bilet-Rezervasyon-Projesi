@@ -46,8 +46,14 @@ public class DomainPurityTests
     {
         var ihlaller = new List<string>();
 
+        // ResideInNamespaceStartingWith filtresinin gerekcesi
+        // ConventionTests.HerKatman_EnAzBirTipIcermeli'de yazili:
+        // coverage toplanirken Coverlet assembly'ye bir Tracker tipi
+        // enjekte ediyor ve filtresiz GetTypes() onu yuklemeye
+        // calisip TypeLoadException firlatiyor.
         var domainTipleri = Types
             .InAssembly(Ticketing.Domain.AssemblyReference.Assembly)
+            .That().ResideInNamespaceStartingWith("Ticketing")
             .GetTypes();
 
         foreach (var tip in domainTipleri)

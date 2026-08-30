@@ -28,7 +28,30 @@ public class ConventionTests
     [MemberData(nameof(TumKatmanAssemblyleri))]
     public void HerKatman_EnAzBirTipIcermeli(string katmanAdi, Assembly assembly)
     {
-        var tipSayisi = Types.InAssembly(assembly).GetTypes().Count();
+        // Namespace filtresi ZORUNLU, sadece susleme degil.
+        //
+        // Filtresiz GetTypes() cagirinca CI kirmizi yandi:
+        //
+        //   System.TypeLoadException : Could not load type
+        //   'Coverlet.Core.Instrumentation.Tracker.Ticketing.Domain_40d7...'
+        //
+        // Sebep: coverage toplarken (--collect "XPlat Code Coverage")
+        // Coverlet, olcum yapabilmek icin DISKTEKI assembly'lere bir
+        // Tracker tipi enjekte ediyor. NetArchTest tipleri diskten
+        // Mono.Cecil ile okuyor, yani o enjekte tipi de goruyor; sonra
+        // onu reflection ile yuklemeye calisiyor ama BELLEKTEKI
+        // assembly orijinal, o tip orada yok.
+        //
+        // Yerelde hic gormedim cunku coverage'siz calistiriyordum.
+        // CI ilk kez bugun kostu ve ortaya cikardi.
+        //
+        // "Ticketing" ile baslayan namespace'lere daraltmak hem bu
+        // sorunu cozuyor hem de testi daha dogru yapiyor: bizi
+        // ilgilendiren, katmanin KENDI tipleri.
+        var tipSayisi = Types.InAssembly(assembly)
+            .That().ResideInNamespaceStartingWith("Ticketing")
+            .GetTypes()
+            .Count();
 
         tipSayisi.Should().BeGreaterThan(0,
             "{0} katmaninda hic tip bulunamadi. Bu durumda o katmani hedefleyen " +
