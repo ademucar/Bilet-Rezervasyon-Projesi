@@ -332,8 +332,13 @@ jobs:
       # aksi halde her hafta baska bir sebeple kirilan bir CI
       # olurdu ve insanlar sonucu gormezden gelmeye baslardi.
       # ==========================================================
+      # Surum etiketine dikkat: "0.28.0" diye bir surum YOK.
+      # Ilk yazdigimda oyle yazmisim ve is "Set up job" adiminda,
+      # daha ilk 2 saniyede duserek kirilmisti -- GitHub action'i
+      # cozemedigi icin adimlar hic calismiyor. Depodaki gercek
+      # etiket "v" onekli: v0.36.0.
       - name: Imaj guvenlik taramasi (Trivy)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ticketing-api:${{ github.sha }}
           format: table

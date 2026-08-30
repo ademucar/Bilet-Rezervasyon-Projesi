@@ -116,7 +116,7 @@ Her sprintin kararları ve karşılaşılan hatalar `docs/` altında:
 | Analizörler | .NET Analyzers + StyleCop |
 | SonarQube | Kalite kapısı **OK** — 0 açık, güvenlik A, sürdürülebilirlik A |
 | Lighthouse | Performans 96, Erişilebilirlik 100, Best Practices 100 |
-| Güvenlik taraması | Trivy (bağımlılık + imaj) |
+| Güvenlik taraması | Bağımlılıklar: `dotnet list package --vulnerable` + `npm audit`; imaj: Trivy |
 
 ## Bilinen eksikler
 
