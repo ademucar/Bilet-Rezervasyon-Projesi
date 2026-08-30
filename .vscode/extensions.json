@@ -1,0 +1,23 @@
+{
+  // VS Code bu depoyu ilk actiginda "onerilen eklentiler" diye
+  // soruyor. Listeyi kisa tuttum: yalnizca bu projede gercekten
+  // kullanilanlar.
+  "recommendations": [
+    // C# dili, hata ayiklama, test kesifi
+    "ms-dotnettools.csdevkit",
+
+    // Container'lari VS Code icinden gormek/durdurmak icin
+    "ms-azuretools.vscode-docker",
+
+    // Bicimlendirme -- projede prettier zaten var (npm run format)
+    "esbenp.prettier-vscode",
+
+    // Tailwind sinif adlarinda tamamlama ve renk onizlemesi.
+    // Tailwind v4 kullaniyoruz; ayar dosyasi yok, tema index.css
+    // icinde @theme ile tanimli.
+    "bradlc.vscode-tailwindcss",
+
+    // .http dosyalariyla API'yi denemek icin (Scalar'a alternatif)
+    "humao.rest-client"
+  ]
+}

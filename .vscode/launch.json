@@ -1,0 +1,58 @@
+{
+  // ------------------------------------------------------------------
+  // Hata ayiklama yapilandirmalari
+  //
+  // ASPNETCORE_URLS'i BURADA 5000'e sabitliyorum. Sebebi somut bir
+  // catisma: Properties/launchSettings.json 5033 diyor, ama
+  //
+  //   - frontend/vite.config.ts proxy'si  -> http://localhost:5000
+  //   - appsettings.Development.json AppUrls:Api -> http://localhost:5000
+  //
+  // 5033'te dinlersem arayuz API'yi bulamiyor ve e-postalardaki
+  // baglantilar yanlis adres uretiyor. launchSettings'i degistirmek
+  // yerine burada acikca yaziyorum: `dotnet run` kendi profilini
+  // kullanmaya devam etsin, VS Code'dan calistirinca dogru port gelsin.
+  // ------------------------------------------------------------------
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API (hata ayiklama)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "backend: derle",
+      "program": "${workspaceFolder}/backend/src/Ticketing.WebApi/bin/Debug/net9.0/Ticketing.WebApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/backend/src/Ticketing.WebApi",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5000"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/scalar"
+      },
+      "console": "internalConsole"
+    },
+    {
+      // Arayuzu tarayicida ayiklamak icin. Once "frontend: gelistirme
+      // sunucusu" gorevi calisiyor, hazir olunca Edge aciliyor.
+      "name": "Arayuz (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "preLaunchTask": "frontend: gelistirme sunucusu",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src"
+    }
+  ],
+  "compounds": [
+    {
+      // Tek tusla: altyapi kalkar, API derlenip baslar, arayuz acilir.
+      "name": "Tam yigin (API + arayuz)",
+      "preLaunchTask": "altyapi: baslat (postgres + redis + mailpit)",
+      "configurations": ["API (hata ayiklama)", "Arayuz (Edge)"],
+      "stopAll": true
+    }
+  ]
+}

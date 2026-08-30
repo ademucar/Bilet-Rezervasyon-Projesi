@@ -1,0 +1,89 @@
+{
+  // ------------------------------------------------------------------
+  // VS Code gorevleri
+  //
+  // Gelistirirken tum yigini Docker'da calistirmiyorum. Veritabani,
+  // Redis ve Mailpit container'da dursun (onlari zaten hic
+  // degistirmiyorum), API ve arayuz VS Code'dan calissin -- boylece
+  // hata ayiklayici ve hot reload calisiyor.
+  //
+  // "altyapi: baslat" gorevi tam olarak bunu yapiyor: yalnizca uc
+  // servisi kaldirip API ile frontend container'larini durduruyor.
+  // Onlar durmazsa 5000 ve 5173 portlari dolu kalir ve VS Code'dan
+  // baslatinca "adres kullanimda" hatasi alirsin.
+  // ------------------------------------------------------------------
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "altyapi: baslat (postgres + redis + mailpit)",
+      "type": "shell",
+      "command": "docker compose up -d postgres redis mailpit && docker compose stop api frontend",
+      "options": { "cwd": "${workspaceFolder}/docker" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "altyapi: durdur",
+      "type": "shell",
+      "command": "docker compose stop",
+      "options": { "cwd": "${workspaceFolder}/docker" },
+      "problemMatcher": []
+    },
+    {
+      "label": "tum yigin: Docker'da calistir",
+      "type": "shell",
+      "command": "docker compose up -d --build",
+      "options": { "cwd": "${workspaceFolder}/docker" },
+      "problemMatcher": []
+    },
+
+    {
+      "label": "backend: derle",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/backend/Ticketing.slnx",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "backend: testler",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["test", "${workspaceFolder}/backend/Ticketing.slnx"],
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "test", "isDefault": true }
+    },
+
+    {
+      // isBackground + problemMatcher: Vite "ready in ... ms" yazdiginda
+      // gorev "basladi" sayiliyor. Bu olmadan VS Code sunucu kapanana
+      // kadar bekler ve hata ayiklayici hic baslamaz.
+      "label": "frontend: gelistirme sunucusu",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*VITE.*",
+          "endsPattern": ".*ready in.*"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "frontend: testler",
+      "type": "shell",
+      "command": "npm test",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": []
+    }
+  ]
+}
