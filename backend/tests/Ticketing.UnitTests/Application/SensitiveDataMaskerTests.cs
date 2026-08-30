@@ -41,7 +41,7 @@ public class SensitiveDataMaskerTests
         sonuc.Should().NotContain(gizliDeger);
     }
 
-    // ALAN ADI KORUNUYOR, DEGERI GIDIYOR
+    // Alan adi korunuyor, degeri gidiyor
     //
     // Alan adini da silseydim logdan "hangi alan vardi" bilgisi
     // kaybolur ve hata ayiklamak imkansizlasirdi. Amac logu
@@ -79,7 +79,7 @@ public class SensitiveDataMaskerTests
         SensitiveDataMasker.Mask(girdi).Should().BeEmpty();
     }
 
-    // E-POSTA: KISMEN MASKELENIYOR
+    // E-posta: kismen maskeleniyor
     [Theory]
     [InlineData("adem@ornek.com", "ade***@ornek.com")]
     [InlineData("a@ornek.com", "a***@ornek.com")]

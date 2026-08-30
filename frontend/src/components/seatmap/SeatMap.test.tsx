@@ -46,7 +46,7 @@ function bolum(): SeatMapSection[] {
 
 describe('SeatMap', () => {
   /**
-   * ERİŞİLEBİLİR AD, MODA GÖRE FARKLI YERDEN GELİYOR
+   * Erişilebilir ad, moda göre farkli yerden geliyor
    *
    * İlk yazdığımda salt okunur haritada getByLabelText kullandım ve
    * test "Unable to find a label" diye kırıldı.
@@ -103,7 +103,7 @@ describe('SeatMap', () => {
   })
 
   /**
-   * SATILMIŞ KOLTUK TIKLANAMAMALI
+   * Satilmiş koltuk tiklanamamali
    *
    * Sunucu zaten reddeder — ama kullanıcıya tıklatıp sonra hata
    * göstermek kötü bir deneyim. Daha da önemlisi: satılmış koltuğu
@@ -143,7 +143,7 @@ describe('SeatMap', () => {
   })
 
   /**
-   * KLAVYE ERİŞİMİ
+   * Klavye erişimi
    *
    * Koltuk seçimi yalnızca fareyle yapılabilseydi, klavye kullanan
    * herkes (motor engelli kullanıcılar, ekran okuyucu kullananlar)

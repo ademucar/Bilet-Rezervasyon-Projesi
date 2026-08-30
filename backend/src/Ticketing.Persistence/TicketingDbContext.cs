@@ -91,7 +91,7 @@ public partial class TicketingDbContext : DbContext
     /// <summary>
     /// Tüm Guid birincil anahtarlari "istemci tarafında üretilir" olarak isaretler.
     ///
-    /// BU METOT GERCEK BIR HATAYI DUZELTIYOR -- HIKAYESI
+    /// Bu metot gercek bir hatayi duzeltiyor -- hikayesi
     ///
     /// Sprint 4'te oturma planina bölüm eklerken su hatayi aldim:
     ///
@@ -118,7 +118,7 @@ public partial class TicketingDbContext : DbContext
     /// Add() her zaman Added isaretler. Hata yalnızca nesne bir
     /// KOLEKSIYON üzerinden eklendiginde ortaya cikiyor.
     ///
-    /// NEDEN TEK TEK DEĞİL DE TOPLU DUZELTIYORUM?
+    /// Neden tek tek değil de toplu duzeltiyorum?
     /// Aynı tuzak su yerlerde de patlayacakti:
     ///     Reservation -> ReservationItems   (Sprint 7)
     ///     Payment     -> PaymentTransactions (Sprint 8)

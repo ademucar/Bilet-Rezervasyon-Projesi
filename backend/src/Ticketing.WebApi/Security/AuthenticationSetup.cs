@@ -33,7 +33,7 @@ internal static class AuthenticationSetup
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                // TOKEN DOGRULAMA PARAMETRELERI
+                // Token dogrulama parametreleri
                 // Her biri KAPATILDIGINDA ne olacagini yazdim.
                 options.TokenValidationParameters = new TokenValidationParameters
                 {

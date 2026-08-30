@@ -8,7 +8,7 @@ namespace Ticketing.WebApi.Security;
 /// İstek hizi sinirlama. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// NEDEN AYRI KUTUPHANE YOK?
+/// Neden ayri kutuphane yok?
 ///
 /// AspNetCoreRateLimit gibi paketler var ama .NET 7'den beri
 /// Microsoft.AspNetCore.RateLimiting FRAMEWORK ICINDE geliyor.
@@ -214,7 +214,7 @@ public static class RateLimitingSetup
             });
 
     /// <summary>
-    /// ISTEMCI ANAHTARI: GIRIS YAPMISSA KULLANICI, YOKSA IP
+    /// İstemci anahtari: giris yapmissa kullanici, yoksa IP
     ///
     /// Yalnızca IP kullansaydım, aynı sirket agindan (tek NAT IP)
     /// baglanan yuzlerce calisan TEK bir sinira takilirdi -- biri
@@ -225,7 +225,7 @@ public static class RateLimitingSetup
     ///
     /// Giriş yapmamislarda IP tek seçenek.
     ///
-    /// UYARI: IP GUVENILIR OLMALI
+    /// Uyari: IP guvenilir olmali
     ///
     /// RemoteIpAddress, ters vekil sunucu (nginx, load balancer)
     /// arkasinda VEKILIN adresini gosterir -- gerçek istemciyi değil.

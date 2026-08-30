@@ -19,7 +19,7 @@ namespace Ticketing.Infrastructure.BackgroundJobs;
 ///   4. Yaklasan etkinlik hatirlatmasi
 ///   5. Günlük satış özeti oluşturma
 ///
-/// BU SINIFLAR NEDEN BU KADAR INCE?
+/// Bu siniflar neden bu kadar ince?
 ///
 /// Her is yalnızca bir MediatR komutu gönderiyor ve sonucu logluyor.
 /// Is mantiginin TEK SATIRI bile burada değil.
@@ -44,7 +44,7 @@ public sealed partial class TicketingJobs
         _logger = logger;
     }
 
-    // 1) SURESI DOLAN REZERVASYONLARI İPTAL ETME
+    // 1) Suresi dolan rezervasyonlari iptal etme
 
     /// <summary>
     /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
@@ -173,7 +173,7 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // 4) YAKLASAN ETKİNLİK HATIRLATMASI
+    // 4) Yaklasan etkinlik hatirlatmasi
 
     [DisableConcurrentExecution(timeoutInSeconds: 120)]
     [AutomaticRetry(Attempts = 0)]
@@ -257,7 +257,7 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // 5) GUNLUK SATIS OZETI
+    // 5) Gunluk satis ozeti
 
     [DisableConcurrentExecution(timeoutInSeconds: 120)]
     [AutomaticRetry(Attempts = 0)]

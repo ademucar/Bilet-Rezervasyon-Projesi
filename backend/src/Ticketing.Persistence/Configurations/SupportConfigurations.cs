@@ -154,7 +154,7 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
         builder.Property(o => o.ErrorMessage).HasMaxLength(4000);
         builder.Property(o => o.CorrelationId).HasMaxLength(100);
 
-        // OUTBOX JOB'ININ ANA SORGUSU
+        // Outbox job'inin ana sorgusu
         //
         //     WHERE ProcessedAt IS NULL
         //       AND IsDeadLettered = false

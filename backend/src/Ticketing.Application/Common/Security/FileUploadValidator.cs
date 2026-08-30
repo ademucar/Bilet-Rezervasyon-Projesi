@@ -9,7 +9,7 @@ namespace Ticketing.Application.Common.Security;
 /// "Guvenli dosya adı".
 /// </summary>
 /// <remarks>
-/// UC KONTROL VAR VE UCU DE GEREKLI -- BIRI DIGERININ YERINE GECMEZ
+/// Uc kontrol var ve ucu de gerekli -- biri digerinin yerine gecmez
 ///
 /// Dosya yukleme, bir web uygulamasindaki EN TEHLIKELI ozelliktir:
 /// kullanıcının sunucumuza VERI değil DOSYA yazmasina izin veriyorum.
@@ -40,7 +40,7 @@ public static class FileUploadValidator
     /// Izin verilen dosya türleri: uzanti -> beklenen MIME türleri.
     /// </summary>
     /// <remarks>
-    /// BEYAZ LISTE, KARA LISTE DEĞİL
+    /// Beyaz liste, kara liste değil
     ///
     /// "Sunlar yasak" (kara liste) yazmak cazip ama YANLIS: unuttugun
     /// her uzanti bir aciktir. .exe engellersin, .bat unutursun;

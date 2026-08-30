@@ -50,7 +50,7 @@ internal sealed class NotifyExpiringReservationsCommandHandler
         var now = _clock.UtcNow;
         var esik = now.AddMinutes(request.WarnBeforeMinutes);
 
-        // HANGI REZERVASYONLAR?
+        // Hangi rezervasyonlar?
         //
         // Kosullar:
         //   ExpiresAt > now      -> HENUZ dolmamis (dolmussa uyarinin
@@ -83,7 +83,7 @@ internal sealed class NotifyExpiringReservationsCommandHandler
             return Result.Success(0);
         }
 
-        // IDEMPOTENCY: AYNI REZERVASYON ICIN IKINCI UYARI YOK
+        // İdempotency: ayni rezervasyon icin ikinci uyari yok
         //
         // Bu is DAKIKADA BIR çalışıyor ve uyarı penceresi 3 dakika.
         // Yani aynı rezervasyon UC KEZ secilir.

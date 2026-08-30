@@ -8,7 +8,7 @@ namespace Ticketing.WebApi.Middleware;
 /// Sahiplik politikalari reddettiginde 403 yerine 404 döndürür.
 /// </summary>
 /// <remarks>
-/// NEDEN 403 DEĞİL DE 404?
+/// Neden 403 değil de 404?
 ///
 /// Sprint 19'da TicketOwner ve ReservationOwner politikalarini
 /// tamamladiktan sonra bir celiski fark ettim.
@@ -36,7 +36,7 @@ namespace Ticketing.WebApi.Middleware;
 /// bağlı. Bedeli: yaniti DEĞİL, yalnızca durum kodunu ve govdeyi
 /// yeniden yazıyorum -- ki zaten istedigim tam olarak bu.
 ///
-/// KAPSAM: YALNIZCA SAHIPLIK POLITIKALARI
+/// Kapsam: yalnizca sahiplik politikalari
 ///
 /// Rol bazlı reddetmelerde (AdminOnly, OrganizerOnly) 403 KALIYOR.
 /// Orada sizinti yok: "admin degilsin" bilgisi kullanıcının kendisi
@@ -62,7 +62,7 @@ internal sealed class OwnershipNotFoundMiddleware
 
         await _next(context).ConfigureAwait(false);
 
-        // YALNIZCA 403 -- 401 DEĞİL
+        // Yalnizca 403 -- 401 değil
         //
         // 401 "kim olduğunu bilmiyorum" demek; kullanıcı giriş
         // yapmamis. Ona "yok" demek yanlış olurdu: giriş yapmasi
@@ -77,7 +77,7 @@ internal sealed class OwnershipNotFoundMiddleware
             return;
         }
 
-        // YANIT BASLAMISSA DOKUNAMAYIZ
+        // Yanit baslamissa dokunamayiz
         //
         // Yetkilendirme reddi govde YAZMADAN durum kodu ayarliyor, bu
         // yüzden pratikte buraya her zaman "baslamamis" olarak

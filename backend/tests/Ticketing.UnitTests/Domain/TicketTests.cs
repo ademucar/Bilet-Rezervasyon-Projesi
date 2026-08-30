@@ -45,7 +45,7 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// BILET NUMARASI BENZERSIZ OLMALI
+    /// Bilet numarasi benzersiz olmali
     ///
     /// Ayni numaraya sahip iki bilet uretilseydi, girişte QR
     /// dogrulamasi hangi bileti kastettigini bilemezdi: bir kisi
@@ -65,7 +65,7 @@ public class TicketTests
         numaralar.Should().OnlyHaveUniqueItems();
     }
 
-    // DURUM GECISLERI
+    // Durum gecisleri
 
     [Fact]
     public void Aktif_bilet_kullanilabilmeli()
@@ -113,7 +113,7 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// IADELI VE IADESIZ IPTAL AYRI DURUMLAR
+    /// İadeli ve iadesiz iptal ayri durumlar
     ///
     /// Tek bir "Cancelled" durumu kullansaydik, mutabakat sirasinda
     /// "bu bilet icin para geri gonderildi mi?" sorusunu yalnizca
@@ -135,7 +135,7 @@ public class TicketTests
     }
 
     /// <remarks>
-    /// BU TESTI DE ONCE YANLIS YAZDIM
+    /// Bu testi de once yanlis yazdim
     ///
     /// Ikinci iptalin HATA firlatmasini bekliyordum. Test kirildi:
     /// Cancel() sessizce geri donuyor.

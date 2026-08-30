@@ -38,7 +38,7 @@ export function EventFilterPanel({
   onReset,
   activeCount,
 }: EventFilterPanelProps) {
-  // SEHIR VE KATEGORI: SUNUCUDA REDIS'TE, ISTEMCIDE TANSTACK'TE
+  // Sehir ve kategori: sunucuda redis'te, istemcide tanstack'te
   //
   // Iki katmanli önbellek gibi görünüyor ve oyle -- ikisi de gerekli:
   //

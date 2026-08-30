@@ -11,7 +11,7 @@ public abstract record PaginationRequest
     /// <summary>
     /// Izin verilen en büyük sayfa boyutu.
     ///
-    /// BU SABIT NEDEN BIR GÜVENLİK ONLEMI?
+    /// Bu sabit neden bir güvenlik onlemi?
     ///
     /// Ust sinir olmasaydı bir kullanıcı
     ///     GET /api/v1/events?pageSize=999999999

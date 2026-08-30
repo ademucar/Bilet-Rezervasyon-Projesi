@@ -39,7 +39,7 @@ public static partial class CachingSetup
             return services;
         }
 
-        // BAGLANTI KURULAMAZSA UYGULAMA COKMEMELI
+        // Baglanti kurulamazsa uygulama cokmemeli
         //
         // ConnectionMultiplexer.Connect(), Redis kapaliysa istisna
         // firlatir. Burada yakalamasaydim uygulama HİÇ BASLAMAZDI.

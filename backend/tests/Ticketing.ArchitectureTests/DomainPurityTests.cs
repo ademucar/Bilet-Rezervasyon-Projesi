@@ -9,7 +9,7 @@ namespace Ticketing.ArchitectureTests;
 /// "Domain Entity dogrudan DTO dondurmemelidir."
 /// </summary>
 /// <remarks>
-/// BU KURAL NEDEN VAR?
+/// Bu kural neden var?
 ///
 /// Bir entity'nin uzerine ToDto() yazmak cok pratik gorunuyor:
 ///

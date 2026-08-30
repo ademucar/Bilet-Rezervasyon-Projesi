@@ -14,7 +14,7 @@ namespace Ticketing.WebApi.Security;
 //
 // Sprint 19 denetiminde yazilmadiklarini buldum.
 //
-// PEKI SISTEM ACIK MIYDI? -- HAYIR, VE BUNU OLCTUM
+// Peki sistem acik miydi? -- hayir, ve bunu olctum
 //
 // Iki kullanıcı olusturup birinin rezervasyonuna digerinin erismesini
 // denedim:
@@ -27,7 +27,7 @@ namespace Ticketing.WebApi.Security;
 // Yani handler'lar sahiplik kontrolunu ZATEN yapiyor (ve varligi
 // sizdirmamak için 403 yerine 404 donuyorlar -- doğru davranis).
 //
-// O ZAMAN BU DOSYA NEDEN VAR?
+// O zaman bu dosya neden var?
 //
 // Uc sebep:
 //
@@ -59,7 +59,7 @@ public sealed class ReservationOwnerRequirement : IAuthorizationRequirement;
 /// Sahiplik kontrolü yapan handler'lar için ortak temel.
 /// </summary>
 /// <remarks>
-/// NEDEN ORTAK TEMEL SINIF?
+/// Neden ortak temel sinif?
 ///
 /// Iki handler da AYNI dort adimi yapiyor:
 ///   1) HttpContext var mi?
@@ -131,7 +131,7 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
         if (!httpContext.Request.RouteValues.TryGetValue(RouteParameterName, out var deger)
             || !Guid.TryParse(deger?.ToString(), out var resourceId))
         {
-            // ROUTE PARAMETRESI YOKSA REDDEDIYORUZ
+            // Route parametresi yoksa reddediyoruz
             //
             // Bu politikayi parametresiz bir uca (örneğin liste ucuna)
             // yanlislikla eklersek, "kontrol edecek bir kaynak yok"

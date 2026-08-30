@@ -9,7 +9,7 @@ namespace Ticketing.Infrastructure.Reporting;
 /// Uretilen rapor dosyalarini diskte saklar. PDF Sprint 13.
 /// </summary>
 /// <remarks>
-/// NEDEN VERITABANI DEĞİL, DISK?
+/// Neden veritabani değil, disk?
 ///
 /// Dosyalari veritabaninda bytea olarak da tutabilirdim. Tutmadim:
 ///
@@ -21,7 +21,7 @@ namespace Ticketing.Infrastructure.Reporting;
 ///     Veritabani ise dogruluk kaynagim; oraya geçici veri koymak
 ///     iki farklı sorumlulugu karistirmak olurdu.
 ///
-/// URETIMDE NE DEGISIR?
+/// Uretimde ne degisir?
 ///
 /// Birden fazla sunucuya olceklenirse disk PAYLASILMAZ: rapor
 /// sunucu-1'de üretilir, kullanıcı sunucu-2'ye baglanir ve dosyayı
@@ -50,7 +50,7 @@ internal sealed class FileSystemReportStore : IReportFileStore
     /// Dosya yolunu üretir.
     /// </summary>
     /// <remarks>
-    /// DOSYA ADI OLARAK GUID -- KULLANICI GIRDISI DEĞİL
+    /// Dosya adi olarak GUID -- kullanici girdisi değil
     ///
     /// Rapor basligini dosya adı yapsaydim, ilerde ozellestirilebilir
     /// bir başlık "../../appsettings.json" olabilirdi ve dizin gecisi

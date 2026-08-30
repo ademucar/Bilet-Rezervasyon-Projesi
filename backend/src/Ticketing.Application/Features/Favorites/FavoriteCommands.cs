@@ -37,7 +37,7 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
             return Result.Failure(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // ETKİNLİK VAR MI VE GORULEBILIR MI?
+        // Etkinlik var mi ve gorulebilir mi?
         //
         // Yalnızca "var mi" diye bakmak YETMEZ. Gorunurluk filtresi de
         // sart: aksi halde kullanıcı bir Id tahmin edip TASLAK bir
@@ -63,7 +63,7 @@ internal sealed class AddFavoriteCommandHandler : IRequestHandler<AddFavoriteCom
             return Result.Failure(FavoriteErrors.EventNotFound);
         }
 
-        // IDEMPOTENT: ZATEN FAVORIDEYSE HATA DEĞİL
+        // İdempotent: zaten favorideyse hata değil
         //
         // Kullanıcı kalp ikonuna iki kez basmis olabilir; ag isteği
         // tekrarlanmis olabilir.
@@ -185,7 +185,7 @@ internal sealed class GetMyFavoritesQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // BU SORGU ASLA ONBELLEKLENMEZ
+        // Bu sorgu asla onbelleklenmez
         //
         // PDF Sprint 11 kuralı: "Kullanıcıya ozel hassas veriler ortak
         // cache içinde tutulmamalidir."
@@ -217,7 +217,7 @@ internal sealed class GetMyFavoritesQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // İPTAL EDILMIS ETKINLIKLER LISTEDE KALIYOR -- BILINCLI
+        // İptal edilmis etkinlikler listede kaliyor -- bilincli
         //
         // Filtrelemeyi dusundum ama vazgectim: kullanıcı favoriledigi
         // etkinliğin İPTAL EDILDIGINI gormeli. Sessizce listeden

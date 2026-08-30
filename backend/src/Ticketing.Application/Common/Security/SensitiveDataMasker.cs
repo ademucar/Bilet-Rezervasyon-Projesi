@@ -7,7 +7,7 @@ namespace Ticketing.Application.Common.Security;
 /// PDF Sprint 15: "Hassas veri maskeleme".
 /// </summary>
 /// <remarks>
-/// BU SINIF NEDEN GEREKLI? -- SOMUT SIZINTI YOLLARI
+/// Bu sinif neden gerekli? -- somut sizinti yollari
 ///
 /// Loglar çoğu zaman "güvenli" sanilir ama degildir:
 ///
@@ -20,7 +20,7 @@ namespace Ticketing.Application.Common.Security;
 /// Bir JWT veya şifre sıfırlama token'i loga duserse, ona erisen
 /// herkes o kullanıcının hesabina girebilir.
 ///
-/// NE MASKELENIYOR?
+/// Ne maskeleniyor?
 ///
 ///   JWT              -> oturum ele gecirme
 ///   Şifre alanlari   -> doğrudan hesap erişimi
@@ -98,7 +98,7 @@ public static partial class SensitiveDataMasker
     /// E-postayi KISMEN maskeler: "adem@ornek.com" -> "ade***@ornek.com"
     /// </summary>
     /// <remarks>
-    /// NEDEN TAMAMEN GIZLEMIYORUZ?
+    /// Neden tamamen gizlemiyoruz?
     ///
     /// E-posta kisisel veri (KVKK/GDPR kapsaminda) ama aynı zamanda
     /// destek ve hata ayiklama için GEREKLI: "hangi kullanıcı?"

@@ -4,7 +4,7 @@ namespace Ticketing.Application.Abstractions.Storage;
 /// Dosya depolama soyutlamasi. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// NEDEN SOYUTLAMA? DISKE YAZMAK ZATEN BASIT
+/// Neden soyutlama? diske yazmak zaten basit
 ///
 /// File.WriteAllBytes cagirmak bir satır. O zaman bu arayüz niye?
 ///

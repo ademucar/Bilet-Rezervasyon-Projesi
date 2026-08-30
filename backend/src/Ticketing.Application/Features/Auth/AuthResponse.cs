@@ -3,7 +3,7 @@ namespace Ticketing.Application.Features.Auth;
 /// <summary>
 /// Başarılı giriş/kayıt/yenileme sonucu.
 ///
-/// NEDEN ENTITY DEĞİL DE DTO DONUYORUM?
+/// Neden entity değil de DTO donuyorum?
 ///
 /// PDF zorunlu kural: "Endpointler doğrudan Entity dondurmemelidir."
 ///

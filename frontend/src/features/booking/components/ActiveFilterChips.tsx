@@ -3,7 +3,7 @@ import { bookingApi, EventStatus, type EventFilters } from '../api/bookingApi'
 import { formatDate } from '../../../lib/format'
 
 /**
- * AKTİF FİLTRE ROZETLERİ
+ * Aktif filtre rozetleri
  *
  * Yan paneldeki filtreler sayfayı aşağı doğru uzatıyor ve kullanıcı
  * sonuçlara baktığında hangi filtrelerin açık olduğunu göremiyor --
@@ -18,7 +18,7 @@ import { formatDate } from '../../../lib/format'
  *   2. Her filtreyi TEK TIKLA kaldırılabilir yapıyor -- yan panelde
  *      doğru açılır listeyi bulup "Farketmez"e çekmek gerekmiyor
  *
- * NEDEN ŞEHİR/KATEGORİ İSİMLERİNİ AYRICA ÇEKİYORUM?
+ * Neden şehir/kategori isimlerini ayrica çekiyorum?
  *
  * Filtrede yalnızca cityId var (bir GUID). Rozette "Şehir:
  * 3fa85f64-..." yazamam. Listeler zaten EventFilterPanel tarafından

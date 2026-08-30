@@ -8,7 +8,7 @@ namespace Ticketing.WebApi.Documentation;
 /// OpenAPI belgesi yapilandirmasi. PDF Sprint 18.
 /// </summary>
 /// <remarks>
-/// PDF'IN ON MADDESI VE NEREDE KARSILANDIGI
+/// Pdf'in ON maddesi ve nerede karsilandigi
 ///
 ///   1. Endpoint aciklamalari   -> XmlDocumentationTransformer
 ///   2. Request ornekleri       -> RequestExampleTransformer
@@ -81,7 +81,7 @@ internal sealed class DocumentInfoTransformer : IOpenApiDocumentTransformer
             Title = "Biletim API",
             Version = "v1",
 
-            // ACIKLAMA, ARAYUZUN ILK EKRANI
+            // Aciklama, arayuzun ilk ekrani
             //
             // Bir API'yi ilk kez kullanan kisinin cevabini aradigi
             // sorular burada: nasil kimlik dogrularim, hatalar hangi
@@ -221,7 +221,7 @@ internal sealed class SecuritySchemeTransformer : IOpenApiDocumentTransformer
 /// PDF: "Authentication gereksinimleri", "Yetkili roller".
 /// </summary>
 /// <remarks>
-/// BU BILGI KODDAN OKUNUYOR, ELLE YAZILMIYOR
+/// Bu bilgi koddan okunuyor, elle yazilmiyor
 ///
 /// [Authorize] ozniteliklerini yansima (reflection) ile okuyup
 /// belgeye aktariyoruz.
@@ -277,7 +277,7 @@ internal sealed class AuthorizationTransformer : IOpenApiOperationTransformer
 
         operation.Security = [gereksinim];
 
-        // ROL / POLITIKA BILGISI ACIKLAMAYA EKLENIYOR
+        // Rol / politika bilgisi aciklamaya ekleniyor
         //
         // Politika adları ("AdminOnly", "EventOwner") tek başına
         // anlasilir değil. Kisa bir açıklama ekliyorum ki Swagger'i
@@ -332,7 +332,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
             Ekle(operation, "403", "Token geçerli ama bu işlem için yetkiniz yok.");
         }
 
-        // 400: YALNIZCA GOVDE VEYA PARAMETRE ALAN UCLARA
+        // 400: Yalnizca govde veya parametre alan uclara
         //
         // Parametresiz bir GET ucunda doğrulama hatası olusamaz.
         // Kosulsuz ekleseydik belge, olmayan bir davranisi vaat
@@ -439,7 +439,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
 /// PDF: "Idempotency-Key açıklaması".
 /// </summary>
 /// <remarks>
-/// HANGI UCLARA EKLENIYOR VE NEDEN YALNIZCA ONLARA?
+/// Hangi uclara ekleniyor ve neden yalnizca onlara?
 ///
 /// Rezervasyon oluşturma, ödeme baslatma ve iade. Ucu de:
 ///   - Yeni bir kayıt URETIYOR

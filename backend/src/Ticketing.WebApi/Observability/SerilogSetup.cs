@@ -8,7 +8,7 @@ namespace Ticketing.WebApi.Observability;
 /// Serilog yapilandirmasi. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// SERILOG NEYI DEGISTIRIYOR, NEYI DEGISTIRMIYOR?
+/// Serilog neyi degistiriyor, neyi degistirmiyor?
 ///
 /// DEGISTIRMEDIGI: kodumuzdaki tek bir log satiri bile. Her yerde
 /// ILogger ve [LoggerMessage] kullanmaya devam ediyorum. Serilog,
@@ -44,7 +44,7 @@ internal static class SerilogSetup
         builder.Host.UseSerilog((context, services, configuration) =>
         {
             configuration
-                // SEVIYELER
+                // Seviyeler
                 //
                 // Varsayılan Information; framework gurultusu bastirilmis.
                 //
@@ -123,7 +123,7 @@ internal static class SerilogSetup
     /// Her HTTP isteği için TEK satirlik özet log ekler.
     /// </summary>
     /// <remarks>
-    /// NEDEN KENDİ OZETIMIZ?
+    /// Neden kendi ozetimiz?
     ///
     /// ASP.NET Core'un yerlesik istek loglamasi aynı istek için
     /// birden fazla satır uretiyor ve hicbiri süreyi net vermiyor.
@@ -143,7 +143,7 @@ internal static class SerilogSetup
             options.MessageTemplate =
                 "{RequestMethod} {RequestPath} -> {StatusCode} ({Elapsed:0.0} ms)";
 
-            // SEVIYE, DURUM KODUNA GORE
+            // Seviye, durum koduna gore
             //
             // Hepsini Information yapsaydim 500'ler normal isteklerin
             // arasında kaybolurdu. Sprint 15'te "alarm yorgunlugu"

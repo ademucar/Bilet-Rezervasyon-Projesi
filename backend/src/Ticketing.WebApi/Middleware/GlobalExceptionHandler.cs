@@ -115,7 +115,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
             // 2. ES ZAMANLILIK CAKISMASI -> 409 Conflict
             //
-            // PROJENIN EN KRITIK HATA YOLU.
+            // Projenin en kritik hata yolu.
             //
             // Iki kullanıcı aynı koltuğu aynı anda almaya calisti;
             // EventSeats uzerindeki xmin token'i ikinciyi reddetti.
@@ -161,7 +161,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
             // 5. ISTEK COK BUYUK / BOZUK -> 413 veya 400
             //
-            // BU DALI SPRINT 15'TE TESTLE BULDUM
+            // Bu dali sprint 15'te testle buldum
             //
             // Program.cs'te MaxRequestBodySize = 1 MB ayarladiktan sonra
             // 2 MB'lik bir istek gonderip dogruladim. Sonuç 500 dondu.
@@ -221,7 +221,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             problem.Extensions["correlationId"] = correlationId.ToString();
         }
 
-        // GELISTIRME ORTAMI ISTISNASI
+        // Gelistirme ortami istisnasi
         //
         // Stack trace'i YALNIZCA gelistirmede donuyorum.
         //
@@ -315,7 +315,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 
     private void LogException(Exception exception, int statusCode)
     {
-        // LOG SEVIYESI KARARI
+        // Log seviyesi karari
         //
         // 4xx = istemci kaynakli, BEKLENEN durum   -> Warning
         // 5xx = sunucu kaynakli, GERCEK hata       -> Error

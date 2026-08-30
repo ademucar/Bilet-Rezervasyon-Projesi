@@ -38,7 +38,7 @@ api.interceptors.request.use((config) => {
 
 // YANIT INTERCEPTOR'I -- 401 alınca sessizce token yenile
 //
-// EN ONEMLI PROBLEM: ES ZAMANLI ISTEKLER
+// En onemli problem: es zamanli istekler
 //
 // Sayfa acilirken 4 istek aynı anda gidiyor ve access token'in süresi
 // yeni dolmuş. Dordu de 401 aliyor.
@@ -193,7 +193,7 @@ export function toProblem(error: unknown): ProblemDetails {
   }
 }
 
-// GELISTIRME YARDIMCISI
+// Gelistirme yardimcisi
 //
 // API istemcisini YALNIZCA gelistirme modunda window'a bagliyorum.
 //

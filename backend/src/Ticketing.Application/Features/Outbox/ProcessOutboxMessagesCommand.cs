@@ -81,7 +81,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     {
         var now = _clock.UtcNow;
 
-        // BEKLEYEN MESAJLARI SEC
+        // Bekleyen mesajlari sec
         //
         // Filtreyi ENTITY'deki IsReadyToProcess ile değil, SORGUDA
         // yazıyorum. Sebep: IsReadyToProcess bir C# metodu; EF önü
@@ -96,7 +96,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                      && !m.IsDeadLettered
                      && (m.NextRetryAt == null || m.NextRetryAt <= now))
 
-            // ESKİ MESAJ ONCE.
+            // Eski mesaj once.
             //
             // Sirali islemek sart: "rezervasyon oluşturuldu" bildirimi
             // "rezervasyon süresi doldu" bildiriminden SONRA gitseydi
@@ -128,7 +128,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // yazıyor).
             //
             // Burada önü bir log kapsamina (scope) alarak zinciri
-            // TAMAMLIYORUZ:
+            // Tamamliyoruz:
             //
             //   HTTP isteği         CorrelationId = abc
             //     -> Outbox kaydı   CorrelationId = abc
@@ -150,7 +150,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                     ["OutboxMessageId"] = message.Id,
                 });
 
-            // HER MESAJ KENDİ BASINA -- BIRI DIGERINI DEVIRMESIN
+            // Her mesaj kendi basina -- biri digerini devirmesin
             //
             // try/catch DONGUNUN ICINDE. Disinda olsaydı tek bir bozuk
             // mesaj (örneğin geçersiz JSON) partinin geri kalanini da

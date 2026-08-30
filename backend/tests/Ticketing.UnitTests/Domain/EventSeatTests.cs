@@ -44,7 +44,7 @@ public class EventSeatTests
     [Fact]
     public void Lock_ZatenKilitliKoltuk_HataFirlatmali()
     {
-        // PROJENIN EN ONEMLI TESTI
+        // Projenin en onemli testi
         // "Ayni koltugu iki kullanici ayni anda secerse ne olmali?"
         // Cevap: ilk kilitleyen kazanir, ikinci 409 alir.
         var (_, koltuklar) = TestVeriKurucu.OturumVeKoltuklar(1);

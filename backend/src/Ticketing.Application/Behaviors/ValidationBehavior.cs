@@ -7,7 +7,7 @@ namespace Ticketing.Application.Behaviors;
 /// <summary>
 /// Her komut/sorgu MediatR'a ulasmadan ONCE dogrulanir.
 ///
-/// PIPELINE BEHAVIOR NEDIR?
+/// Pipeline behavior nedir?
 ///
 /// MediatR'da bir istek handler'a giderken bir "boru hattindan" gecer.
 /// Her behavior bu hattin bir halkasidir ve isteği hem oncesinde hem
@@ -15,7 +15,7 @@ namespace Ticketing.Application.Behaviors;
 ///
 ///   İstek -> [Validation] -> [Logging] -> [Transaction] -> Handler
 ///
-/// NEDEN HANDLER ICINDE DOGRULAMA YAPMIYORUM?
+/// Neden handler icinde dogrulama yapmiyorum?
 ///
 /// Yapabilirdim ama 100 handler'in 100'unde de aynı uc satiri yazmak
 /// gerekirdi. Bir gün birinde unutulur ve dogrulanmamis veri sisteme

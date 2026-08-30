@@ -9,7 +9,7 @@ namespace Ticketing.IntegrationTests;
 /// Entegrasyon testleri icin satisa acik bir etkinlik kurar.
 /// </summary>
 /// <remarks>
-/// NEDEN HTTP DEGIL, DOGRUDAN VERITABANI?
+/// Neden HTTP degil, dogrudan veritabani?
 ///
 /// Satisa acik bir etkinlik icin su zincir gerekiyor:
 ///
@@ -203,7 +203,7 @@ internal static class SenaryoKurucu
     /// Bir rezervasyonun suresini GECMISE ceker.
     /// </summary>
     /// <remarks>
-    /// NEDEN BEKLEMIYORUZ?
+    /// Neden beklemiyoruz?
     ///
     /// Rezervasyon kilidi 10 dakika. "Suresi dolmus rezervasyonda
     /// odeme" senaryosunu gercekten beklemeyle test etseydim tek bir

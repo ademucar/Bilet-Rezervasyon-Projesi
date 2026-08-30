@@ -3,7 +3,7 @@ import { z } from 'zod'
 /**
  * Form doğrulama semalari.
  *
- * NEDEN HEM FRONTEND HEM BACKEND'DE DOGRULAMA VAR?
+ * Neden hem frontend hem backend'de dogrulama var?
  *
  * Bu bir TEKRAR değil, iki FARKLI amaca hizmet ediyor:
  *

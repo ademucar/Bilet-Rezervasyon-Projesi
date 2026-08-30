@@ -7,7 +7,7 @@ namespace Ticketing.Persistence;
 /// "dotnet ef migrations add" ve "dotnet ef database update" komutlarinin
 /// kullandigi tasarım zamani fabrikasi.
 ///
-/// BU SINIF NEDEN GEREKLI?
+/// Bu sinif neden gerekli?
 ///
 /// EF Core araclari migration uretirken uygulamayi baslatmaya çalışır:
 /// Program.cs'i calistirir, DI konteynerini kurar, DbContext'i alır.

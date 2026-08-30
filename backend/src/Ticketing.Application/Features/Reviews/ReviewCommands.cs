@@ -38,7 +38,7 @@ internal static class ReviewErrors
         "review.not_owner", "Yalnızca kendi yorumunuzu duzenleyebilirsiniz.");
 }
 
-// ORTAK KURAL KONTROLU
+// Ortak kural kontrolu
 
 /// <summary>
 /// PDF'in yorum yapma on kosullarini kontrol eder.
@@ -354,7 +354,7 @@ internal sealed class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewC
 
         var isAdmin = _currentUser.Roles.Contains(Role.Names.Admin);
 
-        // AYNI UC, IKI FARKLI ISLEM -- BILINCLI
+        // Ayni uc, iki farkli islem -- bilincli
         //
         // PDF iki ayrı kural veriyor:
         //   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."

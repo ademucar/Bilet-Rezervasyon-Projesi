@@ -30,7 +30,7 @@ internal sealed class SecurityHeadersMiddleware
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        // BASLIKLARI YANIT BASLAMADAN ONCE EKLE
+        // Basliklari yanit baslamadan once ekle
         //
         // OnStarting kullanıyorum, doğrudan atama değil.
         //
@@ -97,7 +97,7 @@ internal sealed class SecurityHeadersMiddleware
             // XSS'e karsi en güçlü savunma: hangi kaynaklardan script,
             // stil ve resim yuklenebilecegini belirliyor.
             //
-            // BU API ICIN CSP -- SAYFA SUNMUYORUZ AMA YINE DE GEREKLI
+            // Bu API icin CSP -- sayfa sunmuyoruz ama yine de gerekli
             //
             // Bu bir API; HTML dondurmuyor. O zaman CSP niye?
             //

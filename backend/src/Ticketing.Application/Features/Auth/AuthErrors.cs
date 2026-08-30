@@ -14,7 +14,7 @@ namespace Ticketing.Application.Features.Auth;
 internal static class AuthErrors
 {
     /// <summary>
-    /// KRITIK GÜVENLİK KARARI: TEK VE BELIRSIZ HATA MESAJI
+    /// Kritik güvenlik karari: tek ve belirsiz hata mesaji
     ///
     /// "E-posta bulunamadı" ve "Şifre yanlış" diye AYRI mesajlar
     /// dondurmuyoruz. Ikisi de bu tek hatayi döner.

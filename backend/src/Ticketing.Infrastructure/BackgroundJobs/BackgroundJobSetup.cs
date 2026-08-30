@@ -22,7 +22,7 @@ public static class BackgroundJobSetup
     }
 
     /// <summary>
-    /// NEDEN HANGFIRE, NEDEN QUARTZ.NET DEĞİL?
+    /// Neden hangfire, neden quartz.net değil?
     ///
     /// PDF ikisini de kabul ediyor. Hangfire'i sectim çünkü:
     ///
@@ -69,7 +69,7 @@ public static class BackgroundJobSetup
             .UseRecommendedSerializerSettings()
             .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
 
-        // ISCI SAYISI
+        // İsci sayisi
         //
         // Varsayılan: CPU cekirdek sayısı x 5. 8 cekirdekli bir
         // makinede 40 esZamanli isci demek.

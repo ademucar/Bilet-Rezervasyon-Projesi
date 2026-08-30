@@ -263,7 +263,7 @@ internal sealed partial class RefundPaymentCommandHandler
                 $"İade tutari 0 ile {refundable.Amount} arasında olmalıdır."));
         }
 
-        // ONCE SAGLAYICI, SONRA VERITABANI
+        // Once saglayici, sonra veritabani
         //
         // Ödeme BASLATIRKEN önce kaydediyorduk (para gidip izimizin
         // kalmamasini onlemek için). IADE'de sıra TERS:

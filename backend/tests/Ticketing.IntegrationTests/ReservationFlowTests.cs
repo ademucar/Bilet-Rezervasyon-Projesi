@@ -87,7 +87,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         koltuklar.Should().OnlyContain(s => s.Status == EventSeatStatus.Locked);
 
-        // KILIT SURESI KONTROLU
+        // Kilit suresi kontrolu
         //
         // Sadece "Locked" olmasi yetmez: kilidin bir SON KULLANMA
         // tarihi olmali. Olmasaydi koltuk sonsuza kadar kilitli
@@ -104,7 +104,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     // PDF: "Ayni koltugu iki kullanicinin almaya calismasi"
 
     /// <remarks>
-    /// PROJENIN EN KRITIK TESTI
+    /// Projenin en kritik testi
     ///
     /// Bu davranis, EF Core InMemory saglayicisiyla test EDILEMEZ:
     /// xmin tabanli iyimser eszamanlilik orada hic yok. Test yesil
@@ -148,7 +148,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         using var db = Db();
 
-        // EN ONEMLI DOGRULAMA: VERI BOZULMADI
+        // En onemli dogrulama: veri bozulmadi
         //
         // Ikinci istek reddedildi ama BIRINCININ kilidini de
         // bozmadi. "Son yazan kazanir" davranisi olsaydi koltuk
@@ -222,7 +222,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         var odemeId = odemeBelge.RootElement.GetProperty("id").GetGuid();
 
-        // PROVIDER REFERENCE'I UYDURAMAYIZ -- ILK DENEMEM BUYDU
+        // Provider reference'i uyduramayiz -- ilk denemem buydu
         //
         // Once "TEST-REF-1" diye kendi uydurdugum bir referans
         // gonderdim ve 422 aldim.
@@ -311,7 +311,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     // PDF: "Basarisiz odeme sonrasi koltuk serbest birakma"
 
     /// <remarks>
-    /// BU TESTI ONCE YANLIS YAZDIM
+    /// Bu testi once yanlis yazdim
     ///
     /// Ilk halinde "koltuk kilitli kalmali, kullanici tekrar
     /// denesin" bekliyordum ve gerekcesini de yazmistim: kart hatasi
@@ -408,7 +408,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
             await SenaryoKurucu.RezervasyonSuresiniDoldurAsync(db, rezervasyonId);
         }
 
-        // BU UC ADMIN YETKISI ISTIYOR -- ILK DENEMEM 403 ALDI
+        // Bu uc admin yetkisi istiyor -- ilk denemem 403 aldi
         //
         // Müşteri token'iyla cagirdim ve reddedildi. Dogru davranis:
         // suresi dolan rezervasyonlari toplu temizlemek, siradan bir

@@ -12,7 +12,7 @@ public enum ReportFormat
 /// Bicimden bağımsız rapor verisi.
 /// </summary>
 /// <remarks>
-/// NEDEN TABLO SEKLINDE ARA BIR MODEL?
+/// Neden tablo seklinde ara bir model?
 ///
 /// Her rapor tipi için ayrı bir Excel/CSV/PDF yazici yazmak
 /// 5 rapor x 3 biçim = 15 metot demekti.

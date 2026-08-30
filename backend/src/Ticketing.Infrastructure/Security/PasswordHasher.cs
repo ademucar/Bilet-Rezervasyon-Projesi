@@ -12,7 +12,7 @@ internal sealed class PasswordHasher : IPasswordHasher
     /// <summary>
     /// BCrypt maliyet faktoru (work factor).
     ///
-    /// BU SAYI NEDEN ONEMLI?
+    /// Bu sayi neden onemli?
     ///
     /// BCrypt kasitli olarak YAVAS bir algoritmadir. Maliyet faktoru her
     /// 1 arttiginda hesaplama süresi IKIYE KATLANIR (2^12 = 4096 tur).

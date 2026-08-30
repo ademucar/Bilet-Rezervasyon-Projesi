@@ -31,7 +31,7 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// RedisInsight gibi araclar anahtarlari bu ayirica göre agac olarak
 /// gosteriyor.
 ///
-/// BURADA OLMAYAN SEY: KULLANICIYA OZEL ANAHTARLAR
+/// Burada olmayan sey: kullaniciya ozel anahtarlar
 ///
 /// PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache içinde
 /// tutulmamalidir."
@@ -70,7 +70,7 @@ public static class CacheKeys
     /// Salonun oturma PLANI -- koltuk UYGUNLUGU değil.
     /// </summary>
     /// <remarks>
-    /// BU AYRIM KRITIK -- KARISTIRILIRSA KOLTUK IKI KISIYE SATILIR
+    /// Bu ayrim kritik -- karistirilirsa koltuk iki kisiye satilir
     ///
     /// PDF "Salon oturma planı" cache edilebilir diyor. Dogru, ama
     /// hangi veri olduğu çok önemli:
@@ -99,7 +99,7 @@ public static class CacheKeys
 /// <summary>
 /// Onbellek yasam sureleri. PDF kuralı: "Cache expiration tanimlanmalidir."
 ///
-/// SURELER NEYE GORE SECILDI?
+/// Sureler neye gore secildi?
 ///
 /// Tek soru: "Bu veri degistikten sonra kullanıcının eski halini
 /// gormesi ne kadar süre kabul edilebilir?"

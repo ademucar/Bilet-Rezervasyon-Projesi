@@ -40,7 +40,7 @@ internal static class ReservationErrors
         "reservation.not_owner", "Bu rezervasyon size ait değil.");
 
     /// <summary>
-    /// PROJENIN EN KRITIK HATASI.
+    /// Projenin en kritik hatasi.
     /// Iki kullanıcı aynı koltuğu aynı anda aldiginda kaybedene döner.
     /// </summary>
     public static readonly Error SeatConflict = Error.Concurrency(
@@ -124,7 +124,7 @@ internal sealed partial class CreateReservationCommandHandler
         ILogger logger, Guid sessionId, int seatCount, int lockMinutes);
 
     /// <remarks>
-    /// CAKISMA NEDEN AYRI VE NEDEN WARNING?
+    /// Cakisma neden ayri ve neden warning?
     ///
     /// Bu satır olmadan "koltuğu secmistim ama alamadim" sikayetini
     /// arastirmak imkansiz: kullanıcının ekraninda koltuk BOSTU,
@@ -165,7 +165,7 @@ internal sealed partial class CreateReservationCommandHandler
 
         var now = _clock.UtcNow;
 
-        // 1. IDEMPOTENCY -- ONCE KONTROL
+        // 1. İdempotency -- once kontrol
         //
         // PDF Sprint 15: "Aynı istegin tekrar gonderilmesine karsi
         // idempotency uygulanmalıdır."
@@ -193,7 +193,7 @@ internal sealed partial class CreateReservationCommandHandler
             }
         }
 
-        // 2. SATIS ACIK MI?
+        // 2. Satis acik mi?
         var sessionInfo = await _context.EventSessions
             .AsNoTracking()
             .Where(s => s.Id == request.EventSessionId)
@@ -224,7 +224,7 @@ internal sealed partial class CreateReservationCommandHandler
             return Result.Failure<ReservationDto>(ReservationErrors.SalesNotOpen);
         }
 
-        // 3. KULLANICI BİLET LIMITI
+        // 3. Kullanici bilet limiti
         //
         // PDF: "Bir kullanıcı aynı oturum için belirlenen maksimum
         // bilet sayisini aşamaz."
@@ -280,7 +280,7 @@ internal sealed partial class CreateReservationCommandHandler
             return Result.Failure<ReservationDto>(ReservationErrors.SeatsNotFound);
         }
 
-        // 5. REZERVASYONU OLUSTUR
+        // 5. Rezervasyonu olustur
         //
         // Reservation.Create koltukları KILITLIYOR ve toplam tutarı
         // koltuklarin KENDİ fiyatlarindan hesapliyor.
@@ -313,7 +313,7 @@ internal sealed partial class CreateReservationCommandHandler
 
         _context.Reservations.Add(reservation);
 
-        // 6. KAYDET -- ASIL YARIS BURADA COZULUYOR
+        // 6. Kaydet -- asil yaris burada cozuluyor
         try
         {
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -334,7 +334,7 @@ internal sealed partial class CreateReservationCommandHandler
         {
             LogSeatConflict(_logger, request.EventSessionId, seats.Count);
 
-            // OPTIMISTIC CONCURRENCY DEVREDE
+            // Optimistic concurrency devrede
             //
             // Biz koltuğu okuduktan SONRA başka bir istek önü kilitledi.
             //

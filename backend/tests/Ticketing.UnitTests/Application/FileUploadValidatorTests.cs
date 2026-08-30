@@ -54,7 +54,7 @@ public class FileUploadValidatorTests
         sonuc.IsSuccess.Should().BeTrue();
     }
 
-    // SALDIRI 1: UZANTIYI DEGISTIRME
+    // Saldiri 1: uzantiyi degistirme
     //
     // Saldirgan "zararli.exe" dosyasini "afis.jpg" yapip yukluyor ve
     // Content-Type basligini da image/jpeg olarak elle yaziyor.
@@ -73,7 +73,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.content_mismatch");
     }
 
-    // SALDIRI 2: CIFT UZANTI
+    // Saldiri 2: cift uzanti
     //
     // "afis.jpg.exe" -- bazi sistemler ilk uzantiya bakar, isletim
     // sistemi ise SON uzantiyi calistirir.
@@ -115,7 +115,7 @@ public class FileUploadValidatorTests
         sonuc.Value.Should().EndWith(".jpg");
     }
 
-    // SALDIRI 4: SVG ILE SAKLANMIS XSS
+    // Saldiri 4: SVG ile saklanmis XSS
     //
     // SVG bir XML belgesidir ve icine script gomulebilir. "Resim"
     // oldugu icin zararsiz sanilir; beyaz listemizde BILINCLI olarak
@@ -134,7 +134,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // SALDIRI 5: MIME TURU ILE UZANTI UYUSMUYOR
+    // Saldiri 5: MIME turu ile uzanti uyusmuyor
     [Fact]
     public void Uyusmayan_mime_turu_reddedilir()
     {
@@ -145,7 +145,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.mime_mismatch");
     }
 
-    // SALDIRI 6: PNG ADIYLA JPEG ICERIGI
+    // Saldiri 6: PNG adiyla JPEG icerigi
     //
     // Bu bir saldiri olmayabilir -- kullanici dosyayi elle yeniden
     // adlandirmis da olabilir. Yine de reddediyoruz cunku dosyayi
@@ -188,7 +188,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // KIRPILMIS DOSYA
+    // Kirpilmis dosya
     //
     // Imzayi tamamlayacak kadar bayt yoksa dogrulayamayiz.
     // "Dogrulayamiyorum" durumunda GECIRMEK degil REDDETMEK dogru
@@ -231,7 +231,7 @@ public class FileUploadValidatorTests
         sonuc.IsSuccess.Should().BeTrue();
     }
 
-    // URETILEN AD HER SEFERINDE FARKLI OLMALI
+    // Uretilen ad her seferinde farkli olmali
     //
     // Ayni ad uretilseydi ikinci yukleme birincinin uzerine yazardi
     // (veya LocalFileStorage'daki FileMode.CreateNew yuzunden

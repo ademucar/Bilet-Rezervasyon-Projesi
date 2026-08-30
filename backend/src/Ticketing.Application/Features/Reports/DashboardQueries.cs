@@ -9,7 +9,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reports;
 
-// ORTAK TIPLER
+// Ortak tipler
 
 /// <summary>Günlük satış grafigi noktasi.</summary>
 public sealed record DailySalesPoint(DateOnly Date, int TicketCount, decimal Revenue);
@@ -72,7 +72,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // BU PANELIN EN KRITIK SATIRI: KAPSAM SINIRI
+        // Bu panelin en kritik satiri: kapsam siniri
         //
         // Organizatör YALNIZCA kendi etkinliklerinin verisini görebilir.
         //
@@ -199,7 +199,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // BOŞ GUNLERI DOLDUR
+        // Boş gunleri doldur
         //
         // Veritabani yalnızca satış OLAN gunleri döndürüyor. Grafige
         // olduğu gibi verseydim, satış olmayan gunler ATLANIRDI ve
@@ -230,7 +230,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
                 t.EventSeat.EventSession.Event.Title,
             })
 
-            // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
+            // Anonim tipe projeksiyon, record'a bellekte cevirim
             //
             // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:
@@ -452,7 +452,7 @@ internal sealed class GetAdminDashboardQueryHandler
         // PDF bu metriği istiyor ama neyin "sistem hatası" sayilacagini
         // soylemiyor. Tanimi ben veriyorum ve acikca yazıyorum:
         //
-        //   DEAD LETTER OLMUS OUTBOX MESAJLARI
+        //   Dead letter olmus outbox mesajlari
         //
         // Neden bu? Çünkü dead letter, sistemde GERCEKTEN yanlış giden
         // ve INSAN MUDAHALESI bekleyen tek kalici kayittir. Bes kez

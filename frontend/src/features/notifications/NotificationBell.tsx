@@ -76,7 +76,7 @@ export function NotificationBell() {
   const navigate = useNavigate()
   const panelRef = useRef<HTMLDivElement>(null)
 
-  // SAYAC: DUZENLI YENILEME
+  // Sayac: duzenli yenileme
   //
   // Bildirimler arka plan islerinden geliyor (süre uyarısı, rapor
   // hazır, etkinlik hatirlatmasi). Kullanıcı hiçbir sey yapmadan
@@ -119,7 +119,7 @@ export function NotificationBell() {
     },
   })
 
-  // DISARI TIKLAYINCA KAPAT
+  // Disari tiklayinca kapat
   //
   // Olmasaydı panel açık kalır ve kullanıcı sayfayla etkilesemezdi.
   //

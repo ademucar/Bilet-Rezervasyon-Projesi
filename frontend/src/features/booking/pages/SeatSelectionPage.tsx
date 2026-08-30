@@ -17,7 +17,7 @@ import {
   type SeatAvailabilityItem,
 } from '../api/bookingApi'
 
-// KOLTUK DURUM RENKLERI
+// Koltuk durum renkleri
 //
 // Renkleri tek bir yerde topluyorum: hem harita hem de gosterge
 // (legend) aynı değeri kullansin. Ayrı ayrı yazsaydım birini
@@ -270,7 +270,7 @@ export function SeatSelectionPage() {
   )
 
   /**
-   * IDEMPOTENCY ANAHTARININ OMRU
+   * İdempotency anahtarinin omru
    *
    * Anahtar, SECIME bağlı. Kullanıcı aynı koltuklarla ikinci kez
    * gonderirse (butona iki kez basti, ag koptu ve tekrar denedi)
@@ -290,7 +290,7 @@ export function SeatSelectionPage() {
   const toggleSeat = (eventSeatId: string) => {
     idempotencyKeyRef.current = null
 
-    // NEDEN FONKSIYONEL GUNCELLEME? -- TARAYICIDA YAKALADIGIM HATA
+    // Neden fonksiyonel guncelleme? -- tarayicida yakaladigim hata
     //
     // İlk yazimim soyleydi:
     //
@@ -363,7 +363,7 @@ export function SeatSelectionPage() {
     },
   })
 
-  // HARITA VERISINI HAZIRLA
+  // Harita verisini hazirla
   //
   // Backend koltukları DUZ bir liste olarak dönüyor; harita ise
   // bolumlere gruplanmis istiyor. Ceviriyi burada yapıyorum.

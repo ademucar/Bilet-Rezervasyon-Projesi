@@ -35,7 +35,7 @@ public class Event : ConcurrentEntity
         CancellationPolicy = CancellationPolicy.Default;
     }
 
-    // DURUM MAKINESI
+    // Durum makinesi
 
     /// <summary>
     /// Izin verilen durum gecislerinin TEK kaynagi.

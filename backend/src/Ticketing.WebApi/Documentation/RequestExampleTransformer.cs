@@ -8,7 +8,7 @@ namespace Ticketing.WebApi.Documentation;
 /// İstek govdelerine örnek deger ekler. PDF Sprint 18: "Request ornekleri".
 /// </summary>
 /// <remarks>
-/// NEDEN ORNEK GEREKLI? SEMA ZATEN VAR
+/// Neden ornek gerekli? sema zaten var
 ///
 /// OpenAPI semasi alan adlarini ve turlerini söylüyor ama GECERLI
 /// bir degerin neye benzedigini soylemiyor.
@@ -23,7 +23,7 @@ namespace Ticketing.WebApi.Documentation;
 ///
 /// Gercekci ornekler, ilk denemeyi CALISIR hale getiriyor.
 ///
-/// ORNEKLER GERCEK KURALLARLA UYUMLU OLMALI
+/// Ornekler gercek kurallarla uyumlu olmali
 ///
 /// Ornek şifre "Şifre123!" -- çünkü dogrulayici en az 8 karakter,
 /// bir büyük harf ve bir rakam istiyor (Sprint 3). "string" veya

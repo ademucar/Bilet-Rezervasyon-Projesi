@@ -11,7 +11,7 @@ namespace Ticketing.IntegrationTests;
 /// Entegrasyon testlerinin ortak temeli. PDF Sprint 17.
 /// </summary>
 /// <remarks>
-/// HER TEST TEMIZ BIR VERITABANIYLA BASLIYOR
+/// Her test temiz bir veritabaniyla basliyor
 ///
 /// InitializeAsync her testten ONCE calisiyor ve tablolari
 /// bosaltiyor.
@@ -62,7 +62,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    // YARDIMCILAR
+    // Yardimcilar
 
     /// <summary>Roller olmadan kayit calismaz; her testten once ekliyorum.</summary>
     private async Task SeedReferansVerisiAsync()
@@ -134,7 +134,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     /// Kullaniciya rol verir ve YENI token uretir.
     /// </summary>
     /// <remarks>
-    /// ROL EKLEDIKTEN SONRA NEDEN TEKRAR GIRIS?
+    /// Rol ekledikten sonra neden tekrar giris?
     ///
     /// Roller JWT'nin ICINE yaziliyor (Sprint 3). Var olan token,
     /// rol eklenmeden once uretildigi icin yeni rolu ICERMIYOR.
@@ -163,7 +163,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
             var rol = await db.Roles.FirstAsync(r => r.Name == rolAdi).ConfigureAwait(false);
 
-            // ROL, DOMAIN METODUYLA ATANIYOR -- TABLOYA DEGIL
+            // Rol, domain metoduyla ataniyor -- tabloya degil
             //
             // db.UserRoles.Add(new UserRole(...)) yazmayi denedim:
             // DERLENMEDI, cunku UserRole'un kurucusu internal.

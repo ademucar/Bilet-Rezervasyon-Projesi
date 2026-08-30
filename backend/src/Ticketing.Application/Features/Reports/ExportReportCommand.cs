@@ -43,7 +43,7 @@ public enum ReportType
 /// Bu uc, yalnızca "talebi kuyruga aldim" der ve HEMEN döner.
 /// Kullanıcı başka isine bakar, rapor hazır olunca bildirim alır.
 ///
-/// KUYRUGA ALMA YOLU: OUTBOX
+/// Kuyruga alma yolu: outbox
 ///
 /// Hangfire'in BackgroundJob.Enqueue metodu da kullanilabilirdi. Ama
 /// Sprint 9'da kurdugum Outbox altyapisi zaten tam olarak bu isi
@@ -99,7 +99,7 @@ internal sealed class ExportReportCommandHandler
         ExportReportCommand request,
         CancellationToken cancellationToken)
     {
-        // YETKI KONTROLU TALEP ANINDA -- ISLEME ANINDA DEĞİL
+        // Yetki kontrolu talep aninda -- isleme aninda değil
         //
         // Bu çok önemli bir ayrim. Rapor arka planda uretilecek ve o
         // sırada HTTP baglami OLMAYACAK: ICurrentUser boş donecek.
@@ -179,7 +179,7 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
     {
         var data = OutboxPayload.Parse<ReportExportPayload>(payload);
 
-        // IDEMPOTENCY: DOSYA ZATEN URETILDIYSE TEKRAR URETME
+        // İdempotency: dosya zaten uretildiyse tekrar uretme
         //
         // Outbox "en az bir kez" garantisi veriyor. Kontrol olmasaydı
         // aynı rapor iki kez üretilir ve kullanıcı IKI bildirim alırdı.
@@ -190,7 +190,7 @@ internal sealed class ReportExportOutboxHandler : IOutboxMessageHandler
             return;
         }
 
-        // KULLANICI KIMLIGINI TASIYAN OZEL BIR BAGLAM
+        // Kullanici kimligini tasiyan ozel bir baglam
         //
         // Rapor sorgulari ICurrentUser üzerinden kapsam belirliyor.
         // Arka planda HTTP baglami yok -> ICurrentUser boş.
@@ -248,13 +248,13 @@ public interface IReportFileStore
     Task<bool> ExistsAsync(Guid exportId, CancellationToken cancellationToken);
 }
 
-// 3) SAHIPLIK DOGRULAMASI
+// 3) Sahiplik dogrulamasi
 
 /// <summary>
 /// Bu rapor dosyasi isteği yapan kullanıcıya mi ait?
 /// </summary>
 /// <remarks>
-/// TAHMIN EDILEMEZ KIMLIK, YETKI DEĞİLDİR
+/// Tahmin edilemez kimlik, yetki değildir
 ///
 /// exportId bir Guid v7 ve tahmin edilmesi pratikte imkansiz. Ama
 /// buna guvenip yetki kontrolunu atlamak "gizlilik yoluyla güvenlik"
@@ -264,7 +264,7 @@ public interface IReportFileStore
 /// gecmisi, paylasilan bir ekran goruntusu, Referer başlığı. Sizan
 /// kimlikle baskasinin GELIR RAPORU indirilebilirdi.
 ///
-/// SAHIPLIGI NEREDEN BILIYORUM?
+/// Sahipligi nereden biliyorum?
 ///
 /// Ayrı bir "raporlar" tablosu acmadim. Çünkü bilgi ZATEN duruyor:
 /// rapor hazır olduğunda SAHIBINE bir bildirim yaziliyor ve o

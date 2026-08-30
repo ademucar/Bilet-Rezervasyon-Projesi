@@ -9,7 +9,7 @@ namespace Ticketing.Application.Features.Reports;
 /// PDF Sprint 13 export akisinin ortasindaki parca.
 /// </summary>
 /// <remarks>
-/// BICIMLENDIRME NEDEN BURADA?
+/// Bicimlendirme neden burada?
 ///
 /// Para, tarih ve yüzde bicimlendirmesini yaziciya (CSV/Excel/PDF)
 /// birakmadim. Sebep: uc yazici da aynı bicimlendirmeyi tekrar
@@ -101,7 +101,7 @@ internal static class ReportTableBuilder
     private static string S(int sayi)
         => sayi.ToString(CultureInfo.InvariantCulture);
 
-    // 1) SATIS OZETI
+    // 1) Satis ozeti
 
     private static async Task<ReportTable> SalesSummaryAsync(
         IApplicationDbContext context,
@@ -113,7 +113,7 @@ internal static class ReportTableBuilder
             .RunAsync(context, scope, data.From, data.To, cancellationToken)
             .ConfigureAwait(false);
 
-        // TEK SATIRLIK RAPORU DIKEY YAZIYORUM
+        // Tek satirlik raporu dikey yaziyorum
         //
         // Satış özeti 8 metrikten olusan TEK bir kayıt. Yatay yazsaydım
         // 8 sutunlu ve 1 satirlik bir tablo çıkardı -- Excel'de saga
@@ -135,7 +135,7 @@ internal static class ReportTableBuilder
         return new ReportTable("Satış Özeti", SalesSummaryHeaders, rows);
     }
 
-    // 2) ETKİNLİK DOLULUGU
+    // 2) Etkinlik dolulugu
 
     private static async Task<ReportTable> EventOccupancyAsync(
         IApplicationDbContext context,
@@ -161,7 +161,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // 3) ETKİNLİK BAZLI GELIR
+    // 3) Etkinlik bazli gelir
 
     private static async Task<ReportTable> RevenueByEventAsync(
         IApplicationDbContext context,
@@ -184,7 +184,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // 4) BİLET TURU SATISLARI
+    // 4) Bilet turu satislari
 
     private static async Task<ReportTable> TicketTypeSalesAsync(
         IApplicationDbContext context,
@@ -209,7 +209,7 @@ internal static class ReportTableBuilder
             }).ToList());
     }
 
-    // 5) ÖDEME DURUMLARI
+    // 5) Ödeme durumlari
 
     private static async Task<ReportTable> PaymentStatusesAsync(
         IApplicationDbContext context,

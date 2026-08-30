@@ -11,7 +11,7 @@ namespace Ticketing.Persistence.Interceptors;
 /// kullanılmalıdır."
 /// </summary>
 /// <remarks>
-/// BU SINIF SPRINT 16'DA, OLCEREK BULUNAN BIR BOSLUK ICIN YAZILDI
+/// Bu sinif sprint 16'da, olcerek bulunan bir bosluk icin yazildi
 ///
 /// OutboxMessage.CorrelationId alanı Sprint 9'dan beri VARDI.
 /// Create() metodunda parametresi vardi. Veritabaninda sutunu ve
@@ -32,7 +32,7 @@ namespace Ticketing.Persistence.Interceptors;
 /// Sekiz cagri yerinden YEDISI parametreyi hiç gecmiyordu. Alan
 /// vardi, indeks vardi, niyet vardi -- veri yoktu.
 ///
-/// NEDEN 7 CAGRI YERINI TEK TEK DUZELTMEDIM?
+/// Neden 7 cagri yerini tek tek duzeltmedim?
 ///
 /// Duzeltebilirdim; 7 satirlik bir is. Ama aynı hata YENIDEN olurdu:
 /// 9. cagri yerini yazan kişi (yani gelecekteki ben) parametreyi

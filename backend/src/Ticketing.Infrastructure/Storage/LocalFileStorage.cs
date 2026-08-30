@@ -7,7 +7,7 @@ namespace Ticketing.Infrastructure.Storage;
 /// Yuklenen dosyalari yerel diske yazar. PDF Sprint 15.
 /// </summary>
 /// <remarks>
-/// URETIMDE BU SINIF YETMEZ -- BILINCLI BIR SINIRLAMA
+/// Uretimde bu sinif yetmez -- bilincli bir sinirlama
 ///
 /// Birden fazla sunucuya olceklenince disk PAYLASILMAZ: kullanıcı
 /// afisi sunucu-1 e yukler, sunucu-2 den istendiginde bulunamaz.
@@ -88,7 +88,7 @@ internal sealed class LocalFileStorage : IFileStorage
     /// klasorun altinda kaldigini dogrular.
     /// </summary>
     /// <remarks>
-    /// UCUNCU SIPER -- DERINLEMESINE SAVUNMA
+    /// Ucuncu siper -- derinlemesine savunma
     ///
     /// Bu noktaya gelen ad zaten Guid: FileUploadValidator uretti ve
     /// kullanıcı girdisi icermiyor. Yani bu kontrol BUGUN gereksiz.

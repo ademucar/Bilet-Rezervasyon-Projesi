@@ -12,7 +12,7 @@ namespace Ticketing.WebApi.Controllers;
 /// <summary>
 /// Mekan ve salon yönetimi. PDF Sprint 4.
 ///
-/// YETKILENDIRME STRATEJISI
+/// Yetkilendirme stratejisi
 ///
 /// OKUMA islemleri ANONIM: kullanıcı etkinlik ararken mekan bilgisini
 /// gormeli ve bunun için giriş yapmak zorunda kalmamali.
@@ -76,7 +76,7 @@ public sealed class VenuesController : ApiControllerBase
         [FromBody] UpdateVenueRequest request,
         CancellationToken cancellationToken)
     {
-        // ID GOVDEDEN DEĞİL URL'DEN ALINIYOR
+        // ID govdeden değil url'den aliniyor
         //
         // Komut nesnesini doğrudan [FromBody] ile baglasaydim, istemci
         // URL'de bir Id, govdede BASKA bir Id gonderebilirdi:
@@ -134,7 +134,7 @@ public sealed record UpdateVenueRequest(
 
 public sealed record CreateHallRequest(string Name, int Capacity);
 
-// SALON VE OTURMA PLANI
+// Salon ve oturma plani
 
 /// <summary>Salon ve oturma planı islemleri. PDF Sprint 4.</summary>
 [ApiVersion("1.0")]

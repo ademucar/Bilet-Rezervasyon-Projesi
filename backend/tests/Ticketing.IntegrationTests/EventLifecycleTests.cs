@@ -99,7 +99,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         yanit.StatusCode.Should().Be(HttpStatusCode.Created);
 
         using var belge = JsonDocument.Parse(await yanit.Content.ReadAsStringAsync());
-        // YANIT GOVDESI NESNE DEGIL, DOGRUDAN GUID
+        // Yanit govdesi nesne degil, dogrudan GUID
         //
         // Once GetProperty("id") yazdim ve su hatayi aldim:
         //   "requires an element of type 'Object', but the target
@@ -118,7 +118,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
 
         var etkinlik = await db.Events.SingleAsync(e => e.Id == etkinlikId);
 
-        // YENI ETKINLIK TASLAK OLARAK BASLAMALI
+        // Yeni etkinlik taslak olarak baslamali
         //
         // Dogrudan yayinda baslasaydi, yarim hazirlanmis bir etkinlik
         // (oturumu yok, bilet turu yok, koltugu yok) ana sayfada
@@ -159,7 +159,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
     // PDF: "Etkinlik yayinlama"
 
     /// <remarks>
-    /// YAYINLAMA, DURUM MAKINESINDEN GECMEK ZORUNDA
+    /// Yayinlama, durum makinesinden gecmek zorunda
     ///
     /// Draft -> PendingApproval -> Published
     ///
@@ -173,7 +173,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         var (token, kategori, sehir, mekan, salon, profil, plan) =
             await OrganizatorHazirlaAsync();
 
-        // ETKINLIK OTURUM VE BILET TURU ILE KURULUYOR
+        // Etkinlik oturum ve bilet turu ile kuruluyor
         //
         // Ilk denememde bos bir taslak olusturup dogrudan onaya
         // gonderdim ve reddedildim.
@@ -208,7 +208,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
             bekleyen.Status.Should().Be(EventStatus.PendingApproval);
         }
 
-        // YAYINLAMA YALNIZCA ADMIN
+        // Yayinlama yalnizca admin
         //
         // Organizator kendi etkinligini onaylayabilseydi onay sureci
         // tamamen anlamsiz olurdu. Once organizator token'iyla

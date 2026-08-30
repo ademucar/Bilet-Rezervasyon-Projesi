@@ -35,7 +35,7 @@ public sealed record ReservationDto(
     int ExtensionCount,
     IReadOnlyList<ReservationItemDto> Items);
 
-// ORTAK SORGU
+// Ortak sorgu
 
 internal static class ReservationQueries
 {
@@ -50,7 +50,7 @@ internal static class ReservationQueries
     /// <summary>
     /// Materyalize edilmiş DTO'ya kalan süreyi ekler.
     ///
-    /// NEDEN SORGUDA HESAPLAMIYORUZ? -- CALISTIRINCA OGRENDIK
+    /// Neden sorguda hesaplamiyoruz? -- calistirinca ogrendik
     ///
     /// İlk yazisimda kalan süreyi SQL içinde hesapliyordum:
     ///
@@ -85,7 +85,7 @@ internal static class ReservationQueries
     /// <summary>
     /// Rezervasyon sorgusunu DTO'ya projelendirir.
     ///
-    /// FILTRE, PROJEKSIYONDAN ONCE UYGULANMALI
+    /// Filtre, projeksiyondan once uygulanmali
     ///
     /// İlk yazisimda bu metot doğrudan context.Reservations üzerinden
     /// baslayip IQueryable&lt;ReservationDto&gt; donuyordu ve cagiranlar
@@ -179,7 +179,7 @@ internal sealed class GetReservationQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // SAHIPLIK KONTROLU -- SORGUNUN ICINDE
+        // Sahiplik kontrolu -- sorgunun icinde
         //
         // "Önce cek, sonra sahibi mi diye bak" da yapabilirdim. Ama o
         // zaman baskasinin rezervasyonu bir an için bellege gelirdi ve
@@ -206,7 +206,7 @@ internal sealed class GetReservationQueryHandler
     }
 }
 
-// KULLANICININ REZERVASYONLARI
+// Kullanicinin rezervasyonlari
 // PDF: GET /api/v1/users/me/reservations
 
 public sealed record GetMyReservationsQuery(ReservationStatus? Status)

@@ -17,7 +17,7 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .MaximumLength(256).WithMessage("E-posta adresi en fazla 256 karakter olabilir.")
             .EmailAddress().WithMessage("Geçerli bir e-posta adresi giriniz.");
 
-        // SIFRE POLITIKASI
+        // Sifre politikasi
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Şifre zorunludur.")
 
@@ -25,7 +25,7 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             // her ek karakter olasilik uzayini katlanarak buyutur.
             .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.")
 
-            // UST SINIR NEDEN VAR? -- COK ONEMLI BIR AYRINTI
+            // Ust sinir neden var? -- cok onemli bir ayrinti
             //
             // BCrypt, girdinin YALNIZCA ILK 72 BYTE'INI dikkate alır.
             // Gerisi sessizce yok sayilir.

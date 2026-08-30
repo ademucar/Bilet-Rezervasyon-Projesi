@@ -4,7 +4,7 @@ namespace Ticketing.Domain.Common;
 /// Es zamanlı güncelleme kontrolü gereken entity'ler bundan turer.
 /// Bundan turecekler: EventSeat (en kritigi), Reservation, Payment, Event.
 ///
-/// OPTIMISTIC CONCURRENCY NASIL CALISIR?
+/// Optimistic concurrency nasil calisir?
 ///
 /// Senaryo: Ayse ve Mehmet aynı anda B-5-12 koltuğunu almak istiyor.
 ///

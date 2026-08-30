@@ -30,7 +30,7 @@ public sealed class FilesController : ApiControllerBase
     /// <response code="413">Dosya izin verilen boyutu asiyor.</response>
     [HttpPost]
 
-    // KIMLIK DOGRULAMA ŞART -- ANONIM YUKLEMEYE ASLA IZIN YOK
+    // Kimlik dogrulama şart -- anonim yuklemeye asla izin yok
     //
     // Anonim dosya yukleme, sunucumuzu herkese açık bir depolama
     // alanina cevirir. Saldirgan diski doldurabilir veya benim alan
@@ -46,7 +46,7 @@ public sealed class FilesController : ApiControllerBase
     // (disk yazma + doğrulama) ve kotuye kullanimi kolay.
     [EnableRateLimiting(RateLimitingSetup.Policies.Transaction)]
 
-    // UC BAZLI BOYUT SINIRI
+    // Uc bazli boyut siniri
     //
     // Program.cs'te genel sinir 1 MB. Dosya yukleme için bu yetersiz
     // oldugundan burada 5 MB'a yukseltiyorum.
@@ -59,7 +59,7 @@ public sealed class FilesController : ApiControllerBase
     // birden değil.
     [RequestSizeLimit(FileUploadValidator.MaksimumBoyut)]
 
-    // IKI SINIR ATTRIBUTE'U -- IKISI DE GEREKLI
+    // İki sinir attribute'u -- ikisi de gerekli
     //
     // [RequestSizeLimit] GERCEK sinirlayici: govdeyi Kestrel
     // seviyesinde kesiyor ve chunked isteklerde bile çalışıyor.

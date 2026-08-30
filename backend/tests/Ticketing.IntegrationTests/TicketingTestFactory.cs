@@ -44,7 +44,7 @@ namespace Ticketing.IntegrationTests;
 /// </remarks>
 public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    // POSTGRESQL KAPSAYICISI
+    // Postgresql kapsayicisi
     //
     // Surumu ACIKCA sabitliyorum ("17-alpine"), "latest" DEGIL.
     //
@@ -98,7 +98,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         // SEMAYI MIGRATION ILE KUR -- EnsureCreated DEGIL
         //
         // EnsureCreated() semayi model'den uretiyor ve
-        // MIGRATION'LARI HIC CALISTIRMIYOR.
+        // Migration'lari hic calistirmiyor.
         //
         // Sonuc: bozuk bir migration'i testler ASLA yakalamaz.
         // Uretime cikarken "migration calismiyor" hatasini ilk kez
@@ -150,7 +150,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        // BAGLANTI DIZELERINI KAPSAYICILARA YONLENDIR
+        // Baglanti dizelerini kapsayicilara yonlendir
         //
         // Uygulama baglanti dizelerini yapilandirmadan okuyor
         // (Sprint 1 karari: hassas degerler kodda sabit degil).
@@ -161,7 +161,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         builder.UseSetting("ConnectionStrings:Postgres", _postgres.GetConnectionString());
         builder.UseSetting("ConnectionStrings:Redis", _redis.GetConnectionString());
 
-        // ZORUNLU AYARLAR -- UYGULAMA BUNLAR OLMADAN ACILMIYOR
+        // Zorunlu ayarlar -- uygulama bunlar olmadan acilmiyor
         //
         // Ilk calistirmada 8 testin 8'i de ayni hatayla dustu:
         //
@@ -193,7 +193,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         builder.UseSetting("Smtp:Port", "1");
         builder.UseSetting("Smtp:From", "test@ornek.local");
 
-        // HIZ SINIRLAMASI TESTLERDE KAPALI
+        // Hiz sinirlamasi testlerde kapali
         //
         // Sprint 15'te auth ucuna 5 dakikada 10 istek siniri koydum.
         // Testler ayni IP'den (bellek ici sunucu) onlarca giris
@@ -231,7 +231,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
 /// Tum entegrasyon testlerinin PAYLASTIGI kapsayici kumesi.
 /// </summary>
 /// <remarks>
-/// NEDEN COLLECTION FIXTURE?
+/// Neden collection fixture?
 ///
 /// Kapsayici baslatmak 10-20 saniye suruyor. Her test sinifi kendi
 /// kapsayicisini baslatsaydi paket dakikalarca surerdi ve kimse

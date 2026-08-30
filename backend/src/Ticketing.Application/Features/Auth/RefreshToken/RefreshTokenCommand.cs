@@ -19,14 +19,14 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 }
 
 /// <summary>
-/// REFRESH TOKEN ROTATION VE CALINMA TESPITI
+/// Refresh token rotation ve calinma tespiti
 ///
 /// PDF Sprint 3 uc kural istiyor:
 ///   - "Refresh Token rotation uygulanmalıdır."
 ///   - "Eski Refresh Token tekrar kullanilamamalidir."
 ///   - "Logout isleminde token iptal edilmelidir."
 ///
-/// ROTATION NEDIR?
+/// Rotation nedir?
 /// Her yenilemede eski token İPTAL EDILIR ve yeni bir token üretilir.
 /// Yani bir refresh token yalnızca BIR KEZ kullanilabilir.
 ///
@@ -99,7 +99,7 @@ internal sealed class RefreshTokenCommandHandler
             return Result.Failure<AuthResponse>(AuthErrors.InvalidRefreshToken);
         }
 
-        // CALINMA TESPITI
+        // Calinma tespiti
         //
         // İptal edilmiş bir token tekrar kullanilmaya calisiliyor.
         //

@@ -5,7 +5,7 @@ import { useCountdown } from './useCountdown'
 /**
  * PDF Sprint 17 frontend testi: "Rezervasyon sayaçı".
  *
- * BU HOOK NEDEN AYRICA TEST EDİLİYOR?
+ * Bu hook neden ayrica test ediliyor?
  *
  * Sayaç, kullanıcının koltuğunu kaybetmeden önce elindeki tek
  * uyarı. Yanlış çalışması iki yönde de kötü:
@@ -57,7 +57,7 @@ describe('useCountdown', () => {
   })
 
   /**
-   * EN ÖNEMLİ TEST: SIFIRIN ALTINA İNMEMELİ
+   * En önemli test: sifirin altina inmemeli
    *
    * Negatife inseydi ekranda "-3:12 kaldı" gibi bir şey yazardı.
    * Bu yalnızca çirkin değil, YANILTICI: kullanıcı eksi bir sayıyı

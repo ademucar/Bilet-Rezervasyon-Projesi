@@ -41,7 +41,7 @@ public sealed record PaymentResult(
 }
 
 /// <summary>
-/// ÖDEME SAGLAYICI SOYUTLAMASI
+/// Ödeme saglayici soyutlamasi
 ///
 /// PDF Sprint 8:
 ///   "Gerçek ödeme sağlayıcısı kullanilmak zorunda degildir. Ancak

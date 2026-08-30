@@ -32,7 +32,7 @@ public sealed class EventsController : ApiControllerBase
         [FromQuery] GetEventsQuery query,
         CancellationToken cancellationToken)
     {
-        // GORUNURLUK KARARI SUNUCUDA VERILIYOR
+        // Gorunurluk karari sunucuda veriliyor
         //
         // IncludeUnpublished, GetEventsQuery uzerinde bir alan ve
         // [FromQuery] ile bağlanıyor. Yani istemci
@@ -158,7 +158,7 @@ public sealed class EventsController : ApiControllerBase
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // KIMLIK ADRESTEN, GOVDEDEN DEĞİL
+        // Kimlik adresten, govdeden değil
         //
         // Govdede de bir EventId tasisaydim, ikisi FARKLI olabilirdi:
         // adreste kendi etkinligini, govdede baskasininkini gonderen

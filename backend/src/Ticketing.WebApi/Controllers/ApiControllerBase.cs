@@ -35,7 +35,7 @@ public abstract class ApiControllerBase : ControllerBase
     /// <summary>
     /// Result'i HTTP yanitina cevirir.
     ///
-    /// HTTP BILGISI NEDEN BURADA?
+    /// HTTP bilgisi neden burada?
     ///
     /// Application katmani ErrorType.NotFound diyor, "404" demiyor.
     /// HTTP'ye cevirme isi Presentation katmaninin sorumlulugunda ve

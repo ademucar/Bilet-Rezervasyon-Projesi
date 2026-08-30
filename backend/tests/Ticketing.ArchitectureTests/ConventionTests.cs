@@ -10,7 +10,7 @@ namespace Ticketing.ArchitectureTests;
 /// </summary>
 public class ConventionTests
 {
-    // GUVENLIK AGI
+    // Guvenlik agi
 
     /// <summary>
     /// Bu test, diger tum architecture testlerinin ANLAMLI olmasini garanti eder.
@@ -78,7 +78,7 @@ public class ConventionTests
         // Handler'lar CQRS'in is mantigini tasir. Bunlarin WebApi veya
         // Infrastructure'da olmasi, is mantiginin altyapiya sizmasi demektir.
         //
-        // BU TEST BIR KEZ HAKLI OLARAK KIRMIZI YANDI -- VE KURAL DARALTILDI
+        // Bu test bir kez hakli olarak kirmizi yandi -- ve kural daraltildi
         //
         // Ilk yazisimda kural "adi 'Handler' ile biten HER sinif" seklindeydi.
         // WebApi'ye GlobalExceptionHandler eklendiginde test kirmizi yandi.
@@ -140,7 +140,7 @@ public class ConventionTests
         // hem niyeti acikca belirtir hem de JIT'in metod cagrilarini
         // devirtualize etmesine izin vererek kucuk bir performans kazandirir.
         //
-        // BU TEST SPRINT 9'DA KIRMIZI YANDI -- YINE KURAL FAZLA GENISTI
+        // Bu test sprint 9'da kirmizi yandi -- yine kural fazla genisti
         //
         // Sprint 9'da IOutboxMessageHandler arayuzunu ekleyince test
         // basarisiz oldu: "IOutboxMessageHandler sealed degil".

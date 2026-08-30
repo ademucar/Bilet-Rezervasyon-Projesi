@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 /**
- * TESTLER İÇİN ORTAK SARMALAYICI
+ * Testler için ortak sarmalayici
  *
  * Bileşenlerimizin çoğu iki bağlama ihtiyaç duyuyor:
  *   - React Router (Link, useNavigate, useLocation)

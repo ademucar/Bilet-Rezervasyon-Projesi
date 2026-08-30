@@ -157,7 +157,7 @@ internal sealed partial class RedisCacheService : ICacheService
     /// Onekle eslesen tüm anahtarlari siler.
     /// </summary>
     /// <remarks>
-    /// NEDEN KEYS DEĞİL SCAN?
+    /// Neden keys değil scan?
     ///
     /// Redis'in KEYS komutu, eslesen anahtarlari bulmak için TÜM
     /// anahtar alanini tek seferde tarar ve bu sırada SUNUCUYU

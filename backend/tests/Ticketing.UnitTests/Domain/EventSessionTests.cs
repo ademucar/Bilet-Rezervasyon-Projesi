@@ -26,7 +26,7 @@ public class EventSessionTests
         return evt.AddSession(Baslangic, Baslangic.AddHours(2), Guid.CreateVersion7(), Guid.CreateVersion7());
     }
 
-    // ARALIK CAKISMA FORMULU
+    // Aralik cakisma formulu
     // Formul: a1 < b2 VE b1 < a2
     // Oturum: 20:00 - 22:00
 

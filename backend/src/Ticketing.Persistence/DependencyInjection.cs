@@ -9,7 +9,7 @@ namespace Ticketing.Persistence;
 /// <summary>
 /// Persistence katmaninin DI kayitlari.
 ///
-/// NEDEN HER KATMAN KENDİ KAYITLARINI YAPIYOR?
+/// Neden her katman kendi kayitlarini yapiyor?
 ///
 /// Alternatif, Program.cs'te her seyi tek tek kaydetmekti:
 ///     builder.Services.AddDbContext&lt;TicketingDbContext&gt;(...);

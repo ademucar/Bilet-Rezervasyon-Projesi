@@ -19,7 +19,7 @@ public class Reservation : ConcurrentEntity
         TotalAmount = Money.Zero("TRY");
     }
 
-    // DURUM MAKINESI
+    // Durum makinesi
     // docs/02-domain-model.md'deki tablonun birebir karşılığı
 
     private static readonly Dictionary<ReservationStatus, ReservationStatus[]> AllowedTransitions = new()

@@ -4,7 +4,7 @@ using Ticketing.Domain.Entities;
 namespace Ticketing.WebApi.Security;
 
 /// <summary>
-/// HANGFIRE IZLEME EKRANI ERISIM KONTROLU
+/// Hangfire izleme ekrani erisim kontrolu
 ///
 /// Hangfire'in /hangfire ekrani VARSAYILAN OLARAK YALNIZCA
 /// localhost'tan erişilebilir. Yani uretime cikildiginda ekran

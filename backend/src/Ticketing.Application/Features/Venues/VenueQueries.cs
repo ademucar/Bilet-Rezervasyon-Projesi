@@ -7,7 +7,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Venues;
 
-// LISTELEME
+// Listeleme
 
 /// <summary>
 /// PDF Sprint 4: GET /api/v1/venues
@@ -52,7 +52,7 @@ internal sealed class GetVenuesQueryHandler
     {
         var query = _context.Venues.AsNoTracking();
 
-        // FILTRELERI KOSULLU EKLIYORUM
+        // Filtreleri kosullu ekliyorum
         //
         // IQueryable tembeldir (lazy): aşağıdaki Where cagrilarinin
         // hicbiri veritabanina gitmez. Yalnızca SQL agacini insa eder.

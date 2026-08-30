@@ -8,12 +8,12 @@ using Ticketing.Domain.Common;
 namespace Ticketing.Persistence.Interceptors;
 
 /// <summary>
-/// DENETIM ALANLARINI OTOMATIK DOLDURAN INTERCEPTOR
+/// Denetim alanlarini otomatik dolduran interceptor
 ///
 /// AuditableEntity uzerindeki CreatedAt / CreatedBy / UpdatedAt /
 /// UpdatedBy alanlarini kaydetme anında dolduruyor.
 ///
-/// BU SINIF SPRINT 12'DE, GERCEK BIR HATA BULUNCA YAZILDI
+/// Bu sinif sprint 12'de, gercek bir hata bulunca yazildi
 ///
 /// Yorum ozelligini tarayıcıda denerken yorum tarihi "01 Ocak 1"
 /// gorundu. Veritabanina bakinca sebebi cikti:
@@ -29,7 +29,7 @@ namespace Ticketing.Persistence.Interceptors;
 ///     Payments      0 / 3  dolu
 ///     Reviews       0 / 2  dolu
 ///
-/// DAHA ONCE FARK EDEMEDIM -- ÇÜNKÜ BELIRTISINI YANLIS YORUMLADIM
+/// Daha once fark edemedim -- çünkü belirtisini yanlis yorumladim
 ///
 /// Sprint 11'de günlük satış özeti isini test ederken rapor "0 bilet,
 /// 0 rezervasyon" dondu. O sorgu tam olarak su filtreyi kullaniyor:
@@ -44,7 +44,7 @@ namespace Ticketing.Persistence.Interceptors;
 /// "0 dondu ve bu makul" ile "0 dondu çünkü sorgu bozuk" aynı
 /// gorunuyordu.
 ///
-/// NEDEN ENTITY ICINDE DEĞİL DE INTERCEPTOR?
+/// Neden entity icinde değil de interceptor?
 ///
 /// Her Create() metoduna "CreatedAt = DateTimeOffset.UtcNow" satiri
 /// eklemek de mumkundu. Yapmadim:
@@ -150,7 +150,7 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     break;
 
                 case EntityState.Deleted:
-                    // SOFT DELETE: SILME ISLEMINI GUNCELLEMEYE CEVIR
+                    // Soft DELETE: silme islemini guncellemeye cevir
                     //
                     // AuditableEntity soft delete destekliyor
                     // (IsDeleted alanı ve global query filter).

@@ -5,7 +5,7 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Outbox Pattern kaydı. PDF Sprint 9.
 ///
-/// OUTBOX PATTERN NEDIR VE NEDEN GEREKLI?
+/// Outbox pattern nedir ve neden gerekli?
 ///
 /// Problem: Ödeme başarılı olduğunda iki sey yapmamiz gerekiyor:
 ///   1. Veritabanina yaz (rezervasyon onayla, bilet üret)
@@ -27,7 +27,7 @@ namespace Ticketing.Domain.Entities;
 /// COZUM: E-postayi gondermek yerine, "e-posta gonderilecek" NIYETINI
 /// aynı veritabanina, AYNI TRANSACTION içinde yaz.
 ///
-///   BEGIN TRANSACTION
+///   Begin transaction
 ///     UPDATE Reservations SET Status = Confirmed
 ///     INSERT INTO Tickets ...
 ///     INSERT INTO OutboxMessages (Type='SendTicketEmail', Payload='{...}')

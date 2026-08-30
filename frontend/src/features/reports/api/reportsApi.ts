@@ -160,7 +160,7 @@ export const reportsApi = {
   /**
    * Rapor disa aktarimi TALEP EDER.
    *
-   * BU CAGRI DOSYAYI DONDURMEZ
+   * Bu cagri dosyayi dondurmez
    *
    * PDF: "Rapor üretimi background job olarak calistirilmali ve
    * tamamlandiginda kullanıcıya bildirim gonderilmelidir."

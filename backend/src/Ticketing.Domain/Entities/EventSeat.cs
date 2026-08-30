@@ -5,7 +5,7 @@ using Ticketing.Domain.ValueObjects;
 namespace Ticketing.Domain.Entities;
 
 /// <summary>
-/// PROJENIN KALBI
+/// Projenin kalbi
 ///
 /// Bir koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
 /// PDF'in "es zamanlı rezervasyon" problemi tam olarak bu satirlarda cozuluyor.
@@ -19,7 +19,7 @@ namespace Ticketing.Domain.Entities;
 /// Bu kasitli bir veri cogaltmasidir: her satirin BAGIMSIZ olarak
 /// kilitlenebilmesi gerekiyor.
 ///
-/// UC KATMANLI SAVUNMA
+/// Uc katmanli savunma
 ///
 /// Aynı koltuğun iki kisiye satilmasini uc ayrı katman engelliyor:
 ///

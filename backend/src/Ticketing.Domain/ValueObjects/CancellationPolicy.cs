@@ -8,7 +8,7 @@ namespace Ticketing.Domain.ValueObjects;
 /// Etkinlik başına saklanir (Event.CancellationPolicy) çünkü her organizatör
 /// kendi politikasini belirleyebilmeli. Veritabaninda jsonb olarak tutulacak.
 ///
-/// NEDEN AYRI BIR VALUE OBJECT?
+/// Neden ayri bir value object?
 ///
 /// Alternatif su olurdu: Event tablosuna uc ayrı sutun koymak
 ///     FullRefundHours, PartialRefundHours, PartialRefundPercentage

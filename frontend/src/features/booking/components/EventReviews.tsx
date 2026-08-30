@@ -9,7 +9,7 @@ import { bookingApi, EventStatus, type ReviewDto } from '../api/bookingApi'
 /**
  * Yildiz göstergesi. Salt okunur veya secilebilir.
  *
- * ERİŞİLEBİLİRLİK: YILDIZLAR SADECE GORSEL DEĞİL
+ * Erişilebilirlik: yildizlar sadece gorsel değil
  *
  * Yildizlari yalnızca sembol olarak cizseydik ekran okuyucu
  * "yıldız yıldız yıldız" derdi -- kac tane olduğunu saymak
@@ -97,7 +97,7 @@ interface EventReviewsProps {
  *   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir"
  *      -> Düzenle/Sil dugmeleri yalnızca isMine=true olanlarda
  *
- * NEDEN BİLET KONTROLUNU ISTEMCIDE YAPMIYORUM?
+ * Neden bilet kontrolunu istemcide yapmiyorum?
  *
  * Yapabilirdim: "biletlerim" listesini cekip bu etkinlik var mi diye
  * bakardim. Yapmadim çünkü:

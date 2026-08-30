@@ -17,7 +17,7 @@ namespace Ticketing.WebApi.Observability;
 /// OpenTelemetry izleme (tracing) yapilandirmasi. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// LOG VE TRACE AYNI SEY DEĞİL
+/// Log ve trace ayni sey değil
 ///
 /// Log "ne oldu" sorusunu cevapliyor:
 ///     "Rezervasyon oluşturuldu. Id: abc, Koltuk: 4"
@@ -50,7 +50,7 @@ internal static class OpenTelemetrySetup
 
         services.AddOpenTelemetry()
             .ConfigureResource(resource => resource
-                // SERVIS KIMLIGI
+                // Servis kimligi
                 //
                 // Trace'ler merkezi bir toplayiciya gidiyor ve orada
                 // BASKA servislerin trace'leriyle karisiyor. Servis
@@ -96,7 +96,7 @@ internal static class OpenTelemetrySetup
 
                     // 3) REDIS ISLEMLERI -- PDF maddesi
                     //
-                    // BURADA BIR SIRALAMA TUZAGI VAR
+                    // Burada bir siralama tuzagi var
                     //
                     // Redis instrumentation, IConnectionMultiplexer
                     // ornegine ihtiyac duyuyor. DI'dan cozmeye

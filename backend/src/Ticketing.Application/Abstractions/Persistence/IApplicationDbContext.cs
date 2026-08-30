@@ -29,7 +29,7 @@ namespace Ticketing.Application.Abstractions.Persistence;
 /// PDF de bu konuda esnek: "Repository abstraction GEREKIYORSA yalnızca
 /// interface seviyesinde" diyor. Yani zorunlu tutmuyor.
 ///
-/// PEKI TEST EDILEBILIRLIK?
+/// Peki test edilebilirlik?
 ///
 /// Repository'nin ana gerekçesi "handler'i mock'layabilmek"tir.
 /// Ama biz zaten Testcontainers ile GERCEK PostgreSQL uzerinde

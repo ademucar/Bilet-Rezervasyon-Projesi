@@ -12,7 +12,7 @@ interface ProtectedRouteProps {
 /**
  * Korumalı route sarmalayicisi.
  *
- * BU BIR GÜVENLİK ONLEMI DEĞİLDİR -- KULLANICI DENEYIMIDIR
+ * Bu bir güvenlik onlemi değildir -- kullanici deneyimidir
  *
  * Kullanıcı tarayıcı konsolunu acip localStorage'daki rolü "Admin"
  * yapabilir ve bu bileşen önü admin paneline sokar.

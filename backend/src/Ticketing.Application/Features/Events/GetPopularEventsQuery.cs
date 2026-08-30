@@ -75,7 +75,7 @@ internal sealed class GetPopularEventsQueryHandler
     /// İptal/iade edilmiş biletleri SAYMIYORUZ: iade edilen bir
     /// etkinligi popüler göstermek yanıltıcı olurdu.
     ///
-    /// BU SORGU NEDEN ONBELLEKTEN EN COK KAZANAN SORGU?
+    /// Bu sorgu neden onbellekten en cok kazanan sorgu?
     ///
     /// Icinde gruplama ve sayım var; veritabani her calismada
     /// Tickets tablosunu tarayip Events ile birlestiriyor. Bilet

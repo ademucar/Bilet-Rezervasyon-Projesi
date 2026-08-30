@@ -23,7 +23,7 @@ export function ForgotPasswordPage() {
     mutationFn: (data: ForgotPasswordForm) => authApi.forgotPassword(data.email),
   })
 
-  // BASARILI EKRANI -- GÜVENLİK ACISINDAN KRITIK METIN
+  // Basarili ekrani -- güvenlik acisindan kritik metin
   //
   // "E-posta gönderildi" DEMIYORUZ.
   // "EGER bu adres kayıtlıysa gönderildi" diyorum.

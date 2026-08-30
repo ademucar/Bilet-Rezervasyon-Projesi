@@ -16,7 +16,7 @@ namespace Ticketing.WebApi.Controllers;
 /// <summary>
 /// Kimlik doğrulama endpointleri. PDF Sprint 3.
 ///
-/// BU CONTROLLER'DA IS MANTIGI YOK -- BILINCLI
+/// Bu controller'da is mantigi yok -- bilincli
 ///
 /// PDF zorunlu kurallari:
 ///   - "Controller içinde is kuralı yazilmamalidir."

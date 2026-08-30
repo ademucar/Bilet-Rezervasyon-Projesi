@@ -325,7 +325,7 @@ internal sealed class AddEventSessionCommandHandler
     }
 }
 
-// DURUM GECISLERI
+// Durum gecisleri
 
 /// <summary>Organizatör etkinligi onaya gönderir.</summary>
 public sealed record SubmitEventForApprovalCommand(Guid EventId) : IRequest<Result>;
@@ -348,7 +348,7 @@ internal sealed partial class EventStatusCommandHandler
 
     // PDF Sprint 16: "Etkinlik yayinlama" loglanmalidir.
     //
-    // NEDEN OLUSTURMADAN AYRI BIR OLAY?
+    // Neden olusturmadan ayri bir olay?
     //
     // Yayinlama, is acisindan donusu olmayan bir esik: o an etkinlik
     // herkese görünür olur ve bilet satışı başlar. Taslak olusturmak
@@ -409,7 +409,7 @@ internal sealed partial class EventStatusCommandHandler
     ///
     /// "event:" oneki hepsini birden yakaliyor.
     ///
-    /// FAZLA SILMEK, EKSIK SILMEKTEN IYIDIR
+    /// Fazla silmek, eksik silmekten iyidir
     ///
     /// Bu yaklasim BASKA etkinliklerin detay anahtarlarini da siliyor.
     /// Israf gibi görünüyor ama doğru tercih:

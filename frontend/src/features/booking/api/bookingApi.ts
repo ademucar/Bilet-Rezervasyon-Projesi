@@ -112,7 +112,7 @@ export interface EventDetail {
   sessions: EventSessionDto[]
 }
 
-// KOLTUK UYGUNLUGU
+// Koltuk uygunlugu
 
 export interface SeatAvailabilityItem {
   eventSeatId: string
@@ -138,7 +138,7 @@ export interface SeatAvailability {
   seats: SeatAvailabilityItem[]
 }
 
-// REZERVASYON
+// Rezervasyon
 
 export interface ReservationItemDto {
   id: string
@@ -167,7 +167,7 @@ export interface ReservationDto {
   items: ReservationItemDto[]
 }
 
-// ÖDEME VE BİLET
+// Ödeme ve bilet
 
 export interface PaymentTransactionDto {
   type: number
@@ -208,7 +208,7 @@ export interface TicketDto {
 }
 
 /**
- * IDEMPOTENCY ANAHTARI
+ * İdempotency anahtari
  *
  * Backend hem rezervasyon hem ödeme olustururken "Idempotency-Key"
  * header'ini kabul ediyor: aynı anahtarla gelen ikinci istek YENI
@@ -294,7 +294,7 @@ export interface EventReviewsResult {
 
 export const bookingApi = {
   getEvents: async (params: EventFilters) => {
-    // BOŞ ALANLARI TEMIZLE
+    // Boş alanlari temizle
     //
     // Axios, undefined değerleri zaten atliyor ama BOŞ METIN ('')
     // gönderiyor: ?cityId=&categoryId=
@@ -375,7 +375,7 @@ export const bookingApi = {
   },
 
   createPayment: async (reservationId: string, idempotencyKey: string): Promise<PaymentDto> => {
-    // TUTAR GONDERMIYORUZ.
+    // Tutar gondermiyoruz.
     //
     // PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
     // güvenilmemelidir." Backend tutari rezervasyondan okuyor.

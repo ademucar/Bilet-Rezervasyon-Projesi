@@ -1,7 +1,7 @@
 /**
  * Bildirim tipleri ve DTO'lari.
  *
- * NEDEN AYRI DOSYA?
+ * Neden ayri dosya?
  *
  * Önce bunlar NotificationBell.tsx icindeydi. Lint uyardi:
  *

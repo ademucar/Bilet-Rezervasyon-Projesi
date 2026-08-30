@@ -10,7 +10,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Events;
 
-// ETKİNLİK GUNCELLEME VE SILME
+// Etkinlik guncelleme ve silme
 //
 // PDF Sprint 5 acikca su iki ucu istiyor:
 //     PUT    /api/v1/events/{id}
@@ -29,7 +29,7 @@ namespace Ticketing.Application.Features.Events;
 /// Etkinligin duzenlenebilir alanlarini günceller. PDF: PUT /api/v1/events/{id}
 /// </summary>
 /// <remarks>
-/// IKI FARKLI KURAL SETI VAR VE DOMAIN BUNU ZATEN AYIRIYOR
+/// İki farkli kural seti var ve domain bunu zaten ayiriyor
 ///
 /// PDF is kuralı: "Yayina alinmis etkinliğin kritik alanlari
 /// KONTROLSUZ degistirilemez."
@@ -74,7 +74,7 @@ public sealed class UpdateEventCommandValidator : AbstractValidator<UpdateEventC
             .InclusiveBetween(0, 99)
             .When(x => x.MinimumAge.HasValue);
 
-        // TARIHLER YA HEP YA HİÇ
+        // Tarihler ya hep ya hiç
         //
         // Ucunden yalnızca birini gonderirsek diger ikisi eski
         // degerinde kalır ve tutarsiz bir kombinasyon olusabilir
@@ -147,7 +147,7 @@ internal sealed partial class UpdateEventCommandHandler
 
         LogEventUpdated(_logger, evt.Id, evt.Title);
 
-        // ONBELLEK TEMIZLIGI ŞART
+        // Onbellek temizligi şart
         //
         // Etkinlik detayı ve popüler listesi onbellekte duruyor
         // (Sprint 11). Temizlemezsek kullanıcı başlığı değiştirir,
@@ -170,7 +170,7 @@ internal sealed partial class UpdateEventCommandHandler
 /// Etkinligi siler (soft delete). PDF: DELETE /api/v1/events/{id}
 /// </summary>
 /// <remarks>
-/// FIZIKSEL SILME YOK -- SOFT DELETE
+/// Fiziksel silme yok -- soft DELETE
 ///
 /// AuditableEntity uzerindeki IsDeleted alanı isaretleniyor ve global
 /// sorgu filtresi kaydı gizliyor.
@@ -182,7 +182,7 @@ internal sealed partial class UpdateEventCommandHandler
 ///   - Silme KARARININ kendisi bir denetim verisi: "kim, ne zaman
 ///     sildi" sorusu cevaplanabilmeli.
 ///
-/// HANGI ETKİNLİK SILINEBILIR?
+/// Hangi etkinlik silinebilir?
 ///
 /// Yalnızca HİÇ BİLET SATILMAMIS olanlar.
 ///
@@ -230,7 +230,7 @@ internal sealed partial class DeleteEventCommandHandler
             return Result.Failure(EventErrors.NotFound);
         }
 
-        // SATILMIS BİLET VAR MI?
+        // Satilmis bilet var mi?
         //
         // Koltuk durumuna DEĞİL, bilet kaydina bakiyorum.
         //

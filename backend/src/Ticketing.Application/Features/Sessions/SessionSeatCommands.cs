@@ -21,7 +21,7 @@ internal static class SessionErrors
         "Koltuk uretmeden önce tüm bolumleri bir bilet turune atayin.");
 }
 
-// OTURUM KOLTUKLARINI URET
+// Oturum koltuklarini uret
 
 /// <summary>
 /// Bir oturum için EventSeat kayitlarini üretir.
@@ -99,7 +99,7 @@ internal sealed class GenerateSessionSeatsCommandHandler
             return Result.Failure<int>(SessionErrors.NoTicketTypeForSection);
         }
 
-        // KOLTUK URETIMI
+        // Koltuk uretimi
         //
         // Fiyatlandirmayi bir FONKSIYON olarak geciyorum. Boylece her
         // koltuk, ait olduğu bölümün bilet türü ve fiyatiyla DOGUYOR --
@@ -119,7 +119,7 @@ internal sealed class GenerateSessionSeatsCommandHandler
     }
 }
 
-// KOLTUK UYGUNLUGU
+// Koltuk uygunlugu
 // PDF: GET /api/v1/event-sessions/{id}/seat-availability
 
 public sealed record SeatAvailabilityItem(

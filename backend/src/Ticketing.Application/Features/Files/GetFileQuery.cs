@@ -29,7 +29,7 @@ internal sealed class GetFileQueryHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // DOSYA VERITABANINDAN BULUNUYOR, YOLDAN DEĞİL
+        // Dosya veritabanindan bulunuyor, yoldan değil
         //
         // Istemci bana bir Guid veriyor; biz o Guid ile veritabanina
         // bakip GERCEK yolu oradan okuyorum.

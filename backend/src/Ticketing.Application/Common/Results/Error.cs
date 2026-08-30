@@ -40,7 +40,7 @@ public enum ErrorType
 /// <summary>
 /// Bir hatayi temsil eder.
 ///
-/// NEDEN EXCEPTION DEĞİL DE BU?
+/// Neden exception değil de bu?
 ///
 /// Exception'lar BEKLENMEYEN durumlar icindir. "Kullanıcı bulunamadı"
 /// veya "bu koltuk dolu" beklenen durumlardir -- her gün yuzlerce kez

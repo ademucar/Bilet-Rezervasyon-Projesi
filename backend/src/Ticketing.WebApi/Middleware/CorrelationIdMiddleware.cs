@@ -7,7 +7,7 @@ namespace Ticketing.WebApi.Middleware;
 /// Bu deger: Response header, Application log, Exception log,
 /// Background job log, Outbox kaydı icerisinde kullanılmalıdır."
 ///
-/// NEDEN GEREKLI?
+/// Neden gerekli?
 ///
 /// Uretimde bir kullanıcı arayip "biletim gelmedi" diyor. Loglara
 /// bakiyorsun: saniyede yuzlerce satır akiyor, hangileri BU kullanıcıya

@@ -39,13 +39,13 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         return new RenderedEmail(subject, Layout(subject, icerik));
     }
 
-    // GÜVENLİK: HTML KACISI
+    // Güvenlik: HTML kacisi
     //
     /// <summary>
     /// Sablona giren her değeri HTML-kacisli döndürür.
     /// </summary>
     /// <remarks>
-    /// BU METOT OLMASAYDI: E-POSTA UZERINDEN ICERIK ENJEKSIYONU
+    /// Bu metot olmasaydi: e-posta uzerinden icerik enjeksiyonu
     ///
     /// Sablon verilerinin çoğu KULLANICIDAN geliyor: ad, soyad,
     /// etkinlik başlığı, iptal sebebi.
@@ -66,7 +66,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     private static string H(IReadOnlyDictionary<string, string> data, string key)
         => WebUtility.HtmlEncode(data.TryGetValue(key, out var v) ? v : "-");
 
-    // ORTAK CERCEVE
+    // Ortak cerceve
 
     /// <summary>
     /// Tüm e-postalarin ortak govdesi.
@@ -149,7 +149,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         return sb.ToString();
     }
 
-    // 1) HOS GELDINIZ
+    // 1) Hos geldiniz
     //
     // Beklenen alanlar: FirstName
     private (string, string) Welcome(IReadOnlyDictionary<string, string> d)
@@ -159,7 +159,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "daha bircok etkinlik icin bilet alabilirsiniz.</p>" +
             Buton($"{_urls.FrontendUrl}/etkinlikler", "Etkinlikleri kesfet"));
 
-    // 2) SIFRE SIFIRLAMA
+    // 2) Sifre sifirlama
     //
     // Beklenen alanlar: FirstName, ResetUrl, ExpiryMinutes
     private (string, string) PasswordReset(IReadOnlyDictionary<string, string> d)
@@ -184,7 +184,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "yapmadiysaniz bu e-postayi yok sayabilirsiniz; sifreniz " +
             "degismeyecektir.</p>");
 
-    // 3) REZERVASYON OLUSTURULDU
+    // 3) Rezervasyon olusturuldu
     //
     // Beklenen: FirstName, EventTitle, ReservationCode, SeatCount,
     //           TotalAmount, ExpiresInMinutes
@@ -206,7 +206,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "Sure dolarsa koltuklar serbest birakilir.</p>" +
             Buton($"{_urls.FrontendUrl}/rezervasyonlarim", "Ödemeye devam et"));
 
-    // 4) ÖDEME BASARILI
+    // 4) Ödeme basarili
     //
     // Beklenen: FirstName, EventTitle, Amount, ReservationCode
     private (string, string) PaymentSucceeded(IReadOnlyDictionary<string, string> d)
@@ -219,7 +219,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
                 ("Odenen tutar", H(d, "Amount"))) +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
 
-    // 5) BİLET BILGILERI
+    // 5) Bilet bilgileri
     //
     // Beklenen: FirstName, EventTitle, EventDate, VenueName, TicketList
     private (string, string) TicketDetails(IReadOnlyDictionary<string, string> d)
@@ -248,7 +248,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             // güvenli.
             Buton($"{_urls.FrontendUrl}/biletlerim", "QR kodlarimi gor"));
 
-    // 6) ETKİNLİK HATIRLATMA
+    // 6) Etkinlik hatirlatma
     //
     // Beklenen: FirstName, EventTitle, EventDate, VenueName
     private (string, string) EventReminder(IReadOnlyDictionary<string, string> d)
@@ -262,7 +262,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
                 ("Mekan", H(d, "VenueName"))) +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletimi ac"));
 
-    // 7) ETKİNLİK IPTALI
+    // 7) Etkinlik iptali
     //
     // Beklenen: FirstName, EventTitle, Reason
     private (string, string) EventCancelled(IReadOnlyDictionary<string, string> d)
@@ -285,7 +285,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             "gecer.</p>" +
             Buton($"{_urls.FrontendUrl}/biletlerim", "Biletlerimi gor"));
 
-    // 8) IADE TAMAMLANDI
+    // 8) İade tamamlandi
     //
     // Beklenen: FirstName, ReservationCode, Amount
     // static: bu sablon _urls kullanmiyor (içinde dugme yok).

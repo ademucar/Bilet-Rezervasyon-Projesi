@@ -20,7 +20,7 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
     public LoginCommandValidator()
     {
-        // LOGIN'DE SIFRE KURALLARI UYGULANMAZ -- BU KASITLI
+        // Login'de sifre kurallari uygulanmaz -- bu kasitli
         //
         // Register'da "en az bir büyük harf" gibi kurallar var ama burada
         // YOK. Sadece "boş olmasın" diyorum.
@@ -82,7 +82,7 @@ internal sealed partial class LoginCommandHandler
 
         if (user is null)
         {
-            // ZAMANLAMA SALDIRISINA KARSI SAHTE HASH DOGRULAMA
+            // Zamanlama saldirisina karsi sahte hash dogrulama
             //
             // Burada doğrudan donseydim su açık olusurdu:
             //
@@ -214,7 +214,7 @@ internal sealed partial class LoginCommandHandler
                 roles)));
     }
 
-    // LOG TANIMLARI
+    // Log tanimlari
     //
     // [LoggerMessage] kaynak ureteci kullanıyorum (CA1848):
     // _logger.LogInformation("...", arg) yazsaydım her cagride

@@ -75,7 +75,7 @@ export function ReservationPage() {
 
   const isConfirmed = reservation?.status === ReservationStatus.Confirmed
 
-  // SURE DOLDUGUNDA SUNUCUYLA TEYITLES
+  // Sure doldugunda sunucuyla teyitles
   //
   // Sayac sıfıra dustugunde ekranda "süreniz doldu" yazıyorum ama
   // bu YALNIZCA istemcinin tahmini. Gerçek karari veren sunucu.
@@ -99,7 +99,7 @@ export function ReservationPage() {
     }
   }, [remaining, reservation, reservationQuery])
 
-  // ÖDEME BASLAT
+  // Ödeme baslat
   const paymentKeyRef = useRef<string | null>(null)
 
   const startPayment = useMutation({
@@ -117,7 +117,7 @@ export function ReservationPage() {
     onSuccess: setPayment,
   })
 
-  // ODEMEYI TAMAMLA (SIMULASYON)
+  // Odemeyi tamamla (simulasyon)
   const completePayment = useMutation({
     mutationFn: (paymentId: string) => bookingApi.completePayment(paymentId),
 
@@ -354,7 +354,7 @@ interface PaymentSimulationProps {
  * PDF: "Gerçek bir ödeme sağlayıcısı entegre edilmeyecektir. Ancak
  * gerçek bir entegrasyona benzer bir yapi kurulmalidir."
  *
- * NEDEN SAHTE BIR KART FORMU KOYMUYORUM?
+ * Neden sahte bir kart formu koymuyorum?
  *
  * İlk aklima gelen, gercekci gorunsun diye kart numarasi alanlari
  * olan bir form cizmekti. VAZGECTIM, iki sebeple:
@@ -373,7 +373,7 @@ interface PaymentSimulationProps {
  * sonucu da denenebilir kiliyorum -- başarısız ödeme yolu en az
  * başarılı yol kadar test edilmeli.
  *
- * BU BUTONLAR GERCEKTE KIM?
+ * Bu butonlar gercekte kim?
  *
  * "Ödemeyi onayla" butonu POST /payments/{id}/complete cagiriyor.
  * Gerçek hayatta bu adresi KULLANICI değil, SAGLAYICI cagirir

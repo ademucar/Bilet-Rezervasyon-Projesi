@@ -22,7 +22,7 @@ namespace Ticketing.Application.Abstractions.Messaging;
 /// Ayrı arayüz ile her senaryo kendi sinifinda, kendi bagimliliklariyla
 /// ve tek başına test edilebilir. Processor ise hiçbir senaryoyu
 /// tanimadan çalışır -- yeni bir mesaj türü eklemek için processor'a
-/// DOKUNULMAZ.
+/// Dokunulmaz.
 /// </summary>
 public interface IOutboxMessageHandler
 {
@@ -36,7 +36,7 @@ public interface IOutboxMessageHandler
     /// Mesaji isler.
     /// </summary>
     /// <remarks>
-    /// ISLEYICILER IDEMPOTENT OLMAK ZORUNDA
+    /// İsleyiciler idempotent olmak zorunda
     ///
     /// Outbox "en az bir kez teslim" (at-least-once) garantisi verir,
     /// "tam olarak bir kez" (exactly-once) DEĞİL.

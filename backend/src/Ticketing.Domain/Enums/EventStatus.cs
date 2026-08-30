@@ -21,7 +21,7 @@ namespace Ticketing.Domain.Enums;
 /// Sayilari sabitleyerek bu riski tamamen ortadan kaldiriyorum.
 /// Yeni durum eklerken SONA ekle ve yeni bir sayi ver.
 ///
-/// NEDEN 0'DAN DEĞİL 1'DEN BASLIYORUM?
+/// Neden 0'dan değil 1'den basliyorum?
 ///
 /// C#'ta bir enum alaninin varsayılan değeri her zaman 0'dir.
 /// Eger Draft = 0 olsaydı, birisi Status alanini hiç set etmeden

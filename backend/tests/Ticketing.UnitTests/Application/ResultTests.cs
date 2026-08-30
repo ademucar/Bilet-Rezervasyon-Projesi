@@ -143,7 +143,7 @@ public class PaginationRequestTests
     [Fact]
     public void PageSize_UstSiniriAsamaz()
     {
-        // BU TEST BIR GUVENLIK KONTROLU
+        // Bu test bir guvenlik kontrolu
         //
         // Ust sinir olmasaydi bir kullanici
         //     GET /api/v1/events?pageSize=999999999

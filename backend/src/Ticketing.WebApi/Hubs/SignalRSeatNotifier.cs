@@ -120,7 +120,7 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
     }
 
     /// <summary>
-    /// BILDIRIM HATASI IS AKISINI ASLA BOZMAMALI
+    /// Bildirim hatasi is akisini asla bozmamali
     ///
     /// Bu, bu dosyadaki en önemli karar.
     ///

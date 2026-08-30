@@ -23,7 +23,7 @@ public static class DependencyInjection
             // "handler bulunamadı" olarak ortaya çıkardı.
             cfg.RegisterServicesFromAssembly(assembly);
 
-            // PIPELINE SIRASI ONEMLIDIR
+            // Pipeline sirasi onemlidir
             //
             // Behavior'lar KAYIT SIRASIYLA çalışır. Su an tek behavior var
             // ama Sprint 7'de TransactionBehavior eklendiginde sıra soyle

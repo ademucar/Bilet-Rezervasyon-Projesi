@@ -13,7 +13,7 @@ namespace Ticketing.Infrastructure.Email;
 /// <summary>
 /// SMTP üzerinden e-posta gönderir. Yerel gelistirmede Mailpit'e baglanir.
 ///
-/// SPRINT 3'TE BIRAKTIGIM NOTUN KARSILIGI
+/// Sprint 3'te biraktigim notun karsiligi
 ///
 /// Sprint 3'te ilk tercihim MailKit'ti (.NET dunyasinda standart
 /// e-posta kutuphanesi). Ama paket ekleme komutu su hatayi verdi:
@@ -32,7 +32,7 @@ namespace Ticketing.Infrastructure.Email;
 ///    sinif degisecek. O gün MailKit advisory'sinin kapanip
 ///    kapanmadigi TEKRAR kontrol edilmeli."
 ///
-/// SPRINT 14: KONTROL ETTIM, ACIK KAPANMIS
+/// Sprint 14: kontrol ettim, acik kapanmis
 ///
 /// MailKit 4.17.0 ile tarama TEMIZ dondu:
 ///
@@ -104,7 +104,7 @@ internal sealed partial class SmtpEmailService : IEmailService
 
         try
         {
-            // TLS SECIMI
+            // TLS secimi
             //
             // Mailpit (yerel gelistirme) TLS kullanmiyor; gerçek
             // saglayicilar kullaniyor.
@@ -177,7 +177,7 @@ internal sealed partial class SmtpEmailService : IEmailService
         }
         finally
         {
-            // BAGLANTIYI HER DURUMDA KAPAT
+            // Baglantiyi her durumda kapat
             //
             // finally ŞART: gonderim istisna firlatirsa bile SMTP
             // bağlantısı kapanmali.

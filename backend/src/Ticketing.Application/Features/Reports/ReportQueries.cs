@@ -8,13 +8,13 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Reports;
 
-// ORTAK: KAPSAM (SCOPE) BELIRLEME
+// Ortak: kapsam (scope) belirleme
 
 /// <summary>
 /// Raporlarin hangi veriyi kapsayacagini belirler.
 /// </summary>
 /// <remarks>
-/// BU SINIF BU DOSYANIN GÜVENLİK OMURGASI
+/// Bu sinif bu dosyanin güvenlik omurgasi
 ///
 /// Bes raporun HEPSI aynı soruyu sormak zorunda: "bu kullanıcı hangi
 /// etkinliklerin verisini görebilir?"
@@ -91,7 +91,7 @@ internal static class ReportScopeResolver
     /// Kapsami DOGRUDAN kullanıcı kimliginden cozer.
     /// </summary>
     /// <remarks>
-    /// ARKA PLAN ISLERI ICIN -- HTTP BAGLAMI OLMADAN
+    /// Arka plan isleri icin -- HTTP baglami olmadan
     ///
     /// Rapor disa aktarimi arka planda çalışıyor ve orada
     /// ICurrentUser boş. Kimlik, talep anında DOGRULANIP Outbox
@@ -466,7 +466,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
                 t.EventSeat.EventSession.Event.Title,
             })
 
-            // ANONIM TIPE PROJEKSIYON, RECORD'A BELLEKTE CEVIRIM
+            // Anonim tipe projeksiyon, record'a bellekte cevirim
             //
             // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
             // 500 dondu:

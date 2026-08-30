@@ -23,7 +23,7 @@ public class ReviewTests
     }
 
     /// <remarks>
-    /// SINIR DEGERLER AYRICA TEST EDILIYOR
+    /// Sinir degerler ayrica test ediliyor
     ///
     /// 1 ve 5 GECERLI, 0 ve 6 GECERSIZ.
     ///
@@ -86,10 +86,10 @@ public class ReviewTests
             .Which.ErrorCode.Should().Be("review.invalid_rating");
     }
 
-    // MODERASYON
+    // Moderasyon
 
     /// <remarks>
-    /// GIZLEME, SILME DEGIL
+    /// Gizleme, silme degil
     ///
     /// Uygunsuz bir yorum gizleniyor ama KAYIT duruyor.
     ///

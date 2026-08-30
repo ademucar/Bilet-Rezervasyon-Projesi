@@ -12,7 +12,7 @@ namespace Ticketing.Application.Features.Events;
 /// Gecmis etkinlikleri "tamamlandı" olarak isaretler.
 /// </summary>
 /// <remarks>
-/// BU IS SPRINT 12'DE ORTAYA CIKAN BIR EKSIKTEN DOGDU
+/// Bu is sprint 12'de ortaya cikan bir eksikten dogdu
 ///
 /// PDF Sprint 12 kuralı: "Etkinlik tamamlanmadan yorum yapılamaz."
 ///
@@ -99,7 +99,7 @@ internal sealed class CompletePastEventsCommandHandler
 
         foreach (var evt in tamamlanacaklar)
         {
-            // IKI ADIM: ONCE SATISI KAPAT, SONRA TAMAMLA
+            // İki adim: once satisi kapat, sonra tamamla
             //
             // İlk yazimimda doğrudan Complete() cagiriyordum ve is
             // calistiginda DomainException aldim:

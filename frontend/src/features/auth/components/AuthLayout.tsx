@@ -18,13 +18,13 @@ interface AuthLayoutProps {
 }
 
 /**
- * KİMLİK DOĞRULAMA EKRANLARININ ORTAK ÇERÇEVESİ
+ * Kimlik doğrulama ekranlarinin ortak çerçevesi
  *
  * Beş ekran (giriş, kayıt, şifremi unuttum, şifre sıfırla,
  * yetkisiz) aynı düzeni paylaşıyor. Her birinde tekrar yazsaydım,
  * birinde başlık boyutunu değiştirdiğimde diğerleri geride kalırdı.
  *
- * NEDEN ORTALANMIŞ KART DEĞİL DE İKİ SÜTUN?
+ * Neden ortalanmiş kart değil de iki sütun?
  *
  * Önceki hâl ekranın ortasında yüzen dar beyaz bir karttı. Sorun
  * şu: kullanıcı buraya çoğu zaman bir AKIŞIN ORTASINDA düşüyor --

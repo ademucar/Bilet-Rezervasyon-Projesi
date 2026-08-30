@@ -34,7 +34,7 @@ export function Button({
     'text-sm font-medium transition-colors ' +
     'disabled:cursor-not-allowed disabled:opacity-60'
 
-  // BIRINCIL DUGME SLATE-900, MARKA RENGI DEĞİL
+  // Birincil dugme slate-900, marka rengi değil
   //
   // Marka moru her dugmede kullanildiginda "hangisi asil eylem?"
   // sorusu cevapsiz kaliyordu: sayfada bes mor dugme vardi.

@@ -19,7 +19,7 @@ namespace Ticketing.Application.Abstractions.RealTime;
 /// herkese haber ver" diyor. Nasil haber verildigi (SignalR, WebSocket,
 /// SSE, hatta hiçbir sey) WebApi katmaninin isi.
 ///
-/// BU BILDIRIMLER NEDEN OUTBOX'A YAZILMIYOR?
+/// Bu bildirimler neden outbox'a yazilmiyor?
 ///
 /// Sprint 9'da e-posta ve bildirimleri Outbox'a yazdim. Burada AYNISINI
 /// YAPMIYORUM ve bu bilinçli bir ayrim.

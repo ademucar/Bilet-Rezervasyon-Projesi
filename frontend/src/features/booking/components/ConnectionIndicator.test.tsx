@@ -6,7 +6,7 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
 /**
  * PDF Sprint 17 frontend testi: "SignalR güncellemesi".
  *
- * NEDEN HUB'IN KENDİSİNİ DEĞİL, GÖSTERGEYİ TEST EDİYORUM?
+ * Neden hub'in kendisini değil, göstergeyi test ediyorum?
  *
  * useSeatHub gerçek bir WebSocket bağlantısı kuruyor. jsdom'da
  * WebSocket yok; mock'lasaydım @microsoft/signalr'ın iç durum
@@ -43,7 +43,7 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   * BAĞLANTI YOKKEN KULLANICI BUNU BİLMELİ
+   * Bağlanti yokken kullanici bunu bilmeli
    *
    * Bu göstergenin var olma sebebi Sprint 10'da somut bir hatayı
    * yakalamış olması: Vite proxy'sine /hubs girdisini eklemeyi
@@ -65,7 +65,7 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   * DURUM DEĞİŞİKLİĞİ EKRAN OKUYUCUYA DA BİLDİRİLMELİ
+   * Durum değişikliği ekran okuyucuya da bildirilmeli
    *
    * role="status" + aria-live="polite" ikilisi, ekran okuyucunun
    * bu bölgeyi izlemesini ve içerik değiştiğinde OKUMASINI sağlıyor.

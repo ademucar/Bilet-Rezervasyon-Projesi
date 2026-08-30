@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 
-// HER TESTTEN SONRA DOM TEMIZLENIYOR
+// Her testten sonra DOM temizleniyor
 //
 // Testing Library bileşenleri gerçek bir DOM'a bağlıyor. Temizlemezsek
 // önceki testin render ettiği elemanlar sayfada kalır ve

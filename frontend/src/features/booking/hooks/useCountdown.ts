@@ -1,74 +1,55 @@
 import { useEffect, useRef, useState } from 'react'
 
-/**
- * GERİ SAYIM -- PDF Sprint 7: "Geri sayım göstergesi"
- *
- * 1) NEDEN SUNUCUNUN SANIYESINDEN BASLIYORUZ?
- *
- * Backend `remainingSeconds` gönderiyor, `expiresAt` yerine önü
- * kullanıyorum.
- *
- * Çünkü kullanıcının bilgisayar saati YANLIS olabilir. `expiresAt`
- * mutlak bir zaman; saati 5 dakika geri olan bir kullanıcı
- * `expiresAt - Date.now()` hesabıyla süreyi 15 dakika sanirdi ve
- * ödemeye geçtiğinde beklenmedik bir "süreniz doldu" hatası alırdı.
- *
- * Kalan süreyi SANIYE olarak almak saat farkindan tamamen bağımsız.
- *
- * 2) NEDEN HER TIK'TA 1 AZALTMIYORUZ?
- *
- * En yaygin (ve hatalı) yazım sudur:
- *
- *     setInterval(() => setKalan((s) => s - 1), 1000)
- *
- * Bu iki sebeple bozuk:
- *
- *   a) setInterval TAM 1000 ms degildir. Tarayici mesgulse gecikir.
- *      10 dakikada birikimli kayma onlarca saniyeyi bulur.
- *
- *   b) DAHA KOTUSU: kullanıcı sekmeyi arka plana attiginda tarayıcı
- *      zamanlayicilari DAKIKADA BIR'e kadar yavaslatir. Kullanıcı
- *      3 dakika başka sekmede kalip geri donse, sayaç yalnızca 3
- *      saniye azalmis görünürdü. Ekranda "7:00 kaldı" yazarken
- *      rezervasyon coktan silinmis olurdu.
- *
- * COZUM: Baslangicta bir BITIS ANI hesapliyorum ve her tik'ta
- * "bitise ne kadar kaldı" diye YENIDEN olcuyorum. Tik geç de gelse,
- * hiç de gelmese, gosterilen deger her zaman doğru olur.
- *
- * `performance.now()` kullanıyorum, `Date.now()` değil:
- * performance.now() monotondur -- sistem saati degisse veya yaz
- * saati uygulamasi devreye girse bile geriye gitmez.
- *
- */
+// Geri sayım -- PDF Sprint 7 "geri sayım göstergesi".
+//
+// Backend hem expiresAt hem remainingSeconds gönderiyor;
+// remainingSeconds'i kullanıyorum. expiresAt mutlak bir zaman ve
+// kullanıcının bilgisayar saatine güveniyor. Saati beş dakika geri
+// olan biri süreyi on beş dakika sanır, sonra ödemeye geçtiğinde
+// hiç beklemediği bir "süreniz doldu" yer. Kalan süreyi saniye
+// olarak almak bu farkı tamamen dışarıda bırakıyor.
+
 export function useCountdown(initialSeconds: number | undefined): number {
   const [remaining, setRemaining] = useState(initialSeconds ?? 0)
 
-  // Bitiş ani, render'lar arasında korunmali ama DEGISIMI bir
-  // yeniden cizim tetiklememeli -> useRef, useState değil.
+  // Bitiş anı render'lar arasında korunmalı ama değişmesi yeniden
+  // çizim tetiklememeli; o yüzden useRef, useState değil.
+  //
+  // Baştan yazacağım ilk şey şuydu:
+  //
+  //     setInterval(() => setKalan((s) => s - 1), 1000)
+  //
+  // İki yerden bozuk. Birincisi setInterval tam 1000 ms değil,
+  // tarayıcı meşgulse gecikiyor; on dakikada birikimli kayma
+  // onlarca saniyeyi buluyor. İkincisi ve daha kötüsü, kullanıcı
+  // sekmeyi arka plana attığında tarayıcı zamanlayıcıları dakikada
+  // bire kadar yavaşlatıyor. Üç dakika başka sekmede kalıp dönse
+  // sayaç üç saniye inmiş görünürdü -- ekranda "7:00 kaldı"
+  // yazarken rezervasyon çoktan silinmiş olurdu.
+  //
+  // Onun yerine başta bir bitiş anı hesaplayıp her tikte "bitişe ne
+  // kaldı" diye yeniden ölçüyorum. Tik geç gelse de, hiç gelmese de
+  // ekrandaki değer doğru.
+  //
+  // performance.now(), Date.now() değil: monoton, yani sistem saati
+  // değişse veya yaz saati devreye girse bile geriye gitmiyor.
   const deadlineRef = useRef<number>(0)
 
-  // 3) LINT UYARISI VE NEDEN SUSTURDUM
+  // Bu effect içinde setRemaining çağırdığım için oxlint
+  // react(set-state-in-effect) kuralına takılıyor. Kural boşuna
+  // konmamış: state'i effect içinde ayarlamak çoğu zaman "bunu
+  // render sırasında hesaplayabilirdin" demek.
   //
-  // Aşağıdaki effect, içinde setRemaining cagirdigi için oxlint'in
-  // `react(set-state-in-effect)` kuralini tetikliyor. Kural haklı
-  // bir sey söylüyor: state'i effect içinde ayarlamak çoğu zaman
-  // "aslında bunu render sırasında hesaplayabilirdin" demektir.
+  // Denedim. Değişimi render sırasında yakalayıp orada sıfırladım
+  // ve bu sefer react(purity) ile react(refs) uyardı -- onlar da
+  // haklıydı, render sırasında performance.now() okuyup ref'e
+  // yazmak React'in saf render sözünü bozuyor.
   //
-  // Önce kuralin dedigini YAPTIM: degisimi render sırasında fark
-  // edip orada sifirladim. Ama o zaman iki YENI uyarı çıktı --
-  // `react(purity)` ve `react(refs)`. Hakliydilar: render sırasında
-  // performance.now() okumak ve ref'e yazmak, React'in saf render
-  // sozunu bozuyor.
-  //
-  // Sebep su: bu kanca React'i bir DIS SISTEME bagliyor -- tarayıcının
-  // saatine. React dokumantasyonunun useEffect için verdiği tanim tam
-  // olarak bu. Yani burada effect kullanmak kacamak değil, DOGRU
-  // arac.
-  //
-  // Bu yuzden kuralı dar kapsamda, gerekcesiyle susturuyorum.
-  // Projede benimsedigim kural: uyariyi susturmak serbest değil,
-  // yalnızca "neden" yazildiginda serbest.
+  // Sonunda şuraya vardım: bu kanca React'i dışarıdaki bir sisteme,
+  // tarayıcının saatine bağlıyor. useEffect'in tarifi tam olarak bu.
+  // Yani effect burada kaçamak değil, doğru araç. Kuralı tek satırda
+  // ve gerekçesiyle susturuyorum -- gerekçesiz susturmayı kendime
+  // yasakladım.
   useEffect(() => {
     if (initialSeconds === undefined) {
       return

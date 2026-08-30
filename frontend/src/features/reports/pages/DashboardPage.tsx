@@ -24,7 +24,7 @@ import { Roles } from '../../../types/auth'
 import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
 
 /**
- * TEK BİR METRİK KARTI
+ * Tek bir metrik karti
  *
  * Çıplak bir sayı hiçbir şey anlatmıyor. "Bugün 50 bilet satıldı"
  * iyi mi kötü mü? Dün 5 satıldıysa harika, 500 satıldıysa felaket.
@@ -32,7 +32,7 @@ import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
  * Bu yüzden karta ikinci bir satır ekledim: `hint`. Zaten vardı ama
  * yalnızca gri küçük yazıydı; şimdi yön bilgisi taşıyabiliyor.
  *
- * RENK KUTUYU BOYAMIYOR
+ * Renk kutuyu boyamiyor
  *
  * Önceki hâlde uyarı tonundaki kartın TÜM zemini sarıya boyanıyordu.
  * Dört kartlık bir sırada biri sarı biri kırmızı olunca panel

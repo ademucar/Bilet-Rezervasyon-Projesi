@@ -44,7 +44,7 @@ export function useSeatHub(
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
 
   /**
-   * HANDLER'LARI REF'TE TUTMANIN SEBEBI
+   * Handler'lari ref'te tutmanin sebebi
    *
    * Bu kancayi cagiran bileşen her render'da YENI bir handlers
    * nesnesi olusturuyor (nesne literali). Eger handlers'i aşağıdaki
@@ -157,7 +157,7 @@ export function useSeatHub(
     connection.onreconnected(() => {
       setStatus('connected')
 
-      // YENIDEN BAGLANINCA LISTEYI BASTAN CEK
+      // Yeniden baglaninca listeyi bastan cek
       // PDF Frontend gorevi: "Güncel koltuk listesini yeniden çekme"
       //
       // Bu satır, kancanin en kritik yeri.
@@ -226,7 +226,7 @@ export function useSeatHub(
         setStatus('disconnected')
       })
 
-    // TEMIZLIK -- ŞART
+    // Temizlik -- şart
     //
     // Kullanıcı sayfadan ayrilinca baglantiyi kapatmazsak:
     //   - Sunucu tarafında açık bağlantı birikir

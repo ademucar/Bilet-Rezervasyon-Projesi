@@ -10,7 +10,7 @@ namespace Ticketing.WebApi.Documentation;
 /// PDF Sprint 18: "Endpoint aciklamalari" ve OpenAPI client arastirmasi.
 /// </summary>
 /// <remarks>
-/// BU SINIF, ORVAL ARASTIRMASI SIRASINDA BULUNAN BOSLUGU KAPATIYOR
+/// Bu sinif, orval arastirmasi sirasinda bulunan boslugu kapatiyor
 ///
 /// Sprint 18'de OpenAPI'den TypeScript istemci uretimini denedim
 /// (Orval). Uretilen tip su cikti:
@@ -28,7 +28,7 @@ namespace Ticketing.WebApi.Documentation;
 /// yapacagini bilemiyordu. Kaynak koda erişimi olmayan biri için
 /// bu alan tamamen anlamsizdi.
 ///
-/// NEDEN STRING'E CEVIRMEDIM?
+/// Neden string'e cevirmedim?
 ///
 /// JsonStringEnumConverter ekleyip enum'lari metin olarak
 /// gonderebilirdim ("Confirmed" gibi). Daha okunakli olurdu.

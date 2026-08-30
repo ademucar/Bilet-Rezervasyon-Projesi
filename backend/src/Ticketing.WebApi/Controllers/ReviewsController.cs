@@ -117,7 +117,7 @@ public sealed class ReviewsController : ApiControllerBase
     /// Yorumu kaldirir. PDF: DELETE /api/v1/reviews/{id}
     /// </summary>
     /// <remarks>
-    /// IKI FARKLI DAVRANIS:
+    /// İki farkli davranis:
     ///   Kullanıcı kendi yorumunu siler -> soft delete
     ///   Admin baskasinin yorumunu siler -> GIZLENIR (denetim izi kalır)
     ///

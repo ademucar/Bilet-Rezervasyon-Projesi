@@ -56,7 +56,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         // "Benim rezervasyonlarim" sayfası
         builder.HasIndex(r => new { r.UserId, r.Status });
 
-        // SURE ASIMI JOB'ININ SORGUSU
+        // Sure asimi job'inin sorgusu
         //
         //     WHERE Status IN (Locked, PaymentPending) AND ExpiresAt <= now()
         //

@@ -59,7 +59,7 @@ public class RefreshToken : Entity
     public string? RevokedByIp { get; private set; }
 
     /// <summary>
-    /// ROTATION'IN KALBI.
+    /// Rotation'in kalbi.
     ///
     /// Kullanıcı token'ini yeniledignde eski token iptal edilir ve bu alana
     /// yeni token'in hash'i yazilir. Boylece bir zincir olusur:

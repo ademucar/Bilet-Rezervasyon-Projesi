@@ -73,7 +73,7 @@ internal sealed class CreateSeatLayoutCommandHandler
         }
         catch (DbUpdateException)
         {
-            // BURADA ONCEDEN KONTROL YAPMIYORUM, EXCEPTION YAKALIYORUM
+            // Burada onceden kontrol yapmiyorum, exception yakaliyorum
             //
             // Venue ve Hall'da "önce sorgula, sonra ekle" yaptım.
             // Burada bilerek farklı davraniyorum ve sebebini yazıyorum:
@@ -197,7 +197,7 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
             .AnyAsync(s => s.SeatLayoutId == seatLayoutId, cancellationToken);
 }
 
-// KOLTUK URETIMI
+// Koltuk uretimi
 // PDF: POST /api/v1/seat-layouts/{id}/generate-seats
 
 /// <summary>
@@ -299,7 +299,7 @@ internal sealed class GenerateSeatsCommandHandler
         // Koltukları üret. Kural ihlallerinde DomainException firlar.
         section.GenerateSeats(request.RowCount, request.SeatsPerRow, request.RowLabels);
 
-        // KAPASITE KONTROLU -- URETIMDEN SONRA, KAYITTAN ONCE
+        // Kapasite kontrolu -- uretimden sonra, kayittan once
         //
         // PDF: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //

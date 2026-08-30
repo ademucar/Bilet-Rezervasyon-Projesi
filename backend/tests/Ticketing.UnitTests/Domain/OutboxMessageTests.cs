@@ -18,7 +18,7 @@ public class OutboxMessageTests
     private static OutboxMessage YeniMesaj()
         => OutboxMessage.Create("TestMesaji", """{"a":1}""");
 
-    // OLUSTURMA
+    // Olusturma
 
     [Fact]
     public void Create_YeniMesaj_IslenmemisOlmali()
@@ -194,7 +194,7 @@ public class OutboxMessageTests
         mesaj.IsReadyToProcess(Simdi.AddDays(1)).Should().BeFalse();
     }
 
-    // TOPARLANMA
+    // Toparlanma
 
     [Fact]
     public void MarkAsProcessed_HatadanSonraBasarili_HataTemizlenmeli()

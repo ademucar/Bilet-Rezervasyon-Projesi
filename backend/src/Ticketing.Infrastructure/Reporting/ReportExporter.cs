@@ -14,7 +14,7 @@ namespace Ticketing.Infrastructure.Reporting;
 internal sealed class ReportExporter : IReportExporter
 {
     /// <summary>
-    /// QUESTPDF LISANSI -- KODDA BELIRTILMEK ZORUNDA
+    /// Questpdf lisansi -- kodda belirtilmek zorunda
     ///
     /// QuestPDF, "Community" lisansi altinda yillik geliri 1 milyon
     /// USD altindaki kuruluslar için UCRETSIZ. Bu proje için uygun.
@@ -80,7 +80,7 @@ internal sealed class ReportExporter : IReportExporter
     /// RFC 4180 uyumlu CSV üretir.
     /// </summary>
     /// <remarks>
-    /// NEDEN KUTUPHANE KULLANMIYORUM?
+    /// Neden kutuphane kullanmiyorum?
     ///
     /// CsvHelper gibi paketler var ama CSV yazma kurallari toplam
     /// uc satır:
@@ -95,7 +95,7 @@ internal sealed class ReportExporter : IReportExporter
     /// (OKUMA farklı olurdu: CSV ayristirmak çok daha zor ve orada
     /// kutuphane kullanirdim.)
     ///
-    /// UTF-8 BOM -- EXCEL ICIN ŞART
+    /// Utf-8 BOM -- excel icin şart
     ///
     /// BOM olmadan Excel, CSV'yi sistem kod sayfasiyla acar ve
     /// Turkce karakterler bozulur: "İstanbul" yerine "Ä°stanbul".
@@ -115,7 +115,7 @@ internal sealed class ReportExporter : IReportExporter
             sb.AppendLine(string.Join(',', row.Select(Kacir)));
         }
 
-        // BOM'U ELLE EKLIYORUM -- YAKALADIGIM HATA
+        // Bom'u elle ekliyorum -- yakaladigim hata
         //
         // Önce soyle yazmistim:
         //
@@ -222,7 +222,7 @@ internal sealed class ReportExporter : IReportExporter
         {
             container.Page(page =>
             {
-                // YATAY (LANDSCAPE) SAYFA
+                // Yatay (landscape) sayfa
                 //
                 // Raporlarin çoğu 5-8 sutunlu. Dikey A4'te sutunlar
                 // sikisip okunamaz hale gelir.

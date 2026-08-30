@@ -263,7 +263,7 @@ export function SeatLayoutPage() {
 /**
  * Sıra etiketlerini üretir: A, B, C ... Z, AA, AB ...
  *
- * KARISABILECEK HARFLERI ATLIYORUM: I, O, Q.
+ * Karisabilecek harfleri atliyorum: i, o, q.
  * Sebep: gerçek salonlarda gorevli "I sırası mi 1 sırası mi?" diye
  * sorar; kullanıcı da bilette "O" mu "0" mi ayırt edemez. Bilet
  * numarasi uretiminde de aynı mantığı uygulamıştım.

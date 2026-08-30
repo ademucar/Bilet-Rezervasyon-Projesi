@@ -123,7 +123,7 @@ public sealed class ReportsController : ApiControllerBase
     {
         ArgumentNullException.ThrowIfNull(store);
 
-        // SAHIPLIK KONTROLU: BILDIRIM UZERINDEN
+        // Sahiplik kontrolu: bildirim uzerinden
         //
         // exportId bir Guid v7 -- tahmin edilmesi pratikte imkansiz.
         // Ama "tahmin edilemez kimlik" tek başına yetki DEĞİLDİR

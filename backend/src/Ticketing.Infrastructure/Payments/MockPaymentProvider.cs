@@ -20,7 +20,7 @@ internal sealed class MockPaymentProvider : IPaymentService
     /// <summary>
     /// Uretilen işlem referanslarini tutar.
     ///
-    /// NEDEN BELLEKTE BIR SOZLUK?
+    /// Neden bellekte bir sozluk?
     ///
     /// VerifyPaymentAsync'in ANLAMLI olmasını için. Sozluk olmasaydı
     /// "her referansı dogrula" derdik ve doğrulama adimi hiçbir sey

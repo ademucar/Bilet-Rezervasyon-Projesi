@@ -210,9 +210,9 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
 
         builder.ConfigureAuditFields();
 
-        // BU IKI SATIR PROJENIN EN KRITIK KISMI
+        // Bu iki satir projenin en kritik kismi
 
-        // 1) OPTIMISTIC CONCURRENCY
+        // 1) Optimistic concurrency
         // Iki kullanıcı aynı koltuğu aynı anda kilitlemeye calisirsa
         // EF'in urettigi UPDATE su hale gelir:
         //     UPDATE "EventSeats" SET "Status" = 2 ...
@@ -220,13 +220,13 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
         // Ikinci istek 0 satır günceller ve DbUpdateConcurrencyException alır.
         builder.ConfigureConcurrencyToken();
 
-        // 2) UNIQUE INDEX -- SON SAVUNMA HATTI
+        // 2) UNIQUE INDEX -- son savunma hatti
         // PDF sayfa 8: "Aynı etkinlik oturumunda aynı koltuk yalnızca bir
         // kez bulunmalidir."
         //
         // Uygulama kodum ne kadar hatalı olursa olsun, kac es zamanlı
         // istek gelirse gelsin, PostgreSQL aynı oturumda aynı koltuk için
-        // IKINCI BIR SATIR OLUSTURMAZ.
+        // İkinci bir satir olusturmaz.
         //
         // Bu index'i silmek, projenin en temel garantisini kaldirmak demektir.
         builder.HasIndex(es => new { es.EventSessionId, es.SeatId })

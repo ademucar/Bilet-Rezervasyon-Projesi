@@ -53,7 +53,7 @@ public static class OutboxMessageTypes
     public const string ReservationCreated = "ReservationCreated";
 }
 
-// PAYLOAD TIPLERI
+// Payload tipleri
 //
 // Payload veritabaninda JSON metni olarak duruyor. Bu record'lar o
 // metnin SEMASI.

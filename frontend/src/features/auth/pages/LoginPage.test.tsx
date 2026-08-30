@@ -9,7 +9,7 @@ import { renderWithProviders } from '../../../test/testUtils'
 /**
  * PDF Sprint 17 frontend testleri: "Login formu" ve "API hata ekranı".
  *
- * API MOCK'LANIYOR, AĞ İSTEĞİ YAPILMIYOR
+ * API mock'laniyor, ağ isteği yapilmiyor
  *
  * Gerçek backend'e istek atsaydık bu testler:
  *   - Backend ayakta olmadan çalışmazdı
@@ -46,7 +46,7 @@ describe('LoginPage', () => {
   })
 
   /**
-   * BOŞ FORM SUNUCUYA GİTMEMELİ
+   * Boş form sunucuya gitmemeli
    *
    * Sunucu zaten reddedecek — ama boşuna bir istek atmak hem
    * kullanıcıyı bekletir hem de hız sınırından (Sprint 15: 5
@@ -132,7 +132,7 @@ describe('LoginPage', () => {
   // PDF: "API hata ekranı"
 
   /**
-   * HATA KULLANICIYA GÖSTERİLMELİ, KONSOLA DEĞİL
+   * Hata kullaniciya gösterilmeli, konsola değil
    *
    * En yaygın arayüz hatası: istek başarısız oluyor, konsola log
    * düşüyor, ekranda hiçbir şey değişmiyor. Kullanıcı butona basıp

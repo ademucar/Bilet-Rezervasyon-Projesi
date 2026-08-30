@@ -190,7 +190,7 @@ internal sealed class GetEventsQueryHandler
     {
         var query = _context.Events.AsNoTracking();
 
-        // GORUNURLUK FILTRESI -- BU DOSYANIN EN ONEMLI SATIRI
+        // Gorunurluk filtresi -- bu dosyanin en onemli satiri
         //
         // Bu filtre olmasaydı herkes Draft ve PendingApproval durumundaki
         // etkinlikleri gorurdu: organizatorun henüz yayinlamadigi,
@@ -415,7 +415,7 @@ internal sealed class GetEventByIdQueryHandler
         // IncludeUnpublished. Admin için true, herkes için false.
         // Yani AYNI Id, ROLE GORE FARKLI sonuç veriyor.
         //
-        // ILK AKLIMA GELEN COZUM VE NEDEN VAZGECTIM
+        // İlk aklima gelen cozum ve neden vazgectim
         //
         // "Anahtara rolü de ekleyeyim" diye dusundum:
         //
@@ -428,7 +428,7 @@ internal sealed class GetEventByIdQueryHandler
         // dosyasi) organizatorun henüz yayinlamadigi etkinlikleri
         // okuyabilirdi.
         //
-        // SECTIGIM COZUM: YAYINLANMAMIS ICERIK HİÇ ONBELLEKLENMEZ
+        // Sectigim cozum: yayinlanmamis icerik hiç onbelleklenmez
         //
         // Admin gorunumu önbelleği TAMAMEN ATLIYOR ve doğrudan
         // veritabanina gidiyor. Onbellege giren sorgu ise YALNIZCA
@@ -466,7 +466,7 @@ internal sealed class GetEventByIdQueryHandler
             .AsNoTracking()
             .Where(e => e.Id == eventId);
 
-        // IDOR KORUMASI -- ARTIK SORGUNUN ICINDE
+        // İdor korumasi -- artik sorgunun icinde
         //
         // Onceden bu kontrol veriyi CEKTIKTEN SONRA yapiliyordu.
         // Onbellek eklerken sorgunun icine tasidim ve daha da güvenli

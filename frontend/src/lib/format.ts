@@ -1,5 +1,5 @@
 /**
- * BICIMLENDIRME YARDIMCILARI
+ * Bicimlendirme yardimcilari
  *
  * Tarih ve para bicimlendirmesini TEK YERDE topluyorum.
  *
@@ -74,7 +74,7 @@ export function formatDate(isoString: string): string {
 /**
  * Tarihi PARCALARINA ayirir: takvim yirtmaci bileseni için.
  *
- * NEDEN AYRI BIR ISLEV?
+ * Neden ayri bir islev?
  *
  * formatDateTime "27 Ekim 2026 20:00" gibi TEK bir cumle dönüyor.
  * Kart tasariminda tarihi bir NESNE gibi göstermek istiyorum:

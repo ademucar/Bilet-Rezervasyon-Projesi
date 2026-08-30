@@ -26,7 +26,7 @@ internal static class VenueErrors
         "Bu sehirde aynı isimde bir mekan zaten var.");
 }
 
-// OLUSTURMA
+// Olusturma
 
 /// <summary>PDF Sprint 4: POST /api/v1/venues</summary>
 public sealed record CreateVenueCommand(
@@ -127,7 +127,7 @@ internal sealed class CreateVenueCommandHandler : IRequestHandler<CreateVenueCom
     }
 }
 
-// GUNCELLEME
+// Guncelleme
 
 public sealed record UpdateVenueCommand(
     Guid Id,
@@ -227,7 +227,7 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
             return Result.Failure(VenueErrors.HasActiveEvents);
         }
 
-        // SOFT DELETE.
+        // Soft DELETE.
         //
         // Fiziksel silme yapsaydim gecmis etkinliklerin VenueId'si
         // bosluga isaret ederdi ve "3 yil önceki konser neredeydi?"

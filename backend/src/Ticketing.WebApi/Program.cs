@@ -36,7 +36,7 @@ var builder = WebApplication.CreateBuilder(args);
 // olmuyor.
 builder.AddSerilogLogging();
 
-// SERVISLER
+// Servisler
 
 builder.Services.AddControllers();
 // ---- API dokumantasyonu (PDF Sprint 18) ----
@@ -132,7 +132,7 @@ builder.Services.AddRateLimiting(
 
 // ---- CORS ----
 //
-// GELISTIRMEDE CORS'A NEDEN IHTIYAC YOK AMA YINE DE TANIMLIYORUZ?
+// Gelistirmede cors'a neden ihtiyac yok ama yine de tanimliyoruz?
 //
 // Gelistirmede Vite proxy'si sayesinde istekler tarayıcı acisindan
 // AYNI kaynaga (5173) gidiyor; CORS hiç devreye girmiyor.
@@ -222,7 +222,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
 
 // ---- Ters vekil sunucu basliklari ----
 //
-// BU YAPILANDIRMA OLMADAN HIZ SINIRI URETIMDE YANLIS CALISIR
+// Bu yapilandirma olmadan hiz siniri uretimde yanlis calisir
 //
 // Uretimde uygulama bir ters vekil sunucu (nginx, load balancer)
 // arkasinda çalışıyor. O durumda RemoteIpAddress VEKILIN adresini
@@ -238,7 +238,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
-    // KNOWN PROXIES TEMIZLENIYOR -- DIKKAT
+    // Known proxies temizleniyor -- dikkat
     //
     // Varsayılan olarak yalnızca localhost'tan gelen X-Forwarded-For
     // basliklarina guveniliyor. Docker/Kubernetes'te vekil sunucu
@@ -284,7 +284,7 @@ builder.Services.AddSingleton<ISeatNotifier, SignalRSeatNotifier>();
 
 var app = builder.Build();
 
-// VERITABANI SEMASI -- HER ORTAMDA
+// Veritabani semasi -- her ortamda
 //
 // Bu blok YOKTU ve eksikligi ancak yayin yigini ilk kez temiz bir
 // birimle ayaga kaldirilinca ortaya cikti: butun uclar 500 donuyordu,
@@ -335,7 +335,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// REFERANS VERISI -- HER ORTAMDA
+// Referans verisi -- her ortamda
 //
 // Burada onceden "Uretimde ASLA otomatik seed calistirmiyoruz"
 // yaziyordu ve seed yalnizca Development'ta kosuyordu. Yayin yigini
@@ -349,7 +349,7 @@ using (var scope = app.Services.CreateScope())
 // geliyor. Yani uygulama yayina cikar cikmaz KULLANILAMAZ
 // durumdaydi ve bunu ancak biri elle SQL yazarak duzeltebilirdi.
 //
-// ESKI GEREKCE NEDEN GECERLI DEGIL?
+// Eski gerekce neden gecerli degil?
 //
 // Eski not "seed kodu yanlislikla veri uzerine yazabilir" diyordu.
 // DatabaseSeeder IDEMPOTENT: tablo bossa ekliyor, doluysa hicbir
@@ -373,7 +373,7 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync().ConfigureAwait(false);
 }
 
-// HTTP PIPELINE -- SIRA ONEMLI
+// HTTP pipeline -- sira onemli
 
 // 1) En basta: kendisinden sonraki her seyi sarmalar.
 app.UseExceptionHandler();
@@ -559,7 +559,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     DisplayStorageConnectionString = false
 });
 
-// TEKRARLANAN ISLERI KAYDET
+// Tekrarlanan isleri kaydet
 //
 // Uygulama AYAGA KALKTIKTAN SONRA cagiriliyor.
 //

@@ -37,7 +37,7 @@ internal static class OutboxPayload
     /// <summary>
     /// Bu bildirim daha önce olusturulmus mu?
     ///
-    /// IDEMPOTENCY'NIN SOMUT UYGULAMASI
+    /// İdempotency'nin somut uygulamasi
     ///
     /// PDF: "Aynı Outbox kaydı iki kez islenmemelidir."
     ///
@@ -67,7 +67,7 @@ internal static class OutboxPayload
 // 1) BİLET SATIN ALINDI -- PDF: "Bilet satin alındı e-postası"
 
 /// <remarks>
-/// PDF'IN IKI MADDESI BURADA CAKISIYOR -- VERDIGIM KARAR
+/// Pdf'in iki maddesi burada cakisiyor -- verdigim karar
 ///
 /// PDF Sprint 9, Outbox senaryolari arasında "QR bilet oluşturma
 /// islemi"ni sayiyor. Ama aynı PDF'in Sprint 8 bolumu, ödeme başarılı
@@ -157,7 +157,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
                 $"Bilet e-postasi için kullanıcı bulunamadı: {data.UserId}");
         }
 
-        // SPRINT 14: ELLE HTML YERINE SABLON
+        // Sprint 14: elle HTML yerine sablon
         //
         // Bu blok onceden StringBuilder ile HTML uretiyordu. Sprint
         // 14'te sablon sistemine tasidim.
@@ -292,7 +292,7 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
             return;
         }
 
-        // BILDIRIM ONCE, E-POSTA SONRA -- SIRA ONEMLI
+        // Bildirim once, e-posta sonra -- sira onemli
         //
         // E-posta önce gonderilseydi ve SaveChanges başarısız olsaydı,
         // mesaj yeniden denenirdi ve kullanıcı IKINCI bir e-posta
@@ -403,7 +403,7 @@ internal sealed class EventCancelledOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 5) YAKLASAN ETKİNLİK HATIRLATMASI
+// 5) Yaklasan etkinlik hatirlatmasi
 //    PDF Background Job: "Yaklasan etkinlik hatirlatmasi"
 
 internal sealed class EventReminderOutboxHandler : IOutboxMessageHandler
@@ -534,14 +534,14 @@ internal sealed class DailySalesSummaryOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 7) REZERVASYON OLUSTURULDU E-POSTASI
+// 7) Rezervasyon olusturuldu e-postasi
 //    PDF Sprint 14 sablonu: "Rezervasyon oluşturuldu"
 
 /// <summary>
 /// Rezervasyon olusturuldugunda bilgilendirme e-postası gönderir.
 /// </summary>
 /// <remarks>
-/// UYGULAMA ICI BILDIRIM ILE E-POSTA AYRI YERLERDE -- BILINCLI
+/// Uygulama ici bildirim ile e-posta ayri yerlerde -- bilincli
 ///
 /// Uygulama ici bildirim, rezervasyonla AYNI transaction'da yaziliyor
 /// (CreateReservationCommandHandler içinde). E-posta ise burada,

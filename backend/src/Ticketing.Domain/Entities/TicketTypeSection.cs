@@ -3,7 +3,7 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Bir bilet turunun hangi oturma planı bolumlerini kapsadigi.
 ///
-/// BU TABLO PDF'IN ER DIYAGRAMINDA YOK -- NEDEN EKLIYORUM?
+/// Bu tablo pdf'in er diyagraminda yok -- neden ekliyorum?
 ///
 /// PDF Sprint 6 su endpoint'i istiyor:
 ///     POST /api/v1/ticket-types/{id}/assign-section

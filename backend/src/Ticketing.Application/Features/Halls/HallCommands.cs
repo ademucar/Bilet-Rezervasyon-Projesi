@@ -93,7 +93,7 @@ internal sealed class CreateHallCommandHandler : IRequestHandler<CreateHallComma
     }
 }
 
-// GUNCELLEME
+// Guncelleme
 
 public sealed record UpdateHallCommand(Guid Id, string Name, int Capacity) : IRequest<Result>;
 
@@ -123,7 +123,7 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             return Result.Failure(HallErrors.NotFound);
         }
 
-        // KAPASITEYI DUSURURKEN MEVCUT KOLTUKLARI KONTROL ET
+        // Kapasiteyi dusururken mevcut koltuklari kontrol et
         //
         // PDF is kuralı: "Koltuk kapasitesi salon kapasitesini asmamalidir."
         //
@@ -135,7 +135,7 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
         // hatayi ancak aylar sonra bir raporda fark ederdik.
         if (request.Capacity < hall.Capacity)
         {
-            // BU SORGU ILK YAZISIMDA CALISMADI -- HIKAYESI
+            // Bu sorgu ilk yazisimda calismadi -- hikayesi
             //
             // Önce soyle yazmistim:
             //

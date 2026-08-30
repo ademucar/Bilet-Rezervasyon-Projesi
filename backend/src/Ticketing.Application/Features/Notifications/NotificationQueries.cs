@@ -50,7 +50,7 @@ internal sealed class GetNotificationsQueryHandler
                 Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // KULLANICI FILTRESI -- BU SORGUNUN EN ONEMLI SATIRI
+        // Kullanici filtresi -- bu sorgunun en onemli satiri
         //
         // Bildirimler tanim geregi KISISEL: rezervasyon kodlari, ödeme
         // tutarlari, hangi etkinlige gittiginiz.

@@ -60,7 +60,7 @@ internal sealed class GetEventReviewsQueryHandler
         // hiçbir yorum "benim" olmaz.
         var currentUserId = _currentUser.UserId;
 
-        // GIZLENMIS YORUMLAR LISTEDE YOK
+        // Gizlenmis yorumlar listede yok
         //
         // PDF: "Admin uygunsuz yorumu kaldirabilir."
         //
@@ -75,7 +75,7 @@ internal sealed class GetEventReviewsQueryHandler
 
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
-        // OZET: TEK SORGUDA GRUPLAMA
+        // Ozet: tek sorguda gruplama
         //
         // Ortalamayi ve dagilimi AYRI sorgularla da alabilirdim ama:
         //
@@ -113,7 +113,7 @@ internal sealed class GetEventReviewsQueryHandler
             TotalCount: totalCount,
             RatingCounts: counts);
 
-        // AD KISALTMASI SORGUDA DEĞİL, BELLEKTE
+        // Ad kisaltmasi sorguda değil, bellekte
         //
         // Önce "FirstName + LastName.Substring(0,1)" seklinde SORGUYA
         // yazmistim. Derleyici CA1845 ile uyardi (Substring yerine
@@ -153,7 +153,7 @@ internal sealed class GetEventReviewsQueryHandler
             r.Id,
             r.UserId,
 
-            // TAM AD DEĞİL, KISALTILMIS AD
+            // Tam ad değil, kisaltilmis ad
             //
             // "Adem U." seklinde donuyorum.
             //

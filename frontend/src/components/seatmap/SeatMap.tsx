@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 /**
- * PAYLASILAN KOLTUK HARITASI
+ * Paylasilan koltuk haritasi
  *
  * Bu bileşen ONCE admin panelinde (Sprint 4) yazildi ve yalnızca
  * adminApi'nin SectionDetail tipini taniyordu.
@@ -63,7 +63,7 @@ interface SeatMapProps {
   /**
    * Haritanin zemini.
    *
-   * NEDEN İKİ TON VAR?
+   * Neden iki ton var?
    *
    * Bilet alma ekranında harita KOYU zeminde duruyor: salon
    * karanlıktır, koltuklar ışıklı okunur. Koyu zemin ayrıca
@@ -105,7 +105,7 @@ const SECTION_TITLE_HEIGHT = 24
  *    tam bir CSS kutu modeli hesaplamasi gerektirir. SVG <rect> çok
  *    daha hafiftir.
  *
- * ERİŞİLEBİLİRLİK
+ * Erişilebilirlik
  *
  * SVG varsayılan olarak ekran okuyuculara KAPALIDIR. Her koltuga
  * <title> ekliyorum ve role="button" veriyorum ki klavyeyle

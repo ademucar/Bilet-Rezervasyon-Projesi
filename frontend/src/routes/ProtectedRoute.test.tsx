@@ -40,7 +40,7 @@ function oturumAc(roller: string[]) {
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    // STORE HER TESTTE SIFIRLANIYOR
+    // Store her testte sifirlaniyor
     //
     // Zustand store'u modül seviyesinde yaşıyor, yani testler
     // arasında PAYLAŞILIYOR. Sıfırlamasaydık bir testte açılan
@@ -68,7 +68,7 @@ describe('ProtectedRoute', () => {
   })
 
   /**
-   * 401 VE 403 AYRIMI ARAYÜZDE DE VAR
+   * 401 Ve 403 ayrimi arayüzde de var
    *
    * Backend'de 401 "kim olduğunu bilmiyorum", 403 "biliyorum ama
    * yetkin yok" demek (Sprint 17 entegrasyon testinde doğrulandı).

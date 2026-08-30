@@ -24,7 +24,7 @@ namespace Ticketing.WebApi.Security;
 ///      Bu, ic yapilandirmamizi disariya acan gereksiz bir bilgi ve
 ///      uygulamanin geri kalaniyla tutarsiz bir hata bicimi.
 ///
-/// NEDEN RESOURCE FILTER, ACTION FILTER DEĞİL?
+/// Neden resource filter, action filter değil?
 ///
 /// Action filter, MODEL BAGLAMADAN SONRA çalışıyor -- yani govde
 /// coktan okunmus, hata coktan olusmus oluyor. Çok geç.
@@ -37,7 +37,7 @@ namespace Ticketing.WebApi.Security;
 /// kalmiyoruz. Reddedecegim veriyi almak için bant genisligi ve
 /// bellek harcamak, tam olarak saldirganin istedigi seydir.
 ///
-/// SINIRLAMA -- DURUSTCE
+/// Sinirlama -- durustce
 ///
 /// Content-Length OLMAYAN istekler (chunked transfer encoding) bu
 /// kontrolden gecer. O durumda [RequestSizeLimit] yine devreye

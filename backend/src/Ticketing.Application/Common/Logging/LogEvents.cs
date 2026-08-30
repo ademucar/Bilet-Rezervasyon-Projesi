@@ -5,7 +5,7 @@ namespace Ticketing.Application.Common.Logging;
 /// PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// NEDEN MERKEZI BIR KAYIT?
+/// Neden merkezi bir kayit?
 ///
 /// EventId'leri her dosyada elle yazsaydım iki sey olurdu:
 ///
@@ -20,7 +20,7 @@ namespace Ticketing.Application.Common.Logging;
 /// Numara BLOKLARI kullanıyorum ki bir alarm kuralini aralık olarak
 /// yazabileyim: "1000-1999 arasi = kimlik olaylari".
 ///
-/// BLOK HARITASI
+/// Blok haritasi
 ///
 ///   1000-1099   Kimlik doğrulama    (bu dosya)
 ///   1100-1199   Etkinlik yasam dongusu

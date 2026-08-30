@@ -128,7 +128,7 @@ internal sealed class GetSeatLayoutQueryHandler
     }
 }
 
-// SALONA AIT PLANLARIN LISTESI
+// Salona ait planlarin listesi
 
 public sealed record GetSeatLayoutsByHallQuery(Guid HallId)
     : IRequest<Result<IReadOnlyList<SeatLayoutListItem>>>;

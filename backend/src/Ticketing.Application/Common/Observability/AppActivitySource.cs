@@ -7,7 +7,7 @@ namespace Ticketing.Application.Common.Observability;
 /// PDF Sprint 16: "Background job islemleri" takip edilmelidir.
 /// </summary>
 /// <remarks>
-/// NEDEN APPLICATION KATMANINDA?
+/// Neden application katmaninda?
 ///
 /// İlk yazdigimda bunu WebApi altina koymustum. Sonra arka plan
 /// isleri (Infrastructure) buna ihtiyac duyunca sorun cikti:

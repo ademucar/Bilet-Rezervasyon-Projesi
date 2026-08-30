@@ -20,7 +20,7 @@ internal static class ConfigurationExtensions
     /// PostgreSQL'in "xmin" sistem sutununu optimistic concurrency
     /// token'i olarak esler.
     ///
-    /// BU DORT SATIR NE YAPIYOR?
+    /// Bu dort satir ne yapiyor?
     ///
     /// HasColumnName("xmin")        -> PostgreSQL'in gizli sistem sutunu.
     ///                                 Her satirda zaten var; biz sadece

@@ -68,7 +68,7 @@ internal sealed class CancelReservationCommandHandler
         // veya onaylanmis bir rezervasyon iptal edilemez.
         reservation.Cancel(request.Reason);
 
-        // KOLTUKLARI SERBEST BIRAK
+        // Koltuklari serbest birak
         //
         // Bu adim ATLANIRSA en kötü hata olusur: rezervasyon iptal
         // görünür ama koltuklar 10 dakika daha kilitli kalır.
@@ -153,7 +153,7 @@ internal sealed class ExtendReservationCommandHandler
             _options.MaxExtensionCount,
             now);
 
-        // KOLTUKLARIN KILIT SURESINI DE UZAT
+        // Koltuklarin kilit suresini de uzat
         //
         // Bu adim atlanirsa TUTARSIZLIK olusur: rezervasyon 15 dakika
         // geçerli görünür ama koltuklar 10. dakikada "musait" olur ve
@@ -268,7 +268,7 @@ internal sealed class ExpireReservationsCommandHandler
                 }
             }
 
-            // BILDIRIMI BURADA GONDERMIYORUZ -- OUTBOX'A YAZIYORUM
+            // Bildirimi burada gondermiyoruz -- outbox'a yaziyorum
             //
             // PDF Sprint 9: "Rezervasyon süresi doldu bildirimi"
             // Outbox senaryolari arasında.

@@ -193,7 +193,7 @@ internal sealed partial class CreatePaymentCommandHandler
 
         _context.Payments.Add(payment);
 
-        // SAGLAYICIYA GITMEDEN ONCE KAYDET
+        // Saglayiciya gitmeden once kaydet
         //
         // Neden? Sağlayıcı cagrisi sırasında uygulama cokerse, elimde
         // "Pending" durumda bir kayıt kalır ve ne olduğunu arastirabilir,
@@ -220,7 +220,7 @@ internal sealed partial class CreatePaymentCommandHandler
         {
             payment.Fail(providerResult.ErrorMessage, now, userId);
 
-            // BURADA KOLTUKLARI SERBEST BIRAKMIYORUZ -- BILINCLI AYRIM
+            // Burada koltuklari serbest birakmiyoruz -- bilincli ayrim
             //
             // PDF Sprint 8: "Ödeme başarısız olduğunda koltuklar serbest
             // birakilmalidir." Bu kuralı FailPaymentCommandHandler'da
@@ -341,7 +341,7 @@ internal sealed partial class CompletePaymentCommandHandler
             return Result.Failure<PaymentDto>(PaymentErrors.NotFound);
         }
 
-        // 1. SAGLAYICIYA SORARAK DOGRULA
+        // 1. Saglayiciya sorarak dogrula
         //
         // Callback'e KORU KORUNE GUVENMIYORUZ.
         //

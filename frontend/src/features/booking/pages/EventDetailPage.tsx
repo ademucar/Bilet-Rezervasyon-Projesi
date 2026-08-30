@@ -49,7 +49,7 @@ export function EventDetailPage() {
 
   const ev = eventQuery.data
 
-  // SATIS ACIK MI?
+  // Satis acik mi?
   //
   // Bu kontrol yalnızca KULLANICI DENEYİMİ için.
   //

@@ -33,7 +33,7 @@ public sealed class AuthTests : IntegrationTestBase
 
         kayit.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // VERITABANINA DA BAKIYORUZ, YALNIZCA YANITA DEGIL
+        // Veritabanina da bakiyoruz, yalnizca yanita degil
         //
         // Yanit 200 dondugu halde kaydin yazilmamis olmasi
         // mumkun (ornegin SaveChanges unutulmus olsaydi).

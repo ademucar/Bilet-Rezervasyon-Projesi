@@ -12,7 +12,7 @@ namespace Ticketing.WebApi.Documentation;
 /// PDF Sprint 18: "Endpoint aciklamalari", "Response ornekleri".
 /// </summary>
 /// <remarks>
-/// BU SINIF NEDEN VAR? -- .NET 9'UN EKSIGI
+/// Bu sinif neden var? -- .net 9'un eksigi
 ///
 /// GenerateDocumentationFile'i acip Swagger'a baktim: 78 ucun
 /// HICBIRINDE açıklama yoktu.
@@ -28,7 +28,7 @@ namespace Ticketing.WebApi.Documentation;
 /// Kod, cercevenin bir sonraki surumunde gereksiz hale gelecek;
 /// o zaman silinebilir.
 ///
-/// BILINCLI BASITLESTIRME: PARAMETRE IMZASI YOK SAYILIYOR
+/// Bilincli basitlestirme: parametre imzasi yok sayiliyor
 ///
 /// XML uye kimlikleri parametre turlerini de iceriyor:
 ///
@@ -226,7 +226,7 @@ internal sealed partial class XmlDocumentationTransformer : IOpenApiOperationTra
     /// XML dugumunun metnini okunabilir hale getirir.
     /// </summary>
     /// <remarks>
-    /// YORUMLARIMIZ UZUN VE COK SATIRLI -- TEMIZLENMESI GEREKIYOR
+    /// Yorumlarimiz uzun ve cok satirli -- temizlenmesi gerekiyor
     ///
     /// Kodda yazdigim yorumlar "=====" cizgileri ve girintiler
     /// iceriyor. Ham haliyle Swagger'a koysaydım okunamaz olurdu.

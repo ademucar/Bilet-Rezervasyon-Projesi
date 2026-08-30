@@ -39,7 +39,7 @@ public sealed class JwtOptions
     /// <summary>
     /// Access token omru (dakika). Varsayılan 15.
     ///
-    /// NEDEN BU KADAR KISA?
+    /// Neden bu kadar kisa?
     /// Access token İPTAL EDILEMEZ -- imzasi geçerli olduğu surece kabul
     /// edilir; veritabanina bakilmaz (zaten amaci budur, her istekte
     /// veritabani sorgusu yapmamak).

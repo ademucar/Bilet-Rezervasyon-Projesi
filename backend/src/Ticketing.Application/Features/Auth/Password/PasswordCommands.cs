@@ -87,7 +87,7 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
 
         user.ChangePasswordHash(_passwordHasher.Hash(request.NewPassword));
 
-        // SIFRE DEGISINCE TÜM OTURUMLARI KAPAT
+        // Sifre degisince tüm oturumlari kapat
         //
         // Kullanıcı sifresini genelde "biri hesabima girmis olabilir"
         // supehesiyle değiştirir. Eski refresh token'lar geçerli kalsaydi
@@ -112,7 +112,7 @@ internal sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePassw
     }
 }
 
-// 2) SIFREMI UNUTTUM
+// 2) Sifremi unuttum
 
 /// <summary>PDF: POST /api/v1/auth/forgot-password</summary>
 public sealed record ForgotPasswordCommand(string Email) : IRequest<Result>;
@@ -164,7 +164,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
             .FirstOrDefaultAsync(u => u.Email == email && u.IsActive, cancellationToken)
             .ConfigureAwait(false);
 
-        // KULLANICI BULUNAMASA BILE BASARILI DONUYORUM
+        // Kullanici bulunamasa bile basarili donuyorum
         //
         // Bu, Login'dekiyle AYNI sebep: kullanıcı numaralandirmayi
         // engellemek.
@@ -211,7 +211,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
     }
 }
 
-// 3) SIFRE SIFIRLAMA
+// 3) Sifre sifirlama
 
 /// <summary>PDF: POST /api/v1/auth/reset-password</summary>
 public sealed record ResetPasswordCommand(string Token, string NewPassword) : IRequest<Result>;

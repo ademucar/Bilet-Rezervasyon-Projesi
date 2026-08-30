@@ -62,7 +62,7 @@ public sealed class PaymentsController : ApiControllerBase
     /// üretir, koltukları satıldı olarak isaretler.
     /// </summary>
     /// <remarks>
-    /// BU ENDPOINT BIR ÖDEME CALLBACK'IDIR
+    /// Bu endpoint bir ödeme callback'idir
     ///
     /// Gerçek entegrasyonda ödeme sağlayıcısı burayi cagirir.
     ///

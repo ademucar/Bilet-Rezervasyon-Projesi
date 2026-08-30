@@ -2,45 +2,31 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AuthResponse, UserSummary } from '../types/auth'
 
-/**
- * TOKEN NEREDE SAKLANMALI? -- DURUSTCE ANLATIYORUM
- *
- * Uc seçenek var ve HICBIRI kusursuz değil:
- *
- * 1) httpOnly çerez  -- EN GUVENLI
- *    JavaScript okuyamaz, yani XSS ile calinamaz.
- *    AMA: backend'in token'i çerez olarak yazmasi gerekir, CSRF
- *    korumasi eklenmesi gerekir ve mobil istemciler için ayrı bir
- *    akis lazim olur.
- *
- * 2) Yalnızca BELLEK (React state)
- *    XSS'e karsi en dayanikli ikinci seçenek.
- *    AMA: sayfa yenilenince oturum kapanir. Kullanıcı F5'e basinca
- *    her seferinde giriş yapmak zorunda kalır.
- *
- * 3) localStorage  <-- SECILEN
- *    Sayfa yenilenmesinde oturum korunur, uygulanmasi basittir.
- *    RISK: XSS acigi olan bir sayfada saldirgan token'i okuyabilir.
- *
- * NEDEN 3'U SECTIM?
- * Backend'im token'i YANIT GOVDESINDE dönüyor, çerez olarak değil
- * (PDF'in ongordugu klasik JWT akışı). Cerez yaklasimina gecmek
- * backend'i değiştirmeyi gerektirirdi.
- *
- * RISKI NASIL AZALTIYORUM?
- *   - Access token yalnızca 15 DAKIKA geçerli -> calinsa bile pencere dar
- *   - Refresh token rotation var -> calinma tespit edilince tüm
- *     oturumlar kapaniyor (backend'de dogrulandi)
- *   - React JSX'i varsayılan olarak kacisla yazar (XSS'in en yaygin
- *     kaynagini kapatır)
- *   - dangerouslySetInnerHTML KULLANMIYORUM
- *   - Content-Security-Policy Sprint 15'te eklendi
- *     (SecurityHeadersMiddleware)
- *
- * Yani riski kabul edip AZALTIYORUM, gormezden gelmiyorum.
- * Uretime cikan gerçek bir urunde httpOnly çerez tercih edilmeliydi.
- *
- */
+// Token'i nereye koyacagima karar vermek bu dosyanin en uzun
+// suren kismiydi. Uc secenek var ve hicbiri temiz degil.
+//
+// httpOnly cerez en guvenlisi: JavaScript okuyamiyor, yani XSS ile
+// calinamiyor. Ama backend'in token'i cerez olarak yazmasi, ustune
+// CSRF korumasi gelmesi ve mobil istemciler icin ayri bir akis
+// kurulmasi gerekiyor.
+//
+// Sadece bellekte tutmak (React state) XSS'e karsi ikinci en
+// dayanikli yol. Ama sayfa yenilenince oturum kapaniyor; kullanici
+// her F5'te yeniden giris yapiyor.
+//
+// localStorage'i sectim. Sebebi guvenlik degil, backend: token'i
+// yanit govdesinde donuyor, cerez olarak degil -- PDF'in tarif
+// ettigi klasik JWT akisi bu. Cereze gecmek backend'i degistirmek
+// demekti.
+//
+// Riski gormezden gelmiyorum, daraltiyorum: access token 15 dakika
+// gecerli, refresh token rotation var (calinma tespit edilince tum
+// oturumlar kapaniyor), JSX zaten kacisla yaziyor,
+// dangerouslySetInnerHTML hic kullanmadim ve Sprint 15'te CSP
+// eklendi.
+//
+// Yine de durustce: uretime cikan gercek bir urunde httpOnly cerez
+// dogru secim olurdu.
 
 interface AuthState {
   accessToken: string | null

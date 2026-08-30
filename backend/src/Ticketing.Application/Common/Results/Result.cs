@@ -11,7 +11,7 @@ public class Result
 {
     protected Result(bool isSuccess, Error error)
     {
-        // BU KONTROL NEDEN VAR?
+        // Bu kontrol neden var?
         //
         // Iki tutarsiz durum mumkun:
         //   - Başarılı ama hata dolu   -> "Basardim ama hata var" (celiski)

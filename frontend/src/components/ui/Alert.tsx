@@ -6,7 +6,7 @@ interface AlertProps {
 }
 
 export function Alert({ variant, children }: AlertProps) {
-  // SOL KENAR ÇİZGİSİ
+  // Sol kenar çizgisi
   //
   // Üç varyantın da zemini hafif renkliydi ve köşeleri 8px
   // yuvarlaktı. Sayfada iki uyarı yan yana geldiğinde (örneğin

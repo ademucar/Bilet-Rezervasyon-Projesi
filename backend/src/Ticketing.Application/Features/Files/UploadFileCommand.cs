@@ -57,7 +57,7 @@ internal sealed class UploadFileCommandHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // 1) IMZA ICIN BASTAN BIRKAC BAYT OKU
+        // 1) İmza icin bastan birkac bayt oku
         //
         // Tüm dosyayı belege almiyorum. 5 MB tek başına sorun değil ama
         // es zamanlı 100 yukleme 500 MB eder ve sunucuyu dusurur.
@@ -100,7 +100,7 @@ internal sealed class UploadFileCommandHandler
             .SaveAsync(guvenliAd, request.Content, cancellationToken)
             .ConfigureAwait(false);
 
-        // 3) VERITABANI KAYDI
+        // 3) Veritabani kaydi
         //
         // Dosya diskte, kayıt veritabaninda -- iki ayrı sistem. Kayıt
         // başarısız olursa dosya SAHIPSIZ kalır.

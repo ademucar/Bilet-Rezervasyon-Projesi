@@ -7,7 +7,7 @@ namespace Ticketing.WebApi.Observability;
 /// Saglik kontrolleri. PDF Sprint 16.
 /// </summary>
 /// <remarks>
-/// UC UC, UC FARKLI SORU
+/// Uc uc, uc farkli soru
 ///
 /// PDF ucunu de istiyor ve ucu de farklı bir soruya cevap veriyor.
 /// Aralarindaki farki bilmemek, uretimde en can sıkıcı hatalardan
@@ -26,7 +26,7 @@ namespace Ticketing.WebApi.Observability;
 ///
 ///   GET /health        Insan için: her seyin özeti.
 ///
-/// BU AYRIM NEDEN HAYATI? -- SOMUT FELAKET SENARYOSU
+/// Bu ayrim neden hayati? -- somut felaket senaryosu
 ///
 /// Diyelim /health/live de veritabanini kontrol ettim.
 ///
@@ -96,7 +96,7 @@ internal static class HealthChecksSetup
                 redisConnectionString: redis,
                 name: "redis",
 
-                // DEGRADED, UNHEALTHY DEĞİL -- BILINCLI KARAR
+                // Degraded, unhealthy değil -- bilincli karar
                 //
                 // Sprint 11'de önbelleği BILINCLI olarak opsiyonel
                 // yaptim: Redis yoksa sorgular veritabanindan
@@ -191,7 +191,7 @@ internal sealed class StorageHealthCheck : IHealthCheck
                     $"Depolama klasörü yok: {_yol}"));
             }
 
-            // GERCEKTEN YAZMAYI DENIYORUZ
+            // Gercekten yazmayi deniyoruz
             //
             // Directory.Exists yeterli DEĞİL: klasor var olabilir ama
             // salt okunur baglanmis olabilir (Docker volume ayari),
@@ -230,7 +230,7 @@ internal sealed class StorageHealthCheck : IHealthCheck
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            // ISTISNA MESAJI MASKELENIYOR
+            // İstisna mesaji maskeleniyor
             //
             // Saglik ucu genellikle disaridan erişilebilir olur
             // (yuk dengeleyici cagiriyor). IO istisnalari TAM DOSYA

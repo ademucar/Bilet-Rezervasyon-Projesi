@@ -9,7 +9,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.Application.Features.Outbox;
 
-// YAKLASAN ETKİNLİK HATIRLATMASI
+// Yaklasan etkinlik hatirlatmasi
 // PDF Sprint 9 Background Job: "Yaklasan etkinlik hatirlatmasi"
 
 /// <param name="WithinHours">
@@ -71,7 +71,7 @@ internal sealed class SendEventRemindersCommandHandler
 
         var sessionIds = sessions.ConvertAll(s => s.Id);
 
-        // BİLET SAHIPLERI TEK SORGUDA -- OTURUM BASINA DEĞİL
+        // Bilet sahipleri tek sorguda -- oturum basina değil
         //
         // İlk yazimda bunu oturum projeksiyonunun icine gomecektim.
         // Ayirdim çünkü ic ice koleksiyon projeksiyonu EF'te ya
@@ -103,7 +103,7 @@ internal sealed class SendEventRemindersCommandHandler
 
             foreach (var userId in userIds)
             {
-                // JOB DOGRUDAN BILDIRIM YAZMIYOR, OUTBOX'A YAZIYOR
+                // Job dogrudan bildirim yazmiyor, outbox'a yaziyor
                 //
                 // Neden dolayli yol? Çünkü PDF'in kuralı su:
                 // "Job islemleri kullanıcı istegini gereksiz yere
