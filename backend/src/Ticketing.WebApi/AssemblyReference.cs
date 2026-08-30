@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Ticketing.WebApi;
 
 /// <summary>
-/// Bkz. diger katmanlardaki AssemblyReference aciklamasi.
+/// Bkz. diger katmanlardaki AssemblyReference açıklaması.
 /// </summary>
 public static class AssemblyReference
 {

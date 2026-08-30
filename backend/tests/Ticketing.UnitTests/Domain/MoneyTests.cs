@@ -8,16 +8,14 @@ namespace Ticketing.UnitTests.Domain;
 /// Money value object testleri.
 ///
 /// Isimlendirme: Metot_Senaryo_BeklenenSonuc
-/// Test kirmizi yandiginda ismin TEK BASINA ne oldugunu anlatmasi gerekir;
+/// Test kirmizi yandiginda ismin tek basina ne oldugunu anlatmasi gerekir;
 /// kodu acmak zorunda kalmamalisin.
 /// </summary>
 public class MoneyTests
 {
     private const string TRY = "TRY";
 
-    // ---------------------------------------------------------------
     // Olusturma kurallari
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Ctor_GecerliDegerlerle_TutariVeParaBirimiSaklamali()
@@ -62,9 +60,7 @@ public class MoneyTests
              .Which.ErrorCode.Should().Be("money.invalid_currency");
     }
 
-    // ---------------------------------------------------------------
     // Yuvarlama -- bu testler projenin para dogrulugunu koruyor
-    // ---------------------------------------------------------------
 
     [Theory]
     [InlineData(2.125, 2.12)]   // 2 cift -> asagi
@@ -95,9 +91,7 @@ public class MoneyTests
         toplam.Amount.Should().Be(1.00m);
     }
 
-    // ---------------------------------------------------------------
     // Aritmetik
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Toplama_AyniParaBirimi_DogruSonucVermeli()
@@ -140,9 +134,7 @@ public class MoneyTests
              .Which.ErrorCode.Should().Be("money.negative");
     }
 
-    // ---------------------------------------------------------------
-    // Deger esitligi -- record'un bize bedavaya verdigi davranis
-    // ---------------------------------------------------------------
+    // Deger esitligi -- record'un bana bedavaya verdigi davranis
 
     [Fact]
     public void Esitlik_AyniTutarVeParaBirimi_EsitSayilmali()
@@ -150,7 +142,7 @@ public class MoneyTests
         var a = new Money(100m, TRY);
         var b = new Money(100m, TRY);
 
-        // Iki AYRI nesne ama ayni DEGER. class olsaydi bu test kirmizi yanardi
+        // Iki ayri nesne ama ayni deger. Class olsaydi bu test kirmizi yanardi
         // cunku class'lar varsayilan olarak referans esitligi kullanir.
         a.Should().Be(b);
         (a == b).Should().BeTrue();

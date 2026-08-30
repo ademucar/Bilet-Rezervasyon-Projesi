@@ -1,0 +1,146 @@
+/// <reference types="vitest/config" />
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    // Tailwind v4 artik PostCSS yerine kendi Vite eklentisiyle calisiyor.
+    // tailwind.config.js dosyasina gerek yok; yapilandirma CSS icinde.
+    tailwindcss(),
+  ],
+
+  // ==================================================================
+  // TESTLER -- PDF Sprint 17
+  // ==================================================================
+  // Vitest'i AYRI bir yapilandirma dosyasina koymadim: boylece
+  // testler, uygulamanin GERCEK derleme ayarlariyla (Tailwind eklentisi,
+  // React eklentisi, yol takma adlari) calisiyor.
+  //
+  // Ayri dosya olsaydi ikisi zamanla birbirinden ayrisir ve
+  // "testte calisiyor, uygulamada calismiyor" durumu ortaya cikardi.
+  // ==================================================================
+  test: {
+    // jsdom: tarayici DOM'unu Node icinde taklit ediyor.
+    // Gercek tarayici (Playwright) E2E testlerinde kullaniliyor;
+    // birim testleri icin jsdom cok daha hizli.
+    environment: 'jsdom',
+
+    // Her test dosyasindan once calisan kurulum (jest-dom eslesmeleri,
+    // temizlik).
+    setupFiles: ['./src/test/setup.ts'],
+
+    // describe/it/expect'i her dosyada import etmeye gerek kalmasin.
+    globals: true,
+
+    css: false,
+
+    // ==============================================================
+    // E2E DOSYALARI VITEST'TEN HARIC
+    // ==============================================================
+    // Sprint 17'de Playwright ekledikten sonra `npm test` su hatayi
+    // verdi:
+    //
+    //   Playwright Test did not expect test.describe() to be called here
+    //
+    // Sebep: Vitest varsayilan olarak TUM *.spec.ts dosyalarini
+    // topluyor ve e2e/ klasorundeki Playwright testlerini de kendi
+    // calistirmaya calisiyor.
+    //
+    // 36 birim testi yine geciyordu ama paket "1 failed" raporluyordu
+    // -- ve surekli kirmizi gorunen bir test paketi, bir sure sonra
+    // hic bakilmayan bir test paketine donusur.
+    //
+    // Iki arac ayri sorumluluklara sahip: Vitest bilesenleri,
+    // Playwright akisi test ediyor. Dosya duzeyinde de ayirmak
+    // gerekiyordu.
+    // ==============================================================
+    exclude: ['node_modules/**', 'dist/**', 'e2e/**'],
+
+    // ==============================================================
+    // COVERAGE -- PDF Sprint 19: "Test coverage raporu kullanilmalidir"
+    // ==============================================================
+    // Olcumun disinda biraktiklarim ve gerekceleri:
+    //
+    //   *.test.tsx      Testin kendisini olcmek anlamsiz; %100 cikar
+    //                   ve gercek orani yukari cekip yaniltir.
+    //   main.tsx        Uc satirlik onyukleme. Test etmek icin tum
+    //                   uygulamayi mount etmek gerekir, karsiliginda
+    //                   ogrendigimiz sey sifir.
+    //   api/generated   Orval'in urettigi dosya. Elle yazilmadigi
+    //                   icin test etmek de bize dusmez; degisirse
+    //                   `npm run api:check` yakaliyor.
+    //   test/           Yardimci kurulum dosyalari.
+    //
+    // Esik koymadim. Yapay bir "%80" koyup testleri kirmizi yapmak,
+    // insanlari anlamsiz test yazmaya iter. Rapor bir OLCU; hedef
+    // degil.
+    // ==============================================================
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/test/**',
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+        'src/lib/api/generated/**',
+      ],
+    },
+  },
+
+  server: {
+    port: 5173,
+
+    proxy: {
+      // ==============================================================
+      // NEDEN PROXY? Dogrudan http://localhost:5000 cagirsak olmaz miydi?
+      // ==============================================================
+      // Olurdu ama iki sorun cikardi:
+      //
+      // 1) CORS. Tarayici 5173'ten 5000'e giden istekleri "farkli
+      //    kaynak" sayar ve backend'in CORS izni vermesi gerekir.
+      //    Proxy ile istek tarayici acisindan AYNI kaynaga (5173)
+      //    gidiyor; Vite arka planda backend'e iletiyor. CORS devreye
+      //    hic girmiyor.
+      //
+      // 2) Ortam farki. Uretimde frontend ve API genelde ayni alan adi
+      //    altinda olur (/api yolu reverse proxy ile yonlendirilir).
+      //    Gelistirmede de ayni yapiyi taklit edersek, kodda ortam
+      //    bazli adres ayrimi yapmamiza gerek kalmaz -- her yerde
+      //    sadece "/api/..." yazariz.
+      // ==============================================================
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+
+      // ==============================================================
+      // SIGNALR HUB'I -- PDF Sprint 10
+      // ==============================================================
+      // Bu girdiyi EKLEMEYI UNUTTUM ve gostergemiz sayesinde hemen
+      // yakalandi: ekranda "Canli baglanti yok" yazdi.
+      //
+      // Gosterge olmasaydi harita yine calisirdi (yoklama yedegi
+      // devrede) ve SignalR'in hic baglanmadigini fark etmezdim.
+      // Sprint 10'u "bitti" sanip devam ederdim. Kucuk bir arayuz
+      // parcasinin gercek degeri tam olarak bu.
+      //
+      // ws: true SART -- varsayilan proxy yalnizca HTTP'yi iletir.
+      // SignalR once HTTP ile el sikisip sonra WebSocket'e
+      // YUKSELTIYOR (Upgrade). Bu bayrak olmadan el sikisma
+      // basarili olur, yukseltme sessizce basarisiz olur ve
+      // SignalR daha yavas olan "long polling" moduna duser --
+      // ya da hic baglanamaz.
+      // ==============================================================
+      '/hubs': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
+  },
+})

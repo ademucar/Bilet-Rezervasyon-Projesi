@@ -160,9 +160,23 @@ Yöntem karşılaştırması ve nihai seçim Sprint 7'de yapılacak (PDF bunu ya
 - Süre dolarsa rezervasyon `Expired` olur, koltuklar serbest bırakılır
 - Kullanıcıya "Ödeme başarısız" bildirimi + e-posta gider
 
-**Karar:** Başarısız ödemede koltuğu hemen serbest bırakmıyoruz. Kart hatası sık
-görülür ve kullanıcıya ikinci bir şans vermek doğru davranıştır. Ama süreyi de
-uzatmıyoruz — yoksa sürekli başarısız ödeme deneyerek koltuk süresiz bloke edilebilir.
+**Karar (Sprint 8'de GÜNCELLENDİ):**
+
+İlk analizimde koltukları kilitli tutup kullanıcıya ikinci şans vermeyi
+önermiştim. Ancak PDF Sprint 8 şu kuralı **açıkça** belirtiyor:
+
+> "Ödeme başarısız olduğunda koltuklar serbest bırakılmalıdır."
+
+Şartname benim tercihimin önüne geçer. Sprint 8'de kuralı PDF'e göre uyguladım
+ve iki durumu ayırdım:
+
+| Durum | Davranış | Neden |
+|---|---|---|
+| Sağlayıcı isteği **başlangıçta** reddetti | Rezervasyon `Locked`'a döner, koltuklar kalır | Ödeme hiç başlamadı; geçici hata olabilir. Kilit 10 dakikada zaten dolar. |
+| Ödeme başladı, **başarısız sonuçlandı** | Rezervasyon iptal, koltuklar **serbest** | Kesin sonuç; koltuğu tutmanın anlamı yok. |
+
+Ödün: kart hatası alan kullanıcı koltuklarını kaybediyor.
+Kazanç: koltuklar hemen satışa dönüyor, popüler etkinliklerde boş yere bloke kalmıyor.
 
 ---
 

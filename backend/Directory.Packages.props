@@ -1,5 +1,4 @@
 <Project>
-
   <!--
     Merkezi Paket Yonetimi (Central Package Management).
 
@@ -13,23 +12,297 @@
     Yeni paket eklerken:  dotnet add <proje> package <ad>
     CLI surumu otomatik olarak buraya yazar.
   -->
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-  </PropertyGroup>
 
+    <!--
+      GECISLI (transitive) BAGIMLILIKLARI DA BURADAN SABITLE.
+
+      Sprint 9'da Hangfire eklerken sorun cikti: Hangfire.Core,
+      Newtonsoft.Json 11.0.1'e bagli ve o surumde YUKSEK onem
+      derecesinde bir guvenlik acigi var (GHSA-5crp-9r3c-p9vr:
+      derin ic ice JSON ile StackOverflow -> servis disi birakma).
+
+      "dotnet list package -vulnerable -include-transitive" bunu
+      yakaladi. Bilinen acigi olan bir paketi projeye almak, kendi
+      kodumuzda acik birakmakla ayni sey.
+
+      Bu ozellik acikken, asagida <PackageVersion> ile yazdigimiz
+      surum GECISLI bagimliliklara da uygulanir. Boylece Hangfire
+      11.0.1 istese bile yamali 13.0.3 kullanilir.
+
+      MailKit'te (Sprint 14 notu) durum farkliydi: orada HICBIR
+      surumde yama yoktu, bu yuzden paketi hic almadim. Burada yama
+      VAR; dogru cozum paketi reddetmek degil, yamayi zorlamak.
+    -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
   <!-- ===================== WEB API ===================== -->
   <ItemGroup>
+    <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.24" />
+    <PackageVersion Include="Hangfire.Core" Version="1.8.24" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
+    <!-- Hangfire.Core icin gecisli sabitleme. Yukaridaki aciklamaya bakin. -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" />
-  </ItemGroup>
+    <!--
+      SWAGGER ARAYUZU: Scalar, Swashbuckle DEGIL
 
+      .NET 9 ile OpenAPI BELGESI uretimi cerceve icine girdi
+      (Microsoft.AspNetCore.OpenApi). Eksik olan tek sey arayuz.
+
+      Swashbuckle da kullanilabilirdi ama o hem belge uretimini hem
+      arayuzu birlikte getiriyor - yerlesik ureticiyle CAKISIRDI ve
+      iki farkli OpenAPI belgesi uretilirdi.
+
+      Scalar yalnizca arayuz: yerlesik ureticinin urettigi belgeyi
+      okuyup gosteriyor. Sorumluluklar ayri kaliyor.
+    -->
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.2" />
+    <!--
+      STYLECOP (PDF Sprint 19: "StyleCop")
+
+      .NET analizorleri KOD KALITESINI denetliyor (CA kurallari);
+      StyleCop ise KOD DUZENINI (SA kurallari): uye sirasi,
+      parantez yerlesimi, bosluk kullanimi.
+
+      Ikisi ayri seyler ve ortusmuyorlar. Ekip buyudugunde
+      "nerede ne olacak" tartismasini bitiriyor.
+
+      NOT: StyleCop varsayilan ayarlariyla yuzlerce uyari uretiyor ve
+      TreatWarningsAsErrors acik oldugu icin derlemeyi durdurur.
+      Bizim yazim tarzimizla celisen kurallar .editorconfig'te
+      GEREKCESIYLE kapatildi.
+    -->
+    <!--
+      SURUM 1.2.0-beta.556 - KARARLI SURUM (1.1.118) CALISMIYOR
+      ==========================================================
+      1.1.118 ile derleme 12 adet AD0001 hatasi verdi: analizorun
+      KENDISI cokuyordu.
+
+          'SA1500BracesForMultiLineStatementsMustNotShareLine'
+          cozumleyicisi 'Object reference not set to an instance
+          of an object.' iletisiyle NullReferenceException olusturdu
+
+      Sebep: 1.1.118 Subat 2018'de yayinlandi. Koleksiyon ifadeleri,
+      hedef tipli new(), file-scoped namespace, desen eslestirme -
+      kullandigimiz sozdiziminin cogu ondan SONRA geldi. Analizor
+      ayristiramadigi agac dugumlerinde null'a dusuyor.
+
+      1.2.0-beta uzun suredir "beta" ama modern C#'i destekleyen tek
+      surum. Sprint 16'da Redis instrumentation icin verdigim
+      kararin aynisi: kararli surum YOKSA ve etki alani SINIRLIYSA
+      beta kabul edilebilir.
+
+      Etki alani burada gercekten sinirli: StyleCop yalnizca
+      DERLEME zamaninda calisiyor, uretime hicbir sey gitmiyor.
+    -->
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="MailKit" Version="4.17.0" />
+    <!--
+      Sprint 13 rapor disa aktarimi.
+
+      ClosedXML : MIT lisansi. Excel (.xlsx) uretimi.
+      QuestPDF  : Community lisansi - yillik geliri 1M USD altindaki
+                  kuruluslar icin ucretsiz. Bu proje icin uygun.
+                  Lisans TURU kodda acikca belirtilmek ZORUNDA
+                  (bkz. ReportExportService).
+
+      CSV icin paket ALMIYORUM: RFC 4180 kacis kurallari 20 satirlik
+      bir metot. Ucuncu bir bagimlilik eklemek, guvenlik taramasi ve
+      surum takibi maliyetine degmez.
+    -->
+    <PackageVersion Include="ClosedXML" Version="0.105.1" />
+    <PackageVersion Include="QuestPDF" Version="2026.8.0" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.58" />
+    <!--
+      EF Core cekirdek paketlerini ACIKCA sabitliyorum.
+
+      NEDEN? Npgsql.EntityFrameworkCore.PostgreSQL 9.0.4, gecisli
+      (transitive) bagimlilik olarak EF Core 9.0.1 cekiyor.
+      Microsoft.EntityFrameworkCore.Design ise 9.0.11.
+
+      Ikisi ayni assembly'nin farkli surumlerini istedigi icin derleyici
+      MSB3277 uyarisi verdi: "cakisan surumler cozumlendi".
+
+      Bu, tam olarak Directory.Packages.props'un onlemek icin var oldugu
+      "diamond dependency" problemidir. Uyari gorunuste zararsizdir ama
+      calisma zamaninda MethodNotFoundException gibi tesbisi cok zor
+      hatalara yol acabilir - cunku derlenen surumle yuklenen surum
+      farkli olur.
+
+      Cozum: surumu tek bir noktadan sabitlemek.
+    -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.11" />
+  </ItemGroup>
+  <!-- ============ GOZLEMLENEBILIRLIK (PDF Sprint 16) ============ -->
+  <ItemGroup>
+    <!--
+      SERILOG
+
+      Neden yerlesik ILogger yetmiyor?
+
+      Yetiyor - kod tarafinda. Biz zaten her yerde ILogger ve
+      [LoggerMessage] kullaniyoruz ve bu SATIRLARIN HICBIRI
+      degismeyecek. Serilog yalnizca o loglarin NEREYE ve HANGI
+      BICIMDE yazildigini degistiriyor.
+
+      Kazandigimiz sey YAPILANDIRILMIS (structured) log: log satiri
+      duz metin degil, alanlari olan bir JSON kaydi olarak dosyaya
+      yaziliyor. Boylece "CorrelationId = x olan tum kayitlar" diye
+      SORGU yazilabiliyor. Duz metinde bunu ancak grep ile ve
+      bicim degisirse kirilacak sekilde yapabilirdik.
+    -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <!--
+      OPENTELEMETRY
+
+      Loglar "ne oldu" sorusunu cevapliyor; izleme (tracing) ise
+      "nerede yavasladi" sorusunu.
+
+      Bizde bir istek su zinciri geciyor:
+        HTTP -> MediatR -> EF Core -> PostgreSQL
+                        -> Redis
+                        -> Outbox -> Hangfire -> SMTP
+      Bir istek 3 saniye surdugunde loglar bunu soyler ama HANGI
+      halkanin yavas oldugunu soylemez. Trace, her halkayi ayri
+      olcuyor.
+    -->
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
+    <!--
+      VERITABANI IZLEME: Npgsql.OpenTelemetry, EF instrumentation DEGIL
+
+      Iki secenek vardi:
+
+        a) OpenTelemetry.Instrumentation.EntityFrameworkCore
+           -> yalnizca 1.18.0-beta.1 olarak var (kararli surum YOK)
+
+        b) Npgsql.OpenTelemetry 9.0.5
+           -> KARARLI ve Npgsql surumumuzle (9.x) ayni hatta
+
+      (b)'yi sectim. Beta bir pakete gerek kalmadigi gibi, surucu
+      seviyesinde olctugu icin daha DOGRU: EF'in urettigi SQL'in
+      veritabaninda gercekte ne kadar surdugunu goruyoruz.
+
+      DIKKAT: surum 10.0.3 de var ama Npgsql 10'u hedefliyor. Bizim
+      Npgsql'imiz 9.x; 9.0.5 secmek zorundaydim. Bunu karistirmak
+      sessizce calisan ama yanlis surum yukleyen bir yapi uretirdi.
+    -->
+    <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.5" />
+    <!--
+      REDIS IZLEME: BURADA BETA KABUL ETMEK ZORUNDAYIM
+
+      OpenTelemetry.Instrumentation.StackExchangeRedis yalnizca
+      1.18.0-beta.1 olarak yayinlaniyor; kararli surumu YOK.
+
+      Sprint 9'da Newtonsoft.Json icin "yama var, zorla" demistim;
+      Sprint 14'te MailKit icin "yama yok, paketi reddet" demistim.
+      Buradaki karar farkli bir uc:
+
+        - Paket, OpenTelemetry'nin KENDI kurulusundan geliyor
+        - "beta" etiketi guvenilmezlikten degil, anlamsal
+          sozlesmelerin (semantic conventions) henuz sabitlenmemis
+          olmasindan - yani alan ADLARI degisebilir, kod calismaz
+          degil
+        - Etkisi izleme ile SINIRLI: bozulursa Redis calismaz hale
+          gelmez, yalnizca trace kaybederiz
+
+      Riski kabul edilebilir buldum ve GERKCESINI buraya yaziyorum
+      ki ilerde "neden beta paket var?" diye sorulunca cevap kodda
+      dursun.
+    -->
+    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.18.0-beta.1" />
+    <!--
+      HEALTH CHECK
+
+      Yerlesik AddHealthChecks() yalnizca "uygulama ayakta mi" der.
+      Bize "BAGIMLILIKLARIM ayakta mi" lazim: PostgreSQL, Redis,
+      Hangfire, disk.
+
+      Bu paketler o kontrolleri hazir getiriyor. Elle yazsaydik her
+      biri icin baglanti acma/kapama, zaman asimi ve hata yakalama
+      mantigini tekrar yazmam gerekirdi.
+    -->
+    <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Hangfire" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+  </ItemGroup>
   <!-- ===================== TEST ALTYAPISI ===================== -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <!--
+      ENTEGRASYON TESTI ALTYAPISI (PDF Sprint 17)
 
+      Testcontainers: testler sirasinda GERCEK PostgreSQL ve Redis
+      kapsayicilari baslatiyor.
+
+      Neden InMemory saglayici degil?
+      EF Core InMemory bir veritabani DEGIL, bir sozluk. Bizim en
+      kritik davranisimiz olan xmin tabanli iyimser eszamanlilik
+      orada HIC calismaz - yani "ayni koltugu iki kullanici alamaz"
+      testi InMemory ile YESIL doner ama hicbir sey kanitlamaz.
+      PDF de zaten gercek kapsayici istiyor.
+
+      Mvc.Testing: uygulamayi bellek ici bir sunucuda ayaga kaldirip
+      gercek HTTP istekleri atmamizi sagliyor. Middleware, kimlik
+      dogrulama, model baglama, hata isleyici - hepsi devrede.
+
+      Respawn: her testten once tablolari temizliyor. Testlerin
+      birbirinin verisini gormesi, en sinsi test hatalarindan biri:
+      tek basina gecen test, tum paket calisinca kiriliyor.
+    -->
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.14.0" />
+    <!--
+      SURUM 9.0.11 - EN SON 9.0.19 OLDUGU HALDE. NEDEN?
+
+      9.0.19, Microsoft.Extensions.* paketlerinin 9.0.19 surumunu
+      cekiyor. Bizim EF Core hattimiz ise 9.0.11'e sabitli
+      (yukaridaki "EF Core cekirdek paketleri" blogu).
+
+      NuGet bunu NU1109 ile REDDETTI: "merkezi olarak tanimlanan
+      9.0.11 surumune dusuruldu".
+
+      Bu, Directory.Packages.props'un tam olarak onlemek icin var
+      oldugu durum. Hatayi susturmak icin merkezi surumu 9.0.19'a
+      cikarabilirdim ama o zaman EF Core'un test edilmemis bir
+      surumune gecmis olurdum - ve bunu yalnizca TEST altyapisi
+      icin yapardim.
+
+      Test araci, uretim bagimliliklarini surukleyemez.
+    -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.11" />
+    <PackageVersion Include="Respawn" Version="7.0.0" />
     <!--
       FluentAssertions surumunu 7.2.0'a SABITLEDIM, 8.x'e cikarmadim.
       Sebep: 8.0 surumuyle birlikte lisans degisti; ticari kullanim ucretli
@@ -37,9 +310,7 @@
       Bunu bilerek yaptim; surumu yukseltmeden once lisansi kontrol et.
     -->
     <PackageVersion Include="FluentAssertions" Version="7.2.0" />
-
     <!-- Katman kurallarini test etmek icin -->
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
   </ItemGroup>
-
 </Project>

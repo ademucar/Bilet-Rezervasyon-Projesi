@@ -2,28 +2,28 @@ namespace Ticketing.Domain.Enums;
 
 /// <summary>
 /// Rezervasyonun yasam dongusu. PDF sayfa 6.
-/// Gecis kurallari Reservation entity'sinin icinde tanimli.
+/// Gecis kurallari Reservation entity'sinin içinde tanimli.
 /// </summary>
 public enum ReservationStatus
 {
-    /// <summary>Kayit olusturuldu, koltuklar henuz kilitlenmedi. Gecici ara durum.</summary>
+    /// <summary>Kayıt oluşturuldu, koltuklar henüz kilitlenmedi. Gecici ara durum.</summary>
     Pending = 1,
 
-    /// <summary>Koltuklar kilitli, geri sayim isliyor. Normal baslangic durumu.</summary>
+    /// <summary>Koltuklar kilitli, geri sayım isliyor. Normal başlangıç durumu.</summary>
     Locked = 2,
 
-    /// <summary>Odeme baslatildi, saglayicidan sonuc bekleniyor.</summary>
+    /// <summary>Ödeme baslatildi, saglayicidan sonuç bekleniyor.</summary>
     PaymentPending = 3,
 
-    /// <summary>Odeme basarili, biletler uretildi.</summary>
+    /// <summary>Ödeme başarılı, biletler üretildi.</summary>
     Confirmed = 4,
 
-    /// <summary>Sure doldu, koltuklar serbest birakildi. Background job yazar.</summary>
+    /// <summary>Süre doldu, koltuklar serbest birakildi. Background job yazar.</summary>
     Expired = 5,
 
-    /// <summary>Kullanici veya sistem iptal etti.</summary>
+    /// <summary>Kullanıcı veya sistem iptal etti.</summary>
     Cancelled = 6,
 
-    /// <summary>Iade edildi.</summary>
-    Refunded = 7
+    /// <summary>İade edildi.</summary>
+    Refunded = 7,
 }

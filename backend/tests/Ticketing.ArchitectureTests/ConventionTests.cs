@@ -10,9 +10,7 @@ namespace Ticketing.ArchitectureTests;
 /// </summary>
 public class ConventionTests
 {
-    // ---------------------------------------------------------------
-    // GUVENLIK AGI
-    // ---------------------------------------------------------------
+    // Guvenlik agi
 
     /// <summary>
     /// Bu test, diger tum architecture testlerinin ANLAMLI olmasini garanti eder.
@@ -30,7 +28,30 @@ public class ConventionTests
     [MemberData(nameof(TumKatmanAssemblyleri))]
     public void HerKatman_EnAzBirTipIcermeli(string katmanAdi, Assembly assembly)
     {
-        var tipSayisi = Types.InAssembly(assembly).GetTypes().Count();
+        // Namespace filtresi ZORUNLU, sadece susleme degil.
+        //
+        // Filtresiz GetTypes() cagirinca CI kirmizi yandi:
+        //
+        //   System.TypeLoadException : Could not load type
+        //   'Coverlet.Core.Instrumentation.Tracker.Ticketing.Domain_40d7...'
+        //
+        // Sebep: coverage toplarken (--collect "XPlat Code Coverage")
+        // Coverlet, olcum yapabilmek icin DISKTEKI assembly'lere bir
+        // Tracker tipi enjekte ediyor. NetArchTest tipleri diskten
+        // Mono.Cecil ile okuyor, yani o enjekte tipi de goruyor; sonra
+        // onu reflection ile yuklemeye calisiyor ama BELLEKTEKI
+        // assembly orijinal, o tip orada yok.
+        //
+        // Yerelde hic gormedim cunku coverage'siz calistiriyordum.
+        // CI ilk kez bugun kostu ve ortaya cikardi.
+        //
+        // "Ticketing" ile baslayan namespace'lere daraltmak hem bu
+        // sorunu cozuyor hem de testi daha dogru yapiyor: bizi
+        // ilgilendiren, katmanin KENDI tipleri.
+        var tipSayisi = Types.InAssembly(assembly)
+            .That().ResideInNamespaceStartingWith("Ticketing")
+            .GetTypes()
+            .Count();
 
         tipSayisi.Should().BeGreaterThan(0,
             "{0} katmaninda hic tip bulunamadi. Bu durumda o katmani hedefleyen " +
@@ -47,9 +68,7 @@ public class ConventionTests
         { Layers.WebApi,         Ticketing.WebApi.AssemblyReference.Assembly }
     };
 
-    // ---------------------------------------------------------------
     // PDF: "Controller dogrudan DbContext kullanmamalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Controller_DogrudanDbContextKullanmamali()
@@ -74,15 +93,50 @@ public class ConventionTests
             Ihlaller(sonuc));
     }
 
-    // ---------------------------------------------------------------
     // PDF: "Handler siniflari dogru namespace altinda bulunmalidir."
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Handler_SiniflariApplicationKatmanindaOlmali()
     {
         // Handler'lar CQRS'in is mantigini tasir. Bunlarin WebApi veya
         // Infrastructure'da olmasi, is mantiginin altyapiya sizmasi demektir.
+        //
+        // Bu test bir kez hakli olarak kirmizi yandi -- ve kural daraltildi
+        //
+        // Ilk yazisimda kural "adi 'Handler' ile biten HER sinif" seklindeydi.
+        // WebApi'ye GlobalExceptionHandler eklendiginde test kirmizi yandi.
+        //
+        // Inceleyince gorduk ki bu bir CQRS handler'i degil: asp.net Core'un
+        // IExceptionHandler arayuzunu uygulayan bir altyapi bileseni ve
+        // dogru yerde duruyor.
+        //
+        // Yani kod dogruydu, kural fazla genisti. Testi susturmak yerine
+        // kurali gercekte ne demek istedigimize gore daralttim: asp.net
+        // altyapi arayuzlerini uygulayan tipler bu kuralin disinda.
+        //
+        // Bu ayrimi yapmak onemli: bir test kirmizi yandiginda refleksle
+        // "testi kaldirayim" demek, testin degerini yok eder. Once
+        // "kod mu yanlis, kural mi?" diye sorulmali.
+        // Asp.net Core'un "Handler" ile biten altyapi arayuzleri.
+        //
+        // Bu liste zamanla buyuyor ve bu normal:
+        //   Sprint 2'de -> IExceptionHandler       (GlobalExceptionHandler)
+        //   Sprint 5'te -> IAuthorizationHandler   (EventOwnerAuthorizationHandler)
+        //
+        // Her seferinde test kirmizi yaniyor, bakiyorum, "bu bir CQRS
+        // handler'i degil, framework bileseni" diyip listeye ekliyorum.
+        //
+        // Bu dongu SAGLIKLI: test her yeni "Handler" sinifini onumuze
+        // getiriyor ve bilincli bir karar vermemizi zorluyor. Kurali
+        // bastan cok gevsek yazsaydik (ornegin yalnizca "CommandHandler"
+        // ile bitenlere baksaydim) yanlis yere konmus gercek bir CQRS
+        // handler'i gozden kacardi.
+        var altyapiArayuzleri = new[]
+        {
+            typeof(Microsoft.AspNetCore.Diagnostics.IExceptionHandler),
+            typeof(Microsoft.AspNetCore.Authorization.IAuthorizationHandler)
+        };
+
         var yanlisYerdekiHandlerlar = Types.InAssemblies(
             [
                 Ticketing.WebApi.AssemblyReference.Assembly,
@@ -91,17 +145,16 @@ public class ConventionTests
             ])
             .That().HaveNameEndingWith("Handler")
             .GetTypes()
+            .Where(t => !altyapiArayuzleri.Any(i => i.IsAssignableFrom(t)))
             .ToList();
 
         yanlisYerdekiHandlerlar.Should().BeEmpty(
-            "Handler siniflari yalnizca Ticketing.Application icinde bulunmalidir. " +
+            "CQRS handler siniflari yalnizca Ticketing.Application icinde bulunmalidir. " +
             "Yanlis yerdekiler: {0}",
             string.Join(", ", yanlisYerdekiHandlerlar.Select(t => t.FullName)));
     }
 
-    // ---------------------------------------------------------------
     // Ek kural: Sealed olmayan siniflar
-    // ---------------------------------------------------------------
 
     [Fact]
     public void Handler_SiniflariSealedOlmali()
@@ -110,11 +163,26 @@ public class ConventionTests
         // hem niyeti acikca belirtir hem de JIT'in metod cagrilarini
         // devirtualize etmesine izin vererek kucuk bir performans kazandirir.
         //
-        // Not: Bu test su an hic handler olmadigi icin bos gecer. Sprint 3'te
-        // ilk handler'i yazdigimizda anlam kazanacak. Simdiden yaziyorum ki
-        // ilk handler yanlis yazildiginda hemen fark edelim.
+        // Bu test sprint 9'da kirmizi yandi -- yine kural fazla genisti
+        //
+        // Sprint 9'da IOutboxMessageHandler arayuzunu ekleyince test
+        // basarisiz oldu: "IOutboxMessageHandler sealed degil".
+        //
+        // Elbette degil -- arayuzler sealed olamaz. Bir arayuzu sealed
+        // yapmak dilde mumkun degildir ve zaten anlamsizdir: arayuzun
+        // varlik sebebi uygulanabilmesidir.
+        //
+        // Yani kod dogruydu, kural yine fazla genisti. Kurali daralttim:
+        // yalnizca SINIFLARA bakiyor.
+        //
+        // Bu, ayni dosyada ucuncu daraltma (bkz. yukaridaki
+        // altyapiArayuzleri listesi). Her seferinde ayni soruyu
+        // soruyorum: "kod mu yanlis, kural mi?" Ve her seferinde
+        // testi silmek yerine kurali kesinlestiriyorum. Boylece test
+        // gercek ihlalleri yakalamaya devam ediyor.
         var sonuc = Types.InAssembly(Ticketing.Application.AssemblyReference.Assembly)
-            .That().HaveNameEndingWith("Handler")
+            .That().AreClasses()
+            .And().HaveNameEndingWith("Handler")
             .Should().BeSealed()
             .GetResult();
 

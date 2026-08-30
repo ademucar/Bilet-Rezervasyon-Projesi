@@ -1,0 +1,81 @@
+# ==================================================================
+# CADDY -- YAYIN ORTAMININ ON KAPISI
+# ==================================================================
+# Bu dosya yalnizca PRODUCTION'da kullaniliyor
+# (docker-compose.prod.yml). Yerelde Caddy yok; orada nginx'e
+# dogrudan 5173'ten giriliyor.
+#
+# ------------------------------------------------------------------
+# NEDEN CADDY? Neden nginx + certbot degil?
+# ------------------------------------------------------------------
+# Zaten bir nginx'imiz var (frontend container'i). Ona TLS'i de
+# yaptirabilirdim. Yapmadim:
+#
+#   - Sertifika ALMAK ve YENILEMEK ayri bir is. nginx bunu kendi
+#     basina yapmiyor; certbot + cron + yeniden yukleme kancasi
+#     kurmak gerekiyor. Uc hareketli parca, ucu de sessizce
+#     bozulabilir ve sertifika 90 gun sonra suresi dolunca site
+#     komple erisilemez olur.
+#
+#   - Caddy sertifikayi ilk acilista kendisi aliyor ve suresi
+#     dolmadan kendisi yeniliyor. Yapilandirma dosyasi asagidaki
+#     kadar: alan adi + reverse_proxy.
+#
+# Frontend nginx'i oldugu yerde kaliyor: statik dosyalari o
+# sunuyor ve /api ile /hubs'i API'ye o yonlendiriyor (Sprint 19).
+# Caddy yalnizca TLS sonlandiriyor ve tek bir yere aktariyor.
+# ==================================================================
+
+{$SITE_DOMAIN} {
+	# ----------------------------------------------------------------
+	# GERCEK ZIYARETCI IP'SI
+	# ----------------------------------------------------------------
+	# API'deki hiz sinirlayici (Sprint 15) istegin IP'sine gore
+	# sayiyor. Zincirin her halkasi gercek IP'yi gecirmezse TUM
+	# istekler tek bir container IP'sinden geliyormus gibi gorunur
+	# ve ilk 10 istekten sonra butun kullanicilar birlikte
+	# kilitlenir.
+	#
+	# Zincir: ziyaretci -> Caddy -> nginx -> API
+	#
+	# Elle hicbir baslik yazmiyorum: Caddy X-Forwarded-For ve
+	# X-Forwarded-Proto'yu ZATEN gonderiyor (caddy validate bunlari
+	# elle yazarsam "gereksiz" diye uyariyor). nginx tarafi
+	# $proxy_add_x_forwarded_for ile listenin sonuna kendi adresini
+	# ekliyor, API de ForwardedHeaders ile bastaki gercek adresi
+	# geri koyuyor.
+	#
+	# API'nin "her vekile guven" ayari (KnownProxies.Clear) ancak
+	# API disaridan ERISILEMEZSE guvenli -- docker-compose.prod.yml
+	# ona bilerek `ports` vermiyor.
+	# ----------------------------------------------------------------
+	reverse_proxy frontend:80
+
+	# ----------------------------------------------------------------
+	# GUVENLIK BASLIKLARI
+	# ----------------------------------------------------------------
+	# nginx.conf'ta da var ama burada TEKRARLIYORUM: Caddy en distaki
+	# katman ve tarayiciya ulasan son cevabi o yaziyor. Ikisinde de
+	# olmasi, birinde bir degisiklik yapilirsa digerinin acigi
+	# kapatmasini sagliyor.
+	#
+	# HSTS: yalnizca HTTPS uzerinden konus. max-age 1 yil.
+	# Bunu ancak alan adin KALICI olarak HTTPS'te kalacaksa ac --
+	# tarayici bu sureyi hatirlar ve geri donusu zordur.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+
+		# Sunucu imzasini gizle: saldirganin sürüm bazli acik
+		# aramasini bir tik zorlastirir.
+		-Server
+	}
+
+	# Erisim kayitlari: JSON, Docker log surucusune.
+	log {
+		output stdout
+		format json
+	}
+}

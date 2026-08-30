@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+  lang="tr": SUS DEGIL, ISLEVSEL.
+
+  1) CSS text-transform: uppercase, Turkce kurallarini ancak dil
+     Turkce isaretlenmisse uyguluyor. lang="en" iken "Şifre"
+     buyuk harfe cevrilince "ŞIFRE" oluyordu -- dogrusu "ŞİFRE".
+     Kucuk buyuk harf etiketlerimin hepsi bu yuzden bozuktu.
+
+  2) Ekran okuyucu metni Ingilizce telaffuz ediyordu.
+
+  3) Tarayicinin cevir teklifi ve heceleme de buna bakiyor.
+-->
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Basligi "frontend" olarak birakmisim; Vite sablonundan geliyordu
+      ve Lighthouse denetimine kadar fark etmedim. Sekme adi, yer imi
+      adi ve arama sonucundaki baslik hep bu -- yani kullanicinin
+      uygulamayi tanidigi ilk metin.
+    -->
+    <title>Biletim — Konser, tiyatro ve etkinlik biletleri</title>
+
+    <!--
+      Lighthouse SEO 82 veriyordu, sebeplerinden biri buydu:
+      "Document does not have a meta description".
+
+      Arama motoru aciklama bulamazsa sayfadan rastgele bir parca
+      kesip gosteriyor; giris ekraninda bu "E-posta Şifre Giriş yap"
+      gibi bir sey olurdu.
+    -->
+    <meta
+      name="description"
+      content="Konser, tiyatro ve etkinlik biletleri. Salon planından koltuğunu seç, ayırt ve biletini QR kod ile al."
+    />
+
+    <!-- Mobil tarayicilarda adres cubugunun rengi. Marka moru. -->
+    <meta name="theme-color" content="#4f46e5" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

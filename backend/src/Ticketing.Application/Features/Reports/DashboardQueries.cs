@@ -1,0 +1,502 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.Security;
+using Ticketing.Application.Abstractions.Time;
+using Ticketing.Application.Common.Results;
+using Ticketing.Domain.Entities;
+using Ticketing.Domain.Enums;
+
+namespace Ticketing.Application.Features.Reports;
+
+// Ortak tipler
+
+/// <summary>Günlük satış grafigi noktasi.</summary>
+public sealed record DailySalesPoint(DateOnly Date, int TicketCount, decimal Revenue);
+
+/// <summary>Ad + deger ciftleri (en popüler şehirler, kategoriler...).</summary>
+public sealed record NamedCount(string Name, int Count);
+
+public sealed record EventRevenue(Guid EventId, string Title, int TicketCount, decimal Revenue);
+
+public sealed record SectionOccupancy(
+    string SectionName,
+    int TotalSeats,
+    int SoldSeats,
+    double OccupancyRate);
+
+// Organizatör dashboard -- PDF Sprint 13 (10 metrik)
+
+public sealed record OrganizerDashboard(
+    int TotalEvents,
+    int PublishedEvents,
+    int TotalTicketsSold,
+    decimal TotalRevenue,
+    int RefundedTickets,
+    double OccupancyRate,
+    string? TopTicketTypeName,
+    int TopTicketTypeCount,
+    IReadOnlyList<DailySalesPoint> DailySales,
+    IReadOnlyList<EventRevenue> RevenueByEvent,
+    IReadOnlyList<SectionOccupancy> SectionOccupancies,
+    string Currency);
+
+/// <param name="Days">Günlük grafik kac gunu kapsasin. Varsayılan 30.</param>
+public sealed record GetOrganizerDashboardQuery(int Days = 30)
+    : IRequest<Result<OrganizerDashboard>>;
+
+internal sealed class GetOrganizerDashboardQueryHandler
+    : IRequestHandler<GetOrganizerDashboardQuery, Result<OrganizerDashboard>>
+{
+    private readonly IApplicationDbContext _context;
+    private readonly ICurrentUser _currentUser;
+    private readonly IDateTimeProvider _clock;
+
+    public GetOrganizerDashboardQueryHandler(
+        IApplicationDbContext context,
+        ICurrentUser currentUser,
+        IDateTimeProvider clock)
+    {
+        _context = context;
+        _currentUser = currentUser;
+        _clock = clock;
+    }
+
+    public async Task<Result<OrganizerDashboard>> Handle(
+        GetOrganizerDashboardQuery request,
+        CancellationToken cancellationToken)
+    {
+        if (_currentUser.UserId is not Guid userId)
+        {
+            return Result.Failure<OrganizerDashboard>(
+                Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
+        }
+
+        // Bu panelin en kritik satiri: kapsam siniri
+        //
+        // Organizatör YALNIZCA kendi etkinliklerinin verisini görebilir.
+        //
+        // Bu filtreyi unutsaydim, herhangi bir organizatör RAKIPLERININ
+        // gelir rakamlarini, bilet satislarini ve doluluk oranlarini
+        // gorurdu. Ticari acidan felaket bir sizinti olurdu -- ve
+        // arayüzde hiçbir hata gorunmezdi, sadece "çok fazla veri".
+        //
+        // Organizatör profili yoksa panel boş değil, HATA döner:
+        // "verisi olmayan bir panel" ile "yetkisiz erişim" farklı
+        // şeyler ve kullanıcıya dogrusunu söylemek gerekiyor.
+        var organizerId = await _context.OrganizerProfiles
+            .AsNoTracking()
+            .Where(p => p.UserId == userId)
+            .Select(p => (Guid?)p.Id)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        if (organizerId is null)
+        {
+            return Result.Failure<OrganizerDashboard>(Error.Forbidden(
+                "report.not_organizer",
+                "Bu panel yalnızca organizatorlere aciktir."));
+        }
+
+        var events = _context.Events.AsNoTracking().Where(e => e.OrganizerId == organizerId);
+
+        // Bu organizatorun etkinliklerine ait TÜM biletler.
+        // Aşağıdaki metriklerin çoğu bu kumeden turetiliyor.
+        var tickets = _context.Tickets
+            .AsNoTracking()
+            .Where(t => t.EventSeat.EventSession.Event.OrganizerId == organizerId);
+
+        // ---- 1 ve 2: etkinlik sayilari ----
+        var totalEvents = await events.CountAsync(cancellationToken).ConfigureAwait(false);
+
+        var publishedEvents = await events
+            .CountAsync(
+                e => e.Status == EventStatus.Published
+                  || e.Status == EventStatus.SalesOpen
+                  || e.Status == EventStatus.SalesClosed,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        // ---- 3, 4 ve 5: satış, gelir, iade ----
+        //
+        // Geliri biletlerden hesapliyorum, odemelerden değil.
+        //
+        // Sebep: bir ödeme birden fazla bileti kapsayabilir ve
+        // organizatör bazinda ayristirmak için yine biletlere inmek
+        // gerekir. Bilet başına fiyat zaten kayıtlı.
+        var soldTickets = tickets.Where(t => t.Status == TicketStatus.Active
+                                          || t.Status == TicketStatus.Used);
+
+        var totalTicketsSold = await soldTickets.CountAsync(cancellationToken).ConfigureAwait(false);
+
+        // SumAsync boş kumede 0 döner (SQL SUM null döner ama EF
+        // decimal için 0'a cevirir). Yine de ?? 0 yazmiyorum çünkü
+        // decimal (nullable değil) dönüyor.
+        var totalRevenue = await soldTickets
+            .SumAsync(t => t.Price.Amount, cancellationToken)
+            .ConfigureAwait(false);
+
+        var refundedTickets = await tickets
+            .CountAsync(t => t.Status == TicketStatus.Refunded, cancellationToken)
+            .ConfigureAwait(false);
+
+        // ---- 6: doluluk oranı ----
+        //
+        // Tanim: satılan koltuk / üretilmiş toplam koltuk.
+        //
+        // Payda olarak salon kapasitesini değil uretilmis koltuk
+        // sayisini alıyorum. Fark önemli: organizatör salonun bir
+        // bolumunu satışa hiç acmamis olabilir. Kapasiteyi payda
+        // yapsaydim doluluk haksiz yere düşük görünürdü.
+        var totalSeats = await _context.EventSeats
+            .AsNoTracking()
+            .CountAsync(
+                es => es.EventSession.Event.OrganizerId == organizerId,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        var soldSeats = await _context.EventSeats
+            .AsNoTracking()
+            .CountAsync(
+                es => es.EventSession.Event.OrganizerId == organizerId
+                   && es.Status == EventSeatStatus.Sold,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        // Sifira bolme korumasi: henüz koltuk uretilmemisse 0.
+        var occupancyRate = totalSeats == 0
+            ? 0
+            : Math.Round((double)soldSeats / totalSeats * 100, 1);
+
+        // ---- 7: en çok satan bilet türü ----
+        // NOT: GroupBy sonucunu ANONIM tipe projelendiriyorum.
+        //
+        // Dogrudan "new NamedCount(...)" yazsaydım EF Core bunu SQL'e
+        // ceviremezdi (bkz. RevenueByEvent'teki ayrintili açıklama).
+        // Bu dosyadaki dort gruplamada da aynı desen uygulaniyor.
+        var topTicketType = await soldTickets
+            .GroupBy(t => t.EventSeat.TicketType.Name)
+            .Select(g => new { Name = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // ---- 8: günlük satış grafigi ----
+        var since = _clock.UtcNow.AddDays(-request.Days);
+
+        var dailyRaw = await soldTickets
+            .Where(t => t.CreatedAt >= since)
+
+            // Gune göre gruplamak için DateOnly'ye indirgiyorum.
+            // Npgsql bunu SQL'de DATE(...) olarak cevirebiliyor.
+            .GroupBy(t => DateOnly.FromDateTime(t.CreatedAt.UtcDateTime))
+            .Select(g => new
+            {
+                Date = g.Key,
+                Count = g.Count(),
+                Revenue = g.Sum(t => t.Price.Amount),
+            })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // Boş gunleri doldur
+        //
+        // Veritabani yalnızca satış OLAN gunleri döndürüyor. Grafige
+        // olduğu gibi verseydim, satış olmayan gunler ATLANIRDI ve
+        // cizgi grafik yanıltıcı olurdu: 1 Ocak ile 15 Ocak yan yana
+        // cizilir, aradaki 13 günlük durgunluk gorunmezdi.
+        //
+        // Sifir degerli gunleri ekleyerek zaman eksenini gerçek
+        // kiliyorum.
+        var bugun = DateOnly.FromDateTime(_clock.UtcNow.UtcDateTime);
+
+        var dailySales = Enumerable.Range(0, request.Days)
+            .Select(offset => bugun.AddDays(-(request.Days - 1 - offset)))
+            .Select(gun =>
+            {
+                var kayit = dailyRaw.Find(d => d.Date == gun);
+
+                return kayit is null
+                    ? new DailySalesPoint(gun, 0, 0)
+                    : new DailySalesPoint(kayit.Date, kayit.Count, kayit.Revenue);
+            })
+            .ToList();
+
+        // ---- 9: etkinlik bazlı gelir ----
+        var revenueRaw = await soldTickets
+            .GroupBy(t => new
+            {
+                t.EventSeat.EventSession.Event.Id,
+                t.EventSeat.EventSession.Event.Title,
+            })
+
+            // Anonim tipe projeksiyon, record'a bellekte cevirim
+            //
+            // Önce doğrudan "new EventRevenue(...)" yaziyordum ve uc
+            // 500 dondu:
+            //
+            //   InvalidOperationException: The LINQ expression ...
+            //   could not be translated
+            //
+            // EF Core, GroupBy sonucunu bir record kurucusuna
+            // projelendiremiyor (anonim tipe ise sorunsuz cevirebiliyor).
+            //
+            // Cozum: SQL'e cevrilebilen anonim tiple gruplayip,
+            // record'a bellekte gecmek. Gruplama sonucu zaten küçük
+            // (etkinlik sayısı kadar satır), yani bellekte islemenin
+            // maliyeti yok.
+            //
+            // Onemli: bu, "veriyi bellege cekip C#'ta grupla" değil.
+            // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
+            // sonucun tipe donusumu bellekte.
+            .Select(g => new
+            {
+                g.Key.Id,
+                g.Key.Title,
+                Count = g.Count(),
+                Revenue = g.Sum(t => t.Price.Amount),
+            })
+            .OrderByDescending(x => x.Revenue)
+            .Take(10)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var revenueByEvent = revenueRaw.ConvertAll(
+            r => new EventRevenue(r.Id, r.Title, r.Count, r.Revenue));
+
+        // ---- 10: bölüm bazlı doluluk ----
+        var sectionOccupancies = await _context.EventSeats
+            .AsNoTracking()
+            .Where(es => es.EventSession.Event.OrganizerId == organizerId)
+            .GroupBy(es => es.Seat.SeatSection.Name)
+            .Select(g => new
+            {
+                SectionName = g.Key,
+                Total = g.Count(),
+                Sold = g.Count(x => x.Status == EventSeatStatus.Sold),
+            })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // Orani BELLEKTE hesapliyorum.
+        //
+        // SQL'de yapsaydim tam sayi bolmesi tuzagina duserdik:
+        // PostgreSQL'de 3/4 = 0 (integer division). Cast eklemek
+        // mumkun ama okunakli değil ve satır sayısı zaten az.
+        var sections = sectionOccupancies
+            .Select(s => new SectionOccupancy(
+                s.SectionName,
+                s.Total,
+                s.Sold,
+                s.Total == 0 ? 0 : Math.Round((double)s.Sold / s.Total * 100, 1)))
+            .OrderByDescending(s => s.OccupancyRate)
+            .ToList();
+
+        // Para birimi: ilk satılan biletten.
+        //
+        // Coklu para birimi bu panelde DESTEKLENMIYOR ve bunu
+        // sessizce toplamak yerine acikca yazıyorum. Sprint 11'de
+        // günlük satış ozetinde de aynı karari vermistim.
+        var currency = await soldTickets
+            .Select(t => t.Price.Currency)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false) ?? "TRY";
+
+        return Result.Success(new OrganizerDashboard(
+            totalEvents,
+            publishedEvents,
+            totalTicketsSold,
+            totalRevenue,
+            refundedTickets,
+            occupancyRate,
+            topTicketType?.Name,
+            topTicketType?.Count ?? 0,
+            dailySales,
+            revenueByEvent,
+            sections,
+            currency));
+    }
+}
+
+// Admin dashboard -- PDF Sprint 13 (10 metrik)
+
+public sealed record AdminDashboard(
+    int TotalUsers,
+    int TotalOrganizers,
+    int TotalEvents,
+    int ActiveSales,
+    decimal TotalTransactionVolume,
+    int CancelledEvents,
+    double FailedPaymentRate,
+    IReadOnlyList<NamedCount> TopCities,
+    IReadOnlyList<NamedCount> TopCategories,
+    int SystemErrorCount,
+    string Currency);
+
+public sealed record GetAdminDashboardQuery : IRequest<Result<AdminDashboard>>;
+
+internal sealed class GetAdminDashboardQueryHandler
+    : IRequestHandler<GetAdminDashboardQuery, Result<AdminDashboard>>
+{
+    private readonly IApplicationDbContext _context;
+
+    public GetAdminDashboardQueryHandler(IApplicationDbContext context) => _context = context;
+
+    public async Task<Result<AdminDashboard>> Handle(
+        GetAdminDashboardQuery request,
+        CancellationToken cancellationToken)
+    {
+        // Yetki kontrolü CONTROLLER'da (AdminOnly policy).
+        // Burada tekrar kontrol etmiyorum: tek bir yerde olmasını,
+        // iki yerde tutup birini guncellemeyi unutmaktan iyi.
+
+        var totalUsers = await _context.Users
+            .AsNoTracking()
+            .CountAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var totalOrganizers = await _context.OrganizerProfiles
+            .AsNoTracking()
+            .CountAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var totalEvents = await _context.Events
+            .AsNoTracking()
+            .CountAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // "Aktif satislar": su an bilet satilabilen etkinlikler.
+        var activeSales = await _context.Events
+            .AsNoTracking()
+            .CountAsync(e => e.Status == EventStatus.SalesOpen, cancellationToken)
+            .ConfigureAwait(false);
+
+        var cancelledEvents = await _context.Events
+            .AsNoTracking()
+            .CountAsync(e => e.Status == EventStatus.Cancelled, cancellationToken)
+            .ConfigureAwait(false);
+
+        // ---- Toplam işlem hacmi ----
+        //
+        // Başarılı odemelerin toplami. İadeleri dusmuyorum.
+        //
+        // Sebep: "işlem hacmi" (transaction volume) finansal bir
+        // terim ve sistemden GECEN paranin toplamini anlatir. Net
+        // gelir farklı bir metriktir ve karistirilmamali.
+        //
+        // İade bilgisi ayrıca raporlarda mevcut.
+        var successfulPayments = _context.Payments
+            .AsNoTracking()
+            .Where(p => p.Status == PaymentStatus.Successful
+                     || p.Status == PaymentStatus.Refunded);
+
+        var totalVolume = await successfulPayments
+            .SumAsync(p => p.Amount.Amount, cancellationToken)
+            .ConfigureAwait(false);
+
+        // ---- Başarısız ödeme oranı ----
+        //
+        // Payda: SONUCLANMIS ödemeler (başarılı + başarısız).
+        //
+        // Pending ve Processing durumundakileri HARIC tutuyorum:
+        // henüz sonuclanmamis bir ödeme "başarısız" sayilamaz.
+        // Dahil etseydim oran, o anda islemde olan ödeme sayısına
+        // göre dalgalanirdi ve hiçbir sey ifade etmezdi.
+        var finalizedPayments = await _context.Payments
+            .AsNoTracking()
+            .CountAsync(
+                p => p.Status == PaymentStatus.Successful
+                  || p.Status == PaymentStatus.Refunded
+                  || p.Status == PaymentStatus.Failed,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        var failedPayments = await _context.Payments
+            .AsNoTracking()
+            .CountAsync(p => p.Status == PaymentStatus.Failed, cancellationToken)
+            .ConfigureAwait(false);
+
+        var failedRate = finalizedPayments == 0
+            ? 0
+            : Math.Round((double)failedPayments / finalizedPayments * 100, 1);
+
+        // ---- En popüler şehirler ve kategoriler ----
+        //
+        // "Popüler" olcutu: satilan bilet sayısı.
+        //
+        // Etkinlik sayısına göre de siralanabilirdi ama o, talebi
+        // değil ARZI olcerdi: 50 etkinligi olup hicbiri satmayan bir
+        // şehir "popüler" görünürdü.
+        var topCities = await _context.Tickets
+            .AsNoTracking()
+            .Where(t => t.Status == TicketStatus.Active || t.Status == TicketStatus.Used)
+            .GroupBy(t => t.EventSeat.EventSession.Event.City.Name)
+            .Select(g => new { Name = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(5)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var topCategories = await _context.Tickets
+            .AsNoTracking()
+            .Where(t => t.Status == TicketStatus.Active || t.Status == TicketStatus.Used)
+            .GroupBy(t => t.EventSeat.EventSession.Event.Category.Name)
+            .Select(g => new { Name = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(5)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // "Sistem hata sayisi" -- PDF'in tanimlamadigi metrik
+        //
+        // PDF bu metriği istiyor ama neyin "sistem hatası" sayilacagini
+        // soylemiyor. Tanimi ben veriyorum ve acikca yazıyorum:
+        //
+        //   Dead letter olmus outbox mesajlari
+        //
+        // Neden bu? Çünkü dead letter, sistemde GERCEKTEN yanlış giden
+        // ve insan mudahalesi bekleyen tek kalici kayittir. Bes kez
+        // denenmis ve hâlâ başarısız bir mesaj, gonderilmemis bir
+        // e-posta veya olusmamis bir bildirim demektir.
+        //
+        // Elemediklerim ve sebepleri:
+        //
+        //   HTTP 500 sayısı -> loglarda, veritabaninda değil. Sayabilmek
+        //   için log toplama altyapisi gerekir (PDF Sprint 16).
+        //
+        //   Başarısız ödemeler -> bunlar sistem hatası değil, is
+        //   sonucudur. Kart limiti yetmemesi benim hatamiz değil.
+        //   Ayrıca zaten ayrı bir metrik olarak yukarida var.
+        //
+        //   Eszamanlilik cakismalari (409) -> bunlar sistemin DOGRU
+        //   calistiginin kaniti. Hata saymak yanıltıcı olurdu.
+        //
+        // Yani bu sayi "operatorun bakmasi gereken is sayısı".
+        // Sifirdan buyukse Hangfire panelinde islenecek bir sey var.
+        var systemErrors = await _context.OutboxMessages
+            .AsNoTracking()
+            .CountAsync(m => m.IsDeadLettered, cancellationToken)
+            .ConfigureAwait(false);
+
+        var cities = topCities.ConvertAll(x => new NamedCount(x.Name, x.Count));
+        var categories = topCategories.ConvertAll(x => new NamedCount(x.Name, x.Count));
+
+        var currency = await successfulPayments
+            .Select(p => p.Amount.Currency)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false) ?? "TRY";
+
+        return Result.Success(new AdminDashboard(
+            totalUsers,
+            totalOrganizers,
+            totalEvents,
+            activeSales,
+            totalVolume,
+            cancelledEvents,
+            failedRate,
+            cities,
+            categories,
+            systemErrors,
+            currency));
+    }
+}

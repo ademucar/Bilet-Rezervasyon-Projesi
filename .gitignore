@@ -19,6 +19,7 @@ build/
 .env
 .env.*
 !.env.example
+!.env.production.example
 appsettings.Development.json
 appsettings.Local.json
 *.secrets.json
@@ -45,3 +46,37 @@ wwwroot/uploads/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Vite
+frontend/dist/
+frontend/.vite/
+
+# Sprint 13: uretilen rapor dosyalari.
+# Gecici ciktilar -- depoya girmemeli.
+report-exports/
+
+# ==================================================================
+# URETILEN API ISTEMCISI (PDF Sprint 18)
+# ==================================================================
+# frontend/src/lib/api/generated/ Orval tarafindan OpenAPI
+# belgesinden uretiliyor: `npm run api:generate`
+#
+# Neden depoya KOYMUYORUZ?
+#   - 6400+ satir ve HICBIR yerden import edilmiyor (su an yalnizca
+#     karsilastirma/dogrulama amacli). Kullanilmayan uretilmis kodu
+#     depoda tutmak, incelemelerde gurultu yaratir.
+#   - Uretmek icin API'nin ayakta olmasi gerekiyor; depodaki kopya
+#     kolayca bayatlar ve "gercek" sanilir.
+#
+# Sprint 19'da CI'a bir SAPMA KONTROLU eklenecek: belge yeniden
+# uretilip elle yazilan tiplerle karsilastirilacak.
+# ==================================================================
+frontend/src/lib/api/generated/
+
+# Tasarim onerileri: .dc.html artboard kaynaklari izleniyor,
+# uretilmis 2.5 MB'lik canvas paketi izlenmiyor.
+design-onerileri/biletim-widget-onerileri.html
+
+# Lighthouse ham raporlari -- tanesi ~480 kB, tek komutla yeniden uretiliyor
+docs/lighthouse/*.report.html
+docs/lighthouse/*.report.json

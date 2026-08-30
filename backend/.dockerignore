@@ -1,0 +1,33 @@
+# Derleme ciktilarini imaja KOPYALAMA.
+#
+# Neden onemli? "COPY src/ src/" komutu bin/ ve obj/ klasorlerini de
+# kopyalardi. Bunlar:
+#   - Windows'ta derlenmis, Linux container'da ise yaramayan ciktilar
+#   - Yuzlerce MB gereksiz veri
+#   - Docker katman onbellegini bozan surekli degisen dosyalar
+#
+# Ayrica obj/ icindeki project.assets.json, ana makinenin NuGet yollarini
+# icerir ve container icinde restore'u bozar.
+**/bin/
+**/obj/
+
+# Ortam degiskenleri ve sirlar -- ASLA imaja girmemeli
+**/.env
+**/.env.*
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/*.user
+
+# Git ve IDE
+.git/
+.github/
+.vs/
+.idea/
+**/*.md
+
+# Testler uretim imajinda gereksiz
+tests/
+
+# Loglar ve yuklenen dosyalar
+**/logs/
+**/uploads/

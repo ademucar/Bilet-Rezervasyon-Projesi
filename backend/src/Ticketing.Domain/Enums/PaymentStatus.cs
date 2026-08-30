@@ -1,23 +1,23 @@
 namespace Ticketing.Domain.Enums;
 
-/// <summary>Odeme durumu. PDF sayfa 6.</summary>
+/// <summary>Ödeme durumu. PDF sayfa 6.</summary>
 public enum PaymentStatus
 {
-    /// <summary>Odeme kaydi olusturuldu, saglayiciya henuz gidilmedi.</summary>
+    /// <summary>Ödeme kaydı oluşturuldu, saglayiciya henüz gidilmedi.</summary>
     Pending = 1,
 
-    /// <summary>Saglayiciya istek gonderildi, cevap bekleniyor.</summary>
+    /// <summary>Saglayiciya istek gönderildi, cevap bekleniyor.</summary>
     Processing = 2,
 
-    /// <summary>Odeme basarili.</summary>
+    /// <summary>Ödeme başarılı.</summary>
     Successful = 3,
 
-    /// <summary>Odeme basarisiz. Kayit SILINMEZ -- denetim izi gerekir.</summary>
+    /// <summary>Ödeme başarısız. Kayıt SILINMEZ -- denetim izi gerekir.</summary>
     Failed = 4,
 
-    /// <summary>Kullanici odemeden vazgecti.</summary>
+    /// <summary>Kullanıcı odemeden vazgeçti.</summary>
     Cancelled = 5,
 
-    /// <summary>Iade yapildi (tam veya kismi).</summary>
-    Refunded = 6
+    /// <summary>İade yapıldı (tam veya kismi).</summary>
+    Refunded = 6,
 }

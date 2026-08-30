@@ -1,0 +1,431 @@
+# ==================================================================
+# CI PIPELINE -- PDF Sprint 19
+# ==================================================================
+# PDF'in istedigi on asama:
+#   Restore, Build, Lint, Unit Test, Integration Test,
+#   Architecture Test, Frontend Test, Docker Image Build,
+#   Security Scan, Artifact olusturma
+#
+# ------------------------------------------------------------------
+# NEDEN TEK IS (job) DEGIL DE BIRDEN FAZLA?
+# ------------------------------------------------------------------
+# Hepsini tek is icinde sirayla calistirmak daha basit olurdu ama:
+#
+#   1) PARALELLIK: backend ve frontend birbirini beklemek zorunda
+#      degil. Ayirinca toplam sure neredeyse yariya iniyor.
+#
+#   2) TESHIS: "CI kirildi" yerine "Frontend Test kirildi" gormek,
+#      hangi log dosyasini acacagini bastan soyluyor.
+#
+#   3) YENIDEN DENEME: yalnizca kirilan isi tekrar calistirabiliyorsun.
+#      Entegrasyon testleri kapsayici baslattigi icin ara sira ag
+#      sorunundan dusebiliyor; tum paketi bastan calistirmak gereksiz.
+#
+# ------------------------------------------------------------------
+# BRANCH KORUMASI ILE ILISKISI
+# ------------------------------------------------------------------
+# Bu dosyadaki her is, GitHub'da "required status check" olarak
+# isaretlenebiliyor. PDF'in "Testler basarisizsa merge yapilamamalidir"
+# maddesi tam olarak boyle uygulaniyor -- ayrintisi
+# docs/16-ci-cd-ve-kod-kalitesi.md icinde.
+# ==================================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Elle tetikleme: bir sorunu arastirirken kod degistirmeden
+  # yeniden calistirabilmek icin.
+  workflow_dispatch:
+
+# ==================================================================
+# AYNI DALDA ESKI CALISTIRMALARI IPTAL ET
+# ==================================================================
+# Ust uste iki commit atildiginda ilki hala calisiyor olabiliyor.
+# Onun sonucu artik kimseyi ilgilendirmiyor: kod degisti.
+#
+# Iptal etmeseydik hem CI kuyrugu doluyor hem de eski calistirmanin
+# "basarisiz" sonucu PR'da yaniltici bir kirmizi birakabiliyordu.
+# ==================================================================
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # ==============================================================
+  # SDK SURUMU ACIKCA SABIT
+  # ==============================================================
+  # "latest" yazsaydik, hicbir kod degismeden bir gun derleme
+  # kirilabilirdi: yeni SDK yeni analizor kurallari getiriyor.
+  #
+  # Bunu Sprint 19'da somut olarak yasadim: yerelde SDK 10 ile
+  # gecen derleme, Docker imajinda SDK 9 ile 24 hatayla kirildi
+  # (bkz. Dockerfile'daki not).
+  # ==============================================================
+  DOTNET_VERSION: '9.0.x'
+  NODE_VERSION: '22.x'
+
+  # Konsol ciktisini sadelestiriyor; CI loglarinda gereksiz
+  # "Welcome to .NET" banner'i olmasin.
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # ================================================================
+  # 1) BACKEND: Restore -> Build -> Lint (analizorler) -> Testler
+  # ================================================================
+  backend:
+    name: Backend (build + test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: .NET SDK kur
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # ==========================================================
+      # NuGet ONBELLEGI
+      # ==========================================================
+      # Anahtar, kilit dosyalarindan (csproj + Directory.Packages.props)
+      # uretiliyor. Paket surumu degismedikce onbellek gecerli kaliyor.
+      #
+      # Yalnizca dalin adini anahtar yapsaydik, paket surumu
+      # degistiginde eski onbellek kullanilir ve "neden hala eski
+      # surum?" diye saatler kaybedilirdi.
+      # ==========================================================
+      - name: NuGet onbellegi
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('backend/**/*.csproj', 'backend/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      # ---- ASAMA: Restore ----
+      - name: Restore
+        working-directory: backend
+        run: dotnet restore
+
+      # ---- ASAMA: Build + Lint ----
+      #
+      # ==============================================================
+      # LINT AYRI BIR ADIM DEGIL -- BILINCLI
+      # ==============================================================
+      # PDF "Lint" ve ".NET Analyzer" maddelerini ayri sayiyor ama
+      # .NET'te bunlar DERLEMENIN parcasi.
+      #
+      # Directory.Build.props'ta TreatWarningsAsErrors acik; yani
+      # bir analizor uyarisi derlemeyi DURDURUYOR. Ayri bir "lint"
+      # adimi eklemek, ayni analizi ikinci kez calistirmak olurdu.
+      #
+      # --no-restore: bir onceki adim zaten yapti. Tekrar yapmasi
+      # hem yavas hem de "restore'da bir sey degisti mi?" sorusunu
+      # bulaniklastirirdi.
+      # ==============================================================
+      - name: Build (analizorler + TreatWarningsAsErrors)
+        working-directory: backend
+        run: dotnet build -c Release --no-restore
+
+      # ---- ASAMA: Unit Test + Architecture Test ----
+      #
+      # Ikisi de Docker gerektirmiyor ve hizli (< 1 sn). Birlikte
+      # calistirmak, entegrasyon testlerinin uzun suresini beklemeden
+      # hizli geri bildirim veriyor.
+      - name: Unit + Architecture testleri
+        working-directory: backend
+        run: |
+          dotnet test tests/Ticketing.UnitTests \
+            -c Release --no-build \
+            --logger "trx;LogFileName=unit.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ../TestResults
+          dotnet test tests/Ticketing.ArchitectureTests \
+            -c Release --no-build \
+            --logger "trx;LogFileName=architecture.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ../TestResults
+
+      # ---- ASAMA: Integration Test ----
+      #
+      # ==============================================================
+      # TESTCONTAINERS ICIN EK KURULUM GEREKMIYOR
+      # ==============================================================
+      # ubuntu-latest calistiricisinda Docker HAZIR geliyor.
+      # Testcontainers PostgreSQL ve Redis kapsayicilarini kendisi
+      # baslatiyor (bkz. TicketingTestFactory).
+      #
+      # Alternatif "services:" blogu kullanmak olurdu ama o zaman
+      # baglanti dizeleri CI'da ve yerelde FARKLI olurdu; ayni testin
+      # iki ortamda iki farkli sekilde kurulmasi kaciniliyor.
+      # ==============================================================
+      - name: Integration testleri (Testcontainers)
+        working-directory: backend
+        run: |
+          dotnet test tests/Ticketing.IntegrationTests \
+            -c Release --no-build \
+            --logger "trx;LogFileName=integration.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ../TestResults
+
+      # ---- ASAMA: Test coverage raporu ----
+      - name: Coverage raporu uret
+        if: always()
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator \
+            -reports:"TestResults/**/coverage.cobertura.xml" \
+            -targetdir:"TestResults/coverage-report" \
+            -reporttypes:"Html;TextSummary;MarkdownSummaryGithub"
+
+      - name: Coverage ozetini is ozetine yaz
+        if: always()
+        run: cat TestResults/coverage-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY || true
+
+      # ==========================================================
+      # if: always() -- TESTLER KIRILSA BILE SONUCLARI YUKLE
+      # ==========================================================
+      # Varsayilan davranis, onceki adim basarisizsa sonrakileri
+      # ATLAMAK. Ama test sonuclarina en cok TESTLER KIRILDIGINDA
+      # ihtiyac duyuluyor.
+      #
+      # Bu bayrak olmasaydi, kirilan bir CI'da elimizde yalnizca
+      # konsol ciktisi kalirdi.
+      # ==========================================================
+      - name: Test sonuclarini yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/
+          retention-days: 14
+
+  # ================================================================
+  # 2) FRONTEND: Lint -> Format -> Type check -> Test -> Build
+  # ================================================================
+  frontend:
+    name: Frontend (lint + test + build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # ==========================================================
+      # npm ci, npm install DEGIL
+      # ==========================================================
+      # npm install kilit dosyasini GUNCELLEYEBILIYOR; yani CI,
+      # gelistiricinin test ettiginden FARKLI surumler kurabilir.
+      #
+      # npm ci kilit dosyasina birebir uyuyor ve uymuyorsa hata
+      # veriyor. CI'da tekrarlanabilirlik hizdan onemli.
+      # ==========================================================
+      - name: Bagimliliklari kur
+        working-directory: frontend
+        run: npm ci
+
+      # ---- ASAMA: Lint ----
+      - name: Lint (oxlint)
+        working-directory: frontend
+        run: npm run lint
+
+      # ---- ASAMA: Bicim kontrolu (Prettier) ----
+      #
+      # --check: dosyalari DEGISTIRMIYOR, yalnizca bicimsiz olanlari
+      # bildiriyor. CI'da --write kullanmak tehlikeli olurdu: kimsenin
+      # gormedigi bir degisiklik yapip gecerdi.
+      - name: Bicim kontrolu (Prettier)
+        working-directory: frontend
+        run: npm run format:check
+
+      # ---- ASAMA: Tip kontrolu ----
+      #
+      # Vite derlemesi tipleri KONTROL ETMIYOR (esbuild yalnizca
+      # tipleri siliyor). tsc olmadan tip hatalari uretime kadar
+      # gidebilirdi.
+      - name: Tip kontrolu (tsc)
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      # ---- ASAMA: Frontend Test ----
+      - name: Birim testleri (Vitest)
+        working-directory: frontend
+        run: npm test
+
+      # ---- ASAMA: Build ----
+      - name: Uretim derlemesi
+        working-directory: frontend
+        run: npm run build
+
+      # ---- ASAMA: Artifact ----
+      - name: Frontend ciktisini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 14
+
+  # ================================================================
+  # 3) DOCKER IMAGE BUILD
+  # ================================================================
+  docker:
+    name: Docker imaji
+    runs-on: ubuntu-latest
+
+    # ==============================================================
+    # BACKEND'I BEKLIYOR -- BILINCLI
+    # ==============================================================
+    # Paralel calistirabilirdik ama imaj derlemesi en pahali adim.
+    # Derleme veya test zaten kiriliyorsa imaji derlemenin anlami yok:
+    # bosuna dakikalar ve calistirici kotasi harcanir.
+    # ==============================================================
+    needs: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Buildx kur
+        uses: docker/setup-buildx-action@v3
+
+      # ==========================================================
+      # IMAJ PUSH EDILMIYOR (load: true)
+      # ==========================================================
+      # Bir kayit defterine (registry) gondermek icin kimlik bilgisi
+      # gerekiyor ve bu proje henuz bir ortama dagitilmiyor.
+      #
+      # Yine de imaji DERLIYORUZ: amac "bu kod paketlenebiliyor mu?"
+      # sorusunu her PR'da cevaplamak. Sprint 19'da tam olarak bu
+      # soru cevapsizdi ve imaj derlemesi KIRIKTI (.editorconfig
+      # kopyalanmiyordu).
+      # ==========================================================
+      - name: Imaji derle
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          load: true
+          tags: ticketing-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ---- ASAMA: Security Scan (imaj) ----
+      #
+      # ==========================================================
+      # TRIVY: isletim sistemi ve kutuphane aciklarini tarar
+      # ==========================================================
+      # Yalnizca NuGet/npm paketlerini taramak yetmiyor: temel imajin
+      # (alpine) kendi paketlerinde de acik cikabiliyor.
+      #
+      # exit-code: 1 -> KRITIK ve YUKSEK aciklar derlemeyi kiriyor.
+      # Orta ve dusuk seviyeler raporlaniyor ama durdurmuyor --
+      # aksi halde her hafta baska bir sebeple kirilan bir CI
+      # olurdu ve insanlar sonucu gormezden gelmeye baslardi.
+      # ==========================================================
+      # Surum etiketine dikkat: "0.28.0" diye bir surum YOK.
+      # Ilk yazdigimda oyle yazmisim ve is "Set up job" adiminda,
+      # daha ilk 2 saniyede duserek kirilmisti -- GitHub action'i
+      # cozemedigi icin adimlar hic calismiyor. Depodaki gercek
+      # etiket "v" onekli: v0.36.0.
+      - name: Imaj guvenlik taramasi (Trivy)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ticketing-api:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+  # ================================================================
+  # 4) SECURITY SCAN (bagimliliklar)
+  # ================================================================
+  security:
+    name: Guvenlik taramasi
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # ==========================================================
+      # GECISLI BAGIMLILIKLAR DA TARANIYOR
+      # ==========================================================
+      # --include-transitive SART. Sprint 9'da Hangfire uzerinden
+      # gelen aciklı Newtonsoft.Json 11.0.1'i tam olarak boyle
+      # bulmustum: dogrudan bagimliliklarimizda yoktu.
+      #
+      # Bulunursa derlemeyi KIRIYORUZ (grep + exit). Varsayilan
+      # olarak `dotnet list package --vulnerable` acik bulsa bile
+      # 0 donuyor -- yani rapor uretip sessizce geciyor.
+      # ==========================================================
+      - name: NuGet acik taramasi
+        working-directory: backend
+        run: |
+          dotnet restore
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee vuln.txt
+          if grep -q "has the following vulnerable packages" vuln.txt; then
+            echo "::error::Aciklı NuGet paketi bulundu"
+            exit 1
+          fi
+
+      # npm audit: yalnizca YUKSEK ve KRITIK seviyeler kiriyor.
+      # Dusuk seviyeli uyarilar gelistirme bagimliliklarinda cok
+      # sik cikiyor ve uretime hic gitmiyorlar.
+      - name: npm acik taramasi
+        working-directory: frontend
+        run: npm audit --audit-level=high
+
+  # ================================================================
+  # 5) ARTIFACT: yayina hazir cikti
+  # ================================================================
+  artifact:
+    name: Yayin paketi
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # ==========================================================
+      # PUBLISH, BUILD DEGIL
+      # ==========================================================
+      # publish; bagimliliklari, yapilandirma dosyalarini ve XML
+      # dokumantasyonunu tek klasorde topluyor. Bu klasor oldugu
+      # gibi bir sunucuya kopyalanip calistirilabiliyor.
+      #
+      # build ciktisi bunu GARANTI ETMIYOR: bazi bagimliliklar
+      # NuGet onbelleginden cozuluyor.
+      # ==========================================================
+      - name: Yayin paketini uret
+        working-directory: backend
+        run: dotnet publish src/Ticketing.WebApi -c Release -o ../publish
+
+      - name: Yayin paketini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: publish/
+          retention-days: 14

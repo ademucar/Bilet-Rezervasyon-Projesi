@@ -1,31 +1,31 @@
 namespace Ticketing.Domain.Enums;
 
 /// <summary>
-/// Bir koltugun BELIRLI BIR ETKINLIK OTURUMUNDAKI durumu.
+/// Bir koltuğun belirli bir etkinlik oturumundaki durumu.
 ///
 /// Bu enum PDF'te acikca listelenmiyor ama EventSeats tablosu isteniyor.
 /// Koltugun oturum bazindaki durumunu tutan bir alan olmadan koltuk
-/// haritasini cizmek imkansiz. Bu yuzden ekledim.
+/// haritasini cizmek imkansiz. Bu yüzden ekledim.
 ///
 /// DIKKAT: Bu, Seat (fiziksel koltuk) ile karistirilmamali.
-///   Seat      = "Salon A, B bolumu, 5. sira, 12 numara" -- salon yikilmadikca degismez
-///   EventSeat = "12 Mart konserinde o koltuk: satilmis, 450 TL, VIP"
+///   Seat      = "Salon A, B bolumu, 5. sıra, 12 numara" -- salon yikilmadikca degismez
+///   EventSeat = "12 Mart konserinde o koltuk: satılmış, 450 TL, vip"
 /// </summary>
 public enum EventSeatStatus
 {
     /// <summary>Satin alinabilir.</summary>
     Available = 1,
 
-    /// <summary>Bir rezervasyon tarafindan gecici kilitli. LockedUntil'e bak.</summary>
+    /// <summary>Bir rezervasyon tarafından geçici kilitli. LockedUntil'e bak.</summary>
     Locked = 2,
 
-    /// <summary>Odemesi tamamlanmis, satilmis. Geri donusu iade ile olur.</summary>
+    /// <summary>Ödemesi tamamlanmis, satılmış. Geri donusu iade ile olur.</summary>
     Sold = 3,
 
     /// <summary>
-    /// Organizator/admin satisa kapatti.
-    /// Gercek salonlarda ses-isik masasi, engelli erisim koridoru gibi
-    /// sebeplerle satisa kapatilan koltuklar olur.
+    /// Organizatör/admin satışa kapatti.
+    /// Gerçek salonlarda ses-isik masasi, engelli erişim koridoru gibi
+    /// sebeplerle satışa kapatilan koltuklar olur.
     /// </summary>
-    Blocked = 4
+    Blocked = 4,
 }

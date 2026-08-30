@@ -1,0 +1,29 @@
+# Bu dosya YOKTU ve eksikligi Lighthouse'ta "robots.txt is not valid
+# -- 24 errors found" olarak cikti.
+#
+# Sebep ilginc: nginx'te SPA icin try_files ile index.html'e dusme
+# var (derin baglantilar calissin diye). Bu, /robots.txt istegine de
+# index.html donduruyordu. Yani dosya yok degil, YANLIS dosya vardi:
+# arama motoru robots.txt sanip HTML'i satir satir ayristirmaya
+# calisiyor ve her satirda hata veriyordu.
+#
+# Kendi dosyamizi koyunca nginx once onu buluyor ve fallback devreye
+# girmiyor.
+
+User-agent: *
+Allow: /
+
+# Giris gerektiren ve dizine eklenmesi anlamsiz olan yollar.
+# Bunlar zaten kimlik dogrulamasi istiyor; arama motorunun
+# tarayip bos donmesinin kimseye faydasi yok.
+Disallow: /giris
+Disallow: /kayit
+Disallow: /sifremi-unuttum
+Disallow: /sifre-sifirla
+Disallow: /rezervasyonlarim
+Disallow: /rezervasyonlar/
+Disallow: /biletlerim
+Disallow: /favorilerim
+Disallow: /panel
+Disallow: /admin/
+Disallow: /api/
