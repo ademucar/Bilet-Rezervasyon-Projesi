@@ -26,17 +26,17 @@ public static class BackgroundJobSetup
     ///
     /// PDF ikisini de kabul ediyor. Hangfire'i sectim çünkü:
     ///
-    /// 1) IZLEME EKRANI HAZIR GELIYOR. /hangfire adresinde her isin
+    /// 1) İzleme ekrani hazir geliyor. /hangfire adresinde her isin
     ///    ne zaman calistigi, ne kadar surdugu, hangi hatayla
     ///    başarısız olduğu görünüyor. Quartz'da bunu kendim
     ///    yazmamiz gerekirdi. Arka plan islerinde en büyük risk
     ///    "calismadigini fark etmemek" olduğu için bu ekran bir
     ///    konfor değil, ihtiyac.
     ///
-    /// 2) IS DURUMU VERITABANINDA. Uygulama yeniden baslatildiginda
+    /// 2) İs durumu veritabaninda. Uygulama yeniden baslatildiginda
     ///    yarim kalan isler kaybolmuyor.
     ///
-    /// 3) ZATEN POSTGRESQL KULLANIYORUM. Hangfire.PostgreSql ile ek
+    /// 3) Zaten postgresql kullaniyorum. Hangfire.PostgreSql ile ek
     ///    bir altyapi (Redis, SQL Server) gerekmiyor.
     ///
     /// Quartz daha hafif ve daha esnek zamanlama sunuyor; benim
@@ -74,7 +74,7 @@ public static class BackgroundJobSetup
         // Varsayılan: CPU cekirdek sayısı x 5. 8 cekirdekli bir
         // makinede 40 esZamanli isci demek.
         //
-        // Bizim isler VERITABANI AGIRLIKLI ve zaten
+        // Bizim isler veritabani agirlikli ve zaten
         // [DisableConcurrentExecution] ile teke dusuruluyor. 40 isci
         // yalnızca veritabani bağlantı havuzunu tuketirdi -- HTTP
         // isteklerine bağlantı kalmayabilirdi.
@@ -89,7 +89,7 @@ public static class BackgroundJobSetup
 
         services.AddScoped<TicketingJobs>();
 
-        // NOT: Outbox isleyicileri BURADA DEĞİL, Application katmaninin
+        // NOT: Outbox isleyicileri burada değil, Application katmaninin
         // kendi DependencyInjection dosyasinda kayıtlı. Sebebi orada
         // yazili: isleyiciler `internal` ve oyle kalmali.
 
@@ -111,9 +111,9 @@ public static class BackgroundJobSetup
     {
         ArgumentNullException.ThrowIfNull(recurringJobs);
 
-        // ---- 1) Süresi dolan rezervasyonlar: DAKIKADA BIR ----
+        // ---- 1) Süresi dolan rezervasyonlar: dakikada bir ----
         //
-        // Neden bu kadar sik? Çünkü bu is DOGRUDAN GELIR etkiliyor.
+        // Neden bu kadar sik? Çünkü bu is dogrudan gelir etkiliyor.
         // Süresi dolmuş bir rezervasyonun koltuğu, is calisana kadar
         // kimseye satilamaz. 10 dakikada bir calissaydi, popüler bir
         // konserde her koltuk ortalama 5 dakika boşuna bekletilirdi.
@@ -124,7 +124,7 @@ public static class BackgroundJobSetup
             job => job.ExpireReservationsAsync(CancellationToken.None),
             Cron.Minutely());
 
-        // ---- 2) Outbox: 30 SANIYEDE BIR ----
+        // ---- 2) Outbox: 30 saniyede bir ----
         //
         // Cron dakikadan kisa aralık desteklemiyor; Hangfire'in
         // "* * * * * *" (saniye alanli) bicimini kullanıyorum.
@@ -139,7 +139,7 @@ public static class BackgroundJobSetup
             job => job.ProcessOutboxAsync(CancellationToken.None),
             "*/30 * * * * *");
 
-        // ---- 3) Etkinlik hatirlatmasi: HER GUN 10:00 (UTC) ----
+        // ---- 3) Etkinlik hatirlatmasi: her gun 10:00 (UTC) ----
         //
         // Sabit bir saat sectim çünkü hatirlatma bir BILDIRIMDIR;
         // gece 03:00'te telefon titretmek kullanıcıyı kizdirir.
@@ -151,9 +151,9 @@ public static class BackgroundJobSetup
             job => job.SendEventRemindersAsync(CancellationToken.None),
             Cron.Daily(hour: 10));
 
-        // ---- 4) Günlük satış özeti: HER GUN 00:30 (UTC) ----
+        // ---- 4) Günlük satış özeti: her gun 00:30 (UTC) ----
         //
-        // Gece yarisindan YARIM SAAT SONRA, tam 00:00'da değil.
+        // Gece yarisindan yarim saat sonra, tam 00:00'da değil.
         //
         // Sebep: 23:59:59'da tamamlanan bir ödemenin veritabanina
         // yazilmasi ve transaction'in kapanmasi birkaç yuz
@@ -164,7 +164,7 @@ public static class BackgroundJobSetup
             job => job.GenerateDailySalesSummaryAsync(CancellationToken.None),
             "30 0 * * *");
 
-        // ---- 5) Gecmis etkinlikleri tamamla: SAATTE BIR ----
+        // ---- 5) Gecmis etkinlikleri tamamla: saatte bir ----
         //
         // Sprint 12 için eklendi (bkz. TicketingJobs açıklaması).
         //
@@ -181,7 +181,7 @@ public static class BackgroundJobSetup
             job => job.CompletePastEventsAsync(CancellationToken.None),
             Cron.Hourly());
 
-        // ---- 6) Süre uyarısı: DAKIKADA BIR ----
+        // ---- 6) Süre uyarısı: dakikada bir ----
         //
         // PDF Sprint 14: "Rezervasyon süresi dolmak uzereyken" bildirim.
         //

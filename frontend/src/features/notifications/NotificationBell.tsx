@@ -28,7 +28,7 @@ const notificationsApi = {
 /**
  * Bildirim turune göre ikon ve renk.
  *
- * NEDEN RENK + IKON, SADECE RENK DEĞİL?
+ * Neden renk + ikon, sadece renk değil?
  *
  * Renk korlugu olan kullanıcı "kırmızı = kötü haber" ayrimini
  * yapamaz. Ikon ikinci bir isaret veriyor.
@@ -65,7 +65,7 @@ function gorunum(type: number): { ikon: string; renk: string } {
 }
 
 /**
- * BILDIRIM ZILI -- PDF Sprint 14
+ * bildirim zili -- PDF Sprint 14
  *
  * Ust cubukta duruyor; rozet okunmamış sayisini gosteriyor.
  *

@@ -1,7 +1,7 @@
 /**
  * Bicimlendirme yardimcilari
  *
- * Tarih ve para bicimlendirmesini TEK YERDE topluyorum.
+ * Tarih ve para bicimlendirmesini tek yerde topluyorum.
  *
  * Neden? Çünkü bunlari her bileşende elle yazmak iki somut hataya
  * yol aciyor:
@@ -16,7 +16,7 @@
  *
  */
 
-// Modul yuklenirken BIR KEZ oluşturuluyor.
+// Modul yuklenirken bir kez oluşturuluyor.
 const dateTimeFormatter = new Intl.DateTimeFormat('tr-TR', {
   day: '2-digit',
   month: 'long',
@@ -34,7 +34,7 @@ const dateFormatter = new Intl.DateTimeFormat('tr-TR', {
 /**
  * Para bicimlendirici önbelleği.
  *
- * Para birimi degisken (TRY, USD, EUR) olduğu için tek bir nesne
+ * Para birimi degisken (try, usd, eur) olduğu için tek bir nesne
  * yetmiyor. Gorulen her para birimi için bir kez olusturup
  * sakliyorum -- Map, tekrar tekrar olusturmayi engelliyor.
  */

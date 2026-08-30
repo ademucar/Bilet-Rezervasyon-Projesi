@@ -60,7 +60,7 @@ internal sealed class MockPaymentProvider : IPaymentService
         string providerReference,
         CancellationToken cancellationToken = default)
     {
-        // Bizim uretmedigim bir referans -> DOGRULAMA BASARISIZ.
+        // Bizim uretmedigim bir referans -> dogrulama basarisiz.
         //
         // Gerçek hayattaki karşılığı: saldirgan callback adresime
         // uydurma bir referansla "ödeme başarılı" isteği gonderdi.

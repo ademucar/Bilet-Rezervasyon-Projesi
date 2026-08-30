@@ -10,11 +10,11 @@ namespace Ticketing.ArchitectureTests;
 ///   - "Domain katmani Infrastructure katmanini referans almamalidir."
 ///   - "Application katmani Web API katmanini referans almamalidir."
 ///
-/// Bu testleri projenin EN BASINDA yaziyorum, sonunda degil.
+/// Bu testleri projenin en basinda yaziyorum, sonunda degil.
 /// Sebebi su: katman ihlali yavas yavas ve fark edilmeden olur. Birisi
 /// Application'da bir DbContext'e ihtiyac duyar, "sadece bu seferlik" der,
 /// referansi ekler. Uc ay sonra 40 yerde ayni ihlal vardir ve geri donusu
-/// imkansizdir. Bu test, ihlalin OLDUGU GUN derlemeyi kirar.
+/// imkansizdir. Bu test, ihlalin oldugu gun derlemeyi kirar.
 /// </summary>
 public class LayerDependencyTests
 {
@@ -94,7 +94,7 @@ public class LayerDependencyTests
             IhlalleriYazdir(sonuc));
     }
 
-    // 3. PERSISTENCE / INFRASTRUCTURE — kardestirler, birbirini bilmezler.
+    // 3. Persistence / infrastructure — kardestirler, birbirini bilmezler.
 
     [Fact]
     public void Persistence_WebApiKatmaniniReferansAlmamali()

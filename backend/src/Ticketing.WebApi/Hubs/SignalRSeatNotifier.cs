@@ -8,16 +8,16 @@ namespace Ticketing.WebApi.Hubs;
 /// ISeatNotifier'in SignalR uygulamasi. PDF Sprint 10.
 ///
 /// Application katmanindaki arayuzu burada, WebApi'de karsiliyoruz --
-/// çünkü SignalR bir ASP.NET Core teknolojisi ve is mantiginin önü
+/// çünkü SignalR bir asp.net Core teknolojisi ve is mantiginin önü
 /// tanimasi gerekmiyor.
 /// </summary>
 internal sealed partial class SignalRSeatNotifier : ISeatNotifier
 {
-    // OLAY ADLARI -- PDF Sprint 10'da SAYILAN ADLAR
+    // olay adlari -- PDF Sprint 10'da sayilan adlar
     //
     // Bu metinler istemcideki `connection.on("SeatLocked", ...)` ile
     // BIREBIR eslesmek zorunda. SignalR eslesmeyen bir olay adını
-    // HATA SAYMAZ; mesaj sessizce hiçbir yere gitmez.
+    // hata saymaz; mesaj sessizce hiçbir yere gitmez.
     //
     // Sabit olarak yazıyorum ki en azindan sunucu tarafında tek
     // doğru kaynak olsun. Istemci tarafi TypeScript'te aynı adlar
@@ -132,7 +132,7 @@ internal sealed partial class SignalRSeatNotifier : ISeatNotifier
     /// bu hatayi yukari birakirsak:
     ///
     ///   - Kullanıcı 500 hatası alırdı
-    ///   - AMA REZERVASYONU BASARIYLA OLUSMUS OLURDU
+    ///   - ama rezervasyonu basariyla olusmus olurdu
     ///   - Kullanıcı "olmadi" deyip tekrar denerdi
     ///   - Koltuklar zaten kendisinde olduğu için... 409 alırdı
     ///   - Yani KENDİ rezervasyonu yuzunden engellenirdi

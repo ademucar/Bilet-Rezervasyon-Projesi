@@ -17,7 +17,7 @@ import {
 } from '../api/bookingApi'
 
 /**
- * REZERVASYON VE ÖDEME EKRANI -- PDF Sprint 7 + Sprint 8
+ * rezervasyon ve ödeme ekrani -- PDF Sprint 7 + Sprint 8
  *
  * Iki sprintin frontend'i tek sayfada bulusuyor çünkü kullanıcı
  * acisindan bunlar tek bir an: "koltugum tutuldu, süreyi kaybetmeden
@@ -52,7 +52,7 @@ export function ReservationPage() {
   // Detayli gerekce useCountdown içinde.
   const remaining = useCountdown(reservation?.remainingSeconds)
 
-  // "OLU" REZERVASYON UC HALDE OLUR -- VE UCU AYNI SEY DEĞİL
+  // "Olu" rezervasyon uc halde olur -- ve ucu ayni sey değil
   //
   // İlk yazimimda ucunu tek bir `isExpired` degiskeninde toplamistim.
   // Tarayicida denerken hatayi gordum: ödemeyi "başarısız" olarak
@@ -349,7 +349,7 @@ interface PaymentSimulationProps {
 }
 
 /**
- * ÖDEME SIMULASYONU -- PDF Sprint 8
+ * ödeme simulasyonu -- PDF Sprint 8
  *
  * PDF: "Gerçek bir ödeme sağlayıcısı entegre edilmeyecektir. Ancak
  * gerçek bir entegrasyona benzer bir yapi kurulmalidir."
@@ -359,7 +359,7 @@ interface PaymentSimulationProps {
  * İlk aklima gelen, gercekci gorunsun diye kart numarasi alanlari
  * olan bir form cizmekti. VAZGECTIM, iki sebeple:
  *
- * 1) Gerçek bir entegrasyonda kart bilgisi BENIM sayfamiza HİÇ
+ * 1) Gerçek bir entegrasyonda kart bilgisi benim sayfamiza hiç
  *    girilmez. Kullanıcı sağlayıcının (Iyzico, Stripe) kendi
  *    sayfasına yönlendirilir veya iframe içinde onun formunu
  *    doldurur. Kart verisi benim sunucumuza ugramaz -- PCI-DSS
@@ -376,7 +376,7 @@ interface PaymentSimulationProps {
  * Bu butonlar gercekte kim?
  *
  * "Ödemeyi onayla" butonu POST /payments/{id}/complete cagiriyor.
- * Gerçek hayatta bu adresi KULLANICI değil, SAGLAYICI cagirir
+ * Gerçek hayatta bu adresi kullanici değil, saglayici cagirir
  * (callback / webhook).
  *
  * Backend bunu bildigi için callback'e koru korune guvenmiyor:

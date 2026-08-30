@@ -3,16 +3,14 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// <summary>
 /// Dagitik önbellek. PDF Sprint 11.
 ///
-/// NEDEN ARAYUZ? Neden doğrudan Redis?
+/// Application katmanina dogrudan StackExchange.Redis enjekte
+/// edebilirdim, ilk aklima gelen oydu. Uc sey engelledi: is mantigi
+/// belirli bir onbellek urunune baglanirdi, mimari testim kirmizi
+/// yanardi (hakli olarak) ve her birim testi icin Redis ayaga
+/// kaldirmam gerekirdi.
 ///
-/// Application katmanina StackExchange.Redis enjekte etseydim:
-///
-///   - Is mantığı bir ONBELLEK URUNUNE baglanirdi
-///   - Mimari testim kırmızı yanardi (ve haklı olarak)
-///   - Birim testlerinde Redis sunucusu ayaga kaldirmak gerekirdi
-///
-/// Bu arayüz sayesinde handler'lar yalnızca "bu veriyi onbellekten
-/// ver, yoksa üret ve sakla" diyor.
+/// Bu arayuzle handler'lar yalnizca "bu veriyi onbellekten ver,
+/// yoksa uret ve sakla" diyor.
 /// </summary>
 public interface ICacheService
 {
@@ -21,9 +19,8 @@ public interface ICacheService
     /// uretip saklar.
     /// </summary>
     /// <remarks>
-    /// NEDEN "GET" VE "SET" AYRI DEĞİL DE TEK METOT?
-    ///
-    /// Ayrı olsaydı her cagiran su kaliba mecbur kalırdı:
+    /// Get ve Set'i ayri iki metot yapmadim. Ayri olsalardi her
+    /// cagiran su kaliba mecbur kalirdi:
     ///
     ///     var cached = await cache.GetAsync&lt;T&gt;(key);
     ///     if (cached is not null) return cached;
@@ -31,11 +28,10 @@ public interface ICacheService
     ///     await cache.SetAsync(key, data, süre);
     ///     return data;
     ///
-    /// Bes satır, ve her cagirim yerinde TEKRAR. Birinde `SetAsync`
-    /// unutulursa o sorgu hiçbir zaman onbelleklenmez ve kimse fark
-    /// etmez -- sistem çalışır, sadece yavastir.
-    ///
-    /// Tek metot bu hatayi imkansiz kiliyor.
+    /// Bes satir, her cagirim yerinde tekrar. Birinde SetAsync
+    /// unutulursa o sorgu hic onbelleklenmez ve kimse fark etmez;
+    /// sistem calisir, sadece yavas. Tek metotta bu hatayi yapmak
+    /// mumkun degil.
     ///
     /// PDF kuralı: "Cache kapalı olduğunda sistem calismaya devam
     /// edebilmelidir." Uygulamalar bu sozu tutmak zorunda: Redis'e

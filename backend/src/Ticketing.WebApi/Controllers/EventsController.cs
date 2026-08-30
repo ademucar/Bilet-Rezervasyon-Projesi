@@ -24,7 +24,7 @@ public sealed class EventsController : ApiControllerBase
     [AllowAnonymous]
     // PDF Sprint 15: "Search endpointi" hiz sınırı.
     //
-    // Bu uc ANONIM erisime açık ve pahali (LIKE sorgusu + JOIN'ler).
+    // Bu uc anonim erisime açık ve pahali (like sorgusu + JOIN'ler).
     // Kimlik dogrulamasi olmadığı için kota IP bazlı çalışıyor.
     [EnableRateLimiting(RateLimitingSetup.Policies.Search)]
     [ProducesResponseType<PagedResult<EventListItem>>(StatusCodes.Status200OK)]
@@ -40,7 +40,7 @@ public sealed class EventsController : ApiControllerBase
         // yazip yayinlanmamis etkinlikleri istemeyi DENEYEBILIR.
         //
         // Bu satır o denemeyi etkisiz kiliyor: gelen deger ne olursa
-        // olsun UZERINE YAZILIYOR ve yalnızca gerçekten admin olanlar
+        // olsun uzerine yaziliyor ve yalnızca gerçekten admin olanlar
         // true aliyor.
         //
         // Bu, "istemciden gelen hiçbir yetki bilgisine guvenme"
@@ -184,10 +184,10 @@ public sealed class EventsController : ApiControllerBase
     /// Etkinligi siler (soft delete).
     /// </summary>
     /// <remarks>
-    /// Yalnızca HİÇ BİLET SATILMAMIS ve aktif rezervasyonu OLMAYAN
+    /// Yalnızca hiç bilet satilmamis ve aktif rezervasyonu olmayan
     /// etkinlikler silinebilir.
     ///
-    /// Bileti olan bir etkinlik için doğru işlem SILMEK değil İPTAL
+    /// Bileti olan bir etkinlik için doğru işlem silmek değil iptal
     /// etmektir (`POST /events/{id}/cancel`): iptal, iade zincirini
     /// ve kullanıcı bildirimlerini baslatir. Silmek ise o biletleri
     /// sessizce geçersiz kilardi.
@@ -249,7 +249,7 @@ public sealed class EventsController : ApiControllerBase
     /// <summary>
     /// Etkinligi yayina alır. PDF: POST /api/v1/events/{id}/publish
     ///
-    /// YALNIZCA ADMIN. Organizatorun kendi etkinligini onaylamasi,
+    /// Yalnizca admin. Organizatorun kendi etkinligini onaylamasi,
     /// onay surecini anlamsiz kilardi.
     /// </summary>
     [HttpPost("{id:guid}/publish")]

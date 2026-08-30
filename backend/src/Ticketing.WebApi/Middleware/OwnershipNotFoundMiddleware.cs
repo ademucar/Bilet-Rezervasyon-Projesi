@@ -26,7 +26,7 @@ namespace Ticketing.WebApi.Middleware;
 /// Yani politikayi kosulsuz eklemek, daha güvenli olan bu davranisi
 /// BOZACAKTI: bir iyilestirme yaparken bir gerileme uretecektim.
 ///
-/// NEDEN MIDDLEWARE, IAuthorizationMiddlewareResultHandler DEĞİL?
+/// Neden middleware, IAuthorizationMiddlewareResultHandler değil?
 ///
 /// Önce o arayuzu uygulamayi denedim -- bu isin "resmi" yolu. Ama
 /// derleyici tipi cozemedi (CS0246): arayüz bu cerceve surumunde

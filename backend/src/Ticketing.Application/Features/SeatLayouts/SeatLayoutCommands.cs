@@ -23,7 +23,7 @@ internal static class SeatLayoutErrors
         "Bu oturma planı bir etkinlik oturumunda kullanılıyor. Degistirilemez veya silinemez.");
 }
 
-// PLAN OLUSTURMA -- PDF: POST /api/v1/halls/{hallId}/seat-layouts
+// Plan olusturma -- PDF: POST /api/v1/halls/{hallId}/seat-layouts
 
 public sealed record CreateSeatLayoutCommand(Guid HallId, string Name, string? Description)
     : IRequest<Result<Guid>>;
@@ -78,7 +78,7 @@ internal sealed class CreateSeatLayoutCommandHandler
             // Venue ve Hall'da "önce sorgula, sonra ekle" yaptım.
             // Burada bilerek farklı davraniyorum ve sebebini yazıyorum:
             //
-            // "Önce sorgula sonra ekle" YARISA ACIKTIR. Iki istek aynı
+            // "Önce sorgula sonra ekle" yarisa aciktir. Iki istek aynı
             // anda gelirse ikisi de "yok" görür, ikisi de eklemeye
             // çalışır; biri unique index'e takilir ve kullanıcı
             // anlamsiz bir "Veri çakışması" hatası alır.
@@ -104,7 +104,7 @@ internal sealed class CreateSeatLayoutCommandHandler
     }
 }
 
-// BOLUM EKLEME -- PDF: POST /api/v1/seat-layouts/{id}/sections
+// Bolum ekleme -- PDF: POST /api/v1/seat-layouts/{id}/sections
 
 public sealed record AddSectionCommand(
     Guid SeatLayoutId,
@@ -140,7 +140,7 @@ internal sealed class AddSectionCommandHandler : IRequestHandler<AddSectionComma
 
     public async Task<Result<Guid>> Handle(AddSectionCommand request, CancellationToken cancellationToken)
     {
-        // Sections'i INCLUDE ediyorum -- bu ŞART.
+        // Sections'i include ediyorum -- bu şart.
         //
         // SeatLayout.AddSection metodu, aynı isimde bölüm var mi diye
         // BELLEKTEKI _sections koleksiyonuna bakiyor. Include etmezsem
@@ -219,7 +219,7 @@ public sealed class GenerateSeatsCommandValidator : AbstractValidator<GenerateSe
     /// <summary>
     /// Tek seferde uretilebilecek maksimum koltuk sayısı.
     ///
-    /// BU SINIR NEDEN VAR? -- Bir DoS korumasi
+    /// Bu sinir neden var? -- Bir DoS korumasi
     ///
     /// Sinir olmasaydı:
     ///     { "rowCount": 100000, "seatsPerRow": 100000 }

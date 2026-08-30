@@ -10,10 +10,10 @@ namespace Ticketing.WebApi.Controllers;
 /// Raporlama uclari. PDF Sprint 13.
 /// </summary>
 /// <remarks>
-/// YETKI: [Authorize] YETERLI, ROL KONTROLU HANDLER'DA
+/// Yetki: [Authorize] yeterli, rol kontrolu handler'da
 ///
 /// İlk aklima gelen [Authorize(Policy = OrganizerOnly)] koymakti.
-/// Yapmadim, çünkü raporlari IKI FARKLI ROL kullaniyor:
+/// Yapmadim, çünkü raporlari iki farkli rol kullaniyor:
 ///
 ///   ADMIN       -> tüm sistemin verisi
 ///   ORGANİZATÖR -> yalnızca kendi etkinlikleri
@@ -76,7 +76,7 @@ public sealed class ReportsController : ApiControllerBase
         => HandleResult(await Sender.Send(query, cancellationToken).ConfigureAwait(false));
 
     /// <summary>
-    /// Rapor disa aktarimi TALEP EDER. PDF: POST /api/v1/reports/export
+    /// Rapor disa aktarimi talep eder. PDF: POST /api/v1/reports/export
     /// </summary>
     /// <remarks>
     /// PDF: "Rapor üretimi background job olarak calistirilmali ve

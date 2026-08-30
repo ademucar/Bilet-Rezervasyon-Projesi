@@ -44,14 +44,14 @@ internal static class PaymentErrors
         "payment.not_refundable", "Bu ödeme iade edilemez.");
 }
 
-// ÖDEME BASLATMA -- PDF: POST /api/v1/payments
+// Ödeme baslatma -- PDF: POST /api/v1/payments
 
 /// <summary>
-/// DIKKAT: Tutar alanı YOK -- rezervasyondan okunuyor.
+/// Dikkat: Tutar alanı yok -- rezervasyondan okunuyor.
 ///
 /// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
 /// güvenilmemelidir." Alan hiç olmadığı için istemci 500 TL'lik
-/// bileti 1 TL'ye ödemeyi DENEYEMEZ bile.
+/// bileti 1 TL'ye ödemeyi deneyemez bile.
 /// </summary>
 public sealed record CreatePaymentCommand(Guid ReservationId, string? IdempotencyKey)
     : IRequest<Result<PaymentDto>>;
@@ -89,7 +89,7 @@ internal sealed partial class CreatePaymentCommandHandler
 
     // PDF Sprint 16: "Ödeme" loglanmalidir.
     //
-    // TUTARI logluyorum ama KART BILGISI YOK -- zaten hiçbir yerde
+    // Tutari logluyorum ama kart bilgisi yok -- zaten hiçbir yerde
     // saklamiyorum (simülasyon sağlayıcı kullanıyorum).
     //
     // Tutar hassas veri değil ama is acisindan kritik: uretimde
@@ -228,12 +228,12 @@ internal sealed partial class CreatePaymentCommandHandler
             //
             // Iki durum FARKLIDIR:
             //
-            //   BURASI: Ödeme HİÇ BASLAMADI. Sağlayıcı isteği daha
+            //   Burasi: Ödeme hiç baslamadi. Sağlayıcı isteği daha
             //           basinda reddetti (geçici hata, ag sorunu,
             //           sağlayıcı bakimda). Para hareket etmedi.
             //           Kullanıcı saniyeler içinde tekrar deneyebilir.
             //
-            //   FailPayment: Ödeme BASLADI ve BASARISIZ SONUCLANDI
+            //   FailPayment: Ödeme basladi ve basarisiz sonuclandi
             //           (kart reddedildi, 3D doğrulama başarısız).
             //           Bu kesin bir sonuctur; koltukları tutmanin
             //           anlami yok.
@@ -283,7 +283,7 @@ internal sealed partial class CreatePaymentCommandHandler
     }
 }
 
-// ÖDEME TAMAMLAMA + BİLET URETIMI
+// Ödeme tamamlama + bilet uretimi
 // PDF: POST /api/v1/payments/{id}/complete
 
 public sealed record CompletePaymentCommand(Guid PaymentId, string? ProviderReference)
@@ -343,11 +343,11 @@ internal sealed partial class CompletePaymentCommandHandler
 
         // 1. Saglayiciya sorarak dogrula
         //
-        // Callback'e KORU KORUNE GUVENMIYORUZ.
+        // Callback'e koru korune guvenmiyoruz.
         //
         // Bu endpoint disariya açık (ödeme sağlayıcısı cagiracak).
         // Doğrulama olmasaydı saldirgan doğrudan bu adrese istek
-        // gonderip BEDAVA BİLET alabilirdi.
+        // gonderip bedava bilet alabilirdi.
         //
         // Simulasyonda da bu adimi isletiyoruz: MockPaymentProvider
         // yalnızca KENDİ urettigi referanslari dogruluyor, uydurma
@@ -370,7 +370,7 @@ internal sealed partial class CompletePaymentCommandHandler
 
         // 2. IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
         //
-        // Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gönderir.
+        // Ödeme saglayicilari callback'i birden fazla kez gönderir.
         // Bu bir hata değil, normal davranistir: sağlayıcı cevap
         // alamadigini dusunurse tekrar dener.
         //
@@ -388,7 +388,7 @@ internal sealed partial class CompletePaymentCommandHandler
 
         var reservation = payment.Reservation;
 
-        // 3. TEK TRANSACTION -- PDF Sprint 8'in acikca istedigi liste
+        // 3. Tek transaction -- PDF Sprint 8'in acikca istedigi liste
         //
         // "Aşağıdaki islemler tek bir transaction içinde calismalidir:
         //    - Ödeme başarılı kaydı
@@ -444,7 +444,7 @@ internal sealed partial class CompletePaymentCommandHandler
 
         // OUTBOX -- PDF Sprint 9
         //
-        // E-postayi BURADA GONDERMIYORUZ. Sebep:
+        // E-postayi burada gondermiyoruz. Sebep:
         //
         // E-posta gonderimi ile veritabani yazimi ayrı sistemler ve
         // aralarinda ortak transaction yok. Önce gonderip sonra
@@ -458,7 +458,7 @@ internal sealed partial class CompletePaymentCommandHandler
         // birikecek ve islenecek.
         // PDF Sprint 14: "Bilet olusturuldugunda" bildirimi.
         //
-        // Ödeme başarılı bildirimi ZATEN var (yukarida) ama bu FARKLI
+        // Ödeme başarılı bildirimi zaten var (yukarida) ama bu farkli
         // bir sey: kullanıcı "param gitti mi?" ile "biletim hazır mi?"
         // sorularinin ikisini de soruyor.
         //
@@ -474,7 +474,7 @@ internal sealed partial class CompletePaymentCommandHandler
             "/biletlerim"));
 
         // Sprint 9 notu: Bu iki mesaj AYRI çünkü ayrı şeyler yapiyorlar
-        // ve BIRBIRINDEN BAGIMSIZ başarısız olabilmeliler.
+        // ve birbirinden bagimsiz başarısız olabilmeliler.
         //
         // Tek mesaj olsaydı ve e-posta gonderimi başarısız olsaydı,
         // uygulama ici bildirim de yeniden denenirdi -- kullanıcı
@@ -542,7 +542,7 @@ internal sealed partial class CompletePaymentCommandHandler
     }
 }
 
-// ÖDEME BASARISIZ -- PDF: POST /api/v1/payments/{id}/fail
+// Ödeme basarisiz -- PDF: POST /api/v1/payments/{id}/fail
 
 public sealed record FailPaymentCommand(Guid PaymentId, string? Reason) : IRequest<Result>;
 

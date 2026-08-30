@@ -17,7 +17,7 @@ namespace Ticketing.Application.Features.Events;
 //     DELETE /api/v1/events/{id}
 //
 // Sprint 19 denetiminde ikisinin de EKSIK olduğunu buldum. Domain
-// tarafında UpdateDetails() ve UpdateDates() metotlari SPRINT 5'TEN
+// tarafında UpdateDetails() ve UpdateDates() metotlari sprint 5'ten
 // BERI vardi -- ama onlari cagiran hiçbir uc yoktu. Yani yazilmis
 // ama erisilemeyen kod.
 //
@@ -43,7 +43,7 @@ namespace Ticketing.Application.Features.Events;
 ///                    Yalnızca iptal/tamamlanmis etkinlikte kapalı.
 ///
 ///   UpdateDates   -> etkinlik ve satış tarihleri
-///                    SATIS BASLADIYSA kapalı. Bilet almis
+///                    satis basladiysa kapalı. Bilet almis
 ///                    kullanicilarin altindan tarihi cekmek olmaz.
 ///
 /// Bu handler ikisini AYRI cagiriyor: kullanıcı yalnızca başlığı
@@ -184,7 +184,7 @@ internal sealed partial class UpdateEventCommandHandler
 ///
 /// Hangi etkinlik silinebilir?
 ///
-/// Yalnızca HİÇ BİLET SATILMAMIS olanlar.
+/// Yalnızca hiç bilet satilmamis olanlar.
 ///
 /// Bileti olan bir etkinligi silmek, o bileti almis kullanicilarin
 /// elindeki bileti geçersiz kilardi -- ve onlara hiçbir sey
@@ -270,7 +270,7 @@ internal sealed partial class DeleteEventCommandHandler
                 "Aktif rezervasyonu olan etkinlik silinemez."));
         }
 
-        // AuditFieldsInterceptor SILMEYI SOFT DELETE'E CEVIRIYOR
+        // AuditFieldsInterceptor silmeyi soft DELETE'E ceviriyor
         //
         // Remove() cagiriyoruz ama kayıt FIZIKSEL olarak silinmiyor:
         // Sprint 12'de yazdigim interceptor EntityState.Deleted'i

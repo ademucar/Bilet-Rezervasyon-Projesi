@@ -8,14 +8,14 @@ namespace Ticketing.WebApi.Security;
 /// PDF Sprint 15: "Request size limit".
 /// </summary>
 /// <remarks>
-/// BU SINIF, [RequestSizeLimit] YETMEDIGI ICIN VAR
+/// Bu sinif, [RequestSizeLimit] yetmedigi icin var
 ///
 /// Önce yalnızca [RequestSizeLimit(5 MB)] kullandim. Sinir DOGRU
 /// calisiyordu ama YANITI test edince iki sorun cikti:
 ///
 ///   1) Durum kodu 413 değil 400 donuyordu. Kestrel doğru istisnayi
 ///      (BadHttpRequestException, StatusCode = 413) firlatiyor ama
-///      MVC bunu MODEL BAGLAMA sırasında yakalayip siradan bir
+///      MVC bunu model baglama sırasında yakalayip siradan bir
 ///      doğrulama hatasina ceviriyor. Bizim GlobalExceptionHandler'a
 ///      hiç ulasmiyor.
 ///
@@ -26,7 +26,7 @@ namespace Ticketing.WebApi.Security;
 ///
 /// Neden resource filter, action filter değil?
 ///
-/// Action filter, MODEL BAGLAMADAN SONRA çalışıyor -- yani govde
+/// Action filter, model baglamadan sonra çalışıyor -- yani govde
 /// coktan okunmus, hata coktan olusmus oluyor. Çok geç.
 ///
 /// Resource filter, model baglamadan ONCE calisan ilk noktadir.
@@ -82,7 +82,7 @@ internal sealed class RequestSizeGuardAttribute : Attribute, IResourceFilter
 
         problem.Extensions["errorCode"] = "request.too_large";
 
-        // Result atamak, işlem hattini KISA DEVRE yapiyor: eylem
+        // Result atamak, işlem hattini kisa devre yapiyor: eylem
         // metodu hiç calismiyor ve govde hiç okunmuyor.
         context.Result = new ObjectResult(problem)
         {

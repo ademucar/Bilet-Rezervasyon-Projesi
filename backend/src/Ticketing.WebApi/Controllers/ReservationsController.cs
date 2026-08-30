@@ -60,7 +60,7 @@ public sealed class ReservationsController : ApiControllerBase
 
     /// <summary>Rezervasyon detayı. Yalnızca sahibi görebilir.</summary>
     [HttpGet("{id:guid}")]
-    // ReservationOwner -- SPRINT 19'DA BAGLANDI
+    // ReservationOwner -- sprint 19'da baglandi
     //
     // Handler zaten sahiplik filtreliyordu (ve 404 donuyordu).
     // Politika IKINCI bir katman: birinin unutulmasi digerini
@@ -123,7 +123,7 @@ public sealed class MyReservationsController : ApiControllerBase
     /// </summary>
     /// <remarks>
     /// Yalnızca isteği yapan kullanıcının rezervasyonları döner;
-    /// kullanıcı kimliği TOKEN'DAN okunuyor, istekten değil.
+    /// kullanıcı kimliği token'dan okunuyor, istekten değil.
     ///
     /// Adreste bir kullanıcı kimliği tasisaydim, birinin baskasinin
     /// kimligini yazip onun rezervasyonlarini gormesini engellemek

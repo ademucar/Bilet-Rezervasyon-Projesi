@@ -179,7 +179,7 @@ public sealed class EventLifecycleTests : IntegrationTestBase
         // gonderdim ve reddedildim.
         //
         // Sebep Event.SubmitForApproval() icindeki iki kural:
-        // en az bir OTURUM ve en az bir BILET TURU olmali.
+        // En az bir oturum ve en az bir bilet turu olmali.
         //
         // Mantikli: oturumsuz bir etkinlik satilamaz ve admin'in
         // onune bos bir kayit gitmesinin anlami yok. Kural, onay

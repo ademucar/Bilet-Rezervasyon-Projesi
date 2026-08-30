@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // LOGLAMA -- PDF Sprint 16
 //
-// Serilog'u EN BASTA baglıyorum.
+// Serilog'u en basta baglıyorum.
 //
 // Sebep: bundan sonraki her satır (servis kayitlari, yapilandirma
 // okuma, veritabani bağlantısı) log uretebiliyor. Sonra baglasaydim
@@ -73,7 +73,7 @@ builder.Services.AddApiVersioning(options =>
 // ---- Katmanlar ----
 //
 // Her katman kendi kayitlarini yapiyor. Program.cs, o katmanlarin
-// IC DETAYLARINI bilmiyor -- hangi handler var, hangi DbContext var
+// ic detaylarini bilmiyor -- hangi handler var, hangi DbContext var
 // gibi bilgiler burada gecmiyor.
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -166,7 +166,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
 
-              // AllowCredentials + AllowAnyOrigin BIRLIKTE KULLANILAMAZ
+              // AllowCredentials + AllowAnyOrigin birlikte kullanilamaz
               // (tarayıcı reddeder). Kaynaklari acikca listeledigim
               // için kimlik bilgisi tasiyabiliyorum.
               .AllowCredentials()
@@ -192,14 +192,14 @@ builder.Services.AddCors(options =>
 // 1 MB: en büyük mesru istegimizin (çok koltuklu rezervasyon)
 // onlarca kati.
 //
-// NOT: Dosya yukleme ucu eklendiginde O UC ICIN ayrı ve daha yüksek
+// NOT: Dosya yukleme ucu eklendiginde O uc icin ayrı ve daha yüksek
 // bir sinir gerekecek -- [RequestSizeLimit] ozniteligi ile uc bazinda
 // verilebiliyor.
 builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerOptions>(options =>
 {
     options.Limits.MaxRequestBodySize = 1 * 1024 * 1024;
 
-    // "Server: Kestrel" BASLIGINI KALDIR -- YAKALADIGIM HATA
+    // "Server: Kestrel" basligini kaldir -- yakaladigim hata
     //
     // Önce bunu SecurityHeadersMiddleware içinde
     // headers.Remove("Server") ile yapmaya calistim. CALISMADI.
@@ -212,7 +212,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServe
     //   curl -D - -> "Server: Kestrel" hâlâ goruluyordu.
     //
     // Dogru yer sunucunun kendi ayari. Sprint 13'teki BOM hatasiyla
-    // aynı ders: kodun NIYETINI değil, URETTIGI CIKTIYI kontrol
+    // aynı ders: kodun niyetini değil, urettigi ciktiyi kontrol
     // etmek gerekiyor.
     //
     // Tek başına bir açık değil ama saldirgana bilgi veriyor:
@@ -242,7 +242,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     //
     // Varsayılan olarak yalnızca localhost'tan gelen X-Forwarded-For
     // basliklarina guveniliyor. Docker/Kubernetes'te vekil sunucu
-    // farklı bir IP'de olur ve basliklar YOK SAYILIR.
+    // farklı bir IP'de olur ve basliklar yok sayilir.
     //
     // Listeleri bosaltmak "her vekile guven" demek. Bu, YALNIZCA
     // uygulama doğrudan internete açık DEGILSE guvenlidir: aksi
@@ -257,17 +257,17 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-// ARKA PLAN ISLERI -- PDF Sprint 9
+// Arka plan isleri -- PDF Sprint 9
 builder.Services.AddBackgroundJobs(builder.Configuration);
 
-// REDIS ONBELLEK -- PDF Sprint 11
+// Redis onbellek -- PDF Sprint 11
 //
-// Bağlantı dizesi yoksa veya Redis kapaliysa uygulama YINE ACILIR;
+// Bağlantı dizesi yoksa veya Redis kapaliysa uygulama yine acilir;
 // önbellek devre dışı kalır ve sorgular veritabanindan karsilanir.
 // PDF: "Cache kapalı olduğunda sistem calismaya devam edebilmelidir."
 builder.Services.AddCaching(builder.Configuration);
 
-// GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
+// Gercek zamanli koltuk guncelleme -- PDF Sprint 10
 builder.Services.AddSignalR(options =>
 {
     // Gelistirmede ayrintili hata dondur.
@@ -298,7 +298,7 @@ var app = builder.Build();
 // duruyordu. Yani sema, kimsenin bir daha calistirmadigi tek
 // seferlik bir komutla var olmustu.
 //
-// NEDEN UYGULAMA ICINDE? Neden ayri bir adim degil?
+// Neden uygulama icinde? Neden ayri bir adim degil?
 //
 // "Dogrusu" CI/CD'de ayri bir migration adimidir. Bu proje tek
 // sunucuda ve TEK API container'i ile calisiyor
@@ -355,7 +355,7 @@ using (var scope = app.Services.CreateScope())
 // DatabaseSeeder IDEMPOTENT: tablo bossa ekliyor, doluysa hicbir
 // sey yapmiyor. Ustune yazma ihtimali yok.
 //
-// Ayrica seed edilen sey DEMO VERISI DEGIL: 81 il ve etkinlik
+// Ayrica seed edilen sey demo verisi degil: 81 il ve etkinlik
 // kategorileri. Bunlar uygulamanin calismasi icin gereken REFERANS
 // VERISI -- rol tablosu gibi. (Roller zaten migration icinde
 // HasData ile geliyor; sehir/kategori de ayni siniftan.)
@@ -389,7 +389,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 // birakirdi: kod var, alan boş.
 app.UseRequestLogging();
 
-// GÜVENLİK KATMANLARI -- PDF Sprint 15
+// Güvenlik katmanlari -- PDF Sprint 15
 
 // 3) Ters vekil basliklari: hiz sinirindan ONCE olmalı.
 //
@@ -423,7 +423,7 @@ if (app.Environment.IsDevelopment())
     // Ham OpenAPI belgesi: /openapi/v1.json
     app.MapOpenApi();
 
-    // SCALAR ARAYUZU -- /scalar
+    // Scalar arayuzu -- /scalar
     //
     // Yalnızca GELISTIRMEDE aciliyor.
     //
@@ -449,7 +449,7 @@ else
     app.UseHttpsRedirection();
 }
 
-// SIRA KRITIK: Authentication ONCE, Authorization SONRA
+// Sira kritik: Authentication once, Authorization sonra
 //
 // UseAuthentication  -> "Sen kimsin?"   (token'i okur, User'i doldurur)
 // UseAuthorization   -> "Yetkin var mi?" (User'a bakip karar verir)
@@ -459,17 +459,17 @@ else
 // karistiricidir: token doğru, kod doğru ama calismiyor.
 app.UseAuthentication();
 app.UseRateLimiter();
-// SAHIPLIK REDDINDE 404 -- PDF Sprint 19 denetiminde eklendi
+// sahiplik reddinde 404 -- PDF Sprint 19 denetiminde eklendi
 //
-// UseAuthorization'dan ONCE kaydediliyor. İlk denememde SONRASINA
-// koymustum ve middleware HİÇ CALISMADI.
+// UseAuthorization'dan once kaydediliyor. İlk denememde sonrasina
+// koymustum ve middleware hiç calismadi.
 //
 // Sebep: middleware zinciri ic ice halkalar gibi çalışıyor. Bir
 // middleware "sonraki"ni cagirir, o döner, sonra kendi isini
 // bitirir.
 //
-// Yetkilendirme reddettiginde KISA DEVRE yapiyor: 403 yazip
-// dönüyor ve sonraki halkayi HİÇ CAGIRMIYOR. Yani sonrasina
+// Yetkilendirme reddettiginde kisa devre yapiyor: 403 yazip
+// dönüyor ve sonraki halkayi hiç cagirmiyor. Yani sonrasina
 // konan bir middleware o durumda calismaz.
 //
 // Önce koydugumuzda ise: benim _next() cagrim yetkilendirmeyi
@@ -483,7 +483,7 @@ app.UseMiddleware<OwnershipNotFoundMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
-// SAGLIK UCLARI -- PDF Sprint 16
+// saglik uclari -- PDF Sprint 16
 //
 // Ucu de AllowAnonymous: yuk dengeleyici ve Kubernetes probe'lari
 // token tasiyamaz. Bu yüzden yanitlarda hiçbir hassas bilgi yok
@@ -507,7 +507,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 // 3) "Process ayakta mi?" -- HICBIR bagimlilik kontrol edilmiyor.
 //
-// Predicate = _ => false  SATIRI BU DOSYADAKI EN KRITIK SATIR
+// Predicate = _ => false  satiri bu dosyadaki en kritik satir
 //
 // Buraya veritabani kontrolü eklemek çok mantikli görünür ve
 // FELAKETLE sonuclanir:
@@ -521,18 +521,18 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 // sey için surekli yeniden baslatilir.
 //
 // Live probe yalnızca "bu process kilitlendi mi?" sorusunu
-// cevaplamali. Cevabi bagimliliklara BAGLI OLMAMALI.
+// cevaplamali. Cevabi bagimliliklara bagli olmamali.
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false,
 });
 
-// KOLTUK HUB'I -- PDF Sprint 10
+// Koltuk hub'I -- PDF Sprint 10
 //
 // Adres frontend'deki VITE proxy'siyle eslesiyor: /hubs/seats
 app.MapHub<SeatHub>("/hubs/seats");
 
-// HANGFIRE IZLEME EKRANI -- PDF Sprint 9
+// Hangfire izleme ekrani -- PDF Sprint 9
 //
 // UseAuthentication/UseAuthorization SONRASINA konuldu.
 //
@@ -543,7 +543,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = [new HangfireDashboardAuthorizationFilter()],
 
-    // Panelden is SILME ve YENIDEN CALISTIRMA yetkisi.
+    // Panelden is silme ve yeniden calistirma yetkisi.
     //
     // Acik birakiyorum çünkü bir mesaj dead letter olduğunda
     // adminin sorunu duzeltip yeniden denemesi gerekiyor -- panelin
@@ -561,7 +561,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 
 // Tekrarlanan isleri kaydet
 //
-// Uygulama AYAGA KALKTIKTAN SONRA cagiriliyor.
+// Uygulama ayaga kalktiktan sonra cagiriliyor.
 //
 // builder asamasinda yapsaydim Hangfire deposu (storage) henüz
 // hazır olmazdi ve kayıt sırasında istisna alırdım.
@@ -571,7 +571,7 @@ BackgroundJobSetup.RegisterRecurringJobs(
 // CALISTIR
 //
 // try/finally içinde: Log.CloseAndFlush() cagrilmazsa dosya sink'i
-// tamponundaki son loglar DISKE YAZILMADAN process sonlanir.
+// tamponundaki son loglar diske yazilmadan process sonlanir.
 //
 // Yani uygulamanin cokme anindaki loglari -- en çok ihtiyac
 // duyacaklarim -- kaybolur. Tam olarak isime yarayacak an.

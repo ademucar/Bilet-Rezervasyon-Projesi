@@ -25,7 +25,7 @@ public sealed record SectionOccupancy(
     int SoldSeats,
     double OccupancyRate);
 
-// ORGANİZATÖR DASHBOARD -- PDF Sprint 13 (10 metrik)
+// Organizatör dashboard -- PDF Sprint 13 (10 metrik)
 
 public sealed record OrganizerDashboard(
     int TotalEvents,
@@ -119,7 +119,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
 
         // ---- 3, 4 ve 5: satış, gelir, iade ----
         //
-        // GELIRI BILETLERDEN hesapliyorum, odemelerden değil.
+        // Geliri biletlerden hesapliyorum, odemelerden değil.
         //
         // Sebep: bir ödeme birden fazla bileti kapsayabilir ve
         // organizatör bazinda ayristirmak için yine biletlere inmek
@@ -144,7 +144,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
         //
         // Tanim: satılan koltuk / üretilmiş toplam koltuk.
         //
-        // Payda olarak SALON KAPASITESINI değil URETILMIS KOLTUK
+        // Payda olarak salon kapasitesini değil uretilmis koltuk
         // sayisini alıyorum. Fark önemli: organizatör salonun bir
         // bolumunu satışa hiç acmamis olabilir. Kapasiteyi payda
         // yapsaydim doluluk haksiz yere düşük görünürdü.
@@ -238,7 +238,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             //   InvalidOperationException: The LINQ expression ...
             //   could not be translated
             //
-            // EF Core, GroupBy sonucunu bir RECORD KURUCUSUNA
+            // EF Core, GroupBy sonucunu bir record kurucusuna
             // projelendiremiyor (anonim tipe ise sorunsuz cevirebiliyor).
             //
             // Cozum: SQL'e cevrilebilen anonim tiple gruplayip,
@@ -246,7 +246,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
             // (etkinlik sayısı kadar satır), yani bellekte islemenin
             // maliyeti yok.
             //
-            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
+            // Onemli: bu, "veriyi bellege cekip C#'ta grupla" değil.
             // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
             .Select(g => new
@@ -318,7 +318,7 @@ internal sealed class GetOrganizerDashboardQueryHandler
     }
 }
 
-// ADMIN DASHBOARD -- PDF Sprint 13 (10 metrik)
+// Admin dashboard -- PDF Sprint 13 (10 metrik)
 
 public sealed record AdminDashboard(
     int TotalUsers,
@@ -378,7 +378,7 @@ internal sealed class GetAdminDashboardQueryHandler
 
         // ---- Toplam işlem hacmi ----
         //
-        // Başarılı odemelerin toplami. IADELERI DUSMUYORUM.
+        // Başarılı odemelerin toplami. İadeleri dusmuyorum.
         //
         // Sebep: "işlem hacmi" (transaction volume) finansal bir
         // terim ve sistemden GECEN paranin toplamini anlatir. Net
@@ -422,7 +422,7 @@ internal sealed class GetAdminDashboardQueryHandler
 
         // ---- En popüler şehirler ve kategoriler ----
         //
-        // "Popüler" olcutu: SATILAN BİLET sayısı.
+        // "Popüler" olcutu: satilan bilet sayısı.
         //
         // Etkinlik sayısına göre de siralanabilirdi ama o, talebi
         // değil ARZI olcerdi: 50 etkinligi olup hicbiri satmayan bir
@@ -447,7 +447,7 @@ internal sealed class GetAdminDashboardQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // "SISTEM HATA SAYISI" -- PDF'in TANIMLAMADIGI METRIK
+        // "Sistem hata sayisi" -- PDF'in tanimlamadigi metrik
         //
         // PDF bu metriği istiyor ama neyin "sistem hatası" sayilacagini
         // soylemiyor. Tanimi ben veriyorum ve acikca yazıyorum:
@@ -455,7 +455,7 @@ internal sealed class GetAdminDashboardQueryHandler
         //   Dead letter olmus outbox mesajlari
         //
         // Neden bu? Çünkü dead letter, sistemde GERCEKTEN yanlış giden
-        // ve INSAN MUDAHALESI bekleyen tek kalici kayittir. Bes kez
+        // ve insan mudahalesi bekleyen tek kalici kayittir. Bes kez
         // denenmis ve hâlâ başarısız bir mesaj, gonderilmemis bir
         // e-posta veya olusmamis bir bildirim demektir.
         //
@@ -464,7 +464,7 @@ internal sealed class GetAdminDashboardQueryHandler
         //   HTTP 500 sayısı -> loglarda, veritabaninda değil. Sayabilmek
         //   için log toplama altyapisi gerekir (PDF Sprint 16).
         //
-        //   Başarısız ödemeler -> bunlar SISTEM hatası değil, IS
+        //   Başarısız ödemeler -> bunlar sistem hatası değil, is
         //   sonucudur. Kart limiti yetmemesi benim hatamiz değil.
         //   Ayrıca zaten ayrı bir metrik olarak yukarida var.
         //

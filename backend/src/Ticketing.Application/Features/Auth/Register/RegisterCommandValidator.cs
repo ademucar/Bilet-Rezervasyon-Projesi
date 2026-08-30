@@ -27,7 +27,7 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
 
             // Ust sinir neden var? -- cok onemli bir ayrinti
             //
-            // BCrypt, girdinin YALNIZCA ILK 72 BYTE'INI dikkate alır.
+            // BCrypt, girdinin yalnizca ilk 72 byte'ini dikkate alır.
             // Gerisi sessizce yok sayilir.
             //
             // Ust sinir koymasaydim su olurdu: 100 karakterlik bir şifre

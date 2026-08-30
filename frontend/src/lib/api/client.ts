@@ -20,7 +20,7 @@ function newCorrelationId(): string {
   return crypto.randomUUID().replace(/-/g, '')
 }
 
-// ISTEK INTERCEPTOR'I -- token ekle
+// İstek interceptor'I -- token ekle
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
 
@@ -36,7 +36,7 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// YANIT INTERCEPTOR'I -- 401 alınca sessizce token yenile
+// Yanit interceptor'I -- 401 alınca sessizce token yenile
 //
 // En onemli problem: es zamanli istekler
 //
@@ -49,14 +49,14 @@ api.interceptors.request.use((config) => {
 // ROTATION uyguluyorum:
 //   1. istek token'i yeniler -> eski token İPTAL olur
 //   2. istek AYNI eski token'i gönderir -> "iptal edilmiş token
-//      tekrar kullanıldı!" -> backend CALINMA SALDIRISI sanip
+//      tekrar kullanıldı!" -> backend calinma saldirisi sanip
 //      kullanıcının TÜM oturumlarini kapatır
 //
 // Yani kullanıcı hiçbir sey yapmadan sistemden atilirdi. Ve bu hata
 // yalnızca "birden fazla istek aynı anda giderse" olusacagi için
 // tespit edilmesi çok zor olurdu.
 //
-// COZUM: Aynı anda YALNIZCA BIR yenileme çalışır. Digerleri o
+// Cozum: Aynı anda yalnizca bir yenileme çalışır. Digerleri o
 // yenilemenin Promise'ini bekler ve sonucunu paylasir.
 
 let refreshPromise: Promise<AuthResponse> | null = null
@@ -68,10 +68,10 @@ async function refreshAccessToken(): Promise<AuthResponse> {
     throw new Error('Refresh token yok')
   }
 
-  // DIKKAT: Burada `api` DEĞİL, ham axios kullanıyorum.
+  // Dikkat: Burada `api` değil, ham axios kullanıyorum.
   //
   // `api` ile cagirsaydim ve bu istek de 401 alsaydi, interceptor
-  // tekrar devreye girip yine yenileme denerdi -> SONSUZ DONGU.
+  // tekrar devreye girip yine yenileme denerdi -> sonsuz dongu.
   // Ham axios interceptor'lardan gecmez.
   const { data } = await axios.post<AuthResponse>(
     '/api/v1/auth/refresh-token',

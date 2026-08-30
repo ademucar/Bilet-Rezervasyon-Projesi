@@ -2,7 +2,7 @@ import { api } from '../../../lib/api/client'
 import type { Paged } from '../../admin/api/adminApi'
 
 /**
- * BİLET ALMA API KATMANI -- PDF Sprint 7 ve 8
+ * bilet alma API katmani -- PDF Sprint 7 ve 8
  *
  * Backend DTO'lariyla birebir eşleyen tipler.
  *
@@ -214,7 +214,7 @@ export interface TicketDto {
  * header'ini kabul ediyor: aynı anahtarla gelen ikinci istek YENI
  * kayıt olusturmuyor, ilkini döndürüyor.
  *
- * Anahtari ISTEMCI uretmek ZORUNDA. Sunucu uretseydi hiçbir ise
+ * Anahtari istemci uretmek zorunda. Sunucu uretseydi hiçbir ise
  * yaramazdi: ag kopmasi yuzunden tekrarlanan istek sunucuya
  * ulastiginda "yeni istek" görünürdü.
  *
@@ -230,7 +230,7 @@ export function newIdempotencyKey(): string {
  * Etkinlik listeleme filtreleri. PDF Sprint 11.
  *
  * Backend'deki GetEventsQuery ile birebir eşleyen alanlar. Alan adı
- * uyusmazsa filtre SESSIZCE calismaz -- ASP.NET taninmayan sorgu
+ * uyusmazsa filtre sessizce calismaz -- asp.net taninmayan sorgu
  * parametresini yok sayar, hata dondurmez. Bu yuzden adları
  * kopyalayarak alıyorum.
  */
@@ -265,7 +265,7 @@ export interface CityDto {
   plateCode: number
 }
 
-// YORUM VE FAVORI -- PDF Sprint 12
+// Yorum ve favori -- PDF Sprint 12
 
 export interface ReviewDto {
   id: string
@@ -296,14 +296,14 @@ export const bookingApi = {
   getEvents: async (params: EventFilters) => {
     // Boş alanlari temizle
     //
-    // Axios, undefined değerleri zaten atliyor ama BOŞ METIN ('')
+    // Axios, undefined değerleri zaten atliyor ama boş metin ('')
     // gönderiyor: ?cityId=&categoryId=
     //
     // Backend tarafında Guid? alanina boş metin baglanmaya calisilinca
     // model binding hatası olusur ve istek 400 döner. Yani kullanıcı
     // filtreyi "Tümü"ne cevirdiginde liste tamamen bozulurdu.
     //
-    // Temizligi TEK YERDE yapıyorum ki her cagirim yerinde
+    // Temizligi tek yerde yapıyorum ki her cagirim yerinde
     // tekrarlanmasin.
     const temiz = Object.fromEntries(
       Object.entries(params).filter(
@@ -397,7 +397,7 @@ export const bookingApi = {
   /**
    * Ödemeyi tamamlar.
    *
-   * GOVDE BOŞ GONDERILIYOR -- bilinçli bir karar.
+   * Govde boş gonderiliyor -- bilinçli bir karar.
    *
    * Backend, govdede referans gelmezse KENDİ kaydettigi referansı
    * kullaniyor (CompletePaymentCommand: `request.ProviderReference

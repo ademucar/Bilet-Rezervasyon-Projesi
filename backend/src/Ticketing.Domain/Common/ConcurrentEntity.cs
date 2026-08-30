@@ -21,7 +21,7 @@ namespace Ticketing.Domain.Common;
 /// EF Core "1 satır bekliyordum, 0 geldi" der ve DbUpdateConcurrencyException
 /// firlatir. Mehmet'e 409 Conflict doneriz.
 ///
-/// KILIT NOKTA: Mehmet'in isteği ASLA veri bozmadi. Kaybetti ama sessizce
+/// Kilit nokta: Mehmet'in isteği asla veri bozmadi. Kaybetti ama sessizce
 /// Ayse'nin uzerine yazmadi. "Last write wins" davranisinin tam tersi.
 ///
 /// PostgreSQL'de "xmin" NEDIR?
@@ -39,7 +39,7 @@ namespace Ticketing.Domain.Common;
 ///            .ValueGeneratedOnAddOrUpdate()
 ///            .IsConcurrencyToken();
 ///
-/// MALIYETI SIFIR: ekstra sutun yok, ekstra index yok, ekstra yazma yok.
+/// Maliyeti sifir: ekstra sutun yok, ekstra index yok, ekstra yazma yok.
 /// PostgreSQL bu bilgiyi zaten tutuyor; biz sadece ondan faydalaniyoruz.
 ///
 /// Neden uint? xmin 32 bit isaretsiz bir tamsayidir (xid tipi).

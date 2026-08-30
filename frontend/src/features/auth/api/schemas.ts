@@ -5,9 +5,9 @@ import { z } from 'zod'
  *
  * Neden hem frontend hem backend'de dogrulama var?
  *
- * Bu bir TEKRAR değil, iki FARKLI amaca hizmet ediyor:
+ * Bu bir tekrar değil, iki farkli amaca hizmet ediyor:
  *
- *   Frontend -> KULLANICI DENEYİMİ. Kullanıcı yazarken anında geri
+ *   Frontend -> kullanici deneyimi. Kullanıcı yazarken anında geri
  *               bildirim alır, sunucuya gidip gelmez.
  *
  *   Backend  -> GÜVENLİK. Frontend'i tamamen atlayip curl ile istek

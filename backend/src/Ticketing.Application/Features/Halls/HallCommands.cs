@@ -145,12 +145,12 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             //       .DefaultIfEmpty(0)
             //       .MaxAsync()
             //
-            // Derlendi, testler gecti -- ama CALISMA ZAMANINDA patladi:
+            // Derlendi, testler gecti -- ama calisma zamaninda patladi:
             //
             //   InvalidOperationException: The LINQ expression
             //   'DbSet<SeatLayout>()...' could not be translated.
             //
-            // Sebep: IC ICE koleksiyon toplama (Sum içinde Count) EF Core
+            // Sebep: ic ice koleksiyon toplama (Sum içinde Count) EF Core
             // tarafından SQL'e cevrilemiyor.
             //
             // DERS: LINQ'in derlenmesi, SQL'e cevrilebilecegi anlamina
@@ -159,7 +159,7 @@ internal sealed class UpdateHallCommandHandler : IRequestHandler<UpdateHallComma
             // karsi calistirinca ortaya çıkar -- birim testler yakalayamaz.
             // (Sprint 17'de Testcontainers ile bunu koruyacagim.)
             //
-            // COZUM: Sorguyu KOLTUK tablosundan baslatip gruplamak.
+            // Cozum: Sorguyu koltuk tablosundan baslatip gruplamak.
             // Duz bir GROUP BY, EF'in rahatca cevirdigi bir yapi.
             var seatCountsPerLayout = await _context.Seats
                 .AsNoTracking()

@@ -24,7 +24,7 @@ public class RefreshToken : Entity
     public Guid UserId { get; private set; }
 
     /// <summary>
-    /// Token'in KENDISI DEĞİL, HASH'i saklanir.
+    /// Token'in kendisi değil, hash'i saklanir.
     ///
     /// Bu çok önemli bir güvenlik karari. Neden?
     ///

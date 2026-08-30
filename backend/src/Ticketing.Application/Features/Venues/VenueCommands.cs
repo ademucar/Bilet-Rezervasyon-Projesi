@@ -51,7 +51,7 @@ public sealed class CreateVenueCommandValidator : AbstractValidator<CreateVenueC
         RuleFor(x => x.CityId)
             .NotEmpty().WithMessage("Şehir seçilmelidir.");
 
-        // Koordinat kontrolunu HEM burada HEM entity'de yapıyorum.
+        // Koordinat kontrolunu hem burada hem entity'de yapıyorum.
         //
         // Tekrar gibi görünüyor ama amaclari farklı: buradaki kullanıcıya
         // "enlem -90 ile 90 arasında olmalı" diye anlasilir bir form
@@ -210,7 +210,7 @@ internal sealed class DeleteVenueCommandHandler : IRequestHandler<DeleteVenueCom
         // Mekan seviyesinde de aynı kural geçerli: mekani silersek
         // altindaki salonlar da erişilemez hale gelir.
         //
-        // "Aktif" derken TAMAMLANMAMIS ve İPTAL EDILMEMIS etkinlikleri
+        // "Aktif" derken tamamlanmamis ve iptal edilmemis etkinlikleri
         // kastediyorum. Gecmis etkinliklerin varligi silmeyi engellememeli
         // -- yoksa hiçbir mekan asla silinemezdi.
         var hasActiveEvents = await _context.Events

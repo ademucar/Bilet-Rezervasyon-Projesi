@@ -88,7 +88,7 @@ public class User : AuditableEntity
     /// hash'i saklaniyor. Sebep aynı: veritabani sizarsa saldirgan
     /// bu token'larla herkesin sifresini sifirlayabilirdi.
     ///
-    /// NEDEN AYRI TABLO DEĞİL DE User UZERINDE IKI ALAN?
+    /// Neden ayri tablo değil de User uzerinde iki alan?
     ///
     /// Bir kullanıcının aynı anda en fazla BIR aktif şifre sıfırlama
     /// talebi olmalı. Ayrı tablo olsaydı birden fazla kayıt olusabilir
@@ -96,7 +96,7 @@ public class User : AuditableEntity
     /// temizlemek için bir job yazmak gerekirdi.
     ///
     /// Tek alan olduğu için yeni talep otomatik olarak eskisinin
-    /// USTUNE YAZIYOR; eski link anında geçersiz oluyor. Bu davranis
+    /// ustune yaziyor; eski link anında geçersiz oluyor. Bu davranis
     /// hem daha basit hem de daha güvenli.
     ///
     /// PDF'in ER diyagramina yeni tablo eklememis olmamin sebebi de bu.
@@ -163,7 +163,7 @@ public class User : AuditableEntity
         // ToLowerInvariant, ToLower değil.
         //
         // Turkce kulturde ToLower() "I" harfini "i" değil "ı" yapar
-        // (noktasiz i). "AHMET@X.COM" -> "ahmet@x.com" beklerken
+        // (noktasiz i). "ahmet@X.com" -> "ahmet@x.com" beklerken
         // "ahmet@x.com" yerine farklı bir metin uretebilir.
         // Bu, meshur "Turkish I problem"idir ve e-posta eslesmesini bozar.
         // Invariant kultur bu tuzagi ortadan kaldirir.
@@ -210,7 +210,7 @@ public class User : AuditableEntity
         // Mantik: kullanıcı kimligini kanitlamis oldu, cezayi kaldirayim.
         ResetFailedLoginAttempts();
 
-        // Kullanilmamis bir sıfırlama tokeni varsa GECERSIZ KIL.
+        // Kullanilmamis bir sıfırlama tokeni varsa gecersiz kil.
         //
         // Senaryo: kullanıcı "sifremi unuttum" dedi, e-posta geldi ama
         // sonra sifresini hatirlayip normal yoldan degistirdi.
@@ -307,7 +307,7 @@ public class User : AuditableEntity
     /// <summary>
     /// Hesap su an kilitli mi?
     ///
-    /// Not: Bu bir METOT, property değil. Çünkü sonuç ZAMANA bağlı olarak
+    /// Not: Bu bir metot, property değil. Çünkü sonuç zamana bağlı olarak
     /// değişiyor -- aynı nesneye iki kez sordugunda farklı cevap alabilirsin.
     /// Property'ler yan etkisiz ve kararli olmalı; zamana bağlı hesaplamalar
     /// metot olarak yazilir ki cagiran kişi bunun bir hesaplama olduğunu bilsin.

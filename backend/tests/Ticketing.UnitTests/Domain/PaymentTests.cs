@@ -48,7 +48,7 @@ public class PaymentTests
     [Fact]
     public void Complete_IkinciKezCagrilirsa_FalseDonmeliVeHataFirlatMAMALI()
     {
-        // Odeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderir.
+        // Odeme saglayicilari callback'i birden fazla kez gonderir.
         // Bu bir hata degil, normal davranistir: saglayici cevap
         // alamadigini dusunurse tekrar dener.
         //
@@ -56,7 +56,7 @@ public class PaymentTests
         // tekrar denerdi -- sonsuz dongu.
         //
         // false donuyorum ki cagiran taraf "yeni bir sey olmadi,
-        // TEKRAR BILET URETME" diye anlasin. Bu donus degeri, ayni
+        // tekrar bilet uretme" diye anlasin. Bu donus degeri, ayni
         // rezervasyon icin iki kez bilet uretilmesini engelliyor.
         var odeme = Odeme();
         odeme.StartProcessing("REF-1");
@@ -168,7 +168,7 @@ public class PaymentTests
         // Bu kontrol gercek para kaybini engelliyor.
         //
         // Senaryo: iade callback'i iki kez gelirse ve kontrol olmasaydi
-        // kullaniciya IKI KAT para gonderirdim. Bu, geri alinmasi cok
+        // kullaniciya iki kat para gonderirdim. Bu, geri alinmasi cok
         // zor bir hatadir.
         var odeme = BasariliOdeme(500m);
         odeme.Refund(new Money(400m, "TRY"));
@@ -198,7 +198,7 @@ public class PaymentTests
     [Fact]
     public void Transactions_HerAdimIcinKayitOlusturmali()
     {
-        // PaymentTransactions bir DENETIM IZIDIR: "bu odemede ne oldu?"
+        // PaymentTransactions bir denetim izidir: "bu odemede ne oldu?"
         // sorusunun cevabi burada. Payment'ta tek Status alani var;
         // bu dort adimi orada tutamam.
         var odeme = Odeme(500m);

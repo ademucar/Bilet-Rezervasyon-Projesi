@@ -40,7 +40,7 @@ public sealed class EventReviewsController : ApiControllerBase
         [FromBody] CreateReviewRequest request,
         CancellationToken cancellationToken)
     {
-        // eventId ADRESTEN aliniyor, govdeden DEĞİL.
+        // eventId adresten aliniyor, govdeden değil.
         //
         // Govdede de olsaydı ikisi CELISEBILIRDI: adres A etkinligini
         // gosterirken govde B'yi soyleyebilirdi. Hangisinin kazandigi

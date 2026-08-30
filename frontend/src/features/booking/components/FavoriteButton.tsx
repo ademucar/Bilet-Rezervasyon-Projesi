@@ -2,13 +2,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { bookingApi } from '../api/bookingApi'
 
 /**
- * FAVORI DUGMESI -- PDF Sprint 12
+ * favori dugmesi -- PDF Sprint 12
  *
  * PDF uclari:
  *   POST   /api/v1/events/{eventId}/favorite
  *   DELETE /api/v1/events/{eventId}/favorite
  *
- * IYIMSER GUNCELLEME (optimistic update)
+ * İyimser guncelleme (optimistic update)
  *
  * Kalp ikonu, sunucu cevabini BEKLEMEDEN doluyor.
  *
@@ -17,7 +17,7 @@ import { bookingApi } from '../api/bookingApi'
  * kullanıcı tekrar tiklar.
  *
  * Risk: istek başarısız olursa ekran YALAN soylemis olur. Bu yuzden
- * onError'da eski duruma GERİ ALIYORUM. Iyimser guncellemenin
+ * onError'da eski duruma geri aliyorum. Iyimser guncellemenin
  * vazgecilmez parcasi budur -- geri alma olmadan yapilirsa arayüz
  * ile sunucu sessizce ayrisir.
  *
@@ -41,7 +41,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
       favoriMi ? bookingApi.removeFavorite(eventId) : bookingApi.addFavorite(eventId),
 
     onMutate: async () => {
-      // Devam eden bir çekim varsa İPTAL ET.
+      // Devam eden bir çekim varsa iptal et.
       //
       // Etmeseydim, o çekim benim iyimser guncellememizden SONRA
       // tamamlanip ESKİ veriyi geri yazabilirdi -- kalp bir dolup
@@ -70,7 +70,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     },
 
     onError: (_hata, _degisken, baglam) => {
-      // GERİ ALMA: sunucu reddetti, ekrani eski haline dondur.
+      // geri alma: sunucu reddetti, ekrani eski haline dondur.
       if (baglam?.onceki !== undefined) {
         queryClient.setQueryData(['favorites'], baglam.onceki)
       }
@@ -86,7 +86,7 @@ export function FavoriteButton({ eventId }: { eventId: string }) {
     <button
       type="button"
       onClick={() => degistir.mutate()}
-      // aria-pressed: ekran okuyucuya dugmenin ACIK/KAPALI olduğunu
+      // aria-pressed: ekran okuyucuya dugmenin acik/kapali olduğunu
       // söyler. Yalnızca ikonu değiştirseydim görmeyen kullanıcı
       // favoride olup olmadigini anlayamazdi.
       aria-pressed={favoriMi}

@@ -56,7 +56,7 @@ internal sealed class GetVenuesQueryHandler
         //
         // IQueryable tembeldir (lazy): aşağıdaki Where cagrilarinin
         // hicbiri veritabanina gitmez. Yalnızca SQL agacini insa eder.
-        // Sorgu, ToListAsync cagrildiginda TEK SEFERDE çalışır.
+        // Sorgu, ToListAsync cagrildiginda tek seferde çalışır.
         //
         // Bu yüzden filtreleri if bloklariyla eklemek maliyetsiz.
         // "her ihtimale karsi hepsini ekleyip null kontrolü yapayim"
@@ -71,7 +71,7 @@ internal sealed class GetVenuesQueryHandler
         {
             var search = request.Search.Trim();
 
-            // NEDEN EF.Functions.ILike KULLANMIYORUM?
+            // Neden EF.Functions.ILike kullanmiyorum?
             //
             // İlk yazisimda ILike kullanmistim -- PostgreSQL'in
             // büyük/küçük harf duyarsiz LIKE'i ve tam ihtiyacim olan sey.
@@ -79,7 +79,7 @@ internal sealed class GetVenuesQueryHandler
             // Ama derleme hatası verdi: ILike, Npgsql paketinde tanimli.
             // Kullanmak için Application katmanina Npgsql referansı
             // eklemem gerekirdi -- yani is mantığı katmanim
-            // POSTGRESQL'E OZGU hale gelirdi.
+            // postgresql'E ozgu hale gelirdi.
             //
             // Bu, EF Core soyutlamasina bagimli olmaktan farklı bir sey.
             // DbSet ve IQueryable her saglayicida aynı çalışır; ILike
@@ -90,7 +90,7 @@ internal sealed class GetVenuesQueryHandler
             // Bunun yerine saglayicidan bağımsız EF.Functions.Like'i
             // ToLower ile birlikte kullanıyorum.
             //
-            // PERFORMANS NOTU: ToLower(), sutun uzerinde fonksiyon
+            // Performans notu: ToLower(), sutun uzerinde fonksiyon
             // uygulandigi için normal bir btree index'i KULLANAMAZ.
             // Cozum, veritabaninda FONKSIYONEL index tanimlamak:
             //     CREATE INDEX ix_venues_name_lower ON "Venues" (LOWER("Name"));

@@ -19,7 +19,7 @@ public sealed record ReservationItemDto(
     decimal UnitPrice,
     string Currency);
 
-/// <param name="RemainingSeconds">Kalan süre (saniye). Neden SUNUCUDA hesapliyorum? Çünkü istemcinin saati YANLIS olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati 5 dakika geri olan bir kullanıcı süreyi 15 dakika sanirdi ve ödemeye geçtiğinde "süreniz doldu" hatası alırdı. Saniye cinsinden gonderip frontend'in kendi içinde geri saymasi, saat farkindan bağımsız çalışır.</param>
+/// <param name="RemainingSeconds">Kalan süre (saniye). Neden sunucuda hesapliyorum? Çünkü istemcinin saati yanlis olabilir. Frontend ExpiresAt - Date.now() hesaplasaydi, saati 5 dakika geri olan bir kullanıcı süreyi 15 dakika sanirdi ve ödemeye geçtiğinde "süreniz doldu" hatası alırdı. Saniye cinsinden gonderip frontend'in kendi içinde geri saymasi, saat farkindan bağımsız çalışır.</param>
 public sealed record ReservationDto(
     Guid Id,
     string ReservationCode,
@@ -56,14 +56,14 @@ internal static class ReservationQueries
     ///
     ///     (int)(r.ExpiresAt > now ? (r.ExpiresAt - now).TotalSeconds : 0)
     ///
-    /// Derlendi. Ama CALISMA ZAMANINDA patladi:
+    /// Derlendi. Ama calisma zamaninda patladi:
     ///     InvalidOperationException: The LINQ expression ...
     ///     could not be translated
     ///
     /// Sebep: DateTimeOffset cikarmasi + TimeSpan.TotalSeconds +
     /// int'e donusum zinciri Npgsql tarafından SQL'e cevrilemiyor.
     ///
-    /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti ve ogretici oldu:
+    /// Bu hata es zamanlilik testinde ortaya cikti ve ogretici oldu:
     /// 10 es zamanlı istekten 9'u doğru şekilde 409 aldi, 1'i
     /// rezervasyonu OLUSTURDU ama yaniti hazirlarken 500 dondu.
     /// Yani cekirdek mantik dogruydu, sunum katmani hatalıydı.
@@ -93,7 +93,7 @@ internal static class ReservationQueries
     ///
     ///     BuildDtoQuery(context, now).FirstOrDefaultAsync(r =&gt; r.Id == id)
     ///
-    /// Bu, PROJEKSIYONDAN SONRA filtreleme demek. EF Core bunu SQL'e
+    /// Bu, projeksiyondan sonra filtreleme demek. EF Core bunu SQL'e
     /// ceviremedi:
     ///     "The LINQ expression ... .Where(r =&gt; new ReservationDto(...))
     ///      could not be translated"
@@ -107,7 +107,7 @@ internal static class ReservationQueries
     ///
     ///     context.Reservations.Where(r =&gt; r.Id == id).ToDto(context)
     ///
-    /// Bu hata ES ZAMANLILIK TESTINDE ortaya cikti: 9 istek doğru
+    /// Bu hata es zamanlilik testinde ortaya cikti: 9 istek doğru
     /// şekilde 409 aldi, kazanan istek rezervasyonu OLUSTURDU ama
     /// yaniti hazirlarken 500 dondu. Cekirdek mantik dogruydu.
     /// </summary>

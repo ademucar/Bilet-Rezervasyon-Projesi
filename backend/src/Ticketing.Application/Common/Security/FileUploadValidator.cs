@@ -11,12 +11,12 @@ namespace Ticketing.Application.Common.Security;
 /// <remarks>
 /// Uc kontrol var ve ucu de gerekli -- biri digerinin yerine gecmez
 ///
-/// Dosya yukleme, bir web uygulamasindaki EN TEHLIKELI ozelliktir:
-/// kullanıcının sunucumuza VERI değil DOSYA yazmasina izin veriyorum.
+/// Dosya yukleme, bir web uygulamasindaki en tehlikeli ozelliktir:
+/// Kullanıcının sunucumuza veri değil dosya yazmasina izin veriyorum.
 ///
-///   1) UZANTI (file type)  -- kullanıcı verir, KOLAYCA yalan söyler
+///   1) Uzanti (file type)  -- kullanıcı verir, kolayca yalan söyler
 ///   2) MIME type           -- tarayıcı/istemci verir, YINE yalan
-///   3) IMZA (magic number) -- dosyanin ICERIGI, yalan soyleyemez
+///   3) imza (magic number) -- dosyanin icerigi, yalan soyleyemez
 ///
 /// Neden hepsi lazim?
 ///
@@ -30,7 +30,7 @@ namespace Ticketing.Application.Common.Security;
 ///   sunuldugunda tarayıcı HTML olarak calistirabilir. Ayrıca
 ///   "polyglot" dosyalar hem geçerli JPEG hem geçerli script olabilir.
 ///
-/// Ucu birden: uzanti VE MIME VE içerik AYNI türü gostermeli.
+/// Ucu birden: uzanti ve MIME ve içerik ayni türü gostermeli.
 /// Uyusmazlik varsa reddediyoruz -- mesru kullanicida bu uc bilgi
 /// zaten uyusur; uyusmuyorsa ya bozuk ya kötü niyetli.
 /// </remarks>
@@ -49,7 +49,7 @@ public static class FileUploadValidator
     /// Beyaz listede unutmanin bedeli yalnızca "bu dosya türü
     /// desteklenmiyor" hatasidir -- güvenlik acigi değil.
     ///
-    /// SVG BILINCLI OLARAK YOK: SVG bir XML belgesidir ve icine
+    /// SVG bilincli olarak yok: SVG bir XML belgesidir ve icine
     /// script etiketi gomulebilir. Tarayicida acildiginda o script
     /// BENIM alan adimda çalışır (saklanmis XSS). "Resim" gibi
     /// görünmesi aldaticidir.
@@ -76,14 +76,14 @@ public static class FileUploadValidator
     private static readonly Dictionary<string, byte[]> Imzalar =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            // JPEG: FF D8 FF
+            // JPEG: ff D8 ff
             [".jpg"] = [0xFF, 0xD8, 0xFF],
             [".jpeg"] = [0xFF, 0xD8, 0xFF],
 
-            // PNG: 89 "PNG" CR LF 1A LF
+            // PNG: 89 "PNG" cr lf 1A lf
             [".png"] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
 
-            // WebP: "RIFF" ile başlar. Bu imza WAV ve AVI ile ORTAK --
+            // WebP: "riff" ile başlar. Bu imza wav ve avi ile ortak --
             // bu yüzden aşağıda 8. bayttan itibaren "WEBP" de aranyor.
             [".webp"] = [0x52, 0x49, 0x46, 0x46],
 
@@ -140,14 +140,14 @@ public static class FileUploadValidator
                     MaksimumBoyut / (1024 * 1024))));
         }
 
-        // 1) FILE TYPE (uzanti) -- PDF maddesi
+        // 1) File type (uzanti) -- PDF maddesi
         if (string.IsNullOrWhiteSpace(fileName))
         {
             return Result.Failure<string>(Error.Validation(
                 "file.name_required", "Dosya adı gereklidir."));
         }
 
-        // ONCE GetFileName, SONRA GetExtension
+        // Once GetFileName, sonra GetExtension
         //
         // Kullanıcı "../../appsettings.json.jpg" gonderebilir.
         // GetFileName önce dizin kismini atiyor -- dizin gecisi
@@ -183,9 +183,9 @@ public static class FileUploadValidator
                 "Dosya türü ile içerik türü uyuşmuyor."));
         }
 
-        // 3) ICERIK IMZASI -- uzanti ve MIME yalanini yakalar
+        // 3) İcerik imzasi -- uzanti ve MIME yalanini yakalar
         //
-        // PDF bu maddeyi acikca istemiyor ama ilk ikisi TEK BASINA
+        // PDF bu maddeyi acikca istemiyor ama ilk ikisi tek basina
         // neredeyse hiçbir sey ifade etmiyor: ikisini de kullanıcı
         // gönderiyor.
         //
@@ -199,19 +199,19 @@ public static class FileUploadValidator
                 "Dosya icerigi, belirtilen dosya turuyle uyuşmuyor."));
         }
 
-        // 4) GUVENLI DOSYA ADI URET -- PDF maddesi
+        // 4) Guvenli dosya adi uret -- PDF maddesi
         //
-        // KULLANICININ ADINI "TEMIZLEMIYORUZ", TAMAMEN ATIYORUZ
+        // Kullanicinin adini "temizlemiyoruz", tamamen atiyoruz
         //
         // Yaygin yaklasim, adı temizlemektir (tehlikeli karakterleri
         // silmek). Bu bir kedi-fare oyunu; her zaman kacirilan bir
         // durum vardir:
         //   "afis.jpg.exe"       cift uzanti
-        //   "CON", "PRN", "NUL"  Windows ayrilmis adları
+        //   "con", "prn", "nul"  Windows ayrilmis adları
         //   ustuste URL kodlamasi
         //   görsel olarak aynı görünen Unicode karakterler
         //
-        // Guid uretmek bu SINIFIN TAMAMINI ortadan kaldiriyor:
+        // Guid uretmek bu sinifin tamamini ortadan kaldiriyor:
         // kullanicidan gelen metin dosya yolunda HİÇ kullanılmıyor.
         // Yani "acaba her durumu yakaladim mi?" sorusunu sormaya
         // gerek kalmiyor.
@@ -244,7 +244,7 @@ public static class FileUploadValidator
             return false;
         }
 
-        // WebP ozel durumu: "RIFF" baslangici WAV ve AVI bicimlerinde
+        // WebP ozel durumu: "riff" baslangici wav ve avi bicimlerinde
         // de var. Gercekten WebP olduğunu 8. bayttan itibaren "WEBP"
         // yazisiyla dogruluyorum.
         if (uzanti.Equals(".webp", StringComparison.OrdinalIgnoreCase))

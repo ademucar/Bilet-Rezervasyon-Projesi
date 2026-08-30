@@ -12,7 +12,7 @@ import { EventFilterPanel } from '../components/EventFilterPanel'
 import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '../api/bookingApi'
 
 /**
- * ETKİNLİK LISTESI -- PDF Sprint 11
+ * etkinlik listesi -- PDF Sprint 11
  *
  * Sprint 7'de bu sayfa yalnızca metin aramasi ve sayfalama
  * yapiyordu ve su notu birakmistim:
@@ -27,7 +27,7 @@ export function EventsPage() {
   const [search, setSearch] = useState('')
 
   /**
-   * NEDEN TEK BIR `filters` NESNESI?
+   * neden tek bir `filters` nesnesi?
    *
    * Her filtre için ayrı useState acabilirdim: cityId, categoryId,
    * minPrice, maxPrice, dateFrom, dateTo, sortBy... on tane state.
@@ -38,7 +38,7 @@ export function EventsPage() {
    * kullanıcı 5. sayfadayken filtre değiştirir, boş sonuç görür ve
    * "arama bozuk" der.
    *
-   * Tek nesne + tek güncelleme fonksiyonu ile bu kuralı TEK YERDE
+   * Tek nesne + tek güncelleme fonksiyonu ile bu kuralı tek yerde
    * uyguluyorum (bkz. updateFilters).
    *
    */
@@ -54,7 +54,7 @@ export function EventsPage() {
       ...onceki,
       ...degisiklik,
 
-      // Filtre değişince HER ZAMAN 1. sayfaya dön.
+      // Filtre değişince her zaman 1. Sayfaya dön.
       //
       // Tek istisna: degisiklik zaten sayfa numarasi ise (kullanıcı
       // "Sonraki"ye basmis). O zaman gelen değeri koruyorum.
@@ -85,7 +85,7 @@ export function EventsPage() {
   const eventsQuery = useQuery({
     // queryKey'e TÜM filtreler dahil.
     //
-    // Bu sadece bir isim değil, ONBELLEK ANAHTARI: filtre değişince
+    // Bu sadece bir isim değil, onbellek anahtari: filtre değişince
     // yeni veri çekiliyor, aynı filtreye geri donuldugunde onbellekten
     // anında gösteriliyor.
     queryKey: ['events', filters],
@@ -96,7 +96,7 @@ export function EventsPage() {
     placeholderData: keepPreviousData,
   })
 
-  // POPULER ETKINLIKLER -- PDF Sprint 11 (Redis'te 10 dakika)
+  // Populer etkinlikler -- PDF Sprint 11 (Redis'te 10 dakika)
   //
   // YALNIZCA filtresiz gorunumde gösteriliyor.
   //

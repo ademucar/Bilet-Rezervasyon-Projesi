@@ -59,9 +59,9 @@ internal static class AuthenticationSetup
                     // anlami kalmaz.
                     ValidateLifetime = true,
 
-                    // ClockSkew = ZERO -- VARSAYILANI DEGISTIRIYORUM
+                    // ClockSkew = zero -- varsayilani degistiriyorum
                     //
-                    // Varsayılan deger BES DAKIKADIR. Yani 15 dakikalik bir
+                    // Varsayılan deger bes dakikadir. Yani 15 dakikalik bir
                     // token aslında 20 dakika geçerli olur.
                     //
                     // Bu tolerans, sunucu saatleri arasindaki farki telafi
@@ -78,7 +78,7 @@ internal static class AuthenticationSetup
 
                     // "sub" claim'ini olduğu gibi birak.
                     //
-                    // ASP.NET Core varsayılan olarak "sub"u
+                    // Asp.net Core varsayılan olarak "sub"u
                     // ClaimTypes.NameIdentifier'a (uzun bir XML URI'sine)
                     // esler. Bu esleme, token'a ne yazdiginizla kodda ne
                     // okudugunuzun tutmamasina yol acan klasik bir
@@ -143,14 +143,14 @@ internal static class AuthenticationSetup
                 policy.RequireAuthenticatedUser();
                 policy.AddRequirements(new EventOwnerRequirement());
             })
-            // TicketOwner / ReservationOwner -- SPRINT 19'DA TAMAMLANDI
+            // TicketOwner / ReservationOwner -- sprint 19'da tamamlandi
             //
             // Sprint 3'te iskelet olarak birakilmislardi: yalnızca
             // RequireAuthenticatedUser() yapiyorlardi ve koddaki not
             // "gerçek kontrolleri Sprint 7-8'de yazacagim" diyordu.
             // Yazilmamislar.
             //
-            // Sprint 19 denetiminde OLCTUM: sistem açık DEGILDI --
+            // Sprint 19 denetiminde olctum: sistem açık degildi --
             // handler'lar sahiplik kontrolunu zaten yapiyor ve
             // baskasinin rezervasyonuna erişim 404 dönüyor.
             //

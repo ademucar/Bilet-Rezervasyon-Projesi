@@ -6,7 +6,7 @@ namespace Ticketing.Application.Common.Options;
 /// Rezervasyon ayarlari. appsettings "Reservation" bolumunden okunur.
 ///
 /// PDF Sprint 7: "Rezervasyon süresi örneğin 10 dakika olmalıdır."
-/// Bu deger KODA GOMULMEDI -- yapilandirmadan geliyor ki farklı
+/// Bu deger koda gomulmedi -- yapilandirmadan geliyor ki farklı
 /// etkinlik tiplerinde veya yogunluk donemlerinde degistirilebilsin.
 /// </summary>
 public sealed class ReservationOptions

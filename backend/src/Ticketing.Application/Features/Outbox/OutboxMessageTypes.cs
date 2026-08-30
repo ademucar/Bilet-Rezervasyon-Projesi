@@ -3,18 +3,18 @@ namespace Ticketing.Application.Features.Outbox;
 /// <summary>
 /// Outbox mesaj türleri. PDF Sprint 9'un saydığı senaryolar.
 ///
-/// NEDEN SABIT? Neden enum değil?
+/// Neden sabit? Neden enum değil?
 ///
 /// Bu deger veritabaninda METİN olarak saklaniyor ve yillarca orada
 /// duracak. Enum kullansaydım iki sorun çıkardı:
 ///
 /// 1) Enum'u sayi olarak saklarsak, birinin enum siralamasini
-///    degistirmesi TABLODAKI ESKİ KAYITLARIN ANLAMINI degistirirdi.
+///    degistirmesi tablodaki eski kayitlarin anlamini degistirirdi.
 ///    "3 = EventCancelled" idi, araya bir deger eklendi, artık
 ///    "3 = PaymentSucceeded". Islenmemis mesajlar yanlış isleyiciye
 ///    gider.
 ///
-/// 2) Enum'u metin olarak saklasak bile, bir uyeyi YENIDEN ADLANDIRMAK
+/// 2) Enum'u metin olarak saklasak bile, bir uyeyi yeniden adlandirmak
 ///    derleyici hatası vermez ama tablodaki eski kayitlar artık
 ///    hiçbir isleyiciyle eslesmez -- sessizce olu mesaja donerler.
 ///
@@ -63,11 +63,11 @@ public static class OutboxMessageTypes
 //     kullaniyor. Alan adını birinde degistirip digerinde unutmak
 //     derleyici hatası veriyor.
 //   - Anonim nesneyle yazip elle okusaydim, uyusmazlik ancak
-//     CALISMA ZAMANINDA -- hem de arka planda, kimse bakmazken --
+//     calisma zamaninda -- hem de arka planda, kimse bakmazken --
 //     ortaya çıkardı.
 //
-// DIKKAT: Bu tiplere alan EKLEMEK guvenlidir (eski kayitlarda alan
-// olmaz, varsayılan deger gelir). Alan SILMEK veya YENIDEN ADLANDIRMAK
+// Dikkat: Bu tiplere alan eklemek guvenlidir (eski kayitlarda alan
+// olmaz, varsayılan deger gelir). Alan silmek veya yeniden adlandirmak
 // tablodaki islenmemis eski mesajlari bozar.
 
 /// <param name="TicketIds">Bilgi amacli; isleyici biletleri yine de veritabanindan okur.</param>

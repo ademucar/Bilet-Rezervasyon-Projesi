@@ -6,7 +6,7 @@ namespace Ticketing.WebApi.Security;
 /// <summary>
 /// Hangfire izleme ekrani erisim kontrolu
 ///
-/// Hangfire'in /hangfire ekrani VARSAYILAN OLARAK YALNIZCA
+/// Hangfire'in /hangfire ekrani varsayilan olarak yalnizca
 /// localhost'tan erişilebilir. Yani uretime cikildiginda ekran
 /// çalışır görünür ama uzaktan acilmaz.
 ///
@@ -18,7 +18,7 @@ namespace Ticketing.WebApi.Security;
 /// Bu ekran ne gosteriyor? Calisan tüm isleri, PARAMETRELERINI
 /// (rezervasyon kimlikleri, kullanıcı kimlikleri), hata yiginlarini
 /// ve veritabani bağlantı hatalarini. Ustelik ekrandan is SILINEBILIR
-/// ve YENIDEN CALISTIRILABILIR.
+/// ve yeniden calistirilabilir.
 ///
 /// Yani burasi salt okunur bir gosterge paneli değil, bir YONETIM
 /// arayuzu. Yanlis yapilandirilirsa saldirgan istedigi is'i istedigi

@@ -18,7 +18,7 @@ namespace Ticketing.WebApi.Middleware;
 ///
 ///   HTTP isteği -> Handler -> Outbox kaydı -> Background job -> E-posta
 ///
-/// Bu adimlar FARKLI ZAMANLARDA ve farklı process'lerde çalışıyor.
+/// Bu adimlar farkli zamanlarda ve farklı process'lerde çalışıyor.
 /// Correlation ID hepsini tek bir ipe diziyor. Kullanicidan ID'yi
 /// alip tek bir sorguyla tüm hikayeyi gorebiliyorsun.
 /// </summary>
@@ -37,16 +37,16 @@ public sealed class CorrelationIdMiddleware
 
         var correlationId = GetOrCreateCorrelationId(context);
 
-        // DEGERI ONCE HttpContext.Items'A KOY -- SPRINT 16'DA BULUNAN HATA
+        // Degeri once HttpContext.Items'A koy -- sprint 16'da bulunan hata
         //
         // Bu satır olmadan sistemin yarisi correlation ID'yi GOREMIYORDU.
         //
-        // Sebep: ICurrentUser.CorrelationId, değeri RESPONSE HEADER'INDAN
+        // Sebep: ICurrentUser.CorrelationId, değeri response header'indan
         // okuyordu. Ama aşağıdaki OnStarting geri cagrimi, yanitin ilk
-        // bayti yazilmadan hemen önce -- yani HANDLER CALISTIKTAN SONRA
+        // bayti yazilmadan hemen önce -- yani handler calistiktan sonra
         // -- çalışıyor.
         //
-        // Yani istek islenirken response header HENUZ BOSTU ve
+        // Yani istek islenirken response header henuz bostu ve
         // ICurrentUser.CorrelationId her zaman null donuyordu:
         //
         //     Middleware  -> OnStarting KAYDEDILDI (henüz calismadi)
@@ -98,7 +98,7 @@ public sealed class CorrelationIdMiddleware
         // yapabilir (önce rezervasyon, sonra ödeme). Aynı ID'yi gondererek
         // bu cagrilari birbirine baglayabilir.
         //
-        // GÜVENLİK NOTU: Istemciden gelen değeri OLDUGU GIBI kullanmiyorum.
+        // Güvenlik notu: Istemciden gelen değeri oldugu gibi kullanmiyorum.
         // Uzunlugu sinirliyorum, çünkü bu deger loglara ve response
         // header'ina yaziliyor. Sinirsiz uzunlukta bir deger log
         // dosyalarini sisirebilir veya header limitlerini asabilir.

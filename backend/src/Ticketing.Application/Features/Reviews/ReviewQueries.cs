@@ -81,7 +81,7 @@ internal sealed class GetEventReviewsQueryHandler
         //
         //   - Iki gidis donus olurdu
         //   - Daha onemlisi: iki sorgu ARASINDA yeni bir yorum gelirse
-        //     ortalama ile dagilim BIRBIRIYLE TUTARSIZ olurdu
+        //     ortalama ile dagilim birbiriyle tutarsiz olurdu
         //     (ortalama 12 yoruma, dagilim 13 yoruma göre)
         //
         // Tek GroupBy ile puan başına sayimi alıyorum; ortalamayi
@@ -117,7 +117,7 @@ internal sealed class GetEventReviewsQueryHandler
         //
         // Önce "FirstName + LastName.Substring(0,1)" seklinde SORGUYA
         // yazmistim. Derleyici CA1845 ile uyardi (Substring yerine
-        // AsSpan kullan) -- ama AsSpan bir IFADE AGACINDA calismaz,
+        // AsSpan kullan) -- ama AsSpan bir ifade agacinda calismaz,
         // EF önü SQL'e ceviremez.
         //
         // Yani kuralin onerdigi duzeltme burada UYGULANAMAZ. Iki
@@ -157,7 +157,7 @@ internal sealed class GetEventReviewsQueryHandler
             //
             // "Adem U." seklinde donuyorum.
             //
-            // Yorumlar HERKESE ACIK ve arama motorlari tarafından
+            // Yorumlar herkese acik ve arama motorlari tarafından
             // indekslenebilir. Tam ad + katildigi etkinlik birlesince
             // kisinin nerede olduğunu gosteren bir iz olusur.
             //

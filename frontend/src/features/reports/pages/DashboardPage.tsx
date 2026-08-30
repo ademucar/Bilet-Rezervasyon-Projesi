@@ -38,7 +38,7 @@ import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
  * Dört kartlık bir sırada biri sarı biri kırmızı olunca panel
  * alarm paneline dönüşüyordu -- oysa "%2 iade" normal bir sayı.
  *
- * Artık zemin her kartta beyaz; renk yalnızca SOL KENAR ÇİZGİSİNDE
+ * Artık zemin her kartta beyaz; renk yalnızca sol kenar çizgisinde
  * ve sayının kendisinde. Aynı bilgi, onda bir gürültü.
  *
  */
@@ -79,12 +79,12 @@ function MetricCard({
 const GRAFIK_RENKLERI = ['#2563eb', '#7c3aed', '#0891b2', '#ea580c', '#65a30d']
 
 /**
- * ORGANİZATÖR VE ADMIN PANELİ -- PDF Sprint 13
+ * organizatör ve admin paneli -- PDF Sprint 13
  *
  * Iki panel TEK sayfada, sekmeli.
  *
  * Neden ayrı iki sayfa değil? Çünkü admin olan bir kullanıcı çoğu
- * zaman AYNI ZAMANDA organizatör (benim demo kullanicim gibi) ve
+ * zaman ayni zamanda organizatör (benim demo kullanicim gibi) ve
  * iki panel arasında gidip gelmek istiyor. Ayrı adresler olsaydı
  * her gecis tam sayfa yuklemesi olurdu.
  *
@@ -134,7 +134,7 @@ export function DashboardPage() {
   )
 }
 
-// ORGANİZATÖR PANELİ -- PDF'in 10 metriği
+// Organizatör paneli -- PDF'in 10 metriği
 
 function OrganizerPanel() {
   const q = useQuery({
@@ -284,7 +284,7 @@ function OrganizerPanel() {
   )
 }
 
-// ADMIN PANELİ -- PDF'in 10 metriği
+// Admin paneli -- PDF'in 10 metriği
 
 function AdminPanel() {
   const q = useQuery({
@@ -341,7 +341,7 @@ function AdminPanel() {
           label="Sistem hatası"
           value={String(d.systemErrorCount)}
           hint="Dead letter olmuş mesaj"
-          // Sifirdan buyukse HER ZAMAN kırmızı: bunlar insan
+          // Sifirdan buyukse her zaman kırmızı: bunlar insan
           // mudahalesi bekleyen isler.
           tone={d.systemErrorCount > 0 ? 'danger' : 'default'}
         />
@@ -401,7 +401,7 @@ function AdminPanel() {
   )
 }
 
-// RAPOR DISA AKTARMA -- PDF Sprint 13
+// Rapor disa aktarma -- PDF Sprint 13
 
 function ReportExportPanel() {
   const [type, setType] = useState<number>(ReportType.SalesSummary)

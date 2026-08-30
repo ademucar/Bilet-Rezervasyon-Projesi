@@ -143,14 +143,14 @@ public class TicketTests
     /// Kodu okudum, yaninda "// idempotent" yaziyordu. Ve bu DOGRU
     /// tasarim:
     ///
-    /// Bileti iptal eden sey bir ARKA PLAN ISI (etkinlik iptali,
+    /// Bileti iptal eden sey bir arka plan isi (etkinlik iptali,
     /// iade akisi). Arka plan isleri basarisiz olunca yeniden
     /// deneniyor -- Outbox'ta en az bir kez teslim (at-least-once)
     /// garantisi var, yani AYNI is birden fazla kez calisabilir.
     ///
     /// Hata firlatsaydi: ikinci deneme patlar, is basarisiz sayilir,
     /// tekrar denenir, yine patlar... Sonunda dead letter'a duserdi
-    /// -- oysa yapilmasi gereken is ZATEN YAPILMISTI.
+    /// -- oysa yapilmasi gereken is zaten yapilmisti.
     ///
     /// "Zaten istenen durumdaysa sessizce gec" ile "gecersiz bir
     /// gecis denendi, reddet" farkli seyler. Kullanilmis bir bileti
@@ -168,7 +168,7 @@ public class TicketTests
 
         bilet.Status.Should().Be(TicketStatus.Refunded);
 
-        // ONEMLI: ikinci cagri withRefund degerini DEGISTIREMEMELI.
+        // Onemli: ikinci cagri withRefund degerini degistirememeli.
         // Aksi halde "iadesiz iptal" edilmis bir bilet, tekrarlanan
         // bir cagriyla iade edilmis gorunebilirdi.
         var iadesiz = BiletUret();

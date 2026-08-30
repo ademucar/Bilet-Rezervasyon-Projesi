@@ -63,7 +63,7 @@ public sealed class CreateTicketTypeCommandValidator : AbstractValidator<CreateT
         // PDF is kuralı: "Fiyat sıfırdan küçük olamaz."
         //
         // Money value object'i de bunu reddediyor. Burada da kontrol
-        // etmemin sebebi kullanıcıya ALAN BAZINDA anlasilir hata vermek:
+        // etmemin sebebi kullanıcıya alan bazinda anlasilir hata vermek:
         // Money'nin DomainException'i 422 döner ve hangi alanin
         // sorunlu olduğunu soylemez.
         RuleFor(x => x.Price)
@@ -146,7 +146,7 @@ internal sealed class CreateTicketTypeCommandHandler
     }
 }
 
-// FIYAT DEGISTIRME -- PDF: denetim kaydı ZORUNLU
+// Fiyat degistirme -- PDF: denetim kaydı zorunlu
 
 public sealed record ChangeTicketTypePriceCommand(Guid Id, decimal Price, string Currency)
     : IRequest<Result>;
@@ -254,7 +254,7 @@ internal sealed class ChangeTicketTypePriceCommandHandler
     }
 }
 
-// GUNCELLEME (fiyat HARIC)
+// Guncelleme (fiyat haric)
 
 public sealed record UpdateTicketTypeCommand(
     Guid Id,
@@ -300,7 +300,7 @@ internal sealed class UpdateTicketTypeCommandHandler
     }
 }
 
-// BOLUM ATAMA -- PDF: POST /api/v1/ticket-types/{id}/assign-section
+// Bolum atama -- PDF: POST /api/v1/ticket-types/{id}/assign-section
 
 public sealed record AssignSectionCommand(Guid TicketTypeId, Guid SeatSectionId)
     : IRequest<Result>;

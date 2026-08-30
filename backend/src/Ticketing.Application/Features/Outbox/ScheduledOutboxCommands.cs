@@ -41,7 +41,7 @@ internal sealed class SendEventRemindersCommandHandler
         var now = _clock.UtcNow;
         var upperBound = now.AddHours(request.WithinHours);
 
-        // GECMIS OTURUMLARI DISLA (StartDate > now)
+        // Gecmis oturumlari disla (StartDate > now)
         //
         // Yalnızca "StartDate <= upperBound" yazsaydım, GECMISTEKI tüm
         // oturumlar da kosula uyardi ve sistem bir yil önceki
@@ -140,7 +140,7 @@ internal sealed class SendEventRemindersCommandHandler
     }
 }
 
-// GUNLUK SATIS OZETI -- PDF: "Günlük satış özeti oluşturma"
+// Gunluk satis ozeti -- PDF: "Günlük satış özeti oluşturma"
 
 /// <param name="Date">
 /// Raporlanacak gün. null ise DUNU raporlar.
@@ -177,7 +177,7 @@ internal sealed class GenerateDailySalesSummaryCommandHandler
         var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
         var end = start.AddDays(1);
 
-        // TEK SORGU, IKI TOPLAM -- GroupBy ile
+        // Tek sorgu, iki toplam -- GroupBy ile
         //
         // Brüt ve iade tutarini ayrı sorgularla da alabilirdim ama o
         // zaman iki tur veritabani gidis donusu olurdu. Daha onemlisi:

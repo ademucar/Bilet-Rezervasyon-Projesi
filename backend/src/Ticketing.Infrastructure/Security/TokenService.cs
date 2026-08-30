@@ -24,7 +24,7 @@ internal sealed class TokenService : ITokenService
         _options = options.Value;
         _clock = clock;
 
-        // Imzalama anahtarini BIR KEZ olusturup saklıyorum.
+        // Imzalama anahtarini bir kez olusturup saklıyorum.
         //
         // Her token uretiminde yeniden olusturmak, her seferinde byte
         // dizisi ayirmak ve kriptografi nesnesi kurmak demek olurdu.
@@ -91,7 +91,7 @@ internal sealed class TokenService : ITokenService
 
     public RefreshTokenResult CreateRefreshToken()
     {
-        // KRIPTOGRAFIK RASTGELELIK -- Random SINIFI KULLANILMAZ
+        // kriptografik rastgelelik -- Random sinifi kullanilmaz
         //
         // System.Random tahmin edilebilir bir dizidir: tohumunu (seed)
         // bilen veya birkaç ciktisini goren biri sonraki değerleri
@@ -120,7 +120,7 @@ internal sealed class TokenService : ITokenService
 
     public string HashRefreshToken(string refreshToken)
     {
-        // NEDEN SHA-256, NEDEN BCrypt DEĞİL?
+        // neden SHA-256, neden BCrypt değil?
         //
         // Şifreler için BCrypt kullanıyorum çünkü sifreler TAHMIN
         // EDILEBILIR ("123456", "şifre123"). Yavas algoritma, sozluk

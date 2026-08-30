@@ -41,7 +41,7 @@ namespace Ticketing.Application.Common.Logging;
 /// </remarks>
 public static class LogEvents
 {
-    // KIMLIK DOGRULAMA -- PDF: "Login", "Başarısız login"
+    // kimlik dogrulama -- PDF: "Login", "Başarısız login"
 
     /// <summary>Başarılı giriş.</summary>
     public const int LoginBasarili = 1001;
@@ -50,7 +50,7 @@ public static class LogEvents
     /// Başarısız giriş.
     /// </summary>
     /// <remarks>
-    /// Bu, güvenlik acisindan EN DEGERLI log satirim: brute force
+    /// Bu, güvenlik acisindan en degerli log satirim: brute force
     /// ve credential stuffing saldirilari burada görünür.
     ///
     /// Warning seviyesinde logluyorum, Information değil. Sebep:

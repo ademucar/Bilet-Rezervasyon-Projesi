@@ -7,7 +7,7 @@ import {
 } from '@microsoft/signalr'
 
 /**
- * GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
+ * gercek zamanli koltuk guncelleme -- PDF Sprint 10
  *
  * Sprint 7'de koltuk haritasini 10 saniyede bir yokluyorduk
  * (refetchInterval). O zaman koda su notu birakmistim:
@@ -48,7 +48,7 @@ export function useSeatHub(
    *
    * Bu kancayi cagiran bileşen her render'da YENI bir handlers
    * nesnesi olusturuyor (nesne literali). Eger handlers'i aşağıdaki
-   * useEffect'in bagimlilik dizisine koysaydım, effect HER RENDER'DA
+   * useEffect'in bagimlilik dizisine koysaydım, effect her render'da
    * yeniden calisirdi.
    *
    * Sonuç: saniyede birkaç kez bağlantı kurulup kapatilirdi. Sunucu
@@ -57,12 +57,12 @@ export function useSeatHub(
    * ve olaylar kacirilir.
    *
    * Ref ile: effect YALNIZCA eventSessionId değişince çalışıyor,
-   * ama olay geldiğinde her zaman EN GUNCEL handler'lar cagriliyor.
+   * ama olay geldiğinde her zaman en guncel handler'lar cagriliyor.
    *
    */
   const handlersRef = useRef(handlers)
 
-  // Atamayi RENDER SIRASINDA değil, render'dan SONRA yapıyorum.
+  // Atamayi render sirasinda değil, render'dan sonra yapıyorum.
   //
   // İlk yazimim `handlersRef.current = handlers` seklinde, doğrudan
   // govdedeydi. Lint (react/refs) haklı olarak uyardi: render
@@ -88,15 +88,15 @@ export function useSeatHub(
       // gerekirdi -- API istemcisinde de aynı yaklasimi kullanıyorum.
       .withUrl('/hubs/seats')
 
-      // OTOMATIK YENIDEN BAGLANMA -- PDF: "SignalR bağlantısı
+      // Otomatik yeniden baglanma -- PDF: "SignalR bağlantısı
       // kesildiginde frontend yeniden baglanmalidir."
       //
       // Varsayılan withAutomaticReconnect() yalnızca DORT kez dener
-      // (0, 2, 10, 30 sn) ve sonra PES EDER.
+      // (0, 2, 10, 30 sn) ve sonra pes eder.
       //
       // Bizim için bu yetersiz: kullanıcı koltuk seçim ekraninda
       // 10 dakika kalabilir. Wi-Fi'si iki dakika kesilse bağlantı
-      // kalici olarak olurdu ve kullanıcı bunu FARK ETMEDEN eski
+      // kalici olarak olurdu ve kullanıcı bunu fark etmeden eski
       // bir haritaya bakmaya devam ederdi.
       //
       // Kendi stratejimi veriyorum: artan araliklarla ama SONSUZA
@@ -123,9 +123,9 @@ export function useSeatHub(
 
     connectionRef.current = connection
 
-    // OLAY DINLEYICILERI -- adlar backend ile BIREBIR
+    // Olay dinleyicileri -- adlar backend ile birebir
     //
-    // SignalR eslesmeyen bir olay adını HATA SAYMAZ; mesaj sessizce
+    // SignalR eslesmeyen bir olay adını hata saymaz; mesaj sessizce
     // hiçbir yere gitmez. Yani "SeatLocked" yerine "seatLocked"
     // yazsaydım hiçbir uyarı almadan calismaz olurdu.
     //
@@ -185,7 +185,7 @@ export function useSeatHub(
 
     // ---- Baglan ----
     //
-    // LINT: react/set-state-in-effect -- GEREKCEYLE SUSTURULDU
+    // Lint: react/set-state-in-effect -- gerekceyle susturuldu
     //
     // Kural, effect içinde senkron setState cagirmaya karsi uyariyor
     // ve çoğu durumda haklı. Ama kuralin KENDİ açıklaması istisnayi
@@ -220,7 +220,7 @@ export function useSeatHub(
       .catch(() => {
         // Bağlantı kurulamadi.
         //
-        // Bu bir FELAKET DEĞİL: koltuk haritası yine çalışıyor,
+        // Bu bir felaket değil: koltuk haritası yine çalışıyor,
         // sadece yoklama (polling) ile guncelleniyor. Durum
         // göstergesi kullanıcıya bunu söylüyor.
         setStatus('disconnected')

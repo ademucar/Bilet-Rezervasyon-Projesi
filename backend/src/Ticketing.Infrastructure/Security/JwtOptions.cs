@@ -40,7 +40,7 @@ public sealed class JwtOptions
     /// Access token omru (dakika). Varsayılan 15.
     ///
     /// Neden bu kadar kisa?
-    /// Access token İPTAL EDILEMEZ -- imzasi geçerli olduğu surece kabul
+    /// Access token iptal edilemez -- imzasi geçerli olduğu surece kabul
     /// edilir; veritabanina bakilmaz (zaten amaci budur, her istekte
     /// veritabani sorgusu yapmamak).
     ///
@@ -56,7 +56,7 @@ public sealed class JwtOptions
 
     /// <summary>
     /// Refresh token omru (gün). Varsayılan 7.
-    /// Bu token İPTAL EDILEBILIR (veritabaninda kaydı var), o yüzden
+    /// Bu token iptal edilebilir (veritabaninda kaydı var), o yüzden
     /// daha uzun olmasını kabul edilebilir.
     /// </summary>
     [Range(1, 365)]

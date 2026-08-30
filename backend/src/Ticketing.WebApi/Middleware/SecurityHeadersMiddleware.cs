@@ -4,7 +4,7 @@ namespace Ticketing.WebApi.Middleware;
 /// Güvenlik basliklarini ekler. PDF Sprint 15: "Security headers".
 /// </summary>
 /// <remarks>
-/// NEDEN MIDDLEWARE? Neden her yanitta elle eklemiyorum?
+/// Neden middleware? Neden her yanitta elle eklemiyorum?
 ///
 /// Basliklari controller'larda eklemek, birini unutmak demektir --
 /// ve unutulan uc tam olarak korumasiz olandir.
@@ -73,7 +73,7 @@ internal sealed class SecurityHeadersMiddleware
             // Baska siteye giderken ADRESIMIZIN ne kadarinin
             // gonderilecegini belirliyor.
             //
-            // Varsayılan davranis TAM ADRESI gönderiyor. Bizim
+            // Varsayılan davranis tam adresi gönderiyor. Bizim
             // adreslerimde hassas bilgi olabilir:
             //   /rezervasyonlar/{guid}
             //   /api/v1/reports/exports/{guid}
@@ -116,7 +116,7 @@ internal sealed class SecurityHeadersMiddleware
                 // script/stil kullaniyor. 'unsafe-inline' vermezsek
                 // paneller calismaz.
                 //
-                // Bu bir GÜVENLİK GEVSETMESI ve yalnızca gelistirmede
+                // Bu bir güvenlik gevsetmesi ve yalnızca gelistirmede
                 // geçerli -- uretimde bu paneller zaten kapalı veya
                 // ag seviyesinde korunuyor.
                 ? "default-src 'self'; " +
@@ -140,7 +140,7 @@ internal sealed class SecurityHeadersMiddleware
             //
             // Tarayiciya "bu siteye bir daha SADECE HTTPS ile gel" der.
             //
-            // YALNIZCA URETIMDE. Gelistirmede localhost HTTP kullaniyor;
+            // Yalnizca uretimde. Gelistirmede localhost HTTP kullaniyor;
             // HSTS gonderirsek tarayıcı localhost'u kalici olarak
             // HTTPS'e zorlar ve gelistirme ortami bozulur.
             //
@@ -150,7 +150,7 @@ internal sealed class SecurityHeadersMiddleware
             {
                 // 1 yil + alt alan adları.
                 //
-                // preload EKLEMEDIM: preload listesine girmek KALICI
+                // Preload eklemedim: preload listesine girmek kalici
                 // bir karardir ve cikmak aylar surer. Önce gerçek bir
                 // alan adiyla test edilmeli.
                 headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";

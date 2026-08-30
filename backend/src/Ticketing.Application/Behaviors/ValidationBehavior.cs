@@ -21,7 +21,7 @@ namespace Ticketing.Application.Behaviors;
 /// gerekirdi. Bir gün birinde unutulur ve dogrulanmamis veri sisteme
 /// girer -- hem de sessizce.
 ///
-/// Burada merkezi olarak yaptigimda UNUTMAK IMKANSIZ hale geliyor:
+/// Burada merkezi olarak yaptigimda unutmak imkansiz hale geliyor:
 /// validator varsa çalışır, yoksa istek gecer.
 /// </summary>
 public sealed class ValidationBehavior<TRequest, TResponse>
@@ -51,7 +51,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 
         var context = new ValidationContext<TRequest>(request);
 
-        // TÜM validator'lari calistirip TÜM hatalari topluyorum.
+        // Tüm validator'lari calistirip tüm hatalari topluyorum.
         //
         // İlk hatada durup donseydim, kullanıcı formu 5 kez gonderip
         // 5 hatayi tek tek gorurdu. Hepsini birden dondugumuzde
@@ -70,7 +70,7 @@ public sealed class ValidationBehavior<TRequest, TResponse>
             return await next().ConfigureAwait(false);
         }
 
-        // EXCEPTION FIRLATIYORUM, Result DONMUYORUM. NEDEN?
+        // Exception firlatiyorum, Result donmuyorum. Neden?
         //
         // Behavior'in donus tipi TResponse (yani Result veya Result<T>).
         // Result<T> uretmek için T'yi bilmem ve ona göre nesne olusturmam

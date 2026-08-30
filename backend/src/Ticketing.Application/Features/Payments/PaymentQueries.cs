@@ -41,7 +41,7 @@ internal static class PaymentProjections
     /// <summary>
     /// Ödeme sorgusunu DTO'ya projelendirir.
     ///
-    /// Filtre PROJEKSIYONDAN ONCE uygulanmali -- Sprint 7'de bu
+    /// Filtre projeksiyondan once uygulanmali -- Sprint 7'de bu
     /// tuzaga dustuk: EF, olusturdugu DTO uzerinde WHERE calistiramiyor.
     /// Bu yüzden metot IQueryable&lt;Payment&gt; aliyor.
     /// </summary>
@@ -116,7 +116,7 @@ internal sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentQuery, 
 /// İade islemi.
 /// </summary>
 /// <param name="Amount">
-/// İade tutarı. null ise KALAN TÜM tutar iade edilir.
+/// İade tutarı. Null ise kalan tüm tutar iade edilir.
 ///
 /// Kismi iade destegi var çünkü bir rezervasyondaki 4 biletten
 /// yalnızca 2'si iade edilebilir.
@@ -158,10 +158,10 @@ internal sealed partial class RefundPaymentCommandHandler
 
     // PDF Sprint 16: "İade" loglanmalidir.
     //
-    // WARNING seviyesi -- hata olduğu için değil, GORULMESI
+    // Warning seviyesi -- hata olduğu için değil, gorulmesi
     // gerektigi için.
     //
-    // İade, sistemdeki tek PARA CIKISI. Hacminde ani bir artis ya
+    // İade, sistemdeki tek para cikisi. Hacminde ani bir artis ya
     // bir yazilim hatasinin ya da bir kotuye kullanimin isaretidir;
     // ikisi de hizli mudahale gerektirir.
     //
@@ -188,7 +188,7 @@ internal sealed partial class RefundPaymentCommandHandler
                 .ThenInclude(r => r.Items)
                     .ThenInclude(i => i.EventSeat)
 
-            // BU Include SPRINT 17'DE, ENTEGRASYON TESTIYLE EKLENDI
+            // Bu Include sprint 17'de, entegrasyon testiyle eklendi
             //
             // Aşağıdaki idempotency kontrolü payment.Transactions
             // uzerinde çalışıyor. Ama bu koleksiyon YUKLENMIYORDU:
@@ -227,7 +227,7 @@ internal sealed partial class RefundPaymentCommandHandler
 
         // IDEMPOTENCY -- PDF Sprint 15
         //
-        // İade, cift calistirilmasi EN TEHLIKELI işlem: aynı parayi
+        // İade, cift calistirilmasi en tehlikeli işlem: aynı parayi
         // iki kez geri gondermek doğrudan mali kayip.
         //
         // Anahtari işlem kayitlarinda (PaymentTransaction) ariyorum.
@@ -247,7 +247,7 @@ internal sealed partial class RefundPaymentCommandHandler
 
             if (zatenIslendi)
             {
-                // Aynı istek daha önce islenmis: HATA DEĞİL, mevcut
+                // Aynı istek daha önce islenmis: hata değil, mevcut
                 // durumu donuyorum. Cagiran taraf için sonuç aynı.
                 return await LoadDtoAsync(payment.Id, cancellationToken).ConfigureAwait(false);
             }
@@ -266,7 +266,7 @@ internal sealed partial class RefundPaymentCommandHandler
         // Once saglayici, sonra veritabani
         //
         // Ödeme BASLATIRKEN önce kaydediyorduk (para gidip izimizin
-        // kalmamasini onlemek için). IADE'de sıra TERS:
+        // kalmamasini onlemek için). İade'de sıra ters:
         //
         // Önce veritabanina "iade edildi" yazip sonra sağlayıcı
         // reddetseydi, kullanıcı parasini almadan sistemde "iade
@@ -357,7 +357,7 @@ internal sealed partial class RefundPaymentCommandHandler
 
         // PDF Sprint 10: "SeatReleased".
         //
-        // YALNIZCA TAM IADEDE gonderiyorum. Kismi iadede koltuklar
+        // Yalnizca tam iadede gonderiyorum. Kismi iadede koltuklar
         // satılmış kaliyor -- kullanıcının hâlâ geçerli biletleri var.
         // Kosulsuz gonderseydim, kismi iade sonrası herkesin
         // ekraninda koltuklar bosalmis görünür ama sunucu
@@ -390,7 +390,7 @@ internal sealed partial class RefundPaymentCommandHandler
     }
 }
 
-// KULLANICININ BILETLERI -- PDF sayfa 4
+// Kullanicinin biletleri -- PDF sayfa 4
 
 public sealed record TicketDto(
     Guid Id,
@@ -455,7 +455,7 @@ internal sealed class GetMyTicketsQueryHandler
                 t.Price.Amount,
                 t.Price.Currency,
 
-                // QR degerini YALNIZCA AKTIF biletlerde donuyorum.
+                // QR degerini yalnizca aktif biletlerde donuyorum.
                 //
                 // İptal edilmiş veya kullanılmış biletin QR'ini
                 // gondermenin bir faydasi yok; hassas bir deger

@@ -17,10 +17,10 @@ namespace Ticketing.Application.Features.Events;
 /// PDF Sprint 12 kuralı: "Etkinlik tamamlanmadan yorum yapılamaz."
 ///
 /// Kurali uygulamaya oturunca fark ettim ki Event.Complete() metodu
-/// VAR ama HICBIR YERDEN CAGRILMIYOR. Yani hiçbir etkinlik
+/// var ama hicbir yerden cagrilmiyor. Yani hiçbir etkinlik
 /// Completed durumuna gecmiyordu.
 ///
-/// Sonucu: kural teknik olarak doğru çalışır ama pratikte HİÇ KIMSE
+/// Sonucu: kural teknik olarak doğru çalışır ama pratikte hiç kimse
 /// yorum yapamazdi. Ozellik "yazildi" ama hiçbir zaman calismazdi --
 /// ve bunu ancak gerçek veriyle deneyen biri fark ederdi.
 ///
@@ -29,12 +29,12 @@ namespace Ticketing.Application.Features.Events;
 /// bu bosluk, PDF'i tek tek okuyup "bu gerçekten çalışır mi?" diye
 /// sormanin neden gerekli oldugunun iyi bir ornegi.
 ///
-/// NEDEN "ETKİNLİK TARIHI GECTI" YETMIYOR?
+/// Neden "etkinlik tarihi gecti" yetmiyor?
 ///
 /// Yorum kontrolunu "EventDate &lt; simdi" diye de yazabilirdim ve is
 /// gereksiz olurdu.
 ///
-/// Yazmadim çünkü DURUM, TARIHTEN daha fazla sey anlatiyor:
+/// Yazmadim çünkü durum, tarihten daha fazla sey anlatiyor:
 /// bir etkinlik iptal edilmiş (Cancelled) ya da askiya alinmis
 /// (Suspended) olabilir. Tarihi gecmis olmasını "gerceklesti" demek
 /// değil. İptal edilmiş bir konser için yorum yapilmasi sacma olurdu.
@@ -110,16 +110,16 @@ internal sealed class CompletePastEventsCommandHandler
             // Durum makinesine bakinca sebebini gordum:
             //     SalesOpen -> SalesClosed -> Completed
             //
-            // Yani ARA DURUM atlanamiyor. Ve bu DOGRU bir kisit:
+            // Yani ara durum atlanamiyor. Ve bu dogru bir kisit:
             // bir etkinlik satışı acikken "tamamlandı" olamaz --
             // gecmis bir etkinlige bilet satilmaya devam ediyor
             // olurdu.
             //
-            // Durum makinesi burada beni HATADAN KORUDU. Mimari
+            // Durum makinesi burada beni hatadan korudu. Mimari
             // testlerin ve derleyicinin yaptigi seyin aynisi:
             // varsayimimi sessizce kabul etmek yerine reddetti.
             //
-            // Cozum ara durumu ATLAMAK değil, GECMEK.
+            // Cozum ara durumu atlamak değil, gecmek.
             if (evt.Status == EventStatus.SalesOpen)
             {
                 evt.CloseSales();

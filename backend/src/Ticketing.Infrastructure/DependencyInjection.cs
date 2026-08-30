@@ -37,12 +37,12 @@ public static class DependencyInjection
 
                 // ValidateOnStart -- KRITIK
                 //
-                // Bu satır olmasaydı, doğrulama ancak JwtOptions ILK KEZ
+                // Bu satır olmasaydı, doğrulama ancak JwtOptions ilk kez
                 // ISTENDIGINDE calisirdi -- yani ilk login denemesinde.
                 //
                 // Yani: eksik JWT_SECRET ile uygulama sorunsuz ayaga kalkar,
                 // saglik kontrolunden gecer, yuk dengeleyici trafik gondermeye
-                // başlar ve ILK KULLANICI giriş yapmaya calistiginda 500 alır.
+                // başlar ve ilk kullanici giriş yapmaya calistiginda 500 alır.
                 //
                 // ValidateOnStart ile uygulama HİÇ baslamaz. Deploy başarısız
                 // olur, eski surum ayakta kalır, kimse etkilenmez.

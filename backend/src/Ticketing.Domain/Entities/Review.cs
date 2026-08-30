@@ -11,7 +11,7 @@ namespace Ticketing.Domain.Entities;
 ///   - Yalnızca geçerli bilet almis kullanıcı yorum yapabilir
 ///   - Etkinlik tamamlanmadan yorum yapılamaz
 ///
-/// Son iki kural BURADA kontrol EDILEMEZ: bilet ve etkinlik durumu
+/// Son iki kural burada kontrol edilemez: bilet ve etkinlik durumu
 /// bilgisi bu entity'de yok, veritabaninda. Onlar Application katmanindaki
 /// handler'da kontrol edilecek. Bunu acikca yazıyorum ki "neden burada
 /// yok?" sorusu havada kalmasin.

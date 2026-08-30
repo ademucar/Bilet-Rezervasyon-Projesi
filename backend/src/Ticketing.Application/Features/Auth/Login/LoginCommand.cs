@@ -105,7 +105,7 @@ internal sealed partial class LoginCommandHandler
 
             // PDF Sprint 16: "Başarısız login" loglanmalidir.
             //
-            // E-POSTA MASKELI (Sprint 15 gerekçesi): başarısız giriş
+            // E-posta maskeli (Sprint 15 gerekçesi): başarısız giriş
             // loglari saldiri sırasında BINLERCE satır uretiyor. Acik
             // yazsaydım, saldirganin denedigi tüm adresler log
             // dosyasinda toplu bir liste oluşturur -- yani saldirgan
@@ -117,7 +117,7 @@ internal sealed partial class LoginCommandHandler
             // imkansiz olurdu -- oysa bu, bir saldirinin hedefli mi
             // yoksa korlemesine mi olduğunu anlamak için gerekli.
             //
-            // DIKKAT: bu ayrim yalnızca LOGDA var. Kullanıcıya donen
+            // Dikkat: bu ayrim yalnızca logda var. Kullanıcıya donen
             // yanit ikisinde de aynı ("E-posta veya şifre hatalı") --
             // aksi halde hesap sayimi (user enumeration) yapilabilirdi.
             LogLoginFailed(_logger, SensitiveDataMasker.MaskEmail(email), "kullanici_yok");
@@ -130,7 +130,7 @@ internal sealed partial class LoginCommandHandler
         // harcar hem de saldirganin kilit durumunu atlatmasina yarar.
         if (user.IsLockedOut())
         {
-            // Kilitli hesaba giriş denemesi, DEVAM EDEN bir saldirinin
+            // Kilitli hesaba giriş denemesi, devam eden bir saldirinin
             // en net isaretidir: hesap zaten kilitlendigi halde biri
             // hâlâ deniyor.
             //

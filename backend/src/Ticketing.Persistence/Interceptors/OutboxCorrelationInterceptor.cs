@@ -41,13 +41,13 @@ namespace Ticketing.Persistence.Interceptors;
 /// Yalnızca uretimde bir sorunu arastirirken "bu e-postayi hangi
 /// istek tetikledi?" diye sordugunda cevapsiz kaliyorsun.
 ///
-/// Interceptor, unutulmasi MUMKUN OLMAYAN yere koyuyor: kaydetme
+/// Interceptor, unutulmasi mumkun olmayan yere koyuyor: kaydetme
 /// anında, otomatik.
 ///
 /// Bu, Sprint 12'deki AuditFieldsInterceptor kararinin aynisi ve aynı
 /// desende bir hatayi cozuyor: "alan tanimli ama kimse doldurmuyor".
 ///
-/// NEDEN AuditFieldsInterceptor'A EKLEMEDIM?
+/// Neden AuditFieldsInterceptor'A eklemedim?
 ///
 /// Ekleyebilirdim ve ChangeTracker'i bir kez yerine iki kez gezmekten
 /// kurtulurduk.
@@ -107,7 +107,7 @@ internal sealed class OutboxCorrelationInterceptor : SaveChangesInterceptor
             return;
         }
 
-        // ARKA PLAN ISLERINDE ICurrentUser BOŞ -- BU NORMAL
+        // Arka plan islerinde ICurrentUser boş -- bu normal
         //
         // ICurrentUser degerini IHttpContextAccessor'dan okuyor. Hangfire
         // isinde HTTP baglami YOK, dolayisiyla CorrelationId de yok.

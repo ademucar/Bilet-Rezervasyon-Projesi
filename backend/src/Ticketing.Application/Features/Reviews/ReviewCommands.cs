@@ -53,7 +53,7 @@ internal static class ReviewErrors
 internal static class ReviewEligibility
 {
     /// <summary>
-    /// "GECERLI BİLET" NE DEMEK? -- PDF'in soylemedigi ayrinti
+    /// "Gecerli bilet" ne demek? -- PDF'in soylemedigi ayrinti
     ///
     /// PDF "geçerli bilet almis kullanıcı" diyor ama hangi bilet
     /// durumlarinin geçerli sayilacagini soylemiyor. Karar bana ait:
@@ -105,7 +105,7 @@ public sealed class CreateReviewCommandValidator : AbstractValidator<CreateRevie
     {
         // PDF: "Puan 1 ile 5 arasında olmalıdır."
         //
-        // Bu kural UC YERDE birden var ve bu tekrar KASITLI:
+        // Bu kural uc yerde birden var ve bu tekrar kasitli:
         //   1. Burada (FluentValidation) -> kullanıcıya 400 + açık mesaj
         //   2. Review.Create             -> entity kendini korur
         //   3. CHECK constraint          -> SQL ile giren veri de gecemez
@@ -147,7 +147,7 @@ internal sealed class CreateReviewCommandHandler
             return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // KURAL 1: Etkinlik var mi ve TAMAMLANDI mi?
+        // Kural 1: Etkinlik var mi ve tamamlandi mi?
         //
         // PDF: "Etkinlik tamamlanmadan yorum yapılamaz."
         //
@@ -190,11 +190,11 @@ internal sealed class CreateReviewCommandHandler
             return Result.Failure<Guid>(ReviewErrors.NoValidTicket);
         }
 
-        // KURAL 3: Etkinlik başına TEK yorum
+        // Kural 3: Etkinlik başına tek yorum
         //
         // PDF: "Kullanıcı etkinlik başına bir yorum olusturabilir."
         //
-        // Bu kontrol YARISA ACIK: iki istek aynı anda gelirse ikisi de
+        // Bu kontrol yarisa acik: iki istek aynı anda gelirse ikisi de
         // "yok" görebilir. Sorun değil -- veritabanindaki
         // ix_reviews_user_event UNIQUE index'i ikincisini reddedecek
         // ve aşağıda yakaliyorum.
@@ -288,7 +288,7 @@ internal sealed class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewC
         // Burada 404 DEĞİL 403 donuyorum -- rezervasyon ve odemede
         // verdigim karardan FARKLI. Sebep:
         //
-        // Yorumlar HERKESE ACIK. Kullanıcı zaten etkinlik sayfasinda
+        // Yorumlar herkese acik. Kullanıcı zaten etkinlik sayfasinda
         // baskasinin yorumunu görüyor ve Id'sini biliyor. "Bu yorum
         // yok" demek sacma olurdu -- gozunun onunde duruyor.
         //
@@ -360,14 +360,14 @@ internal sealed class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewC
         //   "Kullanıcı yalnızca kendi yorumunu düzenleyebilir."
         //   "Admin uygunsuz yorumu kaldirabilir."
         //
-        // Ikisi aynı uctan yonetiliyor ama SONUCLARI FARKLI:
+        // Ikisi aynı uctan yonetiliyor ama sonuclari farkli:
         //
         //   KULLANICI  -> soft delete. Yorum kaybolur; kullanıcı
         //                 isterse yenisini yazabilir (unique index
         //                 IsDeleted=false filtreli olduğu için buna
         //                 izin veriyor).
         //
-        //   ADMIN      -> GIZLEME (IsHidden). Kayıt durur, denetim
+        //   Admin      -> gizleme (IsHidden). Kayıt durur, denetim
         //                 izi korunur, kullanıcı yerine yenisini
         //                 yazamaz.
         //

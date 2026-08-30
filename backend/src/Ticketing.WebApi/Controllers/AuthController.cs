@@ -32,9 +32,9 @@ namespace Ticketing.WebApi.Controllers;
 /// </summary>
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
-// HIZ SINIRI -- PDF Sprint 15: "Login, Register, Şifre sıfırlama"
+// hiz siniri -- PDF Sprint 15: "Login, Register, Şifre sıfırlama"
 //
-// Politika SINIF duzeyinde: bu controller'daki TÜM uclar korunuyor.
+// Politika sinif duzeyinde: bu controller'daki tüm uclar korunuyor.
 //
 // Uc uc tek tek isaretleseydik, ilerde eklenen bir uc (örneğin
 // "e-posta doğrulama kodu tekrar gönder") korumasiz kalırdı -- ve
@@ -143,7 +143,7 @@ public sealed class AuthController : ApiControllerBase
     /// <summary>
     /// Şifre sıfırlama e-postası gönderir.
     ///
-    /// GÜVENLİK: E-posta kayıtlı olsun olmasın HER ZAMAN 204 döner.
+    /// Güvenlik: E-posta kayıtlı olsun olmasın her zaman 204 döner.
     /// Aksi halde bu endpoint, kayıtlı e-postalari tespit etmek için
     /// kullanilabilecek açık bir tarama araci olurdu.
     /// </summary>
@@ -157,7 +157,7 @@ public sealed class AuthController : ApiControllerBase
 
     /// <summary>
     /// Sıfırlama anahtariyla yeni şifre belirler.
-    /// Anahtar TEK KULLANIMLIKTIR ve 1 saat gecerlidir.
+    /// Anahtar tek kullanimliktir ve 1 saat gecerlidir.
     /// </summary>
     [HttpPost("reset-password")]
     [AllowAnonymous]

@@ -7,10 +7,10 @@ namespace Ticketing.UnitTests.Application;
 /// PDF Sprint 15 dosya guvenligi kontrollerinin testleri.
 /// </summary>
 /// <remarks>
-/// BU TESTLERIN COGU "OLUMSUZ" TEST -- BILINCLI
+/// Bu testlerin cogu "olumsuz" test -- bilincli
 ///
 /// Guvenlik kodunda "dogru girdi kabul ediliyor mu?" sorusu kolay
-/// olandir. Asil deger "YANLIS girdi REDDEDILIYOR mu?" sorusunda.
+/// olandir. Asil deger "yanlis girdi reddediliyor mu?" sorusunda.
 ///
 /// Bir dogrulayici, hicbir seyi reddetmezse de "gecerli dosyayi kabul
 /// et" testini gecer. Yani yalnizca olumlu test yazmak, bozuk bir
@@ -59,7 +59,7 @@ public class FileUploadValidatorTests
     // Saldirgan "zararli.exe" dosyasini "afis.jpg" yapip yukluyor ve
     // Content-Type basligini da image/jpeg olarak elle yaziyor.
     //
-    // Uzanti kontrolu GECER. MIME kontrolu de GECER. Yalnizca içerik
+    // Uzanti kontrolu gecer. MIME kontrolu de gecer. Yalnizca içerik
     // imzasi bu saldiriyi yakaliyor.
     //
     // Bu test, imza kontrolunun neden vazgecilmez oldugunun kanitidir:
@@ -89,7 +89,7 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.type_not_allowed");
     }
 
-    // SALDIRI 3: DIZIN GECISI (path traversal)
+    // Saldiri 3: dizin gecisi (path traversal)
     //
     // "../../appsettings.json" gibi bir ad ile uygulama disina yazma
     // girisimi.
@@ -191,7 +191,7 @@ public class FileUploadValidatorTests
     // Kirpilmis dosya
     //
     // Imzayi tamamlayacak kadar bayt yoksa dogrulayamayiz.
-    // "Dogrulayamiyorum" durumunda GECIRMEK degil REDDETMEK dogru
+    // "Dogrulayamiyorum" durumunda gecirmek degil reddetmek dogru
     // olan -- guvenlik kontrollerinde belirsizlik, ret demektir.
     [Fact]
     public void Imza_icin_yetersiz_bayt_reddedilir()
@@ -203,15 +203,15 @@ public class FileUploadValidatorTests
         sonuc.Error.Code.Should().Be("file.content_mismatch");
     }
 
-    // WEBP: "RIFF" TEK BASINA YETMEZ
+    // WEBP: "riff" tek basina yetmez
     //
-    // WAV ve AVI de "RIFF" ile basliyor. Yalnizca ilk 4 bayta
+    // Wav ve avi de "riff" ile basliyor. Yalnizca ilk 4 bayta
     // bakan bir kontrol, .webp adiyla yuklenen bir WAV dosyasini
     // kabul ederdi.
     [Fact]
     public void Riff_ile_baslayan_ama_webp_olmayan_dosya_reddedilir()
     {
-        // "RIFF....WAVE" -- gercek bir WAV başlığı.
+        // "riff....wave" -- gercek bir wav başlığı.
         byte[] wav = [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x41, 0x56, 0x45];
 
         var sonuc = FileUploadValidator.Dogrula("ses.webp", "image/webp", 1024, wav);

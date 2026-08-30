@@ -51,7 +51,7 @@ export function LoginPage() {
     onError: (error) => {
       const problem = toProblem(error)
 
-      // Hata kontrolunu METNE göre değil KODA göre yapıyorum.
+      // Hata kontrolunu metne göre değil koda göre yapıyorum.
       // Backend mesaji değiştirdiginde bu kod bozulmasin.
       const message =
         problem.errorCode === 'auth.account_locked'

@@ -48,7 +48,7 @@ public class Event : ConcurrentEntity
     /// karsilastirilabilir halde duruyor. Yeni bir gecis eklerken tek satır
     /// ekliyorum ve başka bir yeri unutma ihtimalim yok.
     ///
-    /// Ayrıca: bu sozlukte OLMAYAN her gecis YASAKTIR. Yani kural
+    /// Ayrıca: bu sozlukte olmayan her gecis yasaktir. Yani kural
     /// "neyin yasak olduğunu say" değil, "neyin serbest olduğunu say"
     /// seklinde. Yeni bir durum eklendiginde varsayılan davranis
     /// "hiçbir yere gecemez" olur -- güvenli taraf.
@@ -444,7 +444,7 @@ public class Event : ConcurrentEntity
 
         // Aynı etkinlik icindeki oturumlar birbiriyle cakisamaz.
         //
-        // DIKKAT: Bu kontrol sadece BU etkinliğin oturumlarini kapsar.
+        // Dikkat: Bu kontrol sadece bu etkinliğin oturumlarini kapsar.
         // PDF'in "Aynı salon aynı zaman araliginda iki ETKINLIGE atanamaz"
         // kuralı FARKLI etkinlikler arasindaki cakismayi da kapsiyor ve
         // önü buradan kontrol edemem -- diger etkinliklerin oturumlari

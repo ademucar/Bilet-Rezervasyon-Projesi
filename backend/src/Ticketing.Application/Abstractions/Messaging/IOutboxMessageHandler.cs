@@ -3,9 +3,7 @@ namespace Ticketing.Application.Abstractions.Messaging;
 /// <summary>
 /// Bir Outbox mesaj turunu isleyen bileşen. PDF Sprint 9.
 ///
-/// NEDEN AYRI BIR ARAYUZ? Neden processor'in içinde dev bir switch değil?
-///
-/// En kolay yol soyle olurdu:
+/// Once processor'in icine buyuk bir switch yazmayi dusundum:
 ///
 ///     switch (mesaj.Type)
 ///     {
@@ -14,10 +12,10 @@ namespace Ticketing.Application.Abstractions.Messaging;
 ///         case "EventCancelled":      ... 50 satır ...
 ///     }
 ///
-/// PDF Sprint 9 alti farklı senaryo sayiyor ve ilerideki sprintlerde
-/// daha da artacak. O switch birkaç yuz satirlik, test edilemez bir
-/// blok haline gelirdi: tek bir senaryoyu test etmek için processor'in
-/// tamamini ayaga kaldirmak gerekirdi.
+/// Vazgectim. PDF Sprint 9 alti senaryo sayiyor ve sonraki
+/// sprintlerde artiyor; o switch birkac yuz satirlik, test edilemez
+/// bir bloga donusurdu. Tek bir senaryoyu test etmek icin
+/// processor'in tamamini ayaga kaldirmak gerekirdi.
 ///
 /// Ayrı arayüz ile her senaryo kendi sinifinda, kendi bagimliliklariyla
 /// ve tek başına test edilebilir. Processor ise hiçbir senaryoyu
@@ -36,10 +34,9 @@ public interface IOutboxMessageHandler
     /// Mesaji isler.
     /// </summary>
     /// <remarks>
-    /// İsleyiciler idempotent olmak zorunda
-    ///
-    /// Outbox "en az bir kez teslim" (at-least-once) garantisi verir,
-    /// "tam olarak bir kez" (exactly-once) DEĞİL.
+    /// Isleyicilerin idempotent olmasi sart, cunku Outbox
+    /// "en az bir kez teslim" (at-least-once) garantisi veriyor,
+    /// "tam olarak bir kez" (exactly-once) degil.
     ///
     /// Somut senaryo: isleyici e-postayi gonderdi, tam o anda sunucu
     /// coktu ve ProcessedAt yazilamadi. Sistem ayaga kalkinca mesaj

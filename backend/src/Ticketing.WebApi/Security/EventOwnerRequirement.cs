@@ -14,10 +14,10 @@ namespace Ticketing.WebApi.Security;
 public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 
 /// <summary>
-/// ROL BAZLI ile KAYNAK BAZLI YETKILENDIRME ARASINDAKI FARK
+/// Rol bazli ile kaynak bazli yetkilendirme arasindaki fark
 ///
 /// Rol bazlı:    "Organizatör musun?"        -> token'a bakar, DB'ye gitmez
-/// Kaynak bazlı: "BU etkinliğin sahibi misin?" -> DB'ye BAKMAK ZORUNDA
+/// Kaynak bazlı: "bu etkinliğin sahibi misin?" -> DB'ye bakmak zorunda
 ///
 /// Ikincisi olmadan su açık olusur: Organizatör rolune sahip herkes,
 /// BASKA organizatorlerin etkinliklerini düzenleyebilir. Rakip bir
@@ -26,7 +26,7 @@ public sealed class EventOwnerRequirement : IAuthorizationRequirement;
 /// [Authorize(Roles = "Organizer")] bunu ENGELLEYEMEZ -- çünkü token
 /// yalnızca "bu kişi organizatör" der, "bu etkinlik onun" demez.
 ///
-/// NEDEN Application katmaninda değil de BURADA?
+/// Neden Application katmaninda değil de burada?
 /// Handler içinde de kontrol edebilirdim. Ama o zaman her handler'da
 /// tekrar yazmamiz gerekirdi ve birinde unutmak yeterdi. Burada,
 /// endpoint'e girmeden önce çalışıyor ve unutulmasi imkansiz --
@@ -83,7 +83,7 @@ internal sealed class EventOwnerAuthorizationHandler
             return;
         }
 
-        // KENDİ KAPSAMIMI (scope) OLUSTURUYORUM
+        // Kendi kapsamimi (scope) olusturuyorum
         //
         // AuthorizationHandler SINGLETON olarak kaydedilir; DbContext ise
         // SCOPED. Singleton bir servise scoped bagimlilik enjekte etmek

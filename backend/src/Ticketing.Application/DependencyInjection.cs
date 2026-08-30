@@ -25,13 +25,13 @@ public static class DependencyInjection
 
             // Pipeline sirasi onemlidir
             //
-            // Behavior'lar KAYIT SIRASIYLA çalışır. Su an tek behavior var
+            // Behavior'lar kayit sirasiyla çalışır. Su an tek behavior var
             // ama Sprint 7'de TransactionBehavior eklendiginde sıra soyle
             // olmalı:
             //
             //   Validation -> Logging -> Transaction -> Handler
             //
-            // Validation EN BASTA çünkü geçersiz bir istek için transaction
+            // Validation en basta çünkü geçersiz bir istek için transaction
             // acmanin veya log yazmanin anlami yok. Transaction en ICTE
             // çünkü yalnızca handler'in veritabani islemlerini sarmalamali;
             // doğrulama süresi boyunca açık kalmis bir transaction
@@ -42,7 +42,7 @@ public static class DependencyInjection
         // Bu assembly'deki tüm AbstractValidator siniflarini kaydeder.
         services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
-        // OUTBOX ISLEYICILERI -- PDF Sprint 9
+        // Outbox isleyicileri -- PDF Sprint 9
         //
         // Bu kaydı ONCE Infrastructure'a yazmistim; derlenmedi, çünkü
         // isleyiciler `internal`. Hatayi gorunce iki secenegim vardi:

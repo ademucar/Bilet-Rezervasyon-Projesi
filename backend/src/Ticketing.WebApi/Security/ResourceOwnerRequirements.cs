@@ -5,7 +5,7 @@ using Ticketing.Domain.Entities;
 
 namespace Ticketing.WebApi.Security;
 
-// KAYNAK BAZLI YETKILENDIRME -- PDF: "Resource based authorization"
+// Kaynak bazli yetkilendirme -- PDF: "Resource based authorization"
 //
 // Sprint 3'te TicketOwner ve ReservationOwner politikalari
 // tanimlanmisti ama yalnızca RequireAuthenticatedUser() yapiyorlardi.
@@ -20,7 +20,7 @@ namespace Ticketing.WebApi.Security;
 // denedim:
 //
 //   Rezervasyonu OKU      -> 404
-//   Rezervasyonu İPTAL ET -> 404
+//   Rezervasyonu iptal et -> 404
 //   Sureyi UZAT           -> 404
 //   Ödeme AC              -> 404
 //
@@ -31,17 +31,17 @@ namespace Ticketing.WebApi.Security;
 //
 // Uc sebep:
 //
-// 1) POLITIKA YANILTICIYDI. Bir controller'a
+// 1) Politika yanilticiydi. Bir controller'a
 //    [Authorize(Policy = TicketOwner)] yazan kişi, sahiplik
 //    kontrolunun POLITIKA tarafından yapildigini sanirdi. Oysa tek
 //    koruma handler'in icindeki bir Where kosuluydu. Birisi o kosulu
 //    kaldirsa, politika hiçbir sey fark etmezdi.
 //
-// 2) SAVUNMA TEK KATMANLIYDI. Simdi iki bağımsız katman var:
+// 2) Savunma tek katmanliydi. Simdi iki bağımsız katman var:
 //    politika isteği kapida durduruyor, handler kendi sorgusunda
 //    yine filtreliyor. Birinin unutulmasi digerini geçersiz kilmiyor.
 //
-// 3) PDF ACIKCA ISTIYOR: "Resource based authorization
+// 3) PDF acikca istiyor: "Resource based authorization
 //    uygulanmalıdır" ve ornekler arasında TicketOwner ile
 //    ReservationOwner sayiliyor.
 //
@@ -143,7 +143,7 @@ internal abstract class ResourceOwnerHandlerBase<TRequirement>
             return;
         }
 
-        // KENDİ KAPSAMIM (scope) -- captive dependency'den kacinmak için
+        // Kendi kapsamim (scope) -- captive dependency'den kacinmak için
         //
         // AuthorizationHandler singleton; DbContext scoped. Singleton'a
         // scoped enjekte etmek DbContext'i uygulama omru boyunca

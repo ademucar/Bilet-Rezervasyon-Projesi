@@ -29,12 +29,12 @@ import {
 //   - Kilitli: amber. "Şimdilik değil" -- 10 dakika sonra bosalabilir.
 //   - Satıldı: koyu gri. Kalici, umut yok.
 //
-// ERİŞİLEBİLİRLİK NOTU: Yalnızca RENGE guvenmiyoruz. Her koltuğun
+// Erişilebilirlik notu: Yalnızca renge guvenmiyoruz. Her koltuğun
 // <title> etiketinde durumu METIN olarak da yazıyor; renk korlugu
 // olan kullanıcı fareyle uzerine gelince veya ekran okuyucuyla
 // durumu ogrenebiliyor.
 //
-// KOYU ZEMIN PALETI -- harita artik slate-900 uzerinde duruyor.
+// Koyu zemin paleti -- harita artik slate-900 uzerinde duruyor.
 //
 // Acik zemindeki eski degerler (bos: #cbd5e1, satildi: #475569)
 // koyu zeminde ters calisiyordu: bos koltuklar en parlak sey
@@ -67,7 +67,7 @@ function seatStatusLabel(status: number): string {
 }
 
 /**
- * GORSEL KOLTUK SECIMI -- PDF Sprint 7
+ * gorsel koltuk secimi -- PDF Sprint 7
  *
  * PDF'in bu sprintten bekledikleri:
  *   - Görsel koltuk seçimi                    -> SeatMap
@@ -92,10 +92,10 @@ export function SeatSelectionPage() {
   /** Etkinlik canlı olarak iptal edildiyse gösterilecek uyarı. */
   const [cancelledTitle, setCancelledTitle] = useState<string | null>(null)
 
-  // GELEN OLAYI ONBELLEGE ISLE -- PDF: "Gerçek zamanlı koltuk
+  // Gelen olayi onbellege isle -- PDF: "Gerçek zamanlı koltuk
   // güncelleme"
   //
-  // Olay geldiğinde sunucudan listeyi TEKRAR CEKMIYORUZ, elimizdeki
+  // Olay geldiğinde sunucudan listeyi tekrar cekmiyoruz, elimizdeki
   // önbelleği YAMALIYORUZ.
   //
   // Neden? Popüler bir konserde saniyede birkaç olay gelir. Her
@@ -108,7 +108,7 @@ export function SeatSelectionPage() {
   //
   // setQueryData ile YENI nesneler uretiyorum (yayma operatoru),
   // mevcut diziyi değiştirmiyorum. Yerinde değiştirseydim React
-  // referansin aynı olduğunu gorup EKRANI HİÇ GUNCELLEMEZDI --
+  // referansin aynı olduğunu gorup ekrani hiç guncellemezdi --
   // sessizce çalışmayan bir arayüz olurdu.
   const patchSeatStatus = useCallback(
     (eventSeatIds: string[], newStatus: number) => {
@@ -197,7 +197,7 @@ export function SeatSelectionPage() {
     queryFn: () => bookingApi.getSeatAvailability(sessionId),
     enabled: sessionId.length > 0,
 
-    // YOKLAMA ARTIK ASIL YOL DEĞİL, YEDEK -- PDF Sprint 10
+    // Yoklama artik asil yol değil, yedek -- PDF Sprint 10
     //
     // Sprint 7'de buraya sabit 10 saniyelik bir yoklama koymus ve
     // su notu birakmistim:
@@ -205,16 +205,16 @@ export function SeatSelectionPage() {
     //   "Bu bir GECICI çözüm. Sprint 10'da SignalR gelecek ve
     //    o zaman bu satır KALDIRILACAK."
     //
-    // Sprint 10 geldi ve satiri TAMAMEN KALDIRMADIM. Fikrimi
-    // değiştiren sey su: SignalR bağlantısı HER ZAMAN kurulamiyor.
+    // Sprint 10 geldi ve satiri tamamen kaldirmadim. Fikrimi
+    // değiştiren sey su: SignalR bağlantısı her zaman kurulamiyor.
     // Kurumsal aglar WebSocket'i engelleyebiliyor, vekil sunucular
     // uzun baglantilari kesebiliyor, kullanıcının interneti
     // gidebiliyor.
     //
     // Yoklamayi tamamen silseydim, bu durumlarda koltuk haritası
-    // TAMAMEN DONARDI -- Sprint 7'deki halinden bile kötü olurdu.
+    // tamamen donardi -- Sprint 7'deki halinden bile kötü olurdu.
     //
-    // Cozum: yoklama SignalR calisirken KAPALI, calismazken ACIK.
+    // Cozum: yoklama SignalR calisirken kapali, calismazken acik.
     //
     //   canlı bağlantı var  -> false (yoklama yok, olaylar geliyor)
     //   canlı bağlantı yok  -> 10 saniye (Sprint 7 davranisi)
@@ -231,7 +231,7 @@ export function SeatSelectionPage() {
 
   const seats = useMemo(() => availabilityQuery.data?.seats ?? [], [availabilityQuery.data])
 
-  // CAKISMA TESPITI -- PDF Sprint 7: "Çakışma bildirimi"
+  // Cakisma tespiti -- PDF Sprint 7: "Çakışma bildirimi"
   //
   // Her yenilemeden sonra soruyorum: sectigim koltuklardan biri
   // artık boş değil mi?
@@ -241,7 +241,7 @@ export function SeatSelectionPage() {
   // 409 alır ve neden olduğunu anlamaz. Kotu haberi erken vermek,
   // geç vermekten iyidir.
   //
-  // NEDEN useEffect DEĞİL?
+  // Neden useEffect değil?
   //
   // İlk yazimimda bunu bir effect içinde yapip kaybedilen koltukları
   // setSelected ile state'ten siliyordum. Calisiyordu ama yanlış
@@ -298,7 +298,7 @@ export function SeatSelectionPage() {
     //     ...
     //     setSelected(next)
     //
-    // Tek tek tiklamada calisiyordu. Ama tarayıcıda ucunu ARKA ARKAYA
+    // Tek tek tiklamada calisiyordu. Ama tarayıcıda ucunu arka arkaya
     // tıklayınca yalnızca SONUNCUSU seçili kaldı.
     //
     // Sebep: React aynı tur icindeki state guncellemelerini TOPLUYOR.
@@ -346,7 +346,7 @@ export function SeatSelectionPage() {
       // koymasaydim o sayfa açılır acilmaz boş bir iskelet gosterip
       // yeni bir istek atardi -- oysa veri elimde.
       //
-      // Bu ozellikle önemli çünkü GERİ SAYIM o sayfada başlıyor;
+      // Bu ozellikle önemli çünkü geri sayim o sayfada başlıyor;
       // fazladan bir gidis-donus, sayacin geç baslamasi demekti.
       queryClient.setQueryData(['reservation', reservation.id], reservation)
 

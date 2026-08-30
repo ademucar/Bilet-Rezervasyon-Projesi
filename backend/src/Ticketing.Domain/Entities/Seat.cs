@@ -5,13 +5,13 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// FIZIKSEL koltuk. "Salon A, Orta Blok, C sırası, 12 numara".
 ///
-/// EN ONEMLI AYRIM: Seat ile EventSeat karistirilmamali
+/// En onemli ayrim: Seat ile EventSeat karistirilmamali
 ///
 /// Seat      = Fiziksel koltuk. Salon yikilmadikca degismez.
 ///             Bir kere olusturulur, yillarca aynı kalır.
 ///
-/// EventSeat = O koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
-///             "12 Mart konserinde C-12: satılmış, 450 TL, VIP kategorisi"
+/// EventSeat = O koltuğun belirli bir etkinlik oturumundaki durumu.
+///             "12 Mart konserinde C-12: satılmış, 450 TL, vip kategorisi"
 ///
 /// Neden iki ayrı tablo?
 /// Tek tablo olsaydı, aynı salonda iki farklı konser olduğunda ikisinin

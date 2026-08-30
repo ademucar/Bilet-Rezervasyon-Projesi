@@ -7,7 +7,7 @@ import { PublicOnlyRoute } from './routes/PublicOnlyRoute'
 import { ErrorBoundary } from './components/layout/ErrorBoundary'
 import { Roles } from './types/auth'
 
-// ROUTE BAZLI KOD BOLME (code splitting)
+// Route bazli kod bolme (code splitting)
 //
 // PDF Sprint 18: "Route bazlı code splitting uygulanmalıdır."
 //
@@ -107,7 +107,7 @@ const queryClient = new QueryClient({
       // Varsayılan 0'dir; yani her bileşen bagladiginda yeni istek gider.
       staleTime: 60_000,
 
-      // 401 ve 403'te YENIDEN DENEME
+      // 401 Ve 403'te yeniden deneme
       //
       // Varsayılan davranis başarısız isteği 3 kez tekrarlar.
       //

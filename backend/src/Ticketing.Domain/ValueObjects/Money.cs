@@ -9,7 +9,7 @@ namespace Ticketing.Domain.ValueObjects;
 /// PDF Sprint 6: "Para değerleri decimal olarak tutulmalidir. Floating point
 /// kullanilmamalidir. Currency alanı bulunmalidir."
 ///
-/// NEDEN decimal, double DEĞİL?
+/// Neden decimal, double değil?
 ///
 /// double ikili (binary) tabanda çalışır ve 0.1 sayisini TAM olarak temsil
 /// edemez -- tipki benim 1/3'u ondalik olarak tam yazamadigim gibi.
@@ -25,7 +25,7 @@ namespace Ticketing.Domain.ValueObjects;
 ///
 /// NEDEN readonly record struct?
 ///
-/// record  : Para bir KIMLIK değil, bir DEGERDIR. 100 TL ile 100 TL aynı
+/// Record  : Para bir kimlik değil, bir degerdir. 100 TL ile 100 TL aynı
 ///           seydir; hangi nesne oldugunun onemi yoktur. record bana bu
 ///           deger bazlı esitligi (Equals, GetHashCode, ==) bedavaya verir.
 ///           Elle yazsaydim mutlaka bir hata yapardim.
@@ -123,7 +123,7 @@ public readonly record struct Money
     public static bool operator <=(Money left, Money right) => !(left > right);
 
     // CA2225: Operator overload'larin adlandirilmis karşılığı olmalıdır.
-    // Sebep: C# disindaki bazi .NET dilleri (örneğin eski VB.NET surumleri)
+    // Sebep: C# disindaki bazi .net dilleri (örneğin eski vb.net surumleri)
     // operator overload'larini cagiramaz. Bu metotlar onlar için kapi acar.
     // Ayrıca LINQ ifadelerinde metot adiyla kullanmak daha okunakli olabilir.
     public static Money Add(Money left, Money right) => left + right;

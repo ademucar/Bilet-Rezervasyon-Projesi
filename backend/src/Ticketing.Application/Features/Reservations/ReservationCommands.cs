@@ -42,7 +42,7 @@ internal sealed class CancelReservationCommandHandler
         }
 
         // Items ve icindeki EventSeat'leri yukluyorum: koltukları
-        // SERBEST BIRAKACAGIZ ve bunun için takip edilmeleri gerekiyor.
+        // serbest birakacagiz ve bunun için takip edilmeleri gerekiyor.
         var reservation = await _context.Reservations
             .Include(r => r.Items)
                 .ThenInclude(i => i.EventSeat)
@@ -97,7 +97,7 @@ internal sealed class CancelReservationCommandHandler
     }
 }
 
-// SURE UZATMA -- PDF: POST /api/v1/reservations/{id}/extend
+// Sure uzatma -- PDF: POST /api/v1/reservations/{id}/extend
 
 public sealed record ExtendReservationCommand(Guid Id) : IRequest<Result<ReservationDto>>;
 
@@ -159,7 +159,7 @@ internal sealed class ExtendReservationCommandHandler
         // geçerli görünür ama koltuklar 10. dakikada "musait" olur ve
         // başkası alabilir.
         //
-        // Rezervasyon ile koltuk sureleri HER ZAMAN aynı olmalı.
+        // Rezervasyon ile koltuk sureleri her zaman aynı olmalı.
         // Ikisini ayrı yerlerde tuttugum için bu senkronizasyon
         // benim sorumlulugumda.
         foreach (var item in reservation.Items)
@@ -181,7 +181,7 @@ internal sealed class ExtendReservationCommandHandler
     }
 }
 
-// SURESI DOLANLARI TEMIZLE -- background job cagiracak (Sprint 9)
+// Suresi dolanlari temizle -- background job cagiracak (Sprint 9)
 
 /// <summary>
 /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
@@ -218,7 +218,7 @@ internal sealed class ExpireReservationsCommandHandler
     {
         var now = _clock.UtcNow;
 
-        // TOPLU ISLEM SINIRI (BatchSize)
+        // Toplu islem siniri (BatchSize)
         //
         // Sinir olmasaydı, sistem bir süre durup 50.000 süresi dolmuş
         // rezervasyon birikseydi, job hepsini tek transaction'da
@@ -280,7 +280,7 @@ internal sealed class ExpireReservationsCommandHandler
             // sonraki calisma baslayamaz ve süresi dolan yeni
             // rezervasyonlar temizlenmeden bekler.
             //
-            // Yani KOLTUKLAR BOSA BEKLER -- doğrudan gelir kaybi.
+            // Yani koltuklar bosa bekler -- doğrudan gelir kaybi.
             //
             // Outbox'a yazmak ise sadece bir INSERT: mikrosaniyeler.
             // Gonderim isi ayrı bir job'a devrediliyor.
@@ -308,7 +308,7 @@ internal sealed class ExpireReservationsCommandHandler
             // yenilemesi gerekirdi -- ya da Sprint 7'de koydugum
             // 10 saniyelik yoklamayi beklemesi.
             //
-            // IKI AYRI OLAY gonderiyorum:
+            // İki ayri olay gonderiyorum:
             //   SeatReleased      -> oturumu izleyen HERKESE
             //   ReservationExpired -> "senin rezervasyonun bitti"
             //

@@ -11,7 +11,7 @@ interface State {
 /**
  * PDF Sprint 18: "Error Boundary kullanılmalıdır."
  *
- * NEDEN SINIF BILESENI? Hook'lar varken?
+ * Neden sinif bileseni? Hook'lar varken?
  *
  * Çünkü React'in hata yakalama mekanizmasi (componentDidCatch ve
  * getDerivedStateFromError) YALNIZCA sinif bilesenlerinde çalışır.
@@ -19,7 +19,7 @@ interface State {
  *
  * Yani bu, "eski usul kod" değil; React'in bugun bile tek yolu.
  *
- * NE ISE YARIYOR? Bir bileşende yakalanmamis hata olursa, React
+ * Ne ise yariyor? Bir bileşende yakalanmamis hata olursa, React
  * varsayılan olarak TÜM uygulamayi soker ve kullanıcı bembeyaz bir
  * ekran görür. Error Boundary o hatayi yakalayip anlamlı bir arayüz
  * gosterir.

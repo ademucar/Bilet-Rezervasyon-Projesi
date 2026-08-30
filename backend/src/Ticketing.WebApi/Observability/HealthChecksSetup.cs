@@ -14,7 +14,7 @@ namespace Ticketing.WebApi.Observability;
 /// birine yol aciyor.
 ///
 ///   GET /health/live   "Process ayakta mi?"
-///        -> HICBIR bagimliligi kontrol ETMEZ.
+///        -> hicbir bagimliligi kontrol etmez.
 ///        -> Kubernetes bunu kullanir ve BASARISIZ olursa
 ///           kapsayiciyi OLDURUP yeniden baslatir.
 ///
@@ -101,7 +101,7 @@ internal static class HealthChecksSetup
                 // Sprint 11'de önbelleği BILINCLI olarak opsiyonel
                 // yaptim: Redis yoksa sorgular veritabanindan
                 // karsilaniyor (Null Object Pattern). Yani Redis
-                // olmadan sistem YAVAS çalışır, BOZUK calismaz.
+                // olmadan sistem yavas çalışır, bozuk calismaz.
                 //
                 // Unhealthy deseydim: Redis dustugunde /health/ready
                 // başarısız olur, Kubernetes tüm kapsayicilari yuk
@@ -115,7 +115,7 @@ internal static class HealthChecksSetup
                 tags: [ReadyTag]);
         }
 
-        // 3) ARKA PLAN ISLERI -- PDF maddesi
+        // 3) Arka plan isleri -- PDF maddesi
         //
         // Hangfire kontrolü iki sey söylüyor: depolama erişilebilir mi
         // ve CALISAN (worker) var mi.
@@ -233,7 +233,7 @@ internal sealed class StorageHealthCheck : IHealthCheck
             // İstisna mesaji maskeleniyor
             //
             // Saglik ucu genellikle disaridan erişilebilir olur
-            // (yuk dengeleyici cagiriyor). IO istisnalari TAM DOSYA
+            // (yuk dengeleyici cagiriyor). İo istisnalari tam dosya
             // YOLUNU iceriyor:
             //   "Access to the path 'C:\...\uploads\...' is denied."
             //

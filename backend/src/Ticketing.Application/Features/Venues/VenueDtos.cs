@@ -3,7 +3,7 @@ namespace Ticketing.Application.Features.Venues;
 /// <summary>
 /// Mekan listesi ogesi.
 ///
-/// Listede DETAY alanlari (adres, koordinat) YOK -- yalnızca detay
+/// Listede detay alanlari (adres, koordinat) yok -- yalnızca detay
 /// sayfasinda var. Neden? Liste sorgusu 100 kayıt donebilir; her birine
 /// 500 karakterlik adres eklemek yaniti gereksiz sisirir. Kullanıcı
 /// zaten listede adresi okumuyor, isme bakip tikliyor.

@@ -18,7 +18,7 @@ namespace Ticketing.Persistence;
 ///
 /// Bunu yapmadim çünkü:
 ///
-/// 1) Program.cs, Persistence'in IC DETAYLARINI bilmek zorunda kalırdı:
+/// 1) Program.cs, Persistence'in ic detaylarini bilmek zorunda kalırdı:
 ///    hangi DbContext var, hangi repository'ler var. Yarin bir repository
 ///    eklersem Program.cs'i degistirmem gerekirdi -- WebApi katmani
 ///    Persistence'in degisikliginden etkilenirdi.
@@ -56,7 +56,7 @@ public static class DependencyInjection
                 "degiskenini kontrol edin.");
         }
 
-        // DENETIM ALANI INTERCEPTOR'I -- Sprint 12'de eklendi
+        // Denetim alani interceptor'I -- Sprint 12'de eklendi
         //
         // CreatedAt / UpdatedAt / soft delete alanlarini otomatik
         // dolduruyor. Gerekcesi ve nasil bulundugu

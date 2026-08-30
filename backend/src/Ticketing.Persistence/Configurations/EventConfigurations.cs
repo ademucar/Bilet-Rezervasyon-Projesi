@@ -43,7 +43,7 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
         // Uc ayrı sutun (FullRefundHours, PartialRefundHours, Percentage)
         // yerine tek bir jsonb sutunu kullanıyorum.
         //
-        // Neden? Bu uc deger BIRBIRINE BAGLI ve birlikte anlam tasiyor.
+        // Neden? Bu uc deger birbirine bagli ve birlikte anlam tasiyor.
         // Ileride politikaya yeni bir kural eklersek (örneğin "VIP biletler
         // için farklı oran") migration gerektirmeden jsonb icine
         // ekleyebiliriz.
@@ -132,7 +132,7 @@ internal sealed class EventSessionConfiguration : IEntityTypeConfiguration<Event
         // Bu index çakışma sorgusunu hizlandirir:
         //     WHERE HallId = @hall AND StartDate < @end AND EndDate > @start
         //
-        // NOT: Index tek başına kuralı GARANTI ETMEZ -- sadece hizlandirir.
+        // NOT: Index tek başına kuralı garanti etmez -- sadece hizlandirir.
         // Tam garanti için PostgreSQL'in EXCLUDE constraint'i gerekiyor:
         //     EXCLUDE USING gist (HallId WITH =, tsrange(StartDate, EndDate) WITH &&)
         // Bunu Sprint 5'te ham SQL migration'i olarak ekleyecegim;
@@ -184,12 +184,12 @@ internal sealed class TicketTypeSectionConfiguration : IEntityTypeConfiguration<
         // PDF is kuralı: "Aynı koltuk birden fazla aktif bilet turune
         // atanamaz."
         //
-        // Bu index, bir BOLUMUN yalnızca BIR bilet turune ait olmasini
+        // Bu index, bir bolumun yalnızca bir bilet turune ait olmasini
         // garanti ediyor. Bölüm tekil olduğu için o bolumdeki koltuklar
         // da otomatik olarak tek bir bilet turune ait oluyor.
         //
         // Bu kisit olmasaydı aynı koltuk hem "Standart 250 TL" hem
-        // "VIP 800 TL" olarak görünürdü ve hangi fiyatin geçerli
+        // "vip 800 TL" olarak görünürdü ve hangi fiyatin geçerli
         // olduğu belirsiz kalırdı.
         //
         // Composite key'in ILK sutunu TicketTypeId olduğu için
@@ -249,7 +249,7 @@ internal sealed class EventSeatConfiguration : IEntityTypeConfiguration<EventSea
                .OnDelete(DeleteBehavior.Restrict);
 
         // Koltuk haritası sorgusu: bir oturumun tüm koltuklarini durumuyla getir.
-        // Bu, sistemdeki EN SIK calisan sorgulardan biri olacak.
+        // Bu, sistemdeki en sik calisan sorgulardan biri olacak.
         builder.HasIndex(es => new { es.EventSessionId, es.Status })
                .HasDatabaseName("ix_event_seats_session_status");
 

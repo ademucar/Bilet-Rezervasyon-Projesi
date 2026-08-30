@@ -11,20 +11,20 @@ interface EventFilterPanelProps {
 }
 
 /**
- * ETKİNLİK FILTRE PANELİ -- PDF Sprint 11
+ * etkinlik filtre paneli -- PDF Sprint 11
  *
  * PDF'in saydığı sekiz filtre:
  *   Şehir, Kategori, Tarih, Fiyat aralığı, Mekan, Organizatör,
  *   Yaş sınırı, Satış durumu
  *
- * Bu panelde ALTISI var. Mekan ve organizatör BILEREK yok:
+ * Bu panelde altisi var. Mekan ve organizatör bilerek yok:
  *
  *   MEKAN: kullanıcı mekan adını genelde bilmez ("Demo Sahne" mi
- *   "Zorlu PSM" mi?). Etkinlik secince zaten görüyor. Uc TARAFINDA
+ *   "Zorlu psm" mi?). Etkinlik secince zaten görüyor. Uc tarafinda
  *   destekleniyor (venueId) -- organizatör paneli ve admin ekranlari
  *   kullanacak.
  *
- *   ORGANİZATÖR: aynı gerekce. Ustelik organizatorun KENDİ
+ *   Organizatör: aynı gerekce. Ustelik organizatorun kendi
  *   etkinliklerini gormesi için zaten kullanılıyor (Sprint 5).
  *
  * Yani sekiz filtre de API'de VAR; panelde son kullanıcının gerçekten

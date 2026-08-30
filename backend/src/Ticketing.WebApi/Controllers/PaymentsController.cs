@@ -22,7 +22,7 @@ public sealed class PaymentsController : ApiControllerBase
     /// Rezervasyon için ödeme baslatir.
     /// </summary>
     /// <remarks>
-    /// TUTAR GONDERILMEZ -- rezervasyondan okunur.
+    /// Tutar gonderilmez -- rezervasyondan okunur.
     /// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
     /// güvenilmemelidir."
     ///
@@ -66,7 +66,7 @@ public sealed class PaymentsController : ApiControllerBase
     ///
     /// Gerçek entegrasyonda ödeme sağlayıcısı burayi cagirir.
     ///
-    /// GÜVENLİK: Callback'e KORU KORUNE GUVENILMEZ. Handler, islemi
+    /// Güvenlik: Callback'e koru korune guvenilmez. Handler, islemi
     /// saglayiciya SORARAK dogruluyor (VerifyPaymentAsync). Doğrulama
     /// olmasaydı saldirgan bu adrese istek gonderip bedava bilet
     /// alabilirdi.
@@ -89,7 +89,7 @@ public sealed class PaymentsController : ApiControllerBase
         CancellationToken cancellationToken)
         // PDF Sprint 15 idempotency listesi: "Ödeme callback"
         //
-        // Bu uc için AYRI bir Idempotency-Key GEREKMIYOR ve bilinçli
+        // Bu uc için ayri bir Idempotency-Key gerekmiyor ve bilinçli
         // olarak eklemedim.
         //
         // Sebep: idempotency zaten SAGLANIYOR ama farklı bir yoldan.
@@ -99,10 +99,10 @@ public sealed class PaymentsController : ApiControllerBase
         //
         // Anahtar bazlı idempotency burada YANLIS olurdu: anahtari
         // SAGLAYICI uretecekti ve saglayicilar her denemede aynı
-        // anahtari gonderecegini GARANTI ETMIYOR. Anahtar degisirse
+        // anahtari gonderecegini garanti etmiyor. Anahtar degisirse
         // "yeni istek" sanip ikinci kez bilet uretirdik.
         //
-        // Odemenin KENDİ DURUMU en guvenilir idempotency anahtaridir.
+        // Odemenin kendi durumu en guvenilir idempotency anahtaridir.
         // Sprint 8'de bunu ucten uca dogrulamistim: callback 3 kez
         // cagrildi, bilet sayısı 2'de kaldı.
         => HandleResult(await Sender
@@ -129,7 +129,7 @@ public sealed class PaymentsController : ApiControllerBase
     /// Tam iadede biletler iptal edilir ve koltuklar tekrar satışa çıkar.
     /// </summary>
     /// <remarks>
-    /// YALNIZCA ADMIN. Kullanıcının kendi kendine iade baslatmasi,
+    /// Yalnizca admin. Kullanıcının kendi kendine iade baslatmasi,
     /// iade politikasini (CancellationPolicy) atlatmasi anlamina
     /// gelirdi. Kullanıcı tarafli iade akışı Sprint 12'de bilet
     /// iptali üzerinden gelecek ve politikayi uygulayacak.
@@ -145,7 +145,7 @@ public sealed class PaymentsController : ApiControllerBase
         CancellationToken cancellationToken)
         // PDF Sprint 15 idempotency listesi: "İade baslatma"
         //
-        // İade, cift calistirilmasi EN TEHLIKELI işlem: aynı parayi iki
+        // İade, cift calistirilmasi en tehlikeli işlem: aynı parayi iki
         // kez geri gondermek doğrudan mali kayip.
         //
         // Domain katmani zaten koruyor: Payment.Refund(), toplam iadenin

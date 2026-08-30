@@ -3,7 +3,7 @@ namespace Ticketing.Domain.Common;
 /// <summary>
 /// Domain'de "olup bitmis" bir seyi temsil eder.
 ///
-/// Isimlendirme kuralı: GECMIS ZAMAN kullanilir.
+/// Isimlendirme kuralı: gecmis zaman kullanilir.
 ///   Dogru:  ReservationCreated, PaymentSucceeded, EventCancelled
 ///   Yanlis: CreateReservation, SendEmail
 ///

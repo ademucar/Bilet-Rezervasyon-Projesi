@@ -35,7 +35,7 @@ internal sealed class VenueConfiguration : IEntityTypeConfiguration<Venue>
         // Koordinatlar için numeric kullanıyorum, double DEĞİL.
         //
         // Enlem/boylam için double "yeterince iyi" gorulur ama numeric(9,6)
-        // ~11 cm hassasiyet verir ve YUVARLAMA HATASI YAPMAZ. Aynı koordinat
+        // ~11 cm hassasiyet verir ve yuvarlama hatasi yapmaz. Aynı koordinat
         // yazilip okundugunda birebir aynı değeri döndürür; double'da
         // son basamaklarda kayma olabilir ve "bu mekan tasindi mi?" gibi
         // karsilastirmalar yanıltıcı sonuç verir.

@@ -15,7 +15,7 @@ internal sealed class PasswordHasher : IPasswordHasher
     /// Bu sayi neden onemli?
     ///
     /// BCrypt kasitli olarak YAVAS bir algoritmadir. Maliyet faktoru her
-    /// 1 arttiginda hesaplama süresi IKIYE KATLANIR (2^12 = 4096 tur).
+    /// 1 arttiginda hesaplama süresi ikiye katlanir (2^12 = 4096 tur).
     ///
     /// Neden yavaslik istiyorum? Çünkü veritabani sizarsa saldirgan
     /// hash'leri kaba kuvvetle kirmaya çalışır. SHA-256 gibi HIZLI bir

@@ -67,7 +67,7 @@ internal static class OpenTelemetrySetup
             .WithTracing(tracing =>
             {
                 tracing
-                    // 1) HTTP ISTEK IZLERI -- PDF maddesi
+                    // 1) HTTP istek izleri -- PDF maddesi
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         // Saglik kontrolleri saniyede bir cagriliyor.
@@ -83,7 +83,7 @@ internal static class OpenTelemetrySetup
                         options.RecordException = true;
                     })
 
-                    // 2) VERITABANI SORGULARI -- PDF maddesi
+                    // 2) Veritabani sorgulari -- PDF maddesi
                     //
                     // Npgsql'in KENDİ izleme kaynagi.
                     //
@@ -94,7 +94,7 @@ internal static class OpenTelemetrySetup
                     // GERCEKTE ne kadar surdugunu goruyoruz.
                     .AddNpgsql()
 
-                    // 3) REDIS ISLEMLERI -- PDF maddesi
+                    // 3) Redis islemleri -- PDF maddesi
                     //
                     // Burada bir siralama tuzagi var
                     //
@@ -113,7 +113,7 @@ internal static class OpenTelemetrySetup
                     // gerekiyor.
                     .AddRedisInstrumentation()
 
-                    // 4) ARKA PLAN ISLERI -- PDF maddesi
+                    // 4) Arka plan isleri -- PDF maddesi
                     //
                     // Hangfire'in hazır bir instrumentation'i yok.
                     // Kendi ActivitySource'umuzu ekliyorum; isler
@@ -121,7 +121,7 @@ internal static class OpenTelemetrySetup
                     // baslatiyor.
                     .AddSource(AppActivitySource.Name)
 
-                    // 5) HARICI SERVIS CAGRILARI -- PDF maddesi
+                    // 5) Harici servis cagrilari -- PDF maddesi
                     //
                     // HttpClient üzerinden yapilan her cagri.
                     // Bizde ödeme sağlayıcısı simülasyonu ve ilerde
@@ -129,7 +129,7 @@ internal static class OpenTelemetrySetup
                     .AddHttpClientInstrumentation(options =>
                         options.RecordException = true);
 
-                // ORNEKLEME (sampling) VE DISA AKTARIM
+                // Ornekleme (sampling) ve disa aktarim
                 //
                 // Gelistirmede her izi konsola yazıyorum: ne
                 // uretildigini gormek için.

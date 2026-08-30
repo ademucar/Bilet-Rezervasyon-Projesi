@@ -3,9 +3,9 @@ namespace Ticketing.Application.Abstractions.Time;
 /// <summary>
 /// Su anki zamani saglar.
 ///
-/// NEDEN DateTimeOffset.UtcNow'i DOGRUDAN CAGIRMIYORUZ?
+/// Neden DateTimeOffset.UtcNow'i dogrudan cagirmiyoruz?
 ///
-/// Çünkü o zaman zamana bağlı mantığı TEST EDEMEYIZ.
+/// Çünkü o zaman zamana bağlı mantığı test edemeyiz.
 ///
 /// Ornek: "Rezervasyon süresi 10 dakika sonra dolar" kuralini test
 /// etmek istiyorum. Handler içinde DateTimeOffset.UtcNow cagriliyorsa

@@ -42,7 +42,7 @@ internal static class OutboxPayload
     /// PDF: "Aynı Outbox kaydı iki kez islenmemelidir."
     ///
     /// Outbox "en az bir kez" garantisi verir; aynı mesaj tekrar
-    /// islenebilir. Bunu tamamen ONLEMEK yerine ZARARSIZ kiliyorum:
+    /// islenebilir. Bunu tamamen onlemek yerine zararsiz kiliyorum:
     /// bildirim yazmadan önce aynı turden, aynı varliga bağlı bir
     /// bildirim var mi diye bakiyorum.
     ///
@@ -64,14 +64,14 @@ internal static class OutboxPayload
                 cancellationToken);
 }
 
-// 1) BİLET SATIN ALINDI -- PDF: "Bilet satin alındı e-postası"
+// 1) Bilet satin alindi -- PDF: "Bilet satin alındı e-postası"
 
 /// <remarks>
 /// Pdf'in iki maddesi burada cakisiyor -- verdigim karar
 ///
 /// PDF Sprint 9, Outbox senaryolari arasında "QR bilet oluşturma
 /// islemi"ni sayiyor. Ama aynı PDF'in Sprint 8 bolumu, ödeme başarılı
-/// olduğunda su alti isin TEK BIR SUREC ICINDE calismasini istiyor ve
+/// olduğunda su alti isin tek bir surec icinde calismasini istiyor ve
 /// listede "Bilet oluşturma" da var.
 ///
 /// Ikisini birden yapmak mumkun değil: bilet oluşturma islemi tek
@@ -139,7 +139,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
         if (tickets.Count == 0)
         {
             // Gonderilecek aktif bilet kalmamis (hepsi iptal/iade
-            // edilmiş olabilir). Bu bir HATA DEĞİL -- istisna
+            // edilmiş olabilir). Bu bir hata değil -- istisna
             // firlatirsak mesaj boşuna 5 kez denenip dead letter olur.
             return;
         }
@@ -201,7 +201,7 @@ internal sealed class TicketsIssuedOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 2) ÖDEME BASARI BILDIRIMI -- PDF: "Ödeme basari bildirimi"
+// 2) Ödeme basari bildirimi -- PDF: "Ödeme basari bildirimi"
 
 internal sealed class PaymentSucceededOutboxHandler : IOutboxMessageHandler
 {
@@ -236,7 +236,7 @@ internal sealed class PaymentSucceededOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 3) REZERVASYON SURESI DOLDU -- PDF: "Rezervasyon süresi doldu bildirimi"
+// 3) Rezervasyon suresi doldu -- PDF: "Rezervasyon süresi doldu bildirimi"
 
 internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
 {
@@ -329,7 +329,7 @@ internal sealed class ReservationExpiredOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 4) ETKİNLİK İPTAL -- PDF: "Etkinlik iptal bildirimi"
+// 4) Etkinlik iptal -- PDF: "Etkinlik iptal bildirimi"
 
 /// <summary>
 /// Etkinlik iptal edildiginde bilet sahiplerinin HEPSINE bildirim yazar.
@@ -447,12 +447,12 @@ internal sealed class EventReminderOutboxHandler : IOutboxMessageHandler
     }
 }
 
-// 6) GUNLUK SATIS OZETI -- PDF: "Rapor hazirlama"
+// 6) Gunluk satis ozeti -- PDF: "Rapor hazirlama"
 
 /// <summary>
 /// Günlük satış ozetini adminlere bildirim olarak yazar.
 ///
-/// Raporun kendisi job içinde HESAPLANIYOR, burada yalnızca TESLIM
+/// Raporun kendisi job içinde hesaplaniyor, burada yalnızca teslim
 /// ediliyor. Boylece rapor üretimi ile dagitimi ayrı ayrı yeniden
 /// denenebiliyor: e-posta servisi cokerse rapor kaybolmuyor,
 /// payload'da duruyor.
@@ -596,7 +596,7 @@ internal sealed class ReservationCreatedOutboxHandler : IOutboxMessageHandler
 
         // Rezervasyon artık ödeme beklemiyorsa e-posta GONDERMIYORUZ.
         //
-        // Bu bir HATA DEĞİL: istisna firlatirsak mesaj bes kez denenip
+        // Bu bir hata değil: istisna firlatirsak mesaj bes kez denenip
         // dead letter olur ve operatoru boşuna mesgul eder.
         if (rezervasyon is null || rezervasyon.Status != ReservationStatus.Locked)
         {

@@ -6,7 +6,7 @@ namespace Ticketing.Domain.Entities;
 /// Organizatör profili. Bir kullanıcının organizatör olarak ek bilgileri.
 ///
 /// Neden User tablosuna sutun eklemedik?
-/// Çünkü bu alanlar kullanicilarin YALNIZCA KUCUK BIR KISMI için doludur.
+/// Çünkü bu alanlar kullanicilarin yalnizca kucuk bir kismi için doludur.
 /// 100.000 kullanicidan 50'si organizatorse, User tablosunda 99.950 satirda
 /// boş duran 8 sutun olurdu. Ayrı tablo hem yer tasarrufu saglar hem de
 /// "bu kullanıcı organizatör mu?" sorusunu netlestirir.

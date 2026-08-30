@@ -261,7 +261,7 @@ export function SeatLayoutPage() {
 }
 
 /**
- * Sıra etiketlerini üretir: A, B, C ... Z, AA, AB ...
+ * Sıra etiketlerini üretir: A, B, C ... Z, aa, ab ...
  *
  * Karisabilecek harfleri atliyorum: i, o, q.
  * Sebep: gerçek salonlarda gorevli "I sırası mi 1 sırası mi?" diye
@@ -276,7 +276,7 @@ function buildRowLabels(count: number): string[] {
     if (i < alphabet.length) {
       labels.push(alphabet[i])
     } else {
-      // 21'den sonra iki harfli: AA, AB, AC...
+      // 21'den sonra iki harfli: aa, ab, ac...
       const first = alphabet[Math.floor(i / alphabet.length) - 1]
       const second = alphabet[i % alphabet.length]
       labels.push(`${first}${second}`)

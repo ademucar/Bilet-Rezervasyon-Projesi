@@ -20,7 +20,7 @@ public sealed record RenderedEmail(string Subject, string HtmlBody);
 /// E-posta sablonlarini üretir. PDF Sprint 14.
 /// </summary>
 /// <remarks>
-/// NEDEN SABLON SISTEMI? Onceden ne vardi?
+/// Neden sablon sistemi? Onceden ne vardi?
 ///
 /// Sprint 9'a kadar e-posta govdeleri handler'larin ICINE gomulu
 /// HTML metinleriydi:
@@ -30,16 +30,16 @@ public sealed record RenderedEmail(string Subject, string HtmlBody);
 ///
 /// Bu yaklasimin uc somut sorunu vardi:
 ///
-/// 1) GORUNUM TUTARSIZLIGI: her e-posta farklı gorunuyordu. Birinde
+/// 1) Gorunum tutarsizligi: her e-posta farklı gorunuyordu. Birinde
 ///    başlık vardi digerinde yoktu; birinde imza vardi digerinde
 ///    yoktu. Kullanıcının gozunde bunlar aynı sirketten gelmiyor
 ///    gibi duruyordu.
 ///
-/// 2) DEGISIKLIK MALIYETI: alt bilgiye "abonelikten cik" bağlantısı
+/// 2) Degisiklik maliyeti: alt bilgiye "abonelikten cik" bağlantısı
 ///    eklemek gerekseydi SEKIZ ayrı dosyayı degistirmek gerekirdi --
 ///    ve birini unutmak kacinilmazdi.
 ///
-/// 3) IS MANTIGI KIRLILIGI: ödeme handler'inin isi para islemek,
+/// 3) İs mantigi kirliligi: ödeme handler'inin isi para islemek,
 ///    HTML yazmak değil.
 ///
 /// Sablon sistemi ucunu de cozuyor: ortak bir cerceve (layout) var,

@@ -16,7 +16,7 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-// jsdom'DA OLMAYAN TARAYICI API'LERI
+// Jsdom'da olmayan tarayici API'leri
 //
 // jsdom tam bir tarayıcı değil; bazı API'ler eksik. Bileşenlerim
 // bunları kullanıyor ve mock'lamazsak test "matchMedia is not a

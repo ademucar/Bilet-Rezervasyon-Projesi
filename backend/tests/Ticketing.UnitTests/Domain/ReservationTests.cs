@@ -57,7 +57,7 @@ public class ReservationTests
         //
         // Reservation.Create metodunun imzasinda "toplam tutar" diye bir
         // parametre YOK. Bu kasitli bir tasarim: cagiran taraf tutar
-        // gonderemez bile. Guvenligi kural ile degil, TIP SISTEMI ile
+        // gonderemez bile. Guvenligi kural ile degil, tip sistemi ile
         // sagliyorum -- unutulmasi imkansiz.
         var rezervasyon = Rezervasyon(koltukSayisi: 3, birimFiyat: 150m);
 
@@ -128,7 +128,7 @@ public class ReservationTests
         rezervasyon.ReservationCode[4..].Should().NotContainAny("0", "O", "1", "I", "L");
     }
 
-    // SURE KONTROLU -- PDF Sprint 7'nin kalbi
+    // Sure kontrolu -- PDF Sprint 7'nin kalbi
 
     [Fact]
     public void Create_SureyiDogruHesaplamali()
@@ -141,7 +141,7 @@ public class ReservationTests
     {
         // PDF: "Suresi dolmus rezervasyon uzerinden odeme baslatilamaz."
         //
-        // Bu kural IKI KATMANDA korunuyor:
+        // Bu kural iki katmanda korunuyor:
         //   1. Burada acik sure kontrolu -> "reservation.expired" hatasi
         //   2. Durum makinesinde: Expired -> PaymentPending yolu YOK
         //
@@ -260,7 +260,7 @@ public class ReservationTests
         // Bu testin adi buyuk harfle: kolay atlanacak ama onemli bir kural.
         //
         // Odeme basarisiz olunca kullaniciya ikinci sans veriyorum ama
-        // SURE UZATMIYORUZ. Uzatsaydik, surekli basarisiz odeme deneyerek
+        // sure uzatmiyoruz. Uzatsaydik, surekli basarisiz odeme deneyerek
         // koltugu suresiz bloke etmek mumkun olurdu.
         var rezervasyon = Rezervasyon();
         var ilkSure = rezervasyon.ExpiresAt;

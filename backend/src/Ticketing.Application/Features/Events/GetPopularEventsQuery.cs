@@ -56,7 +56,7 @@ internal sealed class GetPopularEventsQueryHandler
     }
 
     /// <summary>
-    /// "POPULER" NASIL OLCULUYOR?
+    /// "Populer" nasil olculuyor?
     ///
     /// Satılan AKTIF bilet sayısına göre. Basit ama doğru bir olcut:
     /// insanlarin parasiyla oy verdiği sey.
@@ -81,7 +81,7 @@ internal sealed class GetPopularEventsQueryHandler
     /// Tickets tablosunu tarayip Events ile birlestiriyor. Bilet
     /// sayısı buyudukce maliyeti artiyor.
     ///
-    /// Ustelik genellikle ANA SAYFADA gösteriliyor -- yani sitenin
+    /// Ustelik genellikle ana sayfada gösteriliyor -- yani sitenin
     /// en çok cagrilan sorgusu. En pahali ve en sik: önbellek için
     /// mukemmel aday.
     ///

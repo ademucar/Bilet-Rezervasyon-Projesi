@@ -50,7 +50,7 @@ describe('useCountdown', () => {
     // 5 saniye geçti; kalan 595 civarı olmalı.
     // Tam eşitlik aramıyorum: sahte zamanlayıcı ile
     // performance.now() arasında bir tık kayma olabilir ve testi
-    // ARADA BİR kıran bir eşitlik kontrolü, testin kendisini
+    // arada bir kıran bir eşitlik kontrolü, testin kendisini
     // güvenilmez yapardı.
     expect(result.current).toBeLessThanOrEqual(595)
     expect(result.current).toBeGreaterThan(590)

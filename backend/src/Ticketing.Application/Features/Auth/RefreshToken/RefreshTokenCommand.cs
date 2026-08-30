@@ -27,23 +27,23 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 ///   - "Logout isleminde token iptal edilmelidir."
 ///
 /// Rotation nedir?
-/// Her yenilemede eski token İPTAL EDILIR ve yeni bir token üretilir.
-/// Yani bir refresh token yalnızca BIR KEZ kullanilabilir.
+/// Her yenilemede eski token iptal edilir ve yeni bir token üretilir.
+/// Yani bir refresh token yalnızca bir kez kullanilabilir.
 ///
-/// PEKI NEDEN? Aşağıdaki saldiri senaryosu bunu aciklar:
+/// Peki neden? Aşağıdaki saldiri senaryosu bunu aciklar:
 ///
 ///   1. Saldirgan, kullanıcının token2'sini caldi (XSS, kötü amacli
 ///      tarayıcı eklentisi, ele gecirilmis cihaz...).
 ///
 ///   2. Gerçek kullanıcı token2 ile yenileme yapti -> token3 aldi.
-///      token2 artık İPTAL, ama veritabaninda kaydı DURUYOR ve
+///      Token2 artık iptal, ama veritabaninda kaydı duruyor ve
 ///      "yerine token3 gecti" bilgisini tasiyor.
 ///
 ///   3. Saldirgan da token2 ile yenileme denedi.
 ///
 ///   4. Sistem bakiyor: "bu token iptal edilmiş ama biri hâlâ
 ///      kullanmaya çalışıyor". Bunun iki acikamasi var: ya token
-///      calindi ya da ciddi bir hata var. IKISI DE ALARM SEBEBI.
+///      calindi ya da ciddi bir hata var. İkisi de alarm sebebi.
 ///
 ///   5. O kullanıcının TÜM aktif token'larini iptal ediyorum.
 ///      Hem saldirgan hem gerçek kullanıcı disari atiliyor.
@@ -144,7 +144,7 @@ internal sealed class RefreshTokenCommandHandler
         // ---- ROTATION ----
         var newToken = _tokenService.CreateRefreshToken();
 
-        // Eski token'i iptal et ve YERINE GECENI kaydet.
+        // Eski token'i iptal et ve yerine geceni kaydet.
         // Bu zincir, ileride "hangi token hangisinden turedi" sorusunu
         // cevaplamamizi ve saldiri anini tespit etmemizi saglar.
         storedToken.Revoke(_currentUser.IpAddress, newToken.HashValue);

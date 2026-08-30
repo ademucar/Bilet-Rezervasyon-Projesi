@@ -90,7 +90,7 @@ public abstract class ApiControllerBase : ControllerBase
             ErrorType.Concurrency => StatusCodes.Status409Conflict,
 
             // 422 Unprocessable Entity: istek BICIMSEL olarak doğru ama
-            // IS KURALI geregi islenemiyor.
+            // is kurali geregi islenemiyor.
             //
             // 400 ile karisir; fark su:
             //   400 -> "gonderdigin veri hatalı" (eksik alan, yanlış tip)

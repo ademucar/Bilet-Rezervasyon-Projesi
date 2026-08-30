@@ -15,7 +15,7 @@ namespace Ticketing.ArchitectureTests;
 ///
 ///     public EventDto ToDto() => new(Id, Title, ...);
 ///
-/// Ama bunu yaptigin anda Domain katmani, DIS DUNYANIN sozlesmesini
+/// Ama bunu yaptigin anda Domain katmani, dis dunyanin sozlesmesini
 /// bilmek zorunda kaliyor. Sonuclari:
 ///
 ///   1) API sozlesmesi degistiginde DOMAIN degisiyor. Frontend bir
@@ -26,7 +26,7 @@ namespace Ticketing.ArchitectureTests;
 ///      (liste ozeti, detay, admin gorunumu). Entity uzerinde
 ///      ToListDto(), ToDetailDto(), ToAdminDto() birikiyor.
 ///
-///   3) EN TEHLIKELISI: DTO'yu entity uretiyorsa, hangi alanlarin
+///   3) En tehlikelisi: DTO'yu entity uretiyorsa, hangi alanlarin
 ///      disariya sizdigini kontrol etmek zorlasiyor. Entity'ye yeni
 ///      bir alan ekleyen kisi, o alanin API yanitina da eklendigini
 ///      fark etmeyebilir.
@@ -52,10 +52,10 @@ public class DomainPurityTests
 
         foreach (var tip in domainTipleri)
         {
-            // YALNIZCA public YUZEY INCELENIYOR
+            // yalnizca public yuzey inceleniyor
             //
             // private bir yardimci metodun ne dondurdugu disariya
-            // sizmaz. Kural, KATMANLAR ARASI sozlesmeyle ilgili --
+            // sizmaz. Kural, katmanlar arasi sozlesmeyle ilgili --
             // ic ayrintiyla degil.
             //
             // DeclaredOnly: miras alinan (object.ToString gibi)

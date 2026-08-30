@@ -51,7 +51,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
     /// <summary>
     /// Mesaj türü -> isleyici eslemesi.
     ///
-    /// DI konteyneri kayıtlı TÜM IOutboxMessageHandler'lari enjekte
+    /// Di konteyneri kayıtlı tüm IOutboxMessageHandler'lari enjekte
     /// ediyor; biz bunlari bir sozluge ceviriyorum. Yeni bir isleyici
     /// eklemek için bu dosyaya dokunmaya gerek yok -- yalnızca
     /// DI'ya kaydetmek yeterli.
@@ -83,7 +83,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 
         // Bekleyen mesajlari sec
         //
-        // Filtreyi ENTITY'deki IsReadyToProcess ile değil, SORGUDA
+        // Filtreyi entity'deki IsReadyToProcess ile değil, sorguda
         // yazıyorum. Sebep: IsReadyToProcess bir C# metodu; EF önü
         // SQL'e ceviremez ve tabloyu KOMPLE bellege cekerdi.
         //
@@ -117,7 +117,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 
         foreach (var message in messages)
         {
-            // CORRELATION ID'YI MESAJDAN DEVRAL -- PDF Sprint 16
+            // correlation ID'yi mesajdan devral -- PDF Sprint 16
             //
             // PDF: correlation ID "Background job log" içinde de
             // kullanılmalıdır.
@@ -140,7 +140,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             // adimlar farklı zamanlarda ve farklı process'lerde
             // calismis olsa bile.
             //
-            // Kapsam DONGUNUN ICINDE: her mesajin kendi ID'si var,
+            // Kapsam dongunun icinde: her mesajin kendi ID'si var,
             // disarida acsaydim hepsi ilk mesajin ID'siyle loglanirdi.
             using var kapsam = string.IsNullOrWhiteSpace(message.CorrelationId)
                 ? null
@@ -152,7 +152,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
 
             // Her mesaj kendi basina -- biri digerini devirmesin
             //
-            // try/catch DONGUNUN ICINDE. Disinda olsaydı tek bir bozuk
+            // Try/catch dongunun icinde. Disinda olsaydı tek bir bozuk
             // mesaj (örneğin geçersiz JSON) partinin geri kalanini da
             // durdururdu ve o mesaj her turda aynı engeli olustururdu:
             // kuyruk kalici olarak tikanirdi.
@@ -201,7 +201,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             }
             catch (OperationCanceledException)
             {
-                // Uygulama kapaniyor. Bu bir HATA DEĞİL.
+                // Uygulama kapaniyor. Bu bir hata değil.
                 //
                 // MarkAsFailed cagirsaydim, her yeniden baslatmada
                 // isleme sirasindaki mesajlarin RetryCount'u boşuna
@@ -211,13 +211,13 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
                 throw;
             }
 #pragma warning disable CA1031 // Genel istisna yakalama
-            // NEDEN GENEL catch? -- CA1031 BILINCLI OLARAK SUSTURULDU
+            // neden genel catch? -- CA1031 bilincli olarak susturuldu
             //
             // Analiz kuralı haklı: normalde yalnızca bekledigin
             // istisnalari yakalamalisin, çünkü beklenmedik bir hatayi
             // yutmak sorunu gizler.
             //
-            // Ama burada durum tersine: bu bir ARKA PLAN ISLEYICISI ve
+            // Ama burada durum tersine: bu bir arka plan isleyicisi ve
             // isleyiciler çok cesitli istisnalar firlatabilir --
             // SmtpException, JsonException, HttpRequestException,
             // DbUpdateException, NullReferenceException...
@@ -229,7 +229,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             //
             // Hatayi YUTMUYORUZ: veritabanina ErrorMessage olarak
             // yazıyor, loga hata seviyesinde dusuyor ve izleme
-            // ekraninda görünüyor. Yani gizlenmiyor, KAYIT ALTINA
+            // ekraninda görünüyor. Yani gizlenmiyor, kayit altina
             // aliniyor -- bir arka plan islemcisinden beklenen tam
             // olarak budur.
             catch (Exception ex)
@@ -258,7 +258,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
             }
         }
 
-        // TEK SaveChanges -- DONGUNUN ICINDE DEĞİL
+        // Tek SaveChanges -- dongunun icinde değil
         //
         // Her mesajtan sonra kaydetseydim 20 ayrı veritabani gidis
         // donusu olurdu. Burada tek turda hepsi yaziliyor.
@@ -274,7 +274,7 @@ internal sealed partial class ProcessOutboxMessagesCommandHandler
         return Result.Success(new OutboxProcessingResult(processed, failed, deadLettered));
     }
 
-    // KAYNAK URETECI ILE LOGLAMA ([LoggerMessage])
+    // Kaynak ureteci ile loglama ([LoggerMessage])
     //
     // logger.LogInformation("... {A} {B}", a, b) yazmak yerine bunu
     // kullanıyorum çünkü:

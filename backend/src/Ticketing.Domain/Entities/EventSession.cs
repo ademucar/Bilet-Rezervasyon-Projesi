@@ -124,7 +124,7 @@ public class EventSession : ConcurrentEntity
     /// Bunlarin ikisi de degilse cakisiyorlardir. Bu iki kosulun
     /// degillemesi tam olarak yukaridaki formuldur.
     ///
-    /// KATI ESITSIZLIK (&lt;) kullanıyorum, &lt;= değil. Boylece
+    /// Kati esitsizlik (&lt;) kullanıyorum, &lt;= değil. Boylece
     /// 14:00-16:00 ile 16:00-18:00 oturumlari CAKISMAZ. Bu doğru davranis:
     /// bir seans bitip digeri hemen baslayabilir. &lt;= kullansaydim
     /// arka arkaya seans koymak imkansiz olurdu.
@@ -135,7 +135,7 @@ public class EventSession : ConcurrentEntity
     /// <summary>
     /// Fiziksel koltuklardan (Seat) bu oturuma ait EventSeat kayitlarini üretir.
     ///
-    /// BU METOT NEDEN BURADA? Neden bir servis değil?
+    /// Bu metot neden burada? Neden bir servis değil?
     ///
     /// EventSeat'ler bu oturuma AITTIR. Onlari üretme yetkisi de oturumun
     /// kendisinde olmalı. Bir "SeatGeneratorService" yazsaydim, o servis
@@ -148,7 +148,7 @@ public class EventSession : ConcurrentEntity
     /// Neden tek fiyat değil de eslestirme fonksiyonu aliyor?
     ///
     /// İlk yazisimda tek bir ticketTypeId ve price aliyordu. Ama gerçek
-    /// salonlarda her BOLUM farklı fiyatlidir: "Orta Blok 450 TL",
+    /// salonlarda her bolum farklı fiyatlidir: "Orta Blok 450 TL",
     /// "Balkon 250 TL".
     ///
     /// Tek fiyatli surumu kullanip sonradan koltukları tek tek
@@ -156,7 +156,7 @@ public class EventSession : ConcurrentEntity
     /// EventSeat'in fiyat atama metodunu Application katmanina acmam
     /// gerekiyordu ve entity yarim kurulmus bir durumdan geciyordu.
     ///
-    /// Fonksiyon parametresi ile koltuk DOGRU fiyatla DOGUYOR; ara bir
+    /// Fonksiyon parametresi ile koltuk dogru fiyatla doguyor; ara bir
     /// geçersiz durum hiç olusmuyor.
     /// </summary>
     /// <param name="seats">Oturma planindaki fiziksel koltuklar.</param>
@@ -201,7 +201,7 @@ public class EventSession : ConcurrentEntity
 
             if (pricing is null)
             {
-                // ONEMLI: burada patliyorum ve HICBIR SEY kaydedilmiyor.
+                // onemli: burada patliyorum ve hicbir sey kaydedilmiyor.
                 //
                 // Yarim üretim yapip "bu koltuklarin fiyati yok" durumuna
                 // dusmek, sonradan temizlenmesi çok zor bir tutarsizlik

@@ -6,14 +6,14 @@ namespace Ticketing.Application.Abstractions.Persistence;
 /// <summary>
 /// Application katmaninin veritabanina bakan yuzu.
 ///
-/// NEDEN REPOSITORY DEĞİL DE DOGRUDAN DbSet?
+/// Neden repository değil de dogrudan DbSet?
 ///
 /// Klasik yaklasim her entity için bir repository yazmaktir:
 /// IUserRepository, IEventRepository, IReservationRepository...
 ///
 /// Bunu YAPMADIM. Sebeplerim:
 ///
-/// 1) DbSet&lt;T&gt; ZATEN bir repository'dir ve IQueryable ZATEN bir
+/// 1) DbSet&lt;T&gt; zaten bir repository'dir ve IQueryable zaten bir
 ///    sorgu soyutlamasidir. Ustune bir katman daha koymak, aynı isi
 ///    iki kez yapmaktir.
 ///

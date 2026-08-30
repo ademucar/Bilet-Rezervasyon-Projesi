@@ -15,7 +15,7 @@ namespace Ticketing.WebApi.Middleware;
 ///   - "Global exception handling eklenmelidir."
 ///   - "Problem Details standardi kullanılmalıdır."
 ///
-/// NEDEN IExceptionHandler, NEDEN KLASIK MIDDLEWARE DEĞİL?
+/// Neden IExceptionHandler, neden klasik middleware değil?
 ///
 /// Eskiden bu is try/catch iceren bir middleware ile yapilirdi.
 /// .NET 8 ile gelen IExceptionHandler arayuzu daha iyi:
@@ -28,7 +28,7 @@ namespace Ticketing.WebApi.Middleware;
 /// </summary>
 internal sealed partial class GlobalExceptionHandler : IExceptionHandler
 {
-    // LoggerMessage KAYNAK URETECI
+    // LoggerMessage kaynak ureteci
     //
     // Analizci (CA1848) bizi buna yonlendirdi ve HAKLI. Bastirmak yerine
     // uyduk. Neden daha iyi:
@@ -82,12 +82,12 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     {
         var problem = exception switch
         {
-            // 0. GIRDI DOGRULAMA HATASI -> 400 Bad Request
+            // 0. Girdi dogrulama hatasi -> 400 Bad Request
             //
             // ValidationBehavior'in firlattigi hata.
             //
             // Bu daldan önce yoktu ve doğrulama hatalari 500 donuyordu --
-            // uygulamayi ILK KEZ CALISTIRDIGIMDA fark ettim. Derleme
+            // uygulamayi ilk kez calistirdigimda fark ettim. Derleme
             // temizdi, testler yesildi ama endpoint yanlış cevap
             // veriyordu.
             //
@@ -98,10 +98,10 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             Application.Common.Exceptions.ValidationException validationEx
                 => CreateValidationProblem(validationEx),
 
-            // 1. IS KURALI IHLALI -> 422 Unprocessable Entity
+            // 1. İs kurali ihlali -> 422 Unprocessable Entity
             //
             // "Süresi dolmuş rezervasyonda ödeme baslatilamaz" gibi.
-            // Bu bir HATA DEĞİL, beklenen bir durum. Gunde binlerce kez
+            // Bu bir hata değil, beklenen bir durum. Gunde binlerce kez
             // olusabilir.
             //
             // Bu yüzden Warning seviyesinde logluyorum, Error değil.
@@ -113,7 +113,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 detail: domainEx.Message,
                 errorCode: domainEx.ErrorCode),
 
-            // 2. ES ZAMANLILIK CAKISMASI -> 409 Conflict
+            // 2. Es zamanlilik cakismasi -> 409 Conflict
             //
             // Projenin en kritik hata yolu.
             //
@@ -131,12 +131,12 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                         "Lütfen sayfayı yenileyip tekrar deneyin.",
                 errorCode: "concurrency.conflict"),
 
-            // 3. VERITABANI KISITI IHLALI -> 409 Conflict
+            // 3. Veritabani kisiti ihlali -> 409 Conflict
             //
             // Unique index ihlali buraya duser. Ornegin aynı koltuk için
             // ikinci bir EventSeat oluşturma girisimi.
             //
-            // ONEMLI: Exception'in KENDİ mesajini kullanıcıya DONMUYORUM.
+            // Onemli: Exception'in kendi mesajini kullanıcıya donmuyorum.
             // Icinde tablo adı, sutun adı ve index adı gecer:
             //     "duplicate key value violates unique constraint
             //      ix_event_seats_session_seat"
@@ -148,7 +148,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 detail: "İşlem tamamlanamadi. Aynı kayıt zaten mevcut olabilir.",
                 errorCode: "database.constraint_violation"),
 
-            // 4. ISTEK İPTAL EDILDI -> 499 (istemci baglantisini kesti)
+            // 4. İstek iptal edildi -> 499 (istemci baglantisini kesti)
             //
             // Kullanıcı sayfayı kapatti veya yenilendi. Bu HİÇ hata değil.
             // 500 olarak loglasaydim hata grafiklerim sahte artislarla
@@ -159,7 +159,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                 detail: "İşlem istemci tarafından iptal edildi.",
                 errorCode: "request.cancelled"),
 
-            // 5. ISTEK COK BUYUK / BOZUK -> 413 veya 400
+            // 5. İstek cok buyuk / bozuk -> 413 veya 400
             //
             // Bu dali sprint 15'te testle buldum
             //
@@ -181,7 +181,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // tahmin etmiyorum, çünkü aynı istisna bozuk govde için
             // 400 ile de gelebiliyor.
             //
-            // DERS: bir korumayi eklemek yetmiyor; TETIKLENDIGINDE ne
+            // Ders: bir korumayi eklemek yetmiyor; tetiklendiginde ne
             // dondugunu de dogrulamak gerekiyor. Ayar dogruydu, yanit
             // yanlisti ve bunu yalnızca calistirinca gordum.
             BadHttpRequestException badRequestEx => CreateProblem(
@@ -200,7 +200,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
                     ? "request.too_large"
                     : "request.malformed"),
 
-            // 6. GERCEK HATA -> 500
+            // 6. Gercek hata -> 500
             _ => CreateProblem(
                 statusCode: StatusCodes.Status500InternalServerError,
                 title: "Sunucu hatası",
@@ -265,7 +265,7 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
     ///       }
     ///     }
     ///
-    /// Duz bir liste değil ALAN BAZINDA sozluk donuyorum çünkü frontend
+    /// Duz bir liste değil alan bazinda sozluk donuyorum çünkü frontend
     /// her mesaji ilgili form alaninin altinda göstermek zorunda.
     /// Liste donseydim hangi mesajin hangi alana ait olduğu bilinemezdi.
     /// </summary>
@@ -336,9 +336,9 @@ internal sealed partial class GlobalExceptionHandler : IExceptionHandler
             // Stack trace GECMIYORUM: beklenen bir durum için 40 satirlik
             // stack trace yazmak log dosyalarini gereksiz sisirir.
             //
-            // MESAJ MASKELENIYOR -- PDF Sprint 15: "Hassas veri maskeleme"
+            // Mesaj maskeleniyor -- PDF Sprint 15: "Hassas veri maskeleme"
             //
-            // exception.Message KULLANICI GIRDISI ICEREBILIYOR. Somut
+            // Exception.Message kullanici girdisi icerebiliyor. Somut
             // ornekler:
             //
             //   - JSON ayristirma hatası, govdenin bir parcasini mesaja

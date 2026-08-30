@@ -246,7 +246,7 @@ public class Reservation : ConcurrentEntity
     /// Ödeme baslatir.
     ///
     /// Süre kontrolunu durum gecisinden ONCE yapıyorum. Sebep: bu bir
-    /// IS KURALI ihlali, geçersiz bir durum gecisi değil. Kullanıcıya
+    /// is kurali ihlali, geçersiz bir durum gecisi değil. Kullanıcıya
     /// "süreniz doldu" demek, "gecis yapılamaz" demekten çok daha anlamlı.
     /// Hata kodu da farklı olduğu için frontend ikisine farklı tepki verebilir.
     /// </summary>

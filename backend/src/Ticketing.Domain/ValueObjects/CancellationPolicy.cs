@@ -15,7 +15,7 @@ namespace Ticketing.Domain.ValueObjects;
 ///
 /// Bunu yapmadim çünkü:
 ///
-/// 1) Bu uc deger BIRBIRINE BAGLIDIR. "7 gunden fazlaysa %100" kuralı
+/// 1) Bu uc deger birbirine baglidir. "7 gunden fazlaysa %100" kuralı
 ///    tek başına anlamsizdir; digerleriyle birlikte tutarli olmalıdır.
 ///    Ayrı sutunlar olsaydı tutarliligi Event sinifinda kontrol etmem
 ///    gerekirdi ve Event zaten yeterince kalabalik.
@@ -46,7 +46,7 @@ public sealed record CancellationPolicy
     /// Parametre adları, property adlarinin camelCase halidir. Bu ONEMLI:
     ///
     /// EF Core bir nesneyi veritabanindan olustururken uygun bir constructor
-    /// arar ve parametreleri PROPERTY ADLARINA göre eslestirir. Parametre adı
+    /// arar ve parametreleri property adlarina göre eslestirir. Parametre adı
     /// "fullHours" olsaydı EF önü "FullRefundThresholdHours" property'siyle
     /// eslestiremez ve su hatayi verirdi:
     ///     "No suitable constructor was found for entity type"

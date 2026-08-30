@@ -156,7 +156,7 @@ public class Payment : ConcurrentEntity
     ///
     /// IDEMPOTENCY -- PDF: "Callback islemleri idempotent olmalıdır."
     ///
-    /// Ödeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderebilir.
+    /// Ödeme saglayicilari callback'i birden fazla kez gonderebilir.
     /// Bu bir hata değil, normal davranistir: sağlayıcı cevap alamadigini
     /// dusunurse tekrar dener.
     ///

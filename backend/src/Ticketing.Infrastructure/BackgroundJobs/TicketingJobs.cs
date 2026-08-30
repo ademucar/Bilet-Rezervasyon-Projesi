@@ -10,7 +10,7 @@ using Ticketing.Application.Features.Reservations;
 namespace Ticketing.Infrastructure.BackgroundJobs;
 
 /// <summary>
-/// ARKA PLAN ISLERI -- PDF Sprint 9
+/// Arka plan isleri -- PDF Sprint 9
 ///
 /// PDF'in istedigi bes is:
 ///   1. Süresi dolan rezervasyonları iptal etme
@@ -22,7 +22,7 @@ namespace Ticketing.Infrastructure.BackgroundJobs;
 /// Bu siniflar neden bu kadar ince?
 ///
 /// Her is yalnızca bir MediatR komutu gönderiyor ve sonucu logluyor.
-/// Is mantiginin TEK SATIRI bile burada değil.
+/// Is mantiginin tek satiri bile burada değil.
 ///
 /// Sebep mimari: Infrastructure katmani "isin nasil tetiklendigini"
 /// bilir, "isin ne olduğunu" bilmez. Zamanlayiciyi Hangfire'dan
@@ -50,7 +50,7 @@ public sealed partial class TicketingJobs
     /// Süresi dolmuş rezervasyonları iptal eder ve koltukları serbest birakir.
     /// </summary>
     /// <remarks>
-    /// [DisableConcurrentExecution] -- NEDEN ŞART?
+    /// [DisableConcurrentExecution] -- neden şart?
     ///
     /// Bu is dakikada bir çalışıyor. Bir calisma 70 saniye surerse
     /// (çok rezervasyon birikmisse olur) Hangfire varsayılan olarak
@@ -118,20 +118,20 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // 2 ve 3) OUTBOX MESAJLARINI ISLEME + BASARISIZLARI YENIDEN DENEME
+    // 2 Ve 3) outbox mesajlarini isleme + basarisizlari yeniden deneme
 
     /// <summary>
     /// Bekleyen Outbox mesajlarini isler.
     /// </summary>
     /// <remarks>
-    /// "BASARISIZ MESAJLARI YENIDEN DENEME" NEDEN AYRI BIR IS DEĞİL?
+    /// "Basarisiz mesajlari yeniden deneme" neden ayri bir is değil?
     ///
     /// PDF bu ikisini ayrı maddeler olarak sayiyor. Ayrı iki is
     /// yazmayi dusundum ve VAZGECTIM.
     ///
     /// Sebep: yeniden denenecek mesaj, bekleyen bir mesajdan yalnızca
     /// RetryCount > 0 olmasiyla ayriliyor. Processor'in sorgusu
-    /// zaten "islenmemis VE (NextRetryAt boş VEYA zamani gelmis)"
+    /// zaten "islenmemis ve (NextRetryAt boş veya zamani gelmis)"
     /// diyor -- yani yeni mesajlar ile yeniden denenecekleri AYNI
     /// sorgu topluyor.
     ///
@@ -161,7 +161,7 @@ public sealed partial class TicketingJobs
 
         var summary = result.Value;
 
-        // Sifir mesaj islendiginde LOG YAZMIYORUZ.
+        // Sifir mesaj islendiginde log yazmiyoruz.
         //
         // Bu is 30 saniyede bir çalışıyor: günde 2880 kez. Her
         // calismada "0 mesaj islendi" yazsaydım loglar günde 2880
@@ -194,11 +194,11 @@ public sealed partial class TicketingJobs
         LogRemindersQueued(_logger, result.Value);
     }
 
-    // 5c) SURESI DOLMAK UZERE OLAN REZERVASYONLARI UYAR
+    // 5C) suresi dolmak uzere olan rezervasyonlari uyar
     //
     // PDF Sprint 14: "Rezervasyon süresi dolmak uzereyken" bildirim.
     //
-    // DAKIKADA BIR çalışıyor -- uyarinin zamaninda gitmesi için sart.
+    // Dakikada bir çalışıyor -- uyarinin zamaninda gitmesi için sart.
     // Bes dakikada bir calissaydi, 3 dakikalik uyarı penceresini
     // tamamen KACIRABILIRDI.
 
@@ -224,7 +224,7 @@ public sealed partial class TicketingJobs
         }
     }
 
-    // 5b) GECMIS ETKINLIKLERI TAMAMLA -- Sprint 12 için eklendi
+    // 5B) gecmis etkinlikleri tamamla -- Sprint 12 için eklendi
     //
     // PDF Sprint 9 bu isi SAYMIYOR. Sprint 12'yi yazarken ortaya cikti:
     // "Etkinlik tamamlanmadan yorum yapılamaz" kuralı, etkinlikleri
@@ -277,7 +277,7 @@ public sealed partial class TicketingJobs
 
         var summary = result.Value;
 
-        // DateOnly'yi OLDUGU GIBI geciyorum, ToString ile metne
+        // DateOnly'yi oldugu gibi geciyorum, ToString ile metne
         // cevirmeden.
         //
         // CA1873 bunu yakaladi: parametreyi burada bicimlendirseydik,

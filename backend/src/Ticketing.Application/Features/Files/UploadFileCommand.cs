@@ -9,7 +9,7 @@ namespace Ticketing.Application.Features.Files;
 
 /// <summary>Yuklenen dosyanin istemciye donen bilgisi.</summary>
 /// <remarks>
-/// StoragePath BILINCLI OLARAK YOK. Sunucudaki gerçek dosya yolunu
+/// StoragePath bilincli olarak yok. Sunucudaki gerçek dosya yolunu
 /// istemciye vermek, saldirgana dizin yapisini açık eder. Istemcinin
 /// ihtiyaci olan tek sey Id ve indirme adresi.
 /// </remarks>
@@ -24,7 +24,7 @@ public sealed record UploadedFileDto(
 /// Dosya yukleme. PDF Sprint 15: file type / MIME type / güvenli dosya adı.
 /// </summary>
 /// <remarks>
-/// NEDEN IFormFile DEĞİL, STREAM?
+/// Neden IFormFile değil, stream?
 ///
 /// IFormFile, Microsoft.AspNetCore.Http içinde tanimli. Application
 /// katmanina almak, is mantigini WEB e bagimli yapardi -- mimari
@@ -62,14 +62,14 @@ internal sealed class UploadFileCommandHandler
         // Tüm dosyayı belege almiyorum. 5 MB tek başına sorun değil ama
         // es zamanlı 100 yukleme 500 MB eder ve sunucuyu dusurur.
         //
-        // Yalnızca imza için gereken kadar okuyup akışı BASA SARIYORUM;
+        // Yalnızca imza için gereken kadar okuyup akışı basa sariyorum;
         // sonra aynı akis doğrudan diske kopyalaniyor.
         var basBaytlari = new byte[FileUploadValidator.ImzaIcinGerekenBayt];
         var okunan = await request.Content
             .ReadAtLeastAsync(basBaytlari, basBaytlari.Length, throwOnEndOfStream: false, cancellationToken)
             .ConfigureAwait(false);
 
-        // 2) DOGRULA -- diske YAZMADAN ONCE
+        // 2) Dogrula -- diske yazmadan once
         //
         // Sıra önemli: önce yazip sonra dogrulasaydik, zararli dosya
         // geçersiz bulunana kadar diskte durmus olurdu. Kisa bir an
@@ -106,7 +106,7 @@ internal sealed class UploadFileCommandHandler
         // başarısız olursa dosya SAHIPSIZ kalır.
         //
         // Bunu dagitik işlem (2PC) ile cozmuyorum: karmasik ve pahali.
-        // Bunun yerine sahipsiz dosyalar KABUL EDILEBILIR sayiliyor ve
+        // Bunun yerine sahipsiz dosyalar kabul edilebilir sayiliyor ve
         // UploadedFile.IsOrphan() ile bulunup temizlenebiliyor.
         //
         // Ters yon (kayıt var, dosya yok) COK daha kötü olurdu: kullanıcı

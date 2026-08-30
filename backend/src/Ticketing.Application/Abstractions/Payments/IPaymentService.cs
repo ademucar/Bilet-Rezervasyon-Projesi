@@ -50,20 +50,20 @@ public sealed record PaymentResult(
 /// Istenen metotlar: CreatePayment, VerifyPayment, RefundPayment,
 /// CancelPayment.
 ///
-/// NEDEN SOYUTLAMA? Dogrudan Iyzico cagirsak olmaz miydi?
+/// Neden soyutlama? Dogrudan Iyzico cagirsak olmaz miydi?
 ///
 /// Uc sebep:
 ///
-/// 1) TEST EDILEBILIRLIK. Gerçek saglayiciyi cagiran bir kod, testte
+/// 1) Test edilebilirlik. Gerçek saglayiciyi cagiran bir kod, testte
 ///    de gerçek para hareketi denerdi. Soyutlama sayesinde testte
 ///    "her zaman başarılı" veya "her zaman başarısız" bir uygulama
 ///    gecebiliyoruz.
 ///
-/// 2) SAGLAYICI DEGISTIRME. Iyzico'dan Stripe'a gecmek, yalnızca yeni
+/// 2) Saglayici degistirme. Iyzico'dan Stripe'a gecmek, yalnızca yeni
 ///    bir uygulama yazip DI kaydini degistirmek demek. Application
 ///    katmaninda tek satır degismez.
 ///
-/// 3) KATMAN KURALI. Application katmani HTTP istemcisi, API anahtari,
+/// 3) Katman kurali. Application katmani HTTP istemcisi, API anahtari,
 ///    imza doğrulama gibi ALTYAPI detaylarini bilmemeli. Bu arayüz
 ///    o detaylari Infrastructure'da tutuyor.
 ///
@@ -88,16 +88,16 @@ public interface IPaymentService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Odemenin gerçekten gerceklestigini SAGLAYICIYA SORARAK dogrular.
+    /// Odemenin gerçekten gerceklestigini saglayiciya sorarak dogrular.
     ///
-    /// BU METOT NEDEN VAR? -- Guvenligin temel tasi
+    /// Bu metot neden var? -- Guvenligin temel tasi
     ///
     /// Gerçek entegrasyonlarda sağlayıcı, ödeme sonucunu bana bir
-    /// "callback" (webhook) ile bildirir. AMA o callback'e KORU KORUNE
+    /// "callback" (webhook) ile bildirir. Ama o callback'e koru korune
     /// GUVENILMEZ: saldirgan callback adresini bulup "ödeme başarılı"
     /// diye sahte bir istek gonderebilir ve bedava bilet alabilir.
     ///
-    /// Dogru akis: callback geldiğinde saglayiciya GERİ SORARIZ --
+    /// Dogru akis: callback geldiğinde saglayiciya geri sorariz --
     /// "gerçekten bu ödeme başarılı mi?" Yalnızca sağlayıcı onaylarsa
     /// bileti uretiriz.
     ///

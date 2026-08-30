@@ -86,7 +86,7 @@ internal sealed class ApplyForOrganizerCommandHandler
         // panelinde aynı kisiden 10 kayıt birikir ve degerlendirme
         // zorlasir. Ayrıca hangisini onaylayacagi belirsizlesir.
         //
-        // REDDEDILMIS basvuru varsa yenisine IZIN VERIYORUM -- kullanıcı
+        // Reddedilmis basvuru varsa yenisine izin veriyorum -- kullanıcı
         // eksiklerini giderip tekrar basvurabilmeli.
         var hasPending = await _context.OrganizerApplications
             .AsNoTracking()
@@ -162,7 +162,7 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // bir basvuru tekrar onaylanamaz (DomainException -> 422).
         application.Approve(_currentUser.UserId ?? Guid.Empty, _clock.UtcNow);
 
-        // ONAY = UC ISLEM, TEK SaveChanges
+        // Onay = uc islem, tek SaveChanges
         //
         //   1. Basvuruyu onayla
         //   2. Organizatör profilini oluştur

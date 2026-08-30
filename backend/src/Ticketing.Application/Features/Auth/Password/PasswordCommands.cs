@@ -10,7 +10,7 @@ using Ticketing.Application.Common.Results;
 
 namespace Ticketing.Application.Features.Auth.Password;
 
-// 1) SIFRE DEGISTIRME -- giriş yapmış kullanıcı
+// 1) Sifre degistirme -- giriş yapmış kullanıcı
 
 /// <summary>PDF: POST /api/v1/auth/change-password</summary>
 public sealed record ChangePasswordCommand(string CurrentPassword, string NewPassword)
@@ -191,7 +191,7 @@ internal sealed class ForgotPasswordCommandHandler : IRequestHandler<ForgotPassw
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // Linke token'in KENDISI konuyor; veritabaninda HASH'i duruyor.
+        // Linke token'in kendisi konuyor; veritabaninda hash'i duruyor.
         var resetLink = $"{_urls.FrontendUrl}/sifre-sifirla?token={Uri.EscapeDataString(resetToken.Value)}";
 
         await _emailService.SendAsync(
@@ -274,7 +274,7 @@ internal sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswor
         }
 
         // ChangePasswordHash içinde ClearPasswordResetToken da cagriliyor,
-        // yani token TEK KULLANIMLIK oluyor. Aynı link ikinci kez
+        // yani token tek kullanimlik oluyor. Aynı link ikinci kez
         // calismaz -- e-postası baskasinin eline gecen kullanıcı için
         // önemli bir koruma.
         user.ChangePasswordHash(_passwordHasher.Hash(request.NewPassword));

@@ -28,7 +28,7 @@ namespace Ticketing.Infrastructure.Email;
 ///
 /// O gün koda su notu birakmistim:
 ///
-///   "SPRINT 14 NOTU: Gerçek bir e-posta saglayicisina gecerken bu
+///   "Sprint 14 notu: Gerçek bir e-posta saglayicisina gecerken bu
 ///    sinif degisecek. O gün MailKit advisory'sinin kapanip
 ///    kapanmadigi TEKRAR kontrol edilmeli."
 ///
@@ -74,7 +74,7 @@ internal sealed partial class SmtpEmailService : IEmailService
         message.To.Add(MailboxAddress.Parse(recipient));
         message.Subject = subject;
 
-        // HTML GOVDE + DUZ METİN ALTERNATIFI
+        // HTML govde + duz metin alternatifi
         //
         // BodyBuilder ile hem HTML hem duz metin surumu gonderiyoruz
         // (multipart/alternative).
@@ -140,7 +140,7 @@ internal sealed partial class SmtpEmailService : IEmailService
 
             await client.SendAsync(message, cancellationToken).ConfigureAwait(false);
 
-            // E-POSTA KISMEN MASKELENIYOR -- PDF Sprint 15
+            // E-posta kismen maskeleniyor -- PDF Sprint 15
             //
             // E-posta adresi KVKK/GDPR kapsaminda kisisel veri. Her
             // gonderimde açık açık loglamak, log dosyalarini bir
@@ -157,7 +157,7 @@ internal sealed partial class SmtpEmailService : IEmailService
             // e-postada boşuna çalışır ve bir string tahsis ederdi.
             //
             // Kaynak ureteci normalde bu kontrolü KENDISI ekliyor -- ama
-            // yalnızca cagriya PARAMETRE OLARAK gecilen degerler için.
+            // yalnızca cagriya parametre olarak gecilen degerler için.
             // Burada parametreyi biz hesapliyorum, o yüzden kontrolü de
             // elle yazmamiz gerekiyor.
             if (_logger.IsEnabled(LogLevel.Debug))

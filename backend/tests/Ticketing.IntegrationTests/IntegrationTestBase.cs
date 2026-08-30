@@ -19,7 +19,7 @@ namespace Ticketing.IntegrationTests;
 /// Neden sart? Testler paylasilan bir veritabanini kullaniyor.
 /// Temizlemeseydim bir testin olusturdugu kullanici, digerinin
 /// "kullanici sayisi 1 olmali" beklentisini bozardi -- ve bu
-/// yalnizca testler BELIRLI BIR SIRAYLA calistiginda olurdu.
+/// yalnizca testler belirli bir sirayla calistiginda olurdu.
 ///
 /// Boyle bir hatayi ayiklamak saatler alir: test tek basina geciyor,
 /// paket halinde kiriliyor, sebep gorunmuyor.
@@ -40,7 +40,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     {
         await Factory.ResetDatabaseAsync().ConfigureAwait(false);
 
-        // HER TEST ICIN YENI HttpClient
+        // Her test icin yeni HttpClient
         //
         // Ayni istemciyi paylassaydik, bir testte eklenen
         // Authorization başlığı sonraki teste sizardi ve

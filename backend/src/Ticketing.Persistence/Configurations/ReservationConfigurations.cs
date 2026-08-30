@@ -60,7 +60,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         //
         //     WHERE Status IN (Locked, PaymentPending) AND ExpiresAt <= now()
         //
-        // Bu sorgu DAKIKADA BIR calisacak. Index olmasaydı her calismada
+        // Bu sorgu dakikada bir calisacak. Index olmasaydı her calismada
         // tüm Reservations tablosunu tararsdi. 100.000 rezervasyondan sonra
         // bu, veritabanini surekli mesgul eden bir yuke donusurdu.
         builder.HasIndex(r => new { r.Status, r.ExpiresAt })
@@ -166,7 +166,7 @@ internal sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
                .IsUnique()
                .HasDatabaseName("ix_tickets_number");
 
-        // Bir rezervasyon kalemi için YALNIZCA BIR bilet.
+        // Bir rezervasyon kalemi için yalnizca bir bilet.
         //
         // Bu, "aynı koltuk için iki bilet üretildi" hatasinin veritabani
         // seviyesindeki karşılığı. Boyle bir hata olsa salona iki kişi
@@ -216,7 +216,7 @@ internal sealed class TicketQrCodeConfiguration : IEntityTypeConfiguration<Ticke
 
         // PDF sayfa 8: "QR kod değeri benzersiz olmalıdır."
         //
-        // Bu index aynı zamanda GIRIS KONTROLUNUN sorgusudur:
+        // Bu index aynı zamanda giris kontrolunun sorgusudur:
         // gorevli QR'i okuttugunda "SELECT ... WHERE QrValue = @deger"
         // çalışır. Index olmadan her okutmada tam tarama olurdu ve
         // kapida kuyruk olusurdu.

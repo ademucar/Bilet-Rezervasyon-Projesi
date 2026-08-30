@@ -4,9 +4,9 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
  * Canlı bağlantı durumu göstergesi.
  * PDF Sprint 10 frontend gorevi: "Bağlantı durumu göstergesi".
  *
- * NEDEN GEREKLI? "Çalışıyor görünen ama çalışmayan" ekran problemi
+ * Neden gerekli? "Çalışıyor görünen ama çalışmayan" ekran problemi
  *
- * Gosterge olmasaydı bağlantı koptugunda ekranda HICBIR SEY
+ * Gosterge olmasaydı bağlantı koptugunda ekranda hicbir sey
  * degismezdi. Kullanıcı donmus bir koltuk haritasina bakip
  * "kimse bilet almiyor, acele etmeme gerek yok" diye dusunurdu.
  *

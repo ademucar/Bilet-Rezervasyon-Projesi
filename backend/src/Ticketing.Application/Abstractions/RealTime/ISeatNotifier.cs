@@ -4,9 +4,9 @@ namespace Ticketing.Application.Abstractions.RealTime;
 /// Koltuk durumu degisikliklerini bağlı istemcilere ANINDA bildirir.
 /// PDF Sprint 10.
 ///
-/// NEDEN ARAYUZ? Application neden SignalR'i tanimiyor?
+/// Neden arayuz? Application neden SignalR'i tanimiyor?
 ///
-/// SignalR bir ASP.NET Core teknolojisi. Application katmanina
+/// SignalR bir asp.net Core teknolojisi. Application katmanina
 /// IHubContext enjekte etseydim:
 ///
 ///   - Application, Microsoft.AspNetCore.SignalR paketine baglanirdi
@@ -29,17 +29,17 @@ namespace Ticketing.Application.Abstractions.RealTime;
 ///   E-POSTA kaybolursa: kullanıcı biletini aldigindan haberi olmaz.
 ///   Telafisi yok. Bu yüzden KALICI olmalı -> Outbox.
 ///
-///   KOLTUK BILDIRIMI kaybolursa: kullanıcının ekranindaki harita
+///   Koltuk bildirimi kaybolursa: kullanıcının ekranindaki harita
 ///   birkaç saniye eski kalır. Zaten yedek mekanizmalar var:
 ///     - Istemci yeniden baglandiginda listeyi bastan cekiyor
 ///     - Rezervasyon denemesi sunucuda dogrulaniyor (409)
 ///   Yani en kötü ihtimalle kullanıcı bir 409 görür.
 ///
-/// Ustelik Outbox'a yazmak GERCEK ZAMANLILIGI BOZARDI: mesaj en fazla
+/// Ustelik Outbox'a yazmak gercek zamanliligi bozardi: mesaj en fazla
 /// 30 saniye sonra islenirdi. "Gerçek zamanlı" diye 30 saniye gecikmeli
 /// bir sistem kurmak, amaci tamamen kacirmak olurdu.
 ///
-/// Ozetle: Outbox DAYANIKLILIK için, SignalR HIZ için. Ikisi farklı
+/// Ozetle: Outbox dayaniklilik için, SignalR hiz için. Ikisi farklı
 /// problemleri cozuyor.
 /// </summary>
 public interface ISeatNotifier
@@ -49,7 +49,7 @@ public interface ISeatNotifier
     /// Koltuklar bir rezervasyon için kilitlendi.
     /// </summary>
     /// <remarks>
-    /// KIMIN kilitledigi GONDERILMIYOR -- yalnızca hangi koltuklar.
+    /// Kimin kilitledigi gonderilmiyor -- yalnızca hangi koltuklar.
     ///
     /// Kullanıcı kimligini yayinlasaydik, oturumu izleyen herkes
     /// "su kişi su koltuğu aldi" bilgisini gorurdu. Bu bir gizlilik

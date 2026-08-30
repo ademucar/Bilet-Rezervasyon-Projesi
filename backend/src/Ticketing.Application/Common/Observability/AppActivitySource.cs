@@ -17,12 +17,12 @@ namespace Ticketing.Application.Common.Observability;
 /// Her iki katmanin da (WebApi ve Infrastructure) gorebildigi tek
 /// yer Application. Buraya tasidim.
 ///
-/// Bu, bagimliligi TERS CEVIRMENIN küçük ama tipik bir ornegi:
+/// Bu, bagimliligi ters cevirmenin küçük ama tipik bir ornegi:
 /// ortak ihtiyac, ortak bagimlilik olan katmana cikiyor.
 ///
-/// NEDEN System.Diagnostics, OpenTelemetry DEĞİL?
+/// Neden System.Diagnostics, OpenTelemetry değil?
 ///
-/// ActivitySource, .NET'in KENDİ sinifi. OpenTelemetry paketine
+/// ActivitySource, .net'in kendi sinifi. OpenTelemetry paketine
 /// bagimli degiliz.
 ///
 /// Bu önemli: Application katmani izleme SAGLAYICISINI bilmiyor.
@@ -58,7 +58,7 @@ public static class AppActivitySource
     /// Bir arka plan isi için izleme kapsami baslatir.
     /// </summary>
     /// <remarks>
-    /// DONUS DEGERI null OLABILIR -- VE BU NORMAL
+    /// Donus degeri null olabilir -- ve bu normal
     ///
     /// Hicbir dinleyici yoksa StartActivity null döner. Bu bir hata
     /// değil, bilinçli bir performans tasarimi: izleme kapaliyken

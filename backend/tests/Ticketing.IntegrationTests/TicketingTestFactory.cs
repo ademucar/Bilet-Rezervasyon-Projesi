@@ -15,7 +15,7 @@ namespace Ticketing.IntegrationTests;
 /// kapsayicilariyla ayaga kaldirir. PDF Sprint 17: "Testcontainers".
 /// </summary>
 /// <remarks>
-/// NEDEN GERCEK VERITABANI? -- InMemory NEDEN YETMEZ?
+/// Neden gercek veritabani? -- InMemory neden yetmez?
 ///
 /// EF Core'un InMemory saglayicisi bir veritabani DEGIL, bir sozluk.
 /// Su ozelliklerin HICBIRI orada yok:
@@ -23,22 +23,22 @@ namespace Ticketing.IntegrationTests;
 ///   - xmin tabanli iyimser eszamanlilik  &lt;- projemizin KALBI
 ///   - Gercek transaction ve izolasyon seviyeleri
 ///   - UNIQUE / FOREIGN KEY kisitlari
-///   - LOWER(), ILIKE gibi PostgreSQL fonksiyonlari
+///   - lower(), ilike gibi PostgreSQL fonksiyonlari
 ///   - Sorgu CEVIRISI (LINQ -> SQL)
 ///
 /// Sonuncusu ozellikle sinsi: Sprint 13'te GroupBy + record
 /// constructor kombinasyonunun EF tarafindan CEVRILEMEDIGINI ancak
 /// calisma zamaninda 500 hatasi alarak ogrendim. InMemory saglayici
-/// LINQ'u BELLEKTE calistirdigi icin o hatalarin HICBIRINI
+/// LINQ'u bellekte calistirdigi icin o hatalarin hicbirini
 /// yakalamaz -- test yesil doner, uretim patlar.
 ///
 /// "Ayni koltugu iki kullanici alamaz" testini InMemory ile yazsaydik
-/// yesil olurdu ve HICBIR SEY kanitlamazdi. PDF de zaten gercek
+/// yesil olurdu ve hicbir sey kanitlamazdi. PDF de zaten gercek
 /// kapsayici istiyor.
 ///
 /// MALIYETI: yaklasik 10-20 saniyelik bir baslangic
 ///
-/// Kapsayicilar TEK KEZ baslatiliyor (ICollectionFixture) ve tum
+/// Kapsayicilar tek kez baslatiliyor (ICollectionFixture) ve tum
 /// testler paylasiyor. Her test icin ayri kapsayici baslatsaydik
 /// paket dakikalarca surerdi.
 /// </remarks>
@@ -46,7 +46,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
 {
     // Postgresql kapsayicisi
     //
-    // Surumu ACIKCA sabitliyorum ("17-alpine"), "latest" DEGIL.
+    // Surumu acikca sabitliyorum ("17-alpine"), "latest" degil.
     //
     // "latest" kullansaydik: bugun gecen bir test, PostgreSQL 18
     // ciktigi gun hicbir kod degismeden kirilabilirdi. Testin ne
@@ -78,12 +78,12 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
         return scope.ServiceProvider.GetRequiredService<TicketingDbContext>();
     }
 
-    // IMZA NOTU: xunit 2.x IAsyncLifetime, Task doner (ValueTask degil)
+    // İmza notu: xunit 2.x IAsyncLifetime, Task doner (ValueTask degil)
     //
     // WebApplicationFactory ise IAsyncDisposable'dan ValueTask donen
     // bir DisposeAsync tasiyor. Ikisi ayni sinifta cakisiyor.
     //
-    // Cozum: IAsyncLifetime.DisposeAsync'i ACIK ARAYUZ UYGULAMASI
+    // Cozum: IAsyncLifetime.DisposeAsync'i acik arayuz uygulamasi
     // olarak yaziyorum (asagida) ve taban sinifin surumune
     // yonlendiriyorum. Boylece iki sozlesme de bozulmadan
     // karsilaniyor.
@@ -95,7 +95,7 @@ public sealed class TicketingTestFactory : WebApplicationFactory<Program>, IAsyn
             _postgres.StartAsync(),
             _redis.StartAsync()).ConfigureAwait(false);
 
-        // SEMAYI MIGRATION ILE KUR -- EnsureCreated DEGIL
+        // Semayi migration ile kur -- EnsureCreated degil
         //
         // EnsureCreated() semayi model'den uretiyor ve
         // Migration'lari hic calistirmiyor.

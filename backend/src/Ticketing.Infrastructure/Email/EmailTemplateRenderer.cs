@@ -52,7 +52,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     ///
     /// Kullanıcı adını "&lt;script&gt;..." veya
     /// "&lt;a href='kötü-site'&gt;Hesabinizi dogrulayin&lt;/a&gt;"
-    /// olarak kaydederse, kacis olmadan bu HTML e-postaya OLDUGU GIBI
+    /// olarak kaydederse, kacis olmadan bu HTML e-postaya oldugu gibi
     /// girerdi.
     ///
     /// Cogu e-posta istemcisi script calistirmiyor ama BAGLANTI
@@ -72,7 +72,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
     /// Tüm e-postalarin ortak govdesi.
     /// </summary>
     /// <remarks>
-    /// NEDEN SATIR ICI (inline) CSS?
+    /// Neden satir ici (inline) CSS?
     ///
     /// Web'de satır ici stil kötü bir aliskanliktir. E-postada ise
     /// ZORUNLULUK: Gmail, Outlook ve çoğu istemci &lt;style&gt;
@@ -238,7 +238,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             (d.TryGetValue("TicketList", out var liste) ? liste : string.Empty) +
             "</div>" +
 
-            // QR KODU E-POSTAYA GOMULMUYOR -- Sprint 8 karari
+            // QR kodu E-postaya gomulmuyor -- Sprint 8 karari
             //
             // QR değeri bilet gecerliligini kanitlayan hassas bir veri.
             // E-posta kutusuna dusen bir goruntu, iletildiginde
@@ -269,7 +269,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
         => ($"Etkinlik iptal edildi - {H(d, "EventTitle")}",
             $"<p>Merhaba {H(d, "FirstName")},</p>" +
 
-            // Kotu haberi BASTA ve NET veriyorum.
+            // Kotu haberi basta ve net veriyorum.
             //
             // Uzun bir girisin ardindan söylemek, kullanıcının
             // e-postayi bastan sona okumasini gerektirirdi ve
@@ -278,7 +278,7 @@ internal sealed class EmailTemplateRenderer : IEmailTemplateRenderer
             $"{H(d, "EventTitle")} etkinligi iptal edildi.</strong></p>" +
             Kutu(("Sebep", H(d, "Reason"))) +
 
-            // Paranin ne olacagi EN COK merak edilen sey; hemen
+            // Paranin ne olacagi en cok merak edilen sey; hemen
             // söylemek destek taleplerini azaltiyor.
             "<p>Ödemeniz otomatik olarak iade edilecektir. İade, " +
             "bankaniza bagli olarak 3-10 is gunu icinde hesabiniza " +

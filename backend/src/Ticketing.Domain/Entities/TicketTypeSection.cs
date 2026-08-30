@@ -16,11 +16,11 @@ namespace Ticketing.Domain.Entities;
 /// bir sey yok.
 ///
 /// Neden TicketType'a tek bir SeatSectionId eklemedim?
-/// Çünkü bir bilet türü BIRDEN FAZLA bolumu kapsayabilir. Ornegin
+/// Çünkü bir bilet türü birden fazla bolumu kapsayabilir. Ornegin
 /// "Standart" bileti hem "Orta Blok" hem "Yan Blok" için geçerli
 /// olabilir. Tek alan bunu modelleyemezdi.
 ///
-/// Ters yon ise TEKILDIR: bir bölüm yalnızca BIR bilet turune ait
+/// Ters yon ise tekildir: bir bölüm yalnızca bir bilet turune ait
 /// olabilir -- yoksa o bolumdeki koltuğun fiyati belirsiz kalırdı.
 /// Bu kisiti UNIQUE (SeatSectionId) index'i ile garanti ediyorum.
 ///

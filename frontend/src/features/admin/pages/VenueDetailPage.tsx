@@ -104,7 +104,7 @@ export function VenueDetailPage() {
             type="number"
             error={errors.capacity?.message}
             {...register('capacity', {
-              // valueAsNumber ŞART: HTML input her zaman STRING döner.
+              // valueAsNumber şart: HTML input her zaman string döner.
               // Bu olmasaydı backend'e "500" (metin) gonderirdim ve
               // model binding hatası alırdım.
               valueAsNumber: true,

@@ -3,7 +3,7 @@ namespace Ticketing.Domain.Enums;
 /// <summary>
 /// Etkinligin yasam dongusu. PDF sayfa 6.
 ///
-/// NEDEN DEGERLERI ELLE YAZIYORUM (= 1, = 2 ...)?
+/// Neden degerleri elle yaziyorum (= 1, = 2 ...)?
 ///
 /// Bu enum'lari veritabanina int olarak yazacagim. Sayilari elle
 /// vermezsem C# bunlari sirayla 0, 1, 2... diye atar.

@@ -27,7 +27,7 @@ interface AuthLayoutProps {
  * Neden ortalanmiş kart değil de iki sütun?
  *
  * Önceki hâl ekranın ortasında yüzen dar beyaz bir karttı. Sorun
- * şu: kullanıcı buraya çoğu zaman bir AKIŞIN ORTASINDA düşüyor --
+ * şu: kullanıcı buraya çoğu zaman bir akişin ortasinda düşüyor --
  * koltuk seçerken, rezervasyona devam ederken. Ortalanmış kart o
  * bağlamı tamamen siliyor; kullanıcı nereden geldiğini ve neden
  * giriş yaptığını göremiyor.

@@ -20,7 +20,7 @@ public class ReservationItem : Entity
     public Guid TicketTypeId { get; private set; }
 
     /// <summary>
-    /// Bu koltuğun REZERVASYON ANINDAKI fiyati.
+    /// Bu koltuğun rezervasyon anindaki fiyati.
     ///
     /// EventSeat.Price'tan kopyalaniyor. Neden tekrar kopyaliyoruz?
     /// Çünkü EventSeat iade sonrası tekrar satışa cikabilir ve o zaman

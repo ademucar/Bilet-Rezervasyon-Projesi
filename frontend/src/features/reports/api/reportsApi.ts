@@ -158,7 +158,7 @@ export const reportsApi = {
   },
 
   /**
-   * Rapor disa aktarimi TALEP EDER.
+   * Rapor disa aktarimi talep eder.
    *
    * Bu cagri dosyayi dondurmez
    *

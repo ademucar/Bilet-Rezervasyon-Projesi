@@ -85,7 +85,7 @@ public class EventSeatTests
         //
         // Temizlik job'i dakikada bir calisiyor. Bir kullanicinin kilidi
         // 10:10'da doluyorsa, job 10:11'de gelip temizleyecek. Arada
-        // gecen 1 dakikada koltuk bos OLMASINA RAGMEN dolu gorunurdu.
+        // gecen 1 dakikada koltuk bos olmasina ragmen dolu gorunurdu.
         //
         // Populer bir konserde bu 1 dakika, yuzlerce kullanicinin bos
         // koltugu alamamasi demek.

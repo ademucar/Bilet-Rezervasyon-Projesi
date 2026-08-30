@@ -80,7 +80,7 @@ public class EventTests
              .Which.ErrorCode.Should().Be("event.sales_end_after_event");
     }
 
-    // DURUM MAKINESI -- projenin en kritik testleri
+    // Durum makinesi -- projenin en kritik testleri
 
     [Fact]
     public void SubmitForApproval_OturumYoksa_HataFirlatmali()

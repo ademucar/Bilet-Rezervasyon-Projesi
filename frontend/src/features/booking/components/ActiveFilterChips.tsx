@@ -11,11 +11,11 @@ import { formatDate } from '../../../lib/format'
  *
  * Sonuç: "neden bu kadar az etkinlik var?" sorusunun cevabı ekranda
  * duruyor ama görünmüyor. Boş sonuç ekranında bunu yazmıştım; ama
- * asıl gerekli olan yer SONUÇ VARKEN.
+ * asıl gerekli olan yer sonuç varken.
  *
  * Rozetler iki iş yapıyor:
  *   1. Ne filtrelendiğini görünür kılıyor
- *   2. Her filtreyi TEK TIKLA kaldırılabilir yapıyor -- yan panelde
+ *   2. Her filtreyi tek tikla kaldırılabilir yapıyor -- yan panelde
  *      doğru açılır listeyi bulup "Farketmez"e çekmek gerekmiyor
  *
  * Neden şehir/kategori isimlerini ayrica çekiyorum?

@@ -71,7 +71,7 @@ internal sealed class GenerateSessionSeatsCommandHandler
                 "Secilen oturma planinda hiç koltuk yok."));
         }
 
-        // BOLUM -> BİLET TURU ESLESTIRMESI
+        // Bolum -> bilet turu eslestirmesi
         //
         // Her koltuğun fiyati, ait olduğu BOLUMUN bilet turunden gelir.
         // Bu eslestirme olmadan koltuğun fiyati belirsiz kalır.
@@ -88,7 +88,7 @@ internal sealed class GenerateSessionSeatsCommandHandler
 
         // TÜM bolumlerin bir bilet turune atanmis olduğunu dogrula.
         //
-        // Eksik atama varsa URETIMI HİÇ BASLATMIYORUM. Yarim üretim
+        // Eksik atama varsa uretimi hiç baslatmiyorum. Yarim üretim
         // yapip "bu koltuklarin fiyati yok" durumuna dusmek, sonradan
         // temizlenmesi çok zor bir tutarsizlik olurdu.
         var sectionIds = seats.Select(s => s.SeatSectionId).Distinct().ToList();
@@ -200,7 +200,7 @@ internal sealed class GetSeatAvailabilityQueryHandler
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // SURESI DOLMUS KILITLERI "MUSAIT" GOSTER
+        // Suresi dolmus kilitleri "musait" goster
         //
         // Temizlik job'i dakikada bir çalışıyor. Kilidi 10:10'da dolan
         // bir koltuk, job 10:11'de gelene kadar veritabaninda hâlâ

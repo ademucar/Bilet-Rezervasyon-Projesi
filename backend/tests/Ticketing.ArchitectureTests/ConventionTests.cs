@@ -83,20 +83,20 @@ public class ConventionTests
         // Ilk yazisimda kural "adi 'Handler' ile biten HER sinif" seklindeydi.
         // WebApi'ye GlobalExceptionHandler eklendiginde test kirmizi yandi.
         //
-        // Inceleyince gorduk ki bu bir CQRS handler'i DEGIL: ASP.NET Core'un
+        // Inceleyince gorduk ki bu bir CQRS handler'i degil: asp.net Core'un
         // IExceptionHandler arayuzunu uygulayan bir altyapi bileseni ve
         // dogru yerde duruyor.
         //
-        // Yani KOD dogruydu, KURAL fazla genisti. Testi susturmak yerine
-        // kurali gercekte ne demek istedigimize gore daralttim: ASP.NET
+        // Yani kod dogruydu, kural fazla genisti. Testi susturmak yerine
+        // kurali gercekte ne demek istedigimize gore daralttim: asp.net
         // altyapi arayuzlerini uygulayan tipler bu kuralin disinda.
         //
         // Bu ayrimi yapmak onemli: bir test kirmizi yandiginda refleksle
         // "testi kaldirayim" demek, testin degerini yok eder. Once
         // "kod mu yanlis, kural mi?" diye sorulmali.
-        // ASP.NET Core'un "Handler" ile biten altyapi arayuzleri.
+        // Asp.net Core'un "Handler" ile biten altyapi arayuzleri.
         //
-        // Bu liste ZAMANLA BUYUYOR ve bu NORMAL:
+        // Bu liste zamanla buyuyor ve bu normal:
         //   Sprint 2'de -> IExceptionHandler       (GlobalExceptionHandler)
         //   Sprint 5'te -> IAuthorizationHandler   (EventOwnerAuthorizationHandler)
         //
@@ -145,7 +145,7 @@ public class ConventionTests
         // Sprint 9'da IOutboxMessageHandler arayuzunu ekleyince test
         // basarisiz oldu: "IOutboxMessageHandler sealed degil".
         //
-        // Elbette degil -- ARAYUZLER SEALED OLAMAZ. Bir arayuzu sealed
+        // Elbette degil -- arayuzler sealed olamaz. Bir arayuzu sealed
         // yapmak dilde mumkun degildir ve zaten anlamsizdir: arayuzun
         // varlik sebebi uygulanabilmesidir.
         //

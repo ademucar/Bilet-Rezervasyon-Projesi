@@ -48,10 +48,10 @@ public sealed class AuthTests : IntegrationTestBase
                 .Include(u => u.UserRoles)
                 .SingleAsync(u => u.Email == Eposta);
 
-            // E-posta KUCUK HARFE cevrilerek saklanmali.
+            // E-posta kucuk harfe cevrilerek saklanmali.
             kullanici.Email.Should().Be(Eposta);
 
-            // Sifre ACIK METIN olarak saklanmamali.
+            // Sifre acik metin olarak saklanmamali.
             kullanici.PasswordHash.Should().NotBe("Test1234!");
             kullanici.PasswordHash.Should().StartWith("$2");
 
@@ -105,7 +105,7 @@ public sealed class AuthTests : IntegrationTestBase
     }
 
     /// <remarks>
-    /// HESAP SAYIMI (user enumeration) KORUMASI
+    /// Hesap sayimi (user enumeration) korumasi
     ///
     /// Var olmayan kullanici ile yanlis sifre AYNI yaniti vermeli.
     ///
@@ -176,7 +176,7 @@ public sealed class AuthTests : IntegrationTestBase
         // Yenilemede yeni bir refresh token uretiliyor ve eskisi
         // iptal ediliyor.
         //
-        // Olmasaydi calinan bir refresh token SONSUZA KADAR
+        // Olmasaydi calinan bir refresh token sonsuza kadar
         // kullanilabilirdi -- sifre degistirmek bile onu
         // durdurmazdi.
         var tekrar = await Client.PostAsJsonAsync("/api/v1/auth/refresh-token", new

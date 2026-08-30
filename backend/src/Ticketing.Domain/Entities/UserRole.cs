@@ -3,7 +3,7 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// User ile Role arasindaki çok-a-çok iliskinin ara tablosu.
 ///
-/// NEDEN Entity'DEN TUREMIYOR? NEDEN Id ALANI YOK?
+/// Neden Entity'den turemiyor? Neden Id alani yok?
 ///
 /// Bu tablonun kendine ait bir kimliği yok. "3 numarali kullanıcı-rol
 /// iliskisi" diye bir sey anlamsiz. Kimligi, iliskilendirdigi iki
@@ -14,7 +14,7 @@ namespace Ticketing.Domain.Entities;
 ///
 /// Bunun bana kazandirdiklari:
 ///
-/// 1) Aynı kullanıcıya aynı rol IKI KEZ atanamaz -- veritabani seviyesinde
+/// 1) Aynı kullanıcıya aynı rol iki kez atanamaz -- veritabani seviyesinde
 ///    garanti. Ayrı bir Id sutunu olsaydı (Guid Id, UserId, RoleId),
 ///    aynı ciftten iki satır olusabilirdi ve bunu engellemek için AYRICA
 ///    bir unique index eklemek gerekirdi.

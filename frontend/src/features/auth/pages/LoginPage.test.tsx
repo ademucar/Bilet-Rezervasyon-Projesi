@@ -19,7 +19,7 @@ import { renderWithProviders } from '../../../test/testUtils'
  *
  * Gerçek uçtan uca akış, ayrıca E2E testinde (Playwright) ve
  * backend entegrasyon testlerinde doğrulanıyor. Burada test edilen
- * şey ARAYÜZÜN DAVRANIŞI: doğru alanları gösteriyor mu, hatayı
+ * şey arayüzün davranişi: doğru alanları gösteriyor mu, hatayı
  * kullanıcıya iletiyor mu, boş formu gönderiyor mu.
  *
  */
@@ -114,7 +114,7 @@ describe('LoginPage', () => {
       expect(girisYap).toHaveBeenCalled()
     })
 
-    // İLK ARGÜMANI kontrol ediyorum, toHaveBeenCalledWith değil.
+    // İlk argümani kontrol ediyorum, toHaveBeenCalledWith değil.
     //
     // toHaveBeenCalledWith TÜM argümanları eşleştiriyor ve test
     // kırıldı: TanStack Query, mutationFn'i ikinci bir bağlam

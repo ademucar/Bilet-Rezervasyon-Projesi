@@ -3,16 +3,16 @@ using Ticketing.Application.Abstractions.Caching;
 namespace Ticketing.Infrastructure.Caching;
 
 /// <summary>
-/// ONBELLEKSIZ UYGULAMA -- PDF Sprint 11
+/// Onbelleksiz uygulama -- PDF Sprint 11
 ///
 /// PDF kuralı: "Cache kapalı olduğunda sistem calismaya devam
 /// edebilmelidir."
 ///
-/// Bu sinif o kuralı EN NET şekilde karsiliyor: yapilandirmada
+/// Bu sinif o kuralı en net şekilde karsiliyor: yapilandirmada
 /// Redis kapaliysa (veya hiç adres verilmemisse) DI konteynerine
 /// bu kaydediliyor ve her sorgu doğrudan veritabanina gidiyor.
 ///
-/// NEDEN "if (cache != null)" KONTROLU YERINE BOŞ BIR SINIF?
+/// Neden "if (cache != null)" kontrolu yerine boş bir sinif?
 ///
 /// Alternatif su olurdu: ICacheService'i nullable yapip her cagirim
 /// yerinde kontrol etmek.
@@ -22,11 +22,11 @@ namespace Ticketing.Infrastructure.Caching;
 ///
 ///     return await SorguyuCalistir();
 ///
-/// Bu yaklasim her handler'da IKI KOD YOLU oluşturur. Ve o iki yoldan
+/// Bu yaklasim her handler'da iki kod yolu oluşturur. Ve o iki yoldan
 /// yalnızca biri test edilir -- digeri uretimde ilk kez çalışır.
 ///
 /// Bu desene "Null Object Pattern" deniyor. Cagiran taraf onbellegin
-/// açık mi kapalı mi olduğunu HİÇ BILMIYOR; kodu tek bir yol.
+/// açık mi kapalı mi olduğunu hiç bilmiyor; kodu tek bir yol.
 ///
 /// Yan fayda: testlerde de bunu kullanabiliyoruz -- Redis kurmadan
 /// handler'lari calistirmak mumkun.

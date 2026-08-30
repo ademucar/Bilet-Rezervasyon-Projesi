@@ -89,7 +89,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         // Kilit suresi kontrolu
         //
-        // Sadece "Locked" olmasi yetmez: kilidin bir SON KULLANMA
+        // Sadece "Locked" olmasi yetmez: kilidin bir son kullanma
         // tarihi olmali. Olmasaydi koltuk sonsuza kadar kilitli
         // kalir ve odeme yapmayan bir kullanici koltugu kalici
         // olarak isgal ederdi.
@@ -108,7 +108,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     ///
     /// Bu davranis, EF Core InMemory saglayicisiyla test EDILEMEZ:
     /// xmin tabanli iyimser eszamanlilik orada hic yok. Test yesil
-    /// doner ve HICBIR SEY kanitlamaz.
+    /// doner ve hicbir sey kanitlamaz.
     ///
     /// Testcontainers'in bu projede var olma sebebi tam olarak bu
     /// senaryo -- PDF de zaten gercek kapsayici istiyor.
@@ -224,7 +224,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
 
         // Provider reference'i uyduramayiz -- ilk denemem buydu
         //
-        // Once "TEST-REF-1" diye kendi uydurdugum bir referans
+        // Once "test-ref-1" diye kendi uydurdugum bir referans
         // gonderdim ve 422 aldim.
         //
         // Sebep Sprint 8'de yazdigim guvenlik kontrolu:
@@ -234,7 +234,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         //
         // Bu bir test engeli degil, korumanin CALISTIGININ kaniti:
         // o kontrol olmasaydi saldirgan dogrudan bu adrese istek
-        // atip BEDAVA BILET alabilirdi.
+        // atip bedava bilet alabilirdi.
         //
         // Bos gonderiyoruz; handler odemenin kendi kayitli
         // referansini kullaniyor.
@@ -271,7 +271,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     /// <remarks>
     /// PDF Sprint 15 idempotency maddesi: "Odeme callback".
     ///
-    /// Odeme saglayicilari callback'i BIRDEN FAZLA KEZ gonderebilir
+    /// Odeme saglayicilari callback'i birden fazla kez gonderebilir
     /// (ag hatasi, yeniden deneme). Her cagride yeni bilet uretseydik
     /// kullanicinin elinde 3 bilet olurdu ve koltuk sayisi tutmazdi.
     /// </remarks>
@@ -317,7 +317,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     /// denesin" bekliyordum ve gerekcesini de yazmistim: kart hatasi
     /// yaygin, kullanici baska kartla hemen tekrar dener.
     ///
-    /// Test kirildi. Kod, rezervasyonu IPTAL edip koltuklari SERBEST
+    /// Test kirildi. Kod, rezervasyonu iptal edip koltuklari serbest
     /// birakiyordu.
     ///
     /// Kodu duzeltmedim -- cunku kod DOGRUYDU. PDF Sprint 8 acikca
@@ -361,7 +361,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         rezervasyon.Status.Should().Be(ReservationStatus.Cancelled);
 
         // PDF Sprint 8: "Odeme basarisiz oldugunda koltuklar serbest
-        // birakilmalidir." Koltuk YENIDEN SATILABILIR olmali.
+        // birakilmalidir." Koltuk yeniden satilabilir olmali.
         var koltuk = await db.EventSeats.SingleAsync(s => s.Id == senaryo.SeatIds[0]);
         koltuk.Status.Should().Be(EventSeatStatus.Available);
 
@@ -391,7 +391,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     /// koltuklari GERCEKTEN serbest kalmali.
     ///
     /// Yukaridaki testin tamamlayicisi: basarisiz odemede koltuk
-    /// bekletiliyor ama SONSUZA KADAR degil.
+    /// bekletiliyor ama sonsuza kadar degil.
     /// </remarks>
     [Fact]
     public async Task Suresi_dolan_rezervasyonun_koltuklari_serbest_kalmali()
@@ -481,7 +481,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
         var odeme = await db.Payments.SingleAsync(p => p.Id == odemeId);
         odeme.Status.Should().Be(PaymentStatus.Refunded);
 
-        // Tam iadede koltuklar YENIDEN SATILABILIR olmali.
+        // Tam iadede koltuklar yeniden satilabilir olmali.
         var koltuk = await db.EventSeats.SingleAsync(s => s.Id == senaryo.SeatIds[0]);
         koltuk.Status.Should().Be(EventSeatStatus.Available);
 
@@ -497,7 +497,7 @@ public sealed class ReservationFlowTests : IntegrationTestBase
     /// <remarks>
     /// PDF Sprint 15 idempotency maddesi: "Iade baslatma".
     ///
-    /// Iade, cift calistirilmasi EN TEHLIKELI islem: ayni parayi iki
+    /// Iade, cift calistirilmasi en tehlikeli islem: ayni parayi iki
     /// kez geri gondermek dogrudan mali kayip.
     /// </remarks>
     [Fact]

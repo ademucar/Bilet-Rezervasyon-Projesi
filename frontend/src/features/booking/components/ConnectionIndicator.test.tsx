@@ -19,7 +19,7 @@ import type { ConnectionStatus } from '../hooks/useSeatHub'
  * taşıma katmanı görüşmesini bozdu ve iki denemeden sonra vazgeçip
  * kod incelemesiyle doğruladım.
  *
- * Burada test ettiğim şey KULLANICININ GÖRDÜĞÜ kısım: bağlantı
+ * Burada test ettiğim şey kullanicinin gördüğü kısım: bağlantı
  * durumu değiştiğinde ekranda doğru bilgi çıkıyor mu. Gerçek
  * bağlantı davranışı E2E testinde (Playwright) doğrulanıyor.
  *

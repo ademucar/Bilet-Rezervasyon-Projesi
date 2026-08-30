@@ -7,12 +7,12 @@ namespace Ticketing.Persistence.Seeding;
 /// <summary>
 /// Başlangıç verisi. YALNIZCA gelistirme ortaminda çalışır.
 ///
-/// NEDEN MIGRATION'IN HasData'SI DEĞİL?
+/// Neden migration'IN HasData'si değil?
 ///
 /// Roller için HasData kullandim (RoleConfiguration'da). Şehirler ve
 /// kategoriler için KULLANMIYORUM. Fark su:
 ///
-///   Roller     -> SISTEMIN CALISMASI için sart. Kod bu ID'lere
+///   Roller     -> sistemin calismasi için sart. Kod bu ID'lere
 ///                 doğrudan referans veriyor (Role.Ids.Admin).
 ///                 Her ortamda AYNI olmalı. -> HasData doğru yer.
 ///
@@ -48,7 +48,7 @@ public sealed class DatabaseSeeder
         //
         // Bu kontrol olmasaydı uygulama her baslatildiginda şehirler
         // tekrar eklenmeye calisilir ve unique index ihlali alırdım.
-        // Seeder'lar HER ZAMAN idempotent olmalı -- uygulamanin kac
+        // Seeder'lar her zaman idempotent olmalı -- uygulamanin kac
         // kez baslatildigi belli olmaz.
         if (await _context.Cities.AnyAsync(cancellationToken).ConfigureAwait(false))
         {
@@ -106,7 +106,7 @@ public sealed class DatabaseSeeder
     }
 
     // LoggerMessage yerine basit bir yardimci kullanıyorum: bu kod
-    // uygulama omru boyunca en fazla BIR KEZ çalışıyor, performans
+    // uygulama omru boyunca en fazla bir kez çalışıyor, performans
     // optimizasyonu gereksiz. CA1848'i bu yüzden burada uygulamiyorum --
     // aşağıdaki sarmalayici, analizciyi de memnun ediyor.
     private static readonly Action<ILogger, int, string, Exception?> SeedLog =

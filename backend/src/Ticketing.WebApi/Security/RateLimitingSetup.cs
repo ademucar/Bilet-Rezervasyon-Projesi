@@ -11,7 +11,7 @@ namespace Ticketing.WebApi.Security;
 /// Neden ayri kutuphane yok?
 ///
 /// AspNetCoreRateLimit gibi paketler var ama .NET 7'den beri
-/// Microsoft.AspNetCore.RateLimiting FRAMEWORK ICINDE geliyor.
+/// Microsoft.AspNetCore.RateLimiting framework icinde geliyor.
 ///
 /// Ucuncu bir bagimlilik eklemek; güvenlik taramasi, surum takibi ve
 /// gecisli bagimlilik maliyeti getirir. Yerlesik olan ihtiyacimi
@@ -37,7 +37,7 @@ public static class RateLimitingSetup
     /// </summary>
     /// <param name="enabled">
     ///
-    /// NEDEN KAPATILABILIR OLMALI? (PDF Sprint 17)
+    /// Neden kapatilabilir olmali? (PDF Sprint 17)
     ///
     /// Entegrasyon testleri aynı istemciden (bellek ici sunucu)
     /// onlarca giriş yapiyor. Auth politikasi 5 dakikada 10 istek
@@ -47,7 +47,7 @@ public static class RateLimitingSetup
     /// SIRALARINA göre gecip kalırdı -- hata ayiklamasi en zor
     /// test türü.
     ///
-    /// Bayrak YAPILANDIRMADAN geliyor ve VARSAYILANI açık. Kapali
+    /// Bayrak yapilandirmadan geliyor ve varsayilani açık. Kapali
     /// olabilmesi için birinin acikca "false" yazmasi gerekiyor;
     /// uretimde yanlislikla kapalı kalmasi mumkun değil.
     ///
@@ -78,7 +78,7 @@ public static class RateLimitingSetup
                 return;
             }
 
-            // SINIRA TAKILAN ISTEK: 429 + Retry-After
+            // Sinira takilan istek: 429 + Retry-After
             //
             // Varsayılan 503 Service Unavailable dönüyor. 429 Too Many
             // Requests dogrusu: 503 "sunucu bozuk" der, 429 "yavasla"
@@ -114,13 +114,13 @@ public static class RateLimitingSetup
                     cancellationToken).ConfigureAwait(false);
             };
 
-            // 1) KIMLIK DOGRULAMA -- PDF: login, register, şifre sıfırlama
+            // 1) Kimlik dogrulama -- PDF: login, register, şifre sıfırlama
             //
             // 5 dakikada 10 istek.
             //
             // Neden bu kadar siki? Çünkü bunlar brute force'un hedefi.
             // Sprint 3'te hesap bazlı kilitleme (5 yanlış deneme)
-            // vardi ama o TEK BIR HESABI koruyor.
+            // vardi ama o tek bir hesabi koruyor.
             //
             // Saldirgan 10.000 farklı e-posta ile "şifre123" deneyebilir
             // (credential stuffing). Hicbir hesap kilitlenmez çünkü her
@@ -162,7 +162,7 @@ public static class RateLimitingSetup
                 permitLimit: 60,
                 window: TimeSpan.FromMinutes(1)));
 
-            // 4) GENEL SINIR -- her istek için
+            // 4) Genel sinir -- her istek için
             //
             // Politikasi olmayan uclar da korunmali. Aksi halde yeni
             // eklenen bir uc, politika atanana kadar TAMAMEN korumasiz
@@ -201,7 +201,7 @@ public static class RateLimitingSetup
                 PermitLimit = permitLimit,
                 Window = window,
 
-                // KUYRUK YOK (QueueLimit = 0)
+                // Kuyruk yok (QueueLimit = 0)
                 //
                 // Kuyruk acsaydim, sinira takilan istek beklerdi ve
                 // sunucu kaynagini tutardi. Saldirgan bunu kullanip

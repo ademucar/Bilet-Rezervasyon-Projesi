@@ -34,7 +34,7 @@ public abstract record PaginationRequest
     /// <summary>
     /// Sayfa numarasi. 1'den başlar.
     ///
-    /// Geçersiz deger gonderilirse HATA FIRLATMIYOR, duzeltiyorum.
+    /// Geçersiz deger gonderilirse hata firlatmiyor, duzeltiyorum.
     ///
     /// Neden? Sayfalama kullanıcının veri talebinin OZU değil, sunum
     /// detayidir. "pageNumber=0" gonderen bir istemciye 400 donup

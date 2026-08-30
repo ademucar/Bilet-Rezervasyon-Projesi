@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore'
 interface ProtectedRouteProps {
   /**
    * Erişim için gereken roller. Boş ise yalnızca giriş yapmış olmak yeterli.
-   * Kullanıcının bunlardan EN AZ BIRINE sahip olması gerekir.
+   * Kullanıcının bunlardan en az birine sahip olması gerekir.
    */
   roles?: string[]
 }
@@ -17,7 +17,7 @@ interface ProtectedRouteProps {
  * Kullanıcı tarayıcı konsolunu acip localStorage'daki rolü "Admin"
  * yapabilir ve bu bileşen önü admin paneline sokar.
  *
- * PEKI SORUN OLMAZ MI? Hayir. Çünkü o panelde gösterilecek her veri
+ * Peki sorun olmaz mi? Hayir. Çünkü o panelde gösterilecek her veri
  * API'den geliyor ve API, JWT'nin ICINDEKI rollere bakiyor. Token
  * imzali olduğu için rol değiştirilemez -- değiştirilirse imza bozulur.
  *

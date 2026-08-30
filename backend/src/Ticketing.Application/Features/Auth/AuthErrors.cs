@@ -19,7 +19,7 @@ internal static class AuthErrors
     /// "E-posta bulunamadı" ve "Şifre yanlış" diye AYRI mesajlar
     /// dondurmuyoruz. Ikisi de bu tek hatayi döner.
     ///
-    /// NEDEN? Ayirsaydik, saldirgan hangi e-postalarin sistemde KAYITLI
+    /// Neden? Ayirsaydik, saldirgan hangi e-postalarin sistemde kayitli
     /// olduğunu ogrenebilirdi:
     ///
     ///   POST /login {"email":"ahmet@x.com","password":"deneme"}

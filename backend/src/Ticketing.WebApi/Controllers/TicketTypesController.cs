@@ -113,7 +113,7 @@ public sealed class TicketTypesController : ApiControllerBase
 
     /// <summary>Bilet turunu siler.</summary>
     /// <remarks>
-    /// Yalnızca HİÇ BİLET SATILMAMIS bir tur silinebilir. Satılmış
+    /// Yalnızca hiç bilet satilmamis bir tur silinebilir. Satılmış
     /// biletleri olan bir türü silmek, o biletleri sahipsiz birakirdi.
     /// </remarks>
     /// <response code="204">Silindi.</response>

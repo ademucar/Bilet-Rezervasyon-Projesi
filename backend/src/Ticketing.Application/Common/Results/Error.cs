@@ -56,7 +56,7 @@ public enum ErrorType
 ///    goremezsin. Result&lt;T&gt; donen bir metot "ben başarısız olabilirim"
 ///    diye ACIKCA söyler ve derleyici seni kontrol etmeye zorlar.
 ///
-/// 3) AKIS KONTROLU. try/catch ile is akışı yonetmek okunabilirligi bozar.
+/// 3) Akis kontrolu. Try/catch ile is akışı yonetmek okunabilirligi bozar.
 ///
 /// Not: Domain katmaninda hâlâ DomainException kullanıyorum. Orada
 /// amac farklı: entity'nin ic tutarliligini korumak. Bir entity

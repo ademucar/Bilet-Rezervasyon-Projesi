@@ -7,9 +7,9 @@ namespace Ticketing.Domain.Entities;
 /// Ödeme uzerindeki her denemenin kaydı. PDF'in ER diyagramindaki
 /// PaymentTransactions tablosu.
 ///
-/// NEDEN AYRI BIR TABLO? Payment'a birkaç sutun eklesek olmaz miydi?
+/// Neden ayri bir tablo? Payment'a birkaç sutun eklesek olmaz miydi?
 ///
-/// Olmazdi. Çünkü bir odemede BIRDEN FAZLA işlem olabilir:
+/// Olmazdi. Çünkü bir odemede birden fazla işlem olabilir:
 ///   1. Tahsilat denemesi -> başarısız (kart limiti)
 ///   2. Tahsilat denemesi -> başarılı
 ///   3. Kismi iade (2 bilet)
@@ -19,7 +19,7 @@ namespace Ticketing.Domain.Entities;
 /// dort adimi orada tutamam. Her adimin kendi zaman damgasi, kendi
 /// sağlayıcı referansı ve kendi hata mesaji olmalı.
 ///
-/// Bu tablo bir DENETIM IZIDIR (audit trail): "bu odemede ne oldu?"
+/// Bu tablo bir denetim izidir (audit trail): "bu odemede ne oldu?"
 /// sorusunun cevabi burada. Kayitlar asla silinmez, asla guncellenmez;
 /// sadece eklenir (append-only).
 /// </summary>

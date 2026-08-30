@@ -5,7 +5,7 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Denetim kaydı. PDF sayfa 5: "Admin audit log kayitlarini inceleyebilir."
 ///
-/// APPEND-ONLY bir tablodur: kayitlar eklenir, ASLA guncellenmez veya
+/// Append-only bir tablodur: kayitlar eklenir, asla guncellenmez veya
 /// silinmez. Bu yüzden AuditableEntity'den turemiyor -- UpdatedAt,
 /// IsDeleted gibi alanlarin burada anlami yok. Bir denetim kaydinin
 /// degistirilebilir olmasını, denetim fikrinin kendisini geçersiz kilar.

@@ -55,7 +55,7 @@ internal sealed class RegisterCommandHandler
 
         if (emailInUse)
         {
-            // BURADA "kullanıcı numaralandirma" RISKI VAR AMA KABUL EDIYORUM
+            // burada "kullanıcı numaralandirma" riski var ama kabul ediyorum
             //
             // Login'de bilerek belirsiz mesaj donuyorum. Kayitta ise
             // "bu e-posta kullanılıyor" demek zorundayız -- aksi halde
@@ -104,7 +104,7 @@ internal sealed class RegisterCommandHandler
             accessToken.Value,
             accessToken.ExpiresAt,
 
-            // Kullanıcıya token'in KENDISI gidiyor; veritabaninda HASH'i var.
+            // Kullanıcıya token'in kendisi gidiyor; veritabaninda hash'i var.
             refreshToken.Value,
             refreshToken.ExpiresAt,
             new UserSummary(

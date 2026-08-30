@@ -44,7 +44,7 @@ public sealed record SeatLayoutListItem(
     int SectionCount,
     int SeatCount);
 
-// PLAN DETAYI -- PDF: GET /api/v1/seat-layouts/{id}
+// Plan detayi -- PDF: GET /api/v1/seat-layouts/{id}
 
 public sealed record GetSeatLayoutQuery(Guid Id) : IRequest<Result<SeatLayoutDetail>>;
 
@@ -59,7 +59,7 @@ internal sealed class GetSeatLayoutQueryHandler
         GetSeatLayoutQuery request,
         CancellationToken cancellationToken)
     {
-        // AsSplitQuery -- BURADA KRITIK
+        // AsSplitQuery -- burada kritik
         //
         // Bu sorgu uc seviyeli bir koleksiyon zinciri iceriyor:
         //     SeatLayout -> Sections -> Seats
@@ -144,7 +144,7 @@ internal sealed class GetSeatLayoutsByHallQueryHandler
         GetSeatLayoutsByHallQuery request,
         CancellationToken cancellationToken)
     {
-        // Listede KOLTUKLARI cekmiyorum, yalnızca SAYILARINI.
+        // Listede koltuklari cekmiyorum, yalnızca sayilarini.
         //
         // Include kullansaydim 5 plan x 2000 koltuk = 10.000 satır
         // bellege gelirdi; oysa ekranda yalnızca "2000 koltuk" yazıyor.

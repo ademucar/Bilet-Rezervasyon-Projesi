@@ -53,7 +53,7 @@ export function RegisterPage() {
     onError: (error) => {
       const problem = toProblem(error)
 
-      // E-posta cakismasini ILGILI ALANIN altinda gösteriyorum,
+      // E-posta cakismasini ilgili alanin altinda gösteriyorum,
       // sayfanin tepesinde genel bir uyarı olarak değil.
       // Kullanıcı hangi alanı duzeltecegini anında görüyor.
       if (problem.errorCode === 'auth.email_in_use') {

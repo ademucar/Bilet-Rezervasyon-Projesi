@@ -81,7 +81,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// <summary>
     /// Taslak ve onay bekleyen etkinlikleri de getir.
     ///
-    /// Controller bu alanı, kullanıcının ROLUNE göre SUNUCUDA set ediyor --
+    /// Controller bu alanı, kullanıcının rolune göre sunucuda set ediyor --
     /// istemciden gelen degere GUVENMIYORUZ. Guvenseydik, herhangi bir
     /// kullanıcı sorguya includeUnpublished=true ekleyip yayinlanmamis
     /// etkinlikleri gorurdu.
@@ -100,12 +100,12 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// En düşük bilet fiyati. PDF filtresi: "Fiyat aralığı".
     /// </summary>
     /// <remarks>
-    /// Etkinligin BIRDEN FAZLA bilet türü var (Tam, Ogrenci, VIP...)
+    /// Etkinligin birden fazla bilet türü var (Tam, Ogrenci, vip...)
     /// ve her birinin fiyati farklı.
     ///
     /// Kullanıcı "en fazla 300 TL" dediginde ne bekler? "300 TL'ye
-    /// girebilecegim etkinlikler" -- yani EN UCUZ bileti 300'un
-    /// altinda olanlar. VIP bileti 1000 TL olsa bile.
+    /// girebilecegim etkinlikler" -- yani en ucuz bileti 300'un
+    /// altinda olanlar. Vip bileti 1000 TL olsa bile.
     ///
     /// Bu yüzden "herhangi bir bilet türü araliga giriyorsa" seklinde
     /// filtreliyoruz. "Tüm bilet türleri araliga girmeli" deseydim
@@ -122,7 +122,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// </summary>
     /// <remarks>
     /// Adi neden "MaxMinimumAge"? Kulaga garip geliyor ama doğru olan
-    /// bu: etkinliğin MinimumAge alanı var ve biz onun EN FAZLA kac
+    /// bu: etkinliğin MinimumAge alanı var ve biz onun en fazla kac
     /// olabilecegini soruyorum.
     ///
     /// Kullanıcı acisindan anlami: "18 yasindayim, girebilecegim
@@ -139,7 +139,7 @@ public sealed record GetEventsQuery : PaginationRequest, IRequest<Result<PagedRe
     /// </summary>
     /// <remarks>
     /// Istemci buraya Draft veya PendingApproval gonderebilir. Sorun
-    /// değil: gorunurluk filtresi (PublicStatuses) DAHA SONRA
+    /// değil: gorunurluk filtresi (PublicStatuses) daha sonra
     /// uygulaniyor ve yetkisiz kullanıcı için sonuç yine boş döner.
     /// Iki filtre birlikte çalışıyor, biri digerini geçersiz kilmiyor.
     /// </remarks>
@@ -252,7 +252,7 @@ internal sealed class GetEventsQueryHandler
         // EF bunu SQL'de EXISTS alt sorgusuna ceviriyor -- yani tüm
         // bilet turlerini bellege cekmiyoruz.
         //
-        // Silinmis bilet türleri için AYRICA filtre YAZMIYORUM: EF
+        // Silinmis bilet türleri için ayrica filtre yazmiyorum: EF
         // global query filter (HasQueryFilter) zaten navigation
         // koleksiyonlarina da WHERE "IsDeleted" = false ekliyor.
         // Elle tekrar yazmak, aynı kuralı iki yerde tutmak olurdu.
@@ -320,12 +320,12 @@ internal sealed class GetEventsQueryHandler
     ///    SQL enjeksiyonuna kapi acar. (EF Core'un LINQ'i buna karsi
     ///    korumali ama aliskanlik olarak dogrusunu yazıyorum.)
     ///
-    /// 2) VERI SIZINTISI: Istemci sortBy=PasswordHash yazarsa, sonuclar
+    /// 2) Veri sizintisi: Istemci sortBy=PasswordHash yazarsa, sonuclar
     ///    o alana göre SIRALANIR. Alan yanitta gorunmese bile,
     ///    siralamanin kendisi bilgi verir -- birden fazla sorguyla
     ///    degerler ikili aramayla cikarilabilir.
     ///
-    /// Beyaz liste (whitelist) ile yalnızca IZIN VERDIGIM alanlar
+    /// Beyaz liste (whitelist) ile yalnızca izin verdigim alanlar
     /// siralanabiliyor. Taninmayan deger sessizce varsayilana dusuyor:
     /// hata donmek yerine mantikli bir sonuç vermek, listeleme
     /// uclarinda daha iyi bir davranis.
@@ -410,10 +410,10 @@ internal sealed class GetEventByIdQueryHandler
         // PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache
         // içinde tutulmamalidir."
         //
-        // Bu sorgu ILK BAKISTA kullanicidan bağımsız görünüyor -- aynı
+        // Bu sorgu ilk bakista kullanicidan bağımsız görünüyor -- aynı
         // etkinlik herkese aynı döner. Ama bir alan var:
         // IncludeUnpublished. Admin için true, herkes için false.
-        // Yani AYNI Id, ROLE GORE FARKLI sonuç veriyor.
+        // Yani ayni Id, role gore farkli sonuç veriyor.
         //
         // İlk aklima gelen cozum ve neden vazgectim
         //
@@ -430,7 +430,7 @@ internal sealed class GetEventByIdQueryHandler
         //
         // Sectigim cozum: yayinlanmamis icerik hiç onbelleklenmez
         //
-        // Admin gorunumu önbelleği TAMAMEN ATLIYOR ve doğrudan
+        // Admin gorunumu önbelleği tamamen atliyor ve doğrudan
         // veritabanina gidiyor. Onbellege giren sorgu ise YALNIZCA
         // yayinlanmis etkinlikleri donduren surum. Redis te hiçbir
         // zaman taslak veri bulunmuyor.
@@ -468,7 +468,7 @@ internal sealed class GetEventByIdQueryHandler
 
         // İdor korumasi -- artik sorgunun icinde
         //
-        // Onceden bu kontrol veriyi CEKTIKTEN SONRA yapiliyordu.
+        // Onceden bu kontrol veriyi cektikten sonra yapiliyordu.
         // Onbellek eklerken sorgunun icine tasidim ve daha da güvenli
         // oldu.
         //
@@ -483,7 +483,7 @@ internal sealed class GetEventByIdQueryHandler
         // reddediliyordu.
         //
         // Bulunamayan kayıt 404 dönüyor, 403 değil -- bilerek.
-        // 403 "bu kayıt VAR ama goremezsin" der ve varligini DOGRULAR.
+        // 403 "Bu kayıt var ama goremezsin" der ve varligini dogrular.
         // 404 hiçbir sey sizdirmaz.
         if (!includeUnpublished)
         {
@@ -499,7 +499,7 @@ internal sealed class GetEventByIdQueryHandler
                 e.Category.Name,
                 e.OrganizerId,
 
-                // Organizatör adını ALT SORGU ile alıyorum.
+                // Organizatör adını alt sorgu ile alıyorum.
                 //
                 // Sebep: Event ile OrganizerProfile arasında navigation
                 // ozelligi tanimlamadim. Tanimlayabilirdim ama Event

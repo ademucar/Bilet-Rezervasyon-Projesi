@@ -26,13 +26,13 @@ public enum ReportType
 // 1) TALEP: POST /api/v1/reports/export
 
 /// <summary>
-/// Rapor disa aktarimi TALEP EDER. Üretim arka planda yapilir.
+/// Rapor disa aktarimi talep eder. Üretim arka planda yapilir.
 /// </summary>
 /// <remarks>
 /// PDF: "Rapor üretimi background job olarak calistirilmali ve
 /// tamamlandiginda kullanıcıya bildirim gonderilmelidir."
 ///
-/// Bu kural neden var? Çünkü rapor üretimi UZUN SUREBILIR:
+/// Bu kural neden var? Çünkü rapor üretimi uzun surebilir:
 /// on binlerce satirlik bir Excel dosyasi olusturmak saniyeler alır.
 ///
 /// Senkron yapsaydim:
@@ -47,9 +47,9 @@ public enum ReportType
 ///
 /// Hangfire'in BackgroundJob.Enqueue metodu da kullanilabilirdi. Ama
 /// Sprint 9'da kurdugum Outbox altyapisi zaten tam olarak bu isi
-/// yapiyor ve UC ONEMLI USTUNLUGU var:
+/// yapiyor ve uc onemli ustunlugu var:
 ///
-///   1) Talep, VERITABANI TRANSACTION'I içinde kaydediliyor. Sunucu
+///   1) Talep, veritabani transaction'I içinde kaydediliyor. Sunucu
 ///      tam o anda coksa bile talep kaybolmuyor.
 ///   2) Başarısız üretim ustel geri cekilme ile yeniden deneniyor.
 ///   3) Bes denemeden sonra dead letter oluyor ve izleme ekraninda
@@ -262,7 +262,7 @@ public interface IReportFileStore
 ///
 /// Kimlik bir yerden sizabilir: sunucu erişim loglari, tarayıcı
 /// gecmisi, paylasilan bir ekran goruntusu, Referer başlığı. Sizan
-/// kimlikle baskasinin GELIR RAPORU indirilebilirdi.
+/// kimlikle baskasinin gelir raporu indirilebilirdi.
 ///
 /// Sahipligi nereden biliyorum?
 ///

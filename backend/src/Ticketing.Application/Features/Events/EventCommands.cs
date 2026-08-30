@@ -42,7 +42,7 @@ internal static class EventErrors
         "event.category_not_found", "Secilen kategori bulunamadı.");
 }
 
-// ETKİNLİK OLUSTURMA -- PDF: POST /api/v1/events
+// Etkinlik olusturma -- PDF: POST /api/v1/events
 
 public sealed record CreateEventCommand(
     string Title,
@@ -81,12 +81,12 @@ public sealed class CreateEventCommandValidator : AbstractValidator<CreateEventC
         RuleFor(x => x.MinimumAge)
             .InclusiveBetween(0, 99).WithMessage("Yaş sınırı 0 ile 99 arasında olmalıdır.");
 
-        // TARIH KURALLARI -- PDF sayfa 13
+        // Tarih kurallari -- PDF sayfa 13
         //
-        // Bu kurallar HEM burada HEM Event entity'sinde var.
+        // Bu kurallar hem burada hem Event entity'sinde var.
         //
         // Tekrar gibi görünüyor ama amaclari farklı:
-        //   Validator -> kullanıcıya ALAN BAZINDA anlasilir hata verir
+        //   Validator -> kullanıcıya alan bazinda anlasilir hata verir
         //                ("Satış bitisi etkinlikten sonra olamaz")
         //   Entity    -> koda hangi yoldan gelirse gelsin geçersiz bir
         //                Event olusmasini engeller (veri tasima scripti,
@@ -101,7 +101,7 @@ public sealed class CreateEventCommandValidator : AbstractValidator<CreateEventC
 
         // Gecmise etkinlik oluşturulamaz.
         //
-        // Entity'de BU kural YOK -- bilerek. Veri tasima sırasında
+        // Entity'de bu kural yok -- bilerek. Veri tasima sırasında
         // gecmis etkinlikleri sisteme aktarmamiz gerekebilir.
         // Kullanıcı arayuzunden ise gecmise etkinlik girmek her zaman
         // hatadir, o yüzden yalnızca burada engelliyorum.
@@ -131,7 +131,7 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
     //
     // Etkinlik BASLIGINI logluyorum. Bu bir istisna: başka yerlerde
     // kullanıcı metnini loglamaktan kaciniyorum. Burada güvenli
-    // çünkü etkinlik başlığı zaten HERKESE ACIK bir veri --
+    // çünkü etkinlik başlığı zaten herkese acik bir veri --
     // yayinlandiginda ana sayfada gorunecek. Gizli bir sey değil ve
     // destek için en pratik tanimlayici.
     [LoggerMessage(
@@ -148,7 +148,7 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
             return Result.Failure<Guid>(Error.Unauthorized("auth.required", "Giriş yapmalisiniz."));
         }
 
-        // Etkinligin sahibi ORGANİZATÖR PROFILI'dir, kullanıcı değil.
+        // Etkinligin sahibi organizatör profili'dir, kullanıcı değil.
         //
         // Neden? Bir organizatör sirketini temsil eder. Ileride bir
         // sirkette birden fazla kullanıcı calisabilir; hepsi aynı
@@ -221,7 +221,7 @@ internal sealed partial class CreateEventCommandHandler : IRequestHandler<Create
     }
 }
 
-// OTURUM EKLEME -- PDF: POST /api/v1/events/{id}/sessions
+// Oturum ekleme -- PDF: POST /api/v1/events/{id}/sessions
 
 public sealed record AddEventSessionCommand(
     Guid EventId,
@@ -249,7 +249,7 @@ internal sealed class AddEventSessionCommandHandler
         AddEventSessionCommand request,
         CancellationToken cancellationToken)
     {
-        // Sessions'i Include ediyorum: Event.AddSession, AYNI ETKİNLİK
+        // Sessions'i Include ediyorum: Event.AddSession, ayni etkinlik
         // icindeki cakismayi bellekteki koleksiyona bakarak kontrol ediyor.
         var evt = await _context.Events
             .Include(e => e.Sessions)
@@ -290,7 +290,7 @@ internal sealed class AddEventSessionCommandHandler
         // İptal edilmiş oturumlari haric tutuyorum -- iptal edilmiş bir
         // oturum salonu isgal etmez.
         //
-        // YARIS DURUMU UYARISI: Bu kontrol ile INSERT arasında başka bir
+        // Yaris durumu uyarisi: Bu kontrol ile INSERT arasında başka bir
         // istek aynı salonu alabilir. Kesin garanti için PostgreSQL'in
         // EXCLUDE constraint'i gerekiyor:
         //     EXCLUDE USING gist (
@@ -396,7 +396,7 @@ internal sealed partial class EventStatusCommandHandler
     ///
     /// Neden ONEK ile siliyorum, tek anahtarla değil?
     ///
-    /// Bir etkinliğin durumu degistiginde BIRDEN FAZLA anahtar
+    /// Bir etkinliğin durumu degistiginde birden fazla anahtar
     /// bayatliyor:
     ///
     ///     event:detail:{id}     -> bu etkinliğin detayı
@@ -416,7 +416,7 @@ internal sealed partial class EventStatusCommandHandler
     ///
     ///   Fazla silmenin bedeli  -> birkaç sorgu tekrar veritabanina
     ///                             gider (milisaniyeler)
-    ///   Eksik silmenin bedeli  -> kullanıcı İPTAL EDILMIS etkinlige
+    ///   Eksik silmenin bedeli  -> kullanıcı iptal edilmis etkinlige
     ///                             bilet almaya çalışır
     ///
     /// Ikisi kiyaslanamaz. Onbellekte "bayat veri" her zaman
@@ -502,7 +502,7 @@ internal sealed partial class EventStatusCommandHandler
 
         evt.Cancel(request.Reason);
 
-        // BILDIRIM OUTBOX'A -- PDF Sprint 9: "Etkinlik iptal bildirimi"
+        // Bildirim outbox'A -- PDF Sprint 9: "Etkinlik iptal bildirimi"
         //
         // Iptali AYNI transaction içinde kuyruga aliyorum.
         //
@@ -532,11 +532,11 @@ internal sealed partial class EventStatusCommandHandler
         // birden gereksiz gorunebilir; değil, çünkü farklı hedefleri
         // var:
         //
-        //   SignalR -> SU AN o oturumun koltuk haritasina bakan
+        //   SignalR -> su an o oturumun koltuk haritasina bakan
         //              kisiler. Bilet almak uzereler; boşuna koltuk
         //              secmelerini engelliyorum.
         //
-        //   Outbox  -> BILETI OLAN herkes. Ekranda olsun olmasın,
+        //   Outbox  -> bileti olan herkes. Ekranda olsun olmasın,
         //              kalici bir bildirim ve e-posta aliyorlar.
         //
         // SignalR kaybolursa telafisi var (yeniden baglantida liste

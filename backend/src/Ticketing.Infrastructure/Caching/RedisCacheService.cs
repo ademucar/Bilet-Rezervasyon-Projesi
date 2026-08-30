@@ -24,7 +24,7 @@ internal sealed partial class RedisCacheService : ICacheService
     private const string AppPrefix = "ticketing:";
 
     /// <summary>
-    /// JSON ayarlari BIR KEZ oluşturuluyor.
+    /// JSON ayarlari bir kez oluşturuluyor.
     ///
     /// Her cagrida yeni JsonSerializerOptions uretmek yaygin ve pahali
     /// bir hatadir: .NET her yeni örnek için serilestirme meta verisini
@@ -58,13 +58,13 @@ internal sealed partial class RedisCacheService : ICacheService
         // edebilmelidir."
         //
         // Bu kural bu dosyanin en önemli tasarım kisitidir ve iki yerde
-        // uygulaniyor: OKUMA ve YAZMA.
+        // uygulaniyor: okuma ve yazma.
         //
         // Onbellek bir HIZLANDIRICIDIR, veri kaynagi değil. Redis
-        // coktugunde site YAVASLAMALI ama COKMEMELI.
+        // coktugunde site yavaslamali ama cokmemeli.
         //
         // Istisnayi yukari biraksaydim, Redis'in bir dakikalik kesintisi
-        // TÜM SITEYI 500 hatasina bogardi -- oysa veritabani gayet
+        // tüm siteyi 500 hatasina bogardi -- oysa veritabani gayet
         // sağlıklı çalışıyor olurdu. Onbellek eklemek, sistemi daha
         // KIRILGAN yapmış olurdu ki bu tam tersi bir sonuç.
         try
@@ -159,9 +159,9 @@ internal sealed partial class RedisCacheService : ICacheService
     /// <remarks>
     /// Neden keys değil scan?
     ///
-    /// Redis'in KEYS komutu, eslesen anahtarlari bulmak için TÜM
+    /// Redis'in keys komutu, eslesen anahtarlari bulmak için tüm
     /// anahtar alanini tek seferde tarar ve bu sırada SUNUCUYU
-    /// TAMAMEN BLOKE EDER. Redis tek is parcacikli olduğu için, o
+    /// tamamen bloke eder. Redis tek is parcacikli olduğu için, o
     /// sırada gelen HER istek bekler.
     ///
     /// Milyonlarca anahtarli bir Redis'te KEYS saniyelerce sürebilir --

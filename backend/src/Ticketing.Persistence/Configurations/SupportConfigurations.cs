@@ -98,7 +98,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
         // PDF Sprint 14: "GET /api/v1/notifications/unread-count"
         //
         // Bu endpoint frontend'de zil ikonunun yanindaki sayiyi besliyor
-        // ve HER SAYFA YUKLENISINDE cagriliyor. Index olmadan her cagride
+        // ve her sayfa yuklenisinde cagriliyor. Index olmadan her cagride
         // kullanıcının tüm bildirimleri taranirdi.
         //
         // IsRead'i partial filter yaparak index'i daha da kucultuyorum:
@@ -162,7 +162,7 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
         //     ORDER BY CreatedAt
         //     LIMIT 100
         //
-        // Bu sorgu 10 SANIYEDE BIR calisacak. Yani günde ~8600 kez.
+        // Bu sorgu 10 saniyede bir calisacak. Yani günde ~8600 kez.
         //
         // Partial index kullanıyorum: yalnızca ISLENMEMIS mesajlar index'te.
         // Islenmis mesajlar zamanla milyonlari bulacak ama hicbiri bu

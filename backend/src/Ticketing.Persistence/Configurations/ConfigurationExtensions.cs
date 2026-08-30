@@ -33,7 +33,7 @@ internal static class ConfigurationExtensions
     ///                                 kendisi guncelliyor. EF'e "sen
     ///                                 dokunma, okuduktan sonra geri al" diyorum.
     ///
-    /// IsConcurrencyToken()         -> KRITIK OLAN BU. Bu satirdan sonra
+    /// IsConcurrencyToken()         -> kritik olan bu. Bu satirdan sonra
     ///                                 EF her UPDATE sorgusuna
     ///                                     WHERE Id = @id AND xmin = @okunan
     ///                                 kosulunu OTOMATIK ekler.
@@ -74,7 +74,7 @@ internal static class ConfigurationExtensions
         builder.HasQueryFilter(x => !x.IsDeleted);
 
         // Soft delete'li tablolarda IsDeleted'i index'e dahil ediyorum
-        // çünkü ARTIK HER SORGUDA bu kosul var. Index olmadan her sorgu
+        // çünkü artik her sorguda bu kosul var. Index olmadan her sorgu
         // tam tarama yapardi.
         builder.HasIndex(x => x.IsDeleted);
     }
@@ -83,7 +83,7 @@ internal static class ConfigurationExtensions
     /// Money value object'ini iki sutuna esler: {ad}_Amount ve {ad}_Currency.
     ///
     /// numeric(18,2) kullanıyorum:
-    ///   - numeric = PostgreSQL'in TAM HASSASIYETLI ondalik tipi.
+    ///   - Numeric = PostgreSQL'in tam hassasiyetli ondalik tipi.
     ///     real/double precision gibi yuvarlama hatası yapmaz.
     ///   - 18 basamak, 2'si kurus. 999 trilyon TL'ye kadar yeter.
     ///

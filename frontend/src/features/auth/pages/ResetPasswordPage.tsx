@@ -31,7 +31,7 @@ export function ResetPasswordPage() {
   const mutation = useMutation({
     mutationFn: (data: ResetPasswordForm) => authApi.resetPassword(token!, data.password),
     onSuccess: () => {
-      // Sifirlamadan sonra OTOMATIK GIRIS YAPMIYORUM.
+      // Sifirlamadan sonra otomatik giris yapmiyorum.
       //
       // Neden? Backend sıfırlama sonrası tüm oturumlari kapatiyor ve
       // yeni token dondurmuyor. Ayrıca kullanıcının yeni sifresini

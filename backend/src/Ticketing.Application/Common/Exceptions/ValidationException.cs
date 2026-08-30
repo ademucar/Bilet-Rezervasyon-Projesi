@@ -6,7 +6,7 @@ namespace Ticketing.Application.Common.Exceptions;
 /// Bir veya daha fazla girdi doğrulama hatası.
 /// GlobalExceptionHandler bunu 400 Bad Request + Problem Details'a cevirir.
 ///
-/// Hatalari ALAN BAZINDA gruplandiriyoruz çünkü RFC 7807'nin
+/// Hatalari alan bazinda gruplandiriyoruz çünkü RFC 7807'nin
 /// doğrulama uzantisi bu bicimi bekler:
 ///
 ///     {

@@ -85,8 +85,8 @@ internal sealed class NotifyExpiringReservationsCommandHandler
 
         // İdempotency: ayni rezervasyon icin ikinci uyari yok
         //
-        // Bu is DAKIKADA BIR çalışıyor ve uyarı penceresi 3 dakika.
-        // Yani aynı rezervasyon UC KEZ secilir.
+        // Bu is dakikada bir çalışıyor ve uyarı penceresi 3 dakika.
+        // Yani aynı rezervasyon uc kez secilir.
         //
         // Kontrol olmasaydı kullanıcı ust uste uc uyarı alırdı -- ve
         // uyarinin amaci (dikkat cekmek) tam tersine donerdi: art arda

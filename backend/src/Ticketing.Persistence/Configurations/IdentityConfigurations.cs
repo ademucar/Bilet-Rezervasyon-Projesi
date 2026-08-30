@@ -103,7 +103,7 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         //
         // Bu tablonun kendine ait bir kimliği yok; kimliği iliskilendirdigi
         // iki varligin birlesimidir. Composite key sayesinde aynı kullanıcıya
-        // aynı rol IKI KEZ atanamaz -- veritabani seviyesinde garanti.
+        // aynı rol iki kez atanamaz -- veritabani seviyesinde garanti.
         //
         // Ayrı bir Id sutunu olsaydı aynı ciftten iki satır olusabilirdi ve
         // engellemek için AYRICA bir unique index gerekirdi.

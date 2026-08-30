@@ -67,7 +67,7 @@ public sealed class FilesController : ApiControllerBase
     // yapilandirmamiz), çünkü hata model baglama sırasında olusup
     // doğrulama hatasina çevriliyor.
     //
-    // [RequestSizeGuard] DOGRU YANITI veriyor: model baglamadan önce
+    // [RequestSizeGuard] dogru yaniti veriyor: model baglamadan önce
     // Content-Length'e bakip 413 dönüyor.
     //
     // Biri korumayi, digeri iletisimi ustleniyor. Bunu ancak sınırı
@@ -93,7 +93,7 @@ public sealed class FilesController : ApiControllerBase
 
         // IFormFile burada BIRAKILIYOR: Application katmanina yalnızca
         // Stream ve birkaç string geciyor. Boylece is mantığı
-        // ASP.NET Core'a bagimli olmuyor (mimari testimin sarti).
+        // asp.net Core'a bagimli olmuyor (mimari testimin sarti).
         await using var akis = file.OpenReadStream();
 
         var sonuc = await Sender.Send(
@@ -134,10 +134,10 @@ public sealed class FilesController : ApiControllerBase
 
         var dosya = sonuc.Value;
 
-        // NEDEN HER ZAMAN "attachment"?
+        // Neden her zaman "attachment"?
         //
         // Content-Disposition: attachment, tarayiciya "bu dosyayı
-        // GOSTERME, INDIR" diyor.
+        // gosterme, indir" diyor.
         //
         // "inline" olsaydı tarayıcı dosyayı benim alan adimda
         // acardi. Dogrulamayi gecmis ama içinde script barindiran bir

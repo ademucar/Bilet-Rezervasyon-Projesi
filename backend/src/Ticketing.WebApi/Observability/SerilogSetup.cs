@@ -125,7 +125,7 @@ internal static class SerilogSetup
     /// <remarks>
     /// Neden kendi ozetimiz?
     ///
-    /// ASP.NET Core'un yerlesik istek loglamasi aynı istek için
+    /// Asp.net Core'un yerlesik istek loglamasi aynı istek için
     /// birden fazla satır uretiyor ve hicbiri süreyi net vermiyor.
     /// Serilog'un UseSerilogRequestLogging'i ise tek satirda
     /// yol + durum kodu + süre veriyor.
@@ -183,7 +183,7 @@ internal static class SerilogSetup
                     diagnosticContext.Set("CorrelationId", correlationId.ToString());
                 }
 
-                // Kullanıcı KIMLIGI (Guid), e-postası DEĞİL.
+                // Kullanıcı kimligi (Guid), e-postası değil.
                 //
                 // Sprint 15'te konustugum gerekce: e-posta kisisel
                 // veri. Guid ise anlamsiz bir tanimlayici -- destek

@@ -13,7 +13,7 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-  // StrictMode gelistirmede bilesenleri IKI KEZ render eder.
+  // StrictMode gelistirmede bilesenleri iki kez render eder.
   // Bu kasitlidir: yan etkisi olan (idempotent olmayan) kodu
   // ortaya cikarir. Üretim derlemesinde devre dışı kalır.
   <StrictMode>

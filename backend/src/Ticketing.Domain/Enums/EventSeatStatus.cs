@@ -1,7 +1,7 @@
 namespace Ticketing.Domain.Enums;
 
 /// <summary>
-/// Bir koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
+/// Bir koltuğun belirli bir etkinlik oturumundaki durumu.
 ///
 /// Bu enum PDF'te acikca listelenmiyor ama EventSeats tablosu isteniyor.
 /// Koltugun oturum bazindaki durumunu tutan bir alan olmadan koltuk
@@ -9,7 +9,7 @@ namespace Ticketing.Domain.Enums;
 ///
 /// DIKKAT: Bu, Seat (fiziksel koltuk) ile karistirilmamali.
 ///   Seat      = "Salon A, B bolumu, 5. sıra, 12 numara" -- salon yikilmadikca degismez
-///   EventSeat = "12 Mart konserinde o koltuk: satılmış, 450 TL, VIP"
+///   EventSeat = "12 Mart konserinde o koltuk: satılmış, 450 TL, vip"
 /// </summary>
 public enum EventSeatStatus
 {

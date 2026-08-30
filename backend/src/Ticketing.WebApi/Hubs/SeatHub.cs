@@ -19,8 +19,8 @@ namespace Ticketing.WebApi.Hubs;
 ///    Sorguya açık olan bilgiyi canlı yayında kapatmak tutarsiz
 ///    olurdu ve hiçbir sey korumazdi.
 ///
-/// 2) TOKEN'I ADRESE KOYMAK ISTEMEDIM: SignalR WebSocket kullaninca
-///    tarayıcı Authorization BASLIGI GONDEREMEZ. Standart çözüm
+/// 2) Token'I adrese koymak istemedim: SignalR WebSocket kullaninca
+///    tarayıcı Authorization basligi gonderemez. Standart çözüm
 ///    token'i sorgu dizesine koymaktir:
 ///
 ///        /hubs/seats?access_token=eyJhbGciOi...
@@ -31,8 +31,8 @@ namespace Ticketing.WebApi.Hubs;
 ///
 ///    Korunacak bir sey olsaydı bu bedeli oderdik. Burada yok.
 ///
-/// KIMLIK GEREKSEYDI NE YAPARDIK? Sprint 15'te bildirim hub'i
-/// eklendiginde (kullanıcıya OZEL veri tasiyacak) orada kimlik ŞART
+/// Kimlik gerekseydi ne yapardik? Sprint 15'te bildirim hub'i
+/// eklendiginde (kullanıcıya ozel veri tasiyacak) orada kimlik şart
 /// olacak ve token sorgu dizesi cozumunu, loglardan token'i maskeleyen
 /// bir yapilandirmayla birlikte kuracagiz.
 /// </summary>
@@ -43,7 +43,7 @@ public sealed class SeatHub : Hub
     /// <remarks>
     /// Grup adını hem hub hem de bildirim gonderen sinif uretiyor.
     /// Iki yerde elle yazsaydım birinde yazım hatası yapmak,
-    /// mesajlarin HİÇ ULASMAMASINA yol acardi -- ve hiçbir hata
+    /// mesajlarin hiç ulasmamasina yol acardi -- ve hiçbir hata
     /// vermezdi, çünkü SignalR var olmayan bir gruba gondermeyi
     /// hata saymaz. Sessizce çalışmayan bir sistem, patlayan
     /// sistemden çok daha zor teshis edilir.
@@ -55,7 +55,7 @@ public sealed class SeatHub : Hub
     /// Istemciyi bir oturumun grubuna alır.
     /// </summary>
     /// <remarks>
-    /// PDF IS KURALI: "Kullanıcı yalnızca goruntuledigi etkinlik
+    /// PDF is kurali: "Kullanıcı yalnızca goruntuledigi etkinlik
     /// oturumunun grubuna katilmalidir."
     ///
     /// Neden bu kural var? Grup olmasaydı tek seçenek TÜM istemcilere
@@ -68,7 +68,7 @@ public sealed class SeatHub : Hub
     /// Grup ile yalnızca o oturumu izleyen 200 kisiye gidiyor.
     /// Fark 50 kat.
     ///
-    /// ONCE ESKİ GRUPTAN CIKIYORUZ: kullanıcı oturumlar arasında
+    /// Once eski gruptan cikiyoruz: kullanıcı oturumlar arasında
     /// gezinirse (A oturumu -> B oturumu) eski gruptan cikmazsa
     /// artık bakmadigi oturumun mesajlarini almaya devam ederdi.
     /// Zamanla bir istemci onlarca gruba uye olurdu.

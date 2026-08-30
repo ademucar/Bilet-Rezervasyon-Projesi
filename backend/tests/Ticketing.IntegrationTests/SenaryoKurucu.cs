@@ -23,8 +23,8 @@ namespace Ticketing.IntegrationTests;
 /// testi bir yerde kirildiginda, HANGI adimin bozuldugunu anlamak
 /// icin 15 istegi tek tek incelemek gerekirdi.
 ///
-/// Kurulum dogrudan domain metotlariyla yapiliyor; TEST EDILEN
-/// davranis (rezervasyon, odeme, iade) ise HER ZAMAN HTTP uzerinden.
+/// Kurulum dogrudan domain metotlariyla yapiliyor; test edilen
+/// davranis (rezervasyon, odeme, iade) ise her zaman HTTP uzerinden.
 /// Yani kisayol yalnizca hazirlikta, olculen seyde degil.
 ///
 /// Kurulumda da domain metotlari kullaniliyor (SQL degil): boylece
@@ -103,7 +103,7 @@ internal static class SenaryoKurucu
             // Satis BASLAMIS olmali: dune ayarliyorum.
             // Bugune ayarlasaydik saat farki yuzunden bazen
             // "satis henuz baslamadi" hatasi alirdik -- ve test
-            // ARADA BIR kirilirdi. En kotu test turu budur.
+            // arada bir kirilirdi. En kotu test turu budur.
             salesStartDate: simdi.AddDays(-1),
             salesEndDate: etkinlikTarihi.AddHours(-1),
             durationMinutes: 120,
@@ -130,7 +130,7 @@ internal static class SenaryoKurucu
 
         // ---- Durum gecisleri ----
         //
-        // SIRA ZORUNLU: Draft -> PendingApproval -> Published -> SalesOpen
+        // Sira zorunlu: Draft -> PendingApproval -> Published -> SalesOpen
         //
         // Dogrudan SalesOpen'a gecmeyi denedim, durum makinesi
         // reddetti. Bu bir engel degil, tasarimin calistiginin
@@ -159,7 +159,7 @@ internal static class SenaryoKurucu
     /// Oturum ve bilet turu ICEREN bir taslak. Ikisi de olmadan
     /// SubmitForApproval() reddediyor (domain kurali).
     ///
-    /// Kurulum domain metotlariyla; TEST EDILEN gecisler (submit ve
+    /// Kurulum domain metotlariyla; test edilen gecisler (submit ve
     /// publish) HTTP uzerinden yapiliyor.
     /// </remarks>
     public static async Task<Guid> TaslakEtkinlikAsync(

@@ -146,7 +146,7 @@ internal sealed class RemoveFavoriteCommandHandler
             return Result.Success();
         }
 
-        // Favori için SOFT DELETE YOK -- gerçekten siliniyor.
+        // Favori için soft DELETE yok -- gerçekten siliniyor.
         //
         // Sebep: Favorite bir AuditableEntity değil, sade bir bağlantı
         // kaydı. Denetim değeri yok ve kullanıcı "favorilerimi
@@ -220,7 +220,7 @@ internal sealed class GetMyFavoritesQueryHandler
         // İptal edilmis etkinlikler listede kaliyor -- bilincli
         //
         // Filtrelemeyi dusundum ama vazgectim: kullanıcı favoriledigi
-        // etkinliğin İPTAL EDILDIGINI gormeli. Sessizce listeden
+        // etkinliğin iptal edildigini gormeli. Sessizce listeden
         // kaldirsaydim "favorim nereye gitti?" diye sorardi.
         //
         // Durum bilgisi zaten dönüyor (Status alanı); arayüz iptal

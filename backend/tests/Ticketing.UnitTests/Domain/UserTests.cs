@@ -87,7 +87,7 @@ public class UserTests
         // Bu test kapsullemeyi koruyor: rol ekleme yetkisi yalnizca
         // User.AssignRole metodunda olmali.
         //
-        // ONEMLI AYRINTI: AsReadOnly() bana ReadOnlyCollection<T> dondurur.
+        // Onemli ayrinti: AsReadOnly() bana ReadOnlyCollection<T> dondurur.
         // Bu tip ICollection<T>'yi ACIKCA (explicitly) implemente eder --
         // yani arayuz uzerinden Add cagrilabilir ama calisma zamaninda
         // NotSupportedException firlatir.
@@ -171,7 +171,7 @@ public class UserTests
     [Fact]
     public void IsLockedOut_KilitSuresiGectiyse_FalseDonmeli()
     {
-        // IsLockedOut'un METOT olmasinin sebebi bu: sonuc ZAMANA baglidir.
+        // IsLockedOut'un metot olmasinin sebebi bu: sonuc zamana baglidir.
         // Ayni nesneye 15 dakika sonra sordugunda farkli cevap alirsin.
         // Property olsaydi cagiran kisi bunun kararli bir deger oldugunu sanirdi.
         var user = GecerliKullanici();

@@ -25,7 +25,7 @@ public class ReviewTests
     /// <remarks>
     /// Sinir degerler ayrica test ediliyor
     ///
-    /// 1 ve 5 GECERLI, 0 ve 6 GECERSIZ.
+    /// 1 Ve 5 gecerli, 0 ve 6 gecersiz.
     ///
     /// Sinirlari ayrica yazmamin sebebi: bu tur kontrollerdeki en
     /// yaygin hata "bir eksik/bir fazla" (off-by-one). Kod

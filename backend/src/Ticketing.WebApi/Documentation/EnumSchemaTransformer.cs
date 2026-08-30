@@ -21,7 +21,7 @@ namespace Ticketing.WebApi.Documentation;
 ///
 ///     "ReservationStatus": { "type": "integer" }
 ///
-/// Enum'un HANGI sayinin NE anlama geldigi belgede HİÇ YOKTU.
+/// Enum'un hangi sayinin ne anlama geldigi belgede hiç yoktu.
 ///
 /// Bunun sonucu yalnızca kod uretimiyle sinirli değil: Swagger'i
 /// acan bir istemci gelistiricisi `status: 3` gordugunde ne
@@ -33,7 +33,7 @@ namespace Ticketing.WebApi.Documentation;
 /// JsonStringEnumConverter ekleyip enum'lari metin olarak
 /// gonderebilirdim ("Confirmed" gibi). Daha okunakli olurdu.
 ///
-/// YAPMADIM çünkü bu KIRICI bir degisiklik: frontend'im sayilarla
+/// Yapmadim çünkü bu kirici bir degisiklik: frontend'im sayilarla
 /// karsilastirma yapiyor (ReservationStatus.Confirmed === 4) ve
 /// Sprint 17'de yazdigim testler de oyle. Dokumantasyonu
 /// iyilestirmek için calisan bir sozlesmeyi bozmak yanlış takas.
@@ -86,7 +86,7 @@ internal sealed class EnumSchemaTransformer : IOpenApiSchemaTransformer
             eslesme.Add($"`{sayi}` = {adlar[i]}");
         }
 
-        // x-enum-varnames: KOD URETICILERI ICIN
+        // X-enum-varnames: kod ureticileri icin
         //
         // OpenAPI standardinda enum değerleri var ama ISIMLERI yok.
         // Bu uzanti, araclarin anlamlı enum uretebilmesi için

@@ -49,16 +49,16 @@ internal static class ReservationErrors
         "Lütfen koltuk planini yenileyip tekrar deneyin.");
 }
 
-// REZERVASYON OLUSTURMA -- PDF: POST /api/v1/reservations
+// Rezervasyon olusturma -- PDF: POST /api/v1/reservations
 
 /// <summary>
 /// PDF Sprint 7'nin ana komutu.
 ///
-/// DIKKAT: Bu komutta TOPLAM TUTAR ALANI YOK -- bilerek.
+/// Dikkat: Bu komutta toplam tutar alani yok -- bilerek.
 ///
 /// PDF Sprint 6: "Frontend tarafından gonderilen toplam tutara
 /// güvenilmemelidir." Alan hiç olmadığı için istemci tutar
-/// GONDEREMIYOR. Guvenligi kural ile değil TIP SISTEMI ile
+/// gonderemiyor. Guvenligi kural ile değil tip sistemi ile
 /// sagliyorum; unutulmasi imkansiz.
 /// </summary>
 public sealed record CreateReservationCommand(
@@ -131,7 +131,7 @@ internal sealed partial class CreateReservationCommandHandler
     /// veritabaninda ise baskasina ait. Log olmadan hangi iki istegin
     /// carpistigini goremem.
     ///
-    /// Warning çünkü bu bir HATA DEĞİL -- sistem tam olarak doğru
+    /// Warning çünkü bu bir hata değil -- sistem tam olarak doğru
     /// calisti ve veri butunlugunu korudu. Ama SIKLIGI önemli:
     /// çakışma oranı aniden artiyorsa ya bot trafigi var ya da bir
     /// etkinlik beklenenden popüler. Ikisi de mudahale gerektirir.
@@ -248,7 +248,7 @@ internal sealed partial class CreateReservationCommandHandler
             return Result.Failure<ReservationDto>(ReservationErrors.TicketLimitExceeded);
         }
 
-        // 4. KOLTUKLARI YUKLE -- TAKIP EDILEREK (AsNoTracking YOK!)
+        // 4. Koltuklari yukle -- takip edilerek (AsNoTracking yok!)
         //
         // Bu koltukları DEGISTIRECEGIZ (kilitleyecegiz). AsNoTracking
         // kullansaydım EF değişiklikleri fark etmez ve SaveChanges
@@ -344,8 +344,8 @@ internal sealed partial class CreateReservationCommandHandler
             //
             // xmin degistigi için 0 satır etkilendi -> exception.
             //
-            // KRITIK NOKTA: benim istegim KAYBETTI ama hiçbir veriyi
-            // BOZMADI. Digerinin kilidinin uzerine YAZMADIK.
+            // Kritik nokta: benim istegim kaybetti ama hiçbir veriyi
+            // bozmadi. Digerinin kilidinin uzerine yazmadik.
             //
             // Bu kontrol olmasaydı "son yazan kazanir" davranisi
             // olusur ve aynı koltuk iki kisiye satilirdi.
@@ -408,9 +408,9 @@ internal sealed partial class CreateReservationCommandHandler
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        // GERCEK ZAMANLI BILDIRIM -- PDF Sprint 10: "SeatLocked"
+        // Gercek zamanli bildirim -- PDF Sprint 10: "SeatLocked"
         //
-        // SaveChangesAsync'ten SONRA cagriliyor. Bu sıra ZORUNLU.
+        // SaveChangesAsync'ten sonra cagriliyor. Bu sıra zorunlu.
         //
         // Önce bildirseydik ve kayıt DbUpdateConcurrencyException ile
         // başarısız olsaydı, oturumu izleyen herkes koltuğu KILITLI

@@ -26,7 +26,7 @@ public interface IFileStorage
     /// Dosyayi kaydeder ve depolama yolunu döner.
     /// </summary>
     /// <param name="storedFileName">
-    /// URETILMIS güvenli dosya adı. Kullanicidan gelen ad ASLA
+    /// Uretilmis güvenli dosya adı. Kullanicidan gelen ad asla
     /// buraya gecmemeli -- cagiran taraf bunu garanti etmeli.
     /// </param>
     Task<string> SaveAsync(

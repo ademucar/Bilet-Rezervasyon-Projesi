@@ -26,9 +26,9 @@ internal sealed class CurrentUser : ICurrentUser
         {
             // JWT'de kullanıcı kimliği "sub" claim'inde.
             //
-            // ASP.NET Core varsayılan olarak "sub" claim'ini
+            // Asp.net Core varsayılan olarak "sub" claim'ini
             // ClaimTypes.NameIdentifier'a ESLER. Bu esleme bazen kafa
-            // karistirici hatalara yol acar, o yüzden IKISINI DE
+            // karistirici hatalara yol acar, o yüzden ikisini de
             // kontrol ediyorum. Program.cs'te bu eslemeyi kapattik
             // ama savunmayi burada da tutuyorum.
             var value = Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
@@ -58,7 +58,7 @@ internal sealed class CurrentUser : ICurrentUser
                 return null;
             }
 
-            // ONCE HttpContext.Items -- SONRA response header
+            // Once HttpContext.Items -- sonra response header
             //
             // Eskiden YALNIZCA response header'ina bakiyordu ve bu
             // SESSIZ bir hataydi: header'i CorrelationIdMiddleware
@@ -94,18 +94,18 @@ internal sealed class CurrentUser : ICurrentUser
     /// <summary>
     /// Istegin geldigi IP adresi.
     ///
-    /// GÜVENLİK UYARISI -- X-Forwarded-For BURADA OKUNMUYOR
+    /// Güvenlik uyarisi -- X-Forwarded-For burada okunmuyor
     ///
     /// Uygulama bir reverse proxy (nginx, yuk dengeleyici) arkasindaysa
     /// RemoteIpAddress proxy'nin IP'sini verir, gerçek kullanicininkini
     /// değil. Gerçek IP "X-Forwarded-For" header'inda gelir.
     ///
-    /// AMA o header'i BURADA elle okumak TEHLIKELIDIR: istemci bu
+    /// Ama o header'i burada elle okumak tehlikelidir: istemci bu
     /// header'i istedigi gibi UYDURABILIR. IP'ye göre kilit veya rate
     /// limit uyguluyorsak, saldirgan her istekte farklı bir IP yazarak
     /// tüm korumalari atlatir.
     ///
-    /// Dogru yontem: ASP.NET Core'un ForwardedHeaders middleware'ini
+    /// Dogru yontem: asp.net Core'un ForwardedHeaders middleware'ini
     /// GUVENILEN proxy listesiyle yapilandirmak. O zaman framework
     /// header'i yalnızca guvenilen bir proxy'den geldiğinde dikkate
     /// alır ve RemoteIpAddress'i doğru degerle değiştirir.

@@ -8,7 +8,7 @@ namespace Ticketing.UnitTests.Domain;
 /// Money value object testleri.
 ///
 /// Isimlendirme: Metot_Senaryo_BeklenenSonuc
-/// Test kirmizi yandiginda ismin TEK BASINA ne oldugunu anlatmasi gerekir;
+/// Test kirmizi yandiginda ismin tek basina ne oldugunu anlatmasi gerekir;
 /// kodu acmak zorunda kalmamalisin.
 /// </summary>
 public class MoneyTests
@@ -142,7 +142,7 @@ public class MoneyTests
         var a = new Money(100m, TRY);
         var b = new Money(100m, TRY);
 
-        // Iki AYRI nesne ama ayni DEGER. class olsaydi bu test kirmizi yanardi
+        // Iki ayri nesne ama ayni deger. Class olsaydi bu test kirmizi yanardi
         // cunku class'lar varsayilan olarak referans esitligi kullanir.
         a.Should().Be(b);
         (a == b).Should().BeTrue();

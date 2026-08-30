@@ -16,7 +16,7 @@ import { useMemo } from 'react'
  *      -> 200 satirlik yerlesim hesabi KOPYALANIRDI. Bir hizalama
  *         hatasini duzeltince digerinde duzelmezdi. Klasik teknik borc.
  *
- *   B) Bileseni GENELLESTIRMEK  <-- SECILEN
+ *   B) Bileseni genellestirmek  <-- secilen
  *      -> Bilesen artık "hangi API'den geldigini" bilmiyor. Yalnızca
  *         "sıra, numara, renk, tıklanabilir mi" biliyor.
  *
@@ -143,7 +143,7 @@ export function SeatMap({
 
     // Duz `for` dongusu kullanıyorum, `.map()` değil.
     //
-    // Sebep: burada bir DONUSUM değil, BIRIKIM yapiyorum -- her bölüm
+    // Sebep: burada bir donusum değil, birikim yapiyorum -- her bölüm
     // bir oncekinin bittigi yerden başlıyor (currentY) ve en genis
     // bolumu ariyorum (maxWidth). `.map()` içinde disaridaki
     // degiskenleri değiştirmek hem okuyucuyu yaniltir hem de

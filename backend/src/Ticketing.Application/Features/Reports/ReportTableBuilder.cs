@@ -20,11 +20,11 @@ namespace Ticketing.Application.Features.Reports;
 ///
 /// NEDEN InvariantCulture?
 ///
-/// Rapor dosyalari BASKA SISTEMLERE aktariliyor: muhasebe yazilimi,
+/// Rapor dosyalari baska sistemlere aktariliyor: muhasebe yazilimi,
 /// bir başka Excel, bir veri ambari.
 ///
 /// Turkce kulturde ondalik ayirici VIRGUL. "1.234,56" yazan bir CSV,
-/// virgulle ayrilmis bir dosyada SUTUN KAYMASINA yol acar -- alan
+/// virgulle ayrilmis bir dosyada sutun kaymasina yol acar -- alan
 /// tirnak icine alinsa bile karsi taraf sayiyi ayristiramaz.
 ///
 /// Nokta ayirici (1234.56) makineler için evrensel. Ekranda Turkce
@@ -32,7 +32,7 @@ namespace Ticketing.Application.Features.Reports;
 /// </remarks>
 internal static class ReportTableBuilder
 {
-    // BASLIK DIZILERI static readonly -- CA1861
+    // baslik dizileri static readonly -- CA1861
     //
     // Metot içinde "new[] { ... }" yazsaydım her cagirimda YENI bir
     // dizi ayrilirdi. Analiz kuralı bunu yakaladi.

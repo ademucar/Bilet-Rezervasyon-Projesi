@@ -97,16 +97,16 @@ internal sealed class GetNotificationsQueryHandler
     }
 }
 
-// 2) OKUNMAMIS SAYISI -- PDF: GET /api/v1/notifications/unread-count
+// 2) Okunmamis sayisi -- PDF: GET /api/v1/notifications/unread-count
 
 /// <summary>
 /// Okunmamis bildirim sayısı. Zil ikonundaki rozet için.
 /// </summary>
 /// <remarks>
-/// NEDEN AYRI BIR UC? Listeden de sayilabilirdi.
+/// Neden ayri bir uc? Listeden de sayilabilirdi.
 ///
 /// Sayiyi liste ucundan da alabilirdim (totalCount). Ama zil rozeti
-/// HER SAYFADA ve DUZENLI ARALIKLARLA yenileniyor.
+/// her sayfada ve duzenli araliklarla yenileniyor.
 ///
 /// Liste ucunu cagirsaydim her yenilemede 20 bildirimin tüm metnini
 /// (başlık, mesaj, adres) boşuna tasirdim. Bu uc tek bir SAYI
@@ -137,7 +137,7 @@ internal sealed class GetUnreadNotificationCountQueryHandler
     {
         if (_currentUser.UserId is not Guid userId)
         {
-            // Giriş yapmamis kullanıcı için HATA değil SIFIR donuyorum.
+            // Giriş yapmamis kullanıcı için hata değil sifir donuyorum.
             //
             // Zil ikonu her sayfada var ve oturum süresi dolmuş bir
             // kullanicida 401 hatası, arayüzde gereksiz bir hata
@@ -155,7 +155,7 @@ internal sealed class GetUnreadNotificationCountQueryHandler
     }
 }
 
-// 3) OKUNDU ISARETLE -- PDF: PATCH /api/v1/notifications/{id}/read
+// 3) Okundu isaretle -- PDF: PATCH /api/v1/notifications/{id}/read
 
 public sealed record MarkNotificationReadCommand(Guid Id) : IRequest<Result>;
 
@@ -216,7 +216,7 @@ internal sealed class MarkNotificationReadCommandHandler
     }
 }
 
-// 4) TUMUNU OKUNDU ISARETLE -- PDF: PATCH /api/v1/notifications/read-all
+// 4) Tumunu okundu isaretle -- PDF: PATCH /api/v1/notifications/read-all
 
 public sealed record MarkAllNotificationsReadCommand : IRequest<Result<int>>;
 
@@ -248,7 +248,7 @@ internal sealed class MarkAllNotificationsReadCommandHandler
 
         var now = _clock.UtcNow;
 
-        // NEDEN ExecuteUpdateAsync DEĞİL?
+        // Neden ExecuteUpdateAsync değil?
         //
         // EF Core 7+ ile toplu güncelleme yapilabilir:
         //

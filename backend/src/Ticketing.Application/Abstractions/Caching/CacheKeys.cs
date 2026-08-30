@@ -3,7 +3,7 @@ using System.Globalization;
 namespace Ticketing.Application.Abstractions.Caching;
 
 /// <summary>
-/// ONBELLEK ANAHTAR STANDARDI -- PDF Sprint 11
+/// Onbellek anahtar standardi -- PDF Sprint 11
 ///
 /// PDF kuralı: "Cache key standardi olusturulmalidir."
 ///
@@ -16,7 +16,7 @@ namespace Ticketing.Application.Abstractions.Caching;
 ///     event:popular:{adet}           -> popüler etkinlikler
 ///     layout:{id}                    -> salon oturma planı
 ///
-/// NEDEN STANDART ŞART? -- Iki somut sorun
+/// Neden standart şart? -- Iki somut sorun
 ///
 /// 1) CAKISMA: Anahtarlar elle yazilsaydi, birinin "event:123" digerinin
 ///    "events:123" yazmasi kacinilmazdi. Ikisi FARKLI anahtar olur;
@@ -36,7 +36,7 @@ namespace Ticketing.Application.Abstractions.Caching;
 /// PDF kuralı: "Kullanıcıya ozel hassas veriler ortak cache içinde
 /// tutulmamalidir."
 ///
-/// Bu sinifta bilerek TEK BIR kullanıcı bazlı anahtar yok. Rezervasyon,
+/// Bu sinifta bilerek tek bir kullanıcı bazlı anahtar yok. Rezervasyon,
 /// bilet, ödeme ve bildirim sorgulari HİÇ onbelleklenmiyor.
 ///
 /// Sebep sadece gizlilik değil, DOGRULUK da: rezervasyon durumu
@@ -67,7 +67,7 @@ public static class CacheKeys
     public const string SeatLayoutPrefix = "layout:";
 
     /// <summary>
-    /// Salonun oturma PLANI -- koltuk UYGUNLUGU değil.
+    /// Salonun oturma plani -- koltuk uygunlugu değil.
     /// </summary>
     /// <remarks>
     /// Bu ayrim kritik -- karistirilirsa koltuk iki kisiye satilir
@@ -75,11 +75,11 @@ public static class CacheKeys
     /// PDF "Salon oturma planı" cache edilebilir diyor. Dogru, ama
     /// hangi veri olduğu çok önemli:
     ///
-    ///   OTURMA PLANI (bu anahtar): Salonun fiziksel yapısı --
+    ///   Oturma plani (bu anahtar): Salonun fiziksel yapısı --
     ///   bölümler, sıra etiketleri, koltuk numaralari, koordinatlar.
     ///   Yilda belki bir kez degisir. Onbelleklenmesi ideal.
     ///
-    ///   KOLTUK UYGUNLUGU (ASLA onbelleklenmez): Hangi koltuk boş,
+    ///   Koltuk uygunlugu (asla onbelleklenmez): Hangi koltuk boş,
     ///   hangisi kilitli, hangisi satıldı. SANIYELER içinde degisir.
     ///
     /// Ikincisini onbelleklesevdik, iki kullanıcı aynı "boş" koltuğu
@@ -88,7 +88,7 @@ public static class CacheKeys
     /// koltuğun iki kez satilmasini engellerdi -- ama kullanıcı
     /// deneyimi berbat olurdu: herkes surekli 409 alırdı.
     ///
-    /// Ustelik Sprint 10'da SignalR ile koltuk durumunu GERCEK ZAMANLI
+    /// Ustelik Sprint 10'da SignalR ile koltuk durumunu gercek zamanli
     /// yayinliyorum. Aynı veriyi hem onbellekten (eski) hem SignalR'dan
     /// (güncel) beslemek, birbiriyle celisen iki kaynak demek olurdu.
     /// </remarks>
@@ -105,7 +105,7 @@ public static class CacheKeys
 /// gormesi ne kadar süre kabul edilebilir?"
 ///
 /// Cevap ne kadar uzunsa süre o kadar uzun. Ayrıca her veri için
-/// ACIK temizleme (invalidation) de var; süre yalnızca EMNIYET AGI:
+/// acik temizleme (invalidation) de var; süre yalnızca emniyet agi:
 /// bir temizleme cagrisi unutulursa veya başarısız olursa, veri en
 /// geç bu süre sonunda kendini yeniler.
 ///

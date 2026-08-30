@@ -7,12 +7,12 @@ namespace Ticketing.Domain.Entities;
 /// <summary>
 /// Projenin kalbi
 ///
-/// Bir koltuğun BELIRLI BIR ETKİNLİK OTURUMUNDAKI durumu.
+/// Bir koltuğun belirli bir etkinlik oturumundaki durumu.
 /// PDF'in "es zamanlı rezervasyon" problemi tam olarak bu satirlarda cozuluyor.
 ///
 /// Seat (fiziksel koltuk) ile karistirma:
 ///   Seat      = "Salon A, Orta Blok, C sırası, 12 numara" -- degismez
-///   EventSeat = "12 Mart 20:00 seansinda C-12: satılmış, 450 TL, VIP"
+///   EventSeat = "12 Mart 20:00 seansinda C-12: satılmış, 450 TL, vip"
 ///
 /// Her oturum için Seat tablosundan kopyalanarak üretilir.
 /// 1000 koltuklu salon + 3 oturum = 3000 EventSeat satiri.
@@ -106,7 +106,7 @@ public class EventSeat : ConcurrentEntity
     /// <summary>
     /// Koltuk su an satin alinabilir mi?
     ///
-    /// DIKKAT: "Status == Available" demek YETMEZ. Süresi dolmuş bir kilit
+    /// Dikkat: "Status == Available" demek yetmez. Süresi dolmuş bir kilit
     /// de aslında musait demektir -- background job henüz gelip temizlememis
     /// olabilir. Job dakikada bir çalışıyor; o bir dakika içinde koltuk
     /// gereksiz yere dolu görünürdü.
@@ -136,7 +136,7 @@ public class EventSeat : ConcurrentEntity
     /// <summary>
     /// Koltugu bir rezervasyon için kilitler.
     ///
-    /// Bu metot BASARILI dondugunde is bitmis DEĞİLDİR. Nesne bellekte
+    /// Bu metot basarili dondugunde is bitmis değildir. Nesne bellekte
     /// değişti; asil kritik an SaveChangesAsync cagrisi. Orada
     /// PostgreSQL su sorguyu calistiracak:
     ///
@@ -145,7 +145,7 @@ public class EventSeat : ConcurrentEntity
     ///
     /// Araya başkası girip satiri degistirmisse 0 satır etkilenir ve
     /// EF Core DbUpdateConcurrencyException firlatir. Bizim istegim
-    /// kaybeder ama VERI BOZULMAZ -- ustune yazmayiz.
+    /// kaybeder ama veri bozulmaz -- ustune yazmayiz.
     /// </summary>
     /// <param name="reservationId">Kilidi alan rezervasyon.</param>
     /// <param name="lockedUntil">Kilidin bitecegi an (UTC).</param>

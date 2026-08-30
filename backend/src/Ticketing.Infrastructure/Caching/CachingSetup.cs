@@ -20,10 +20,10 @@ public static partial class CachingSetup
 
         var connectionString = configuration.GetConnectionString("Redis");
 
-        // ONBELLEK ISTEGE BAGLI -- PDF: "Cache kapalı olduğunda sistem
+        // Onbellek istege bagli -- PDF: "Cache kapalı olduğunda sistem
         // calismaya devam edebilmelidir."
         //
-        // Bağlantı dizesi yoksa bu BIR HATA DEĞİL, bir TERCIH.
+        // Bağlantı dizesi yoksa bu bir hata değil, bir tercih.
         //
         // Gelistirici Redis kurmak istemeyebilir; testler Redis'siz
         // calismali; küçük bir kurulumda Redis gereksiz olabilir.
@@ -42,7 +42,7 @@ public static partial class CachingSetup
         // Baglanti kurulamazsa uygulama cokmemeli
         //
         // ConnectionMultiplexer.Connect(), Redis kapaliysa istisna
-        // firlatir. Burada yakalamasaydim uygulama HİÇ BASLAMAZDI.
+        // firlatir. Burada yakalamasaydim uygulama hiç baslamazdi.
         //
         // Bu, JWT dogrulamasindaki "fail fast" yaklasiminin TERSI --
         // ve bilinçli. Orada eksik yapilandirma bir GÜVENLİK acigiydi,
@@ -89,7 +89,7 @@ public static partial class CachingSetup
 
     // CA1848: LogWarning yerine kaynak ureteci.
     //
-    // Bu metot uygulama omrunde EN FAZLA BIR KEZ çalışıyor, yani
+    // Bu metot uygulama omrunde en fazla bir kez çalışıyor, yani
     // performans farki sıfıra yakın. Yine de kurala uyuyorum:
     // "burada onemsiz" diye istisna yapmaya baslarsak, kural
     // giderek anlamini yitirir. Susturmak yerine uymak daha ucuz.

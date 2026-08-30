@@ -29,7 +29,7 @@ namespace Ticketing.Infrastructure.Reporting;
 ///
 /// O zaman bu sinifin yerine bir S3/Azure Blob uygulamasi gelir --
 /// arayüz (IReportFileStore) aynı kaldigi için Application katmaninda
-/// TEK SATIR degismez. Zaten arayuzun varlik sebebi bu.
+/// tek satir degismez. Zaten arayuzun varlik sebebi bu.
 /// </remarks>
 internal sealed class FileSystemReportStore : IReportFileStore
 {

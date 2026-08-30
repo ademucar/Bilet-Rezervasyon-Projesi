@@ -13,7 +13,7 @@ namespace Ticketing.Infrastructure.Storage;
 /// afisi sunucu-1 e yukler, sunucu-2 den istendiginde bulunamaz.
 ///
 /// O gün IFileStorage in S3/Azure Blob uygulamasi yazilacak ve
-/// Application katmaninda TEK SATIR degismeyecek. Arayuzun varlik
+/// Application katmaninda tek satir degismeyecek. Arayuzun varlik
 /// sebebi tam olarak bu.
 ///
 /// Şimdilik yerel disk yeterli çünkü tek sunucuda calisiyorum --
@@ -61,7 +61,7 @@ internal sealed class LocalFileStorage : IFileStorage
             bufferSize: 81920,
             useAsync: true);
 
-        // CopyToAsync akışı PARCA PARCA kopyaliyor; dosyanin tamami
+        // CopyToAsync akışı parca parca kopyaliyor; dosyanin tamami
         // hiçbir zaman bellege alinmiyor. 5 MB tek başına sorun değil
         // ama es zamanlı yuzlerce yukleme olsaydı olurdu.
         await content.CopyToAsync(dosya, cancellationToken).ConfigureAwait(false);

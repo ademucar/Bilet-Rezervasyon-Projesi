@@ -17,12 +17,12 @@ internal sealed class ReportExporter : IReportExporter
     /// Questpdf lisansi -- kodda belirtilmek zorunda
     ///
     /// QuestPDF, "Community" lisansi altinda yillik geliri 1 milyon
-    /// USD altindaki kuruluslar için UCRETSIZ. Bu proje için uygun.
+    /// usd altindaki kuruluslar için ucretsiz. Bu proje için uygun.
     ///
     /// Ama kutuphane, lisans turunun ACIKCA belirtilmesini sart
     /// kosuyor. Belirtilmezse ilk PDF uretiminde istisna firlatiyor.
     ///
-    /// Static kurucu: uygulama omrunde BIR KEZ ve ilk kullanimdan
+    /// Static kurucu: uygulama omrunde bir kez ve ilk kullanimdan
     /// önce çalışıyor. Her Export cagrisinda atama yapmak gereksiz
     /// olurdu.
     ///
@@ -122,18 +122,18 @@ internal sealed class ReportExporter : IReportExporter
         //     return new UTF8Encoding(true).GetBytes(...)
         //
         // "encoderShouldEmitUTF8Identifier: true" parametresi BOM
-        // ekliyor SANDIM. EKLEMIYOR.
+        // ekliyor sandim. Eklemiyor.
         //
         // O bayrak yalnızca GetPreamble() metodunun ne donduregini
-        // belirliyor; GetBytes ONU KULLANMIYOR. BOM ancak StreamWriter
+        // belirliyor; GetBytes onu kullanmiyor. BOM ancak StreamWriter
         // gibi preamble'i kendisi yazan siniflarla eklenir.
         //
-        // Uretilen dosyayı inceleyerek buldum: ilk baytlar EF BB BF
+        // Uretilen dosyayı inceleyerek buldum: ilk baytlar EF bb bf
         // yerine "Etki" (45 74 6B 69) idi.
         //
         // Yani yorumda "BOM ekliyorum" yaziyordu ama EKLENMIYORDU --
         // ve Turkce karakterler Excel'de bozuk cikacakti. Kodun
-        // NIYETINI değil, URETTIGI CIKTIYI kontrol etmek gerekiyor.
+        // niyetini değil, urettigi ciktiyi kontrol etmek gerekiyor.
         var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
         var preamble = encoding.GetPreamble();
@@ -192,7 +192,7 @@ internal sealed class ReportExporter : IReportExporter
                 // Hucreleri METİN olarak yazıyorum.
                 //
                 // ClosedXML sayi gibi görünen değerleri otomatik
-                // sayiya cevirebilir ve bu ISTEDIGIMIZ SEY DEĞİL:
+                // sayiya cevirebilir ve bu istedigimiz sey değil:
                 // "01" gibi bir bilet numarasi "1"e donusur, uzun
                 // Guid'ler bilimsel gosterime kayar.
                 //

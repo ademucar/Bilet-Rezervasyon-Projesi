@@ -1,12 +1,12 @@
 namespace Ticketing.Domain.Common;
 
 /// <summary>
-/// Bir IS KURALI ihlal edildiginde firlatilir.
+/// Bir is kurali ihlal edildiginde firlatilir.
 ///
 /// Bu tipi ayrı bir sinif yapmamin sebebi, hatalari iki gruba ayirabilmek:
 ///
 ///   1. DomainException  -> "Süresi dolmuş rezervasyonda ödeme baslatilamaz."
-///      Bu bir HATA DEĞİL, beklenen bir durumdur. Kullanıcıya anlamlı bir
+///      Bu bir hata değil, beklenen bir durumdur. Kullanıcıya anlamlı bir
 ///      mesaj gostermeliyim ve HTTP 400/409 donmeliyim. Alarm calmamali.
 ///
 ///   2. Diger exception'lar -> NullReferenceException, veritabani bağlantı

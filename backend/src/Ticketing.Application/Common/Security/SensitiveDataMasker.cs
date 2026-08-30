@@ -40,7 +40,7 @@ public static partial class SensitiveDataMasker
     // Regex ise calisma zamaninda derlenir. GeneratedRegex ise C# kodu
     // olarak URETILIYOR -- en hizlisi ve tahsis yapmiyor.
     //
-    // Maskeleme HER LOG SATIRINDA calisabilecegi için bu önemli.
+    // Maskeleme her log satirinda calisabilecegi için bu önemli.
 
     /// <summary>JWT: uc bolumlu, nokta ile ayrilmis Base64.</summary>
     [GeneratedRegex(
@@ -83,7 +83,7 @@ public static partial class SensitiveDataMasker
 
         var sonuc = JwtRegex().Replace(input, Maske);
 
-        // $1 ile alan ADINI koruyor, yalnızca DEGERI maskeliyorum.
+        // $1 İle alan adini koruyor, yalnızca degeri maskeliyorum.
         //
         // Alan adını da silseydim logdan "hangi alan vardi" bilgisi
         // kaybolurdu ve hata ayiklamak imkansizlasirdi.

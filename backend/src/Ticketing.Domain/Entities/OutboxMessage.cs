@@ -11,7 +11,7 @@ namespace Ticketing.Domain.Entities;
 ///   1. Veritabanina yaz (rezervasyon onayla, bilet üret)
 ///   2. E-posta gönder
 ///
-/// Bunlar IKI FARKLI SISTEM. Aralarinda ortak bir transaction yok.
+/// Bunlar iki farkli sistem. Aralarinda ortak bir transaction yok.
 /// Dolayisiyla su iki senaryo kacinilmaz:
 ///
 ///   A) Önce DB yaz, sonra e-posta gönder:
@@ -24,8 +24,8 @@ namespace Ticketing.Domain.Entities;
 ///
 /// Ikisi de kabul edilemez. B daha da kötü: geri alinamaz.
 ///
-/// COZUM: E-postayi gondermek yerine, "e-posta gonderilecek" NIYETINI
-/// aynı veritabanina, AYNI TRANSACTION içinde yaz.
+/// Cozum: E-postayi gondermek yerine, "e-posta gonderilecek" niyetini
+/// aynı veritabanina, ayni transaction içinde yaz.
 ///
 ///   Begin transaction
 ///     UPDATE Reservations SET Status = Confirmed
@@ -68,7 +68,7 @@ public class OutboxMessage : Entity
     public DateTimeOffset CreatedAt { get; private set; }
 
     /// <summary>
-    /// Basariyla islendigi an. null ise HENUZ ISLENMEDI.
+    /// Basariyla islendigi an. Null ise henuz islenmedi.
     ///
     /// Job'in sorgusu: WHERE "ProcessedAt" IS NULL ORDER BY "CreatedAt"
     /// Bu yüzden (ProcessedAt, CreatedAt) uzerinde composite index var.
@@ -134,10 +134,10 @@ public class OutboxMessage : Entity
     /// Basariyla islendi.
     /// </summary>
     /// <summary>
-    /// Correlation ID'yi, HENUZ ATANMAMISSA atar.
+    /// Correlation ID'yi, henuz atanmamissa atar.
     /// </summary>
     /// <remarks>
-    /// NEDEN "SADECE BOSSA" YAZIYOR?
+    /// Neden "sadece bossa" yaziyor?
     ///
     /// Bu metodu OutboxCorrelationInterceptor cagiriyor: kaydetme
     /// anında, değeri atanmamis her Outbox mesajini o anki HTTP
@@ -164,7 +164,7 @@ public class OutboxMessage : Entity
         {
             // PDF: "Aynı Outbox kaydı iki kez islenmemelidir."
             //
-            // Burada HATA FIRLATMIYORUM, sessizce donuyorum. Sebep:
+            // Burada hata firlatmiyorum, sessizce donuyorum. Sebep:
             // at-least-önce teslimde aynı mesajin iki kez islenmesi
             // BEKLENEN bir durumdur, hata değil. Hata firlatsaydim
             // job loglari gereksiz alarmlarla dolardi.

@@ -128,7 +128,7 @@ internal static class ReportScopeResolver
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        // Organizatör profili silinmisse: KAPSAMI BOŞ birak.
+        // Organizatör profili silinmisse: kapsami boş birak.
         //
         // OrganizerId null olunca Apply(...) hiçbir kayitla
         // eşleşmiyor ve rapor BOŞ cikiyor. Istisna firlatmak yerine
@@ -146,7 +146,7 @@ public abstract record ReportRangeRequest
     public DateTimeOffset? To { get; init; }
 }
 
-// 1) SATIS OZETI -- GET /api/v1/reports/sales-summary
+// 1) Satis ozeti -- GET /api/v1/reports/sales-summary
 
 public sealed record SalesSummaryReport(
     int TicketCount,
@@ -199,19 +199,19 @@ internal sealed class GetSalesSummaryReportQueryHandler
     /// Sorgunun KENDISI. Kapsami disaridan aliyor.
     /// </summary>
     /// <remarks>
-    /// NEDEN AYRI BIR static METOT?
+    /// Neden ayri bir static metot?
     ///
-    /// Bu sorgu IKI FARKLI YERDEN çalışıyor:
+    /// Bu sorgu iki farkli yerden çalışıyor:
     ///
     ///   1) HTTP ucu       -> kapsam ICurrentUser'dan cozuluyor
     ///   2) Arka plan isi  -> kapsam Outbox payload'indaki userId'den
     ///
     /// Arka planda HTTP baglami YOK, yani ICurrentUser boş döner.
     /// Handler'i doğrudan cagirsaydim rapor "yetkisiz" hatası verirdi
-    /// ya da (daha kotusu) kapsam boş kalip TÜM VERIYI dondururdu.
+    /// ya da (daha kotusu) kapsam boş kalip tüm veriyi dondururdu.
     ///
     /// Sorguyu kapsamdan ayirinca ikisi de aynı kodu kullaniyor ve
-    /// yetki kurallari HER IKI YOLDA da AYNEN uygulaniyor. Arka planda
+    /// yetki kurallari her iki yolda da aynen uygulaniyor. Arka planda
     /// "her seyi gor" gibi bir ayricalik YOK.
     /// </remarks>
     internal static async Task<SalesSummaryReport> RunAsync(
@@ -225,7 +225,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
 
         var tickets = scope.Apply(_context.Tickets.AsNoTracking());
 
-        // Tarih aralığı ISTEGE BAGLI. Verilmezse tüm zamanlar.
+        // Tarih aralığı istege bagli. Verilmezse tüm zamanlar.
         if (request.From.HasValue)
         {
             tickets = tickets.Where(t => t.CreatedAt >= request.From.Value);
@@ -303,7 +303,7 @@ internal sealed class GetSalesSummaryReportQueryHandler
     }
 }
 
-// 2) ETKİNLİK DOLULUGU -- GET /api/v1/reports/event-occupancy
+// 2) Etkinlik dolulugu -- GET /api/v1/reports/event-occupancy
 
 public sealed record EventOccupancyRow(
     Guid EventId,
@@ -363,10 +363,10 @@ internal sealed class GetEventOccupancyReportQueryHandler
                 e.Title,
                 e.EventDate,
 
-                // Koltuk sayimlarini ALT SORGU ile alıyorum.
+                // Koltuk sayimlarini alt sorgu ile alıyorum.
                 //
                 // GroupBy ile de yapilabilirdi ama o zaman koltuğu
-                // OLMAYAN etkinlikler sonuctan DUSERDI (inner join
+                // olmayan etkinlikler sonuctan duserdi (inner join
                 // davranisi). Oysa "0 koltuk üretilmiş" bilgisi de
                 // rapor için degerli -- organizatör eksik kurulumu
                 // gorebilmeli.
@@ -396,7 +396,7 @@ internal sealed class GetEventOccupancyReportQueryHandler
     }
 }
 
-// 3) ETKİNLİK BAZLI GELIR -- GET /api/v1/reports/revenue-by-event
+// 3) Etkinlik bazli gelir -- GET /api/v1/reports/revenue-by-event
 
 public sealed record GetRevenueByEventReportQuery : ReportRangeRequest,
     IRequest<Result<IReadOnlyList<EventRevenue>>>;
@@ -474,7 +474,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
             //   InvalidOperationException: The LINQ expression ...
             //   could not be translated
             //
-            // EF Core, GroupBy sonucunu bir RECORD KURUCUSUNA
+            // EF Core, GroupBy sonucunu bir record kurucusuna
             // projelendiremiyor (anonim tipe ise sorunsuz cevirebiliyor).
             //
             // Cozum: SQL'e cevrilebilen anonim tiple gruplayip,
@@ -482,7 +482,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
             // (etkinlik sayısı kadar satır), yani bellekte islemenin
             // maliyeti yok.
             //
-            // ONEMLI: bu, "veriyi bellege cekip C#'ta grupla" DEĞİL.
+            // Onemli: bu, "veriyi bellege cekip C#'ta grupla" değil.
             // Gruplama ve toplama HALA SQL'de yapiliyor; yalnızca
             // sonucun tipe donusumu bellekte.
             .Select(g => new
@@ -500,7 +500,7 @@ internal sealed class GetRevenueByEventReportQueryHandler
     }
 }
 
-// 4) BİLET TURU SATISLARI -- GET /api/v1/reports/ticket-type-sales
+// 4) Bilet turu satislari -- GET /api/v1/reports/ticket-type-sales
 
 public sealed record TicketTypeSalesRow(
     string TicketTypeName,
@@ -595,7 +595,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
                 r.Refunded,
                 r.Revenue,
 
-                // Ortalama fiyati BİLET TURUNUN listelenen fiyatindan
+                // Ortalama fiyati bilet turunun listelenen fiyatindan
                 // değil, GERCEKLESEN satistan hesapliyorum.
                 //
                 // Fark önemli: bilet turunun fiyati sonradan
@@ -610,7 +610,7 @@ internal sealed class GetTicketTypeSalesReportQueryHandler
     }
 }
 
-// 5) ÖDEME DURUMLARI -- GET /api/v1/reports/payment-statuses
+// 5) Ödeme durumlari -- GET /api/v1/reports/payment-statuses
 
 public sealed record PaymentStatusRow(
     PaymentStatus Status,

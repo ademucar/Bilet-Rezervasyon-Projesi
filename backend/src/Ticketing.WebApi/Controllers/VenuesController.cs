@@ -14,10 +14,10 @@ namespace Ticketing.WebApi.Controllers;
 ///
 /// Yetkilendirme stratejisi
 ///
-/// OKUMA islemleri ANONIM: kullanıcı etkinlik ararken mekan bilgisini
+/// Okuma islemleri anonim: kullanıcı etkinlik ararken mekan bilgisini
 /// gormeli ve bunun için giriş yapmak zorunda kalmamali.
 ///
-/// YAZMA islemleri ADMIN: PDF sayfa 5'e göre mekan/salon yönetimi
+/// Yazma islemleri admin: PDF sayfa 5'e göre mekan/salon yönetimi
 /// admin sorumlulugunda. Organizatör yalnızca var olan salonlari SECER.
 ///
 /// Bu ayrim olmasaydı her organizatör kendi "salon"unu tanimlardi ve
@@ -80,7 +80,7 @@ public sealed class VenuesController : ApiControllerBase
         //
         // Komut nesnesini doğrudan [FromBody] ile baglasaydim, istemci
         // URL'de bir Id, govdede BASKA bir Id gonderebilirdi:
-        //     PUT /api/v1/venues/AAA   { "id": "BBB", ... }
+        //     PUT /api/v1/venues/aaa   { "id": "bbb", ... }
         //
         // Hangisi geçerli? Belirsiz. Ve daha kotusu: yetkilendirme
         // URL'deki Id'ye bakip govdedeki Id guncellenirse GÜVENLİK

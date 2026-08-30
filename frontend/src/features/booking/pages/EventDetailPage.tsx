@@ -51,7 +51,7 @@ export function EventDetailPage() {
 
   // Satis acik mi?
   //
-  // Bu kontrol yalnızca KULLANICI DENEYİMİ için.
+  // Bu kontrol yalnızca kullanici deneyimi için.
   //
   // Satış kapaliyken koltuk seçim baglantisini gizlemek, kullanıcının
   // 10 koltuk seçip en sonda "satış kapalı" hatası almasini onluyor.

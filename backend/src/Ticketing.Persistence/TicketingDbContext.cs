@@ -6,7 +6,7 @@ namespace Ticketing.Persistence;
 /// <summary>
 /// Uygulamanin EF Core veritabani baglami.
 ///
-/// NEDEN DbSet'ler VAR AMA IS MANTIGI YOK?
+/// Neden DbSet'ler var ama is mantigi yok?
 ///
 /// DbContext'in tek isi veri erisimidir. Icine "rezervasyon oluştur"
 /// gibi metotlar yazsaydım, is mantığı Persistence katmanina sizardi
@@ -111,9 +111,9 @@ public partial class TicketingDbContext : DbContext
     ///
     /// Bu ikisi celisince su olur: EF, bir navigation koleksiyonuna
     /// eklenmis yeni nesneyi gordugunde "anahtari dolu, demek ki
-    /// veritabaninda ZATEN VAR" diye dusunur ve Modified isaretler.
+    /// veritabaninda zaten var" diye dusunur ve Modified isaretler.
     ///
-    /// NEDEN Venue ve Hall'da OLMADI?
+    /// Neden Venue ve Hall'da olmadi?
     /// Çünkü onlari _context.Venues.Add(...) ile ACIKCA ekledim --
     /// Add() her zaman Added isaretler. Hata yalnızca nesne bir
     /// KOLEKSIYON üzerinden eklendiginde ortaya cikiyor.
@@ -125,7 +125,7 @@ public partial class TicketingDbContext : DbContext
     ///     EventSession -> EventSeats         (Sprint 5)
     ///     SeatSection -> Seats               (koltuk üretimi)
     ///
-    /// Yani projenin EN KRITIK akislarinin hepsi. Tek tek duzeltseydim
+    /// Yani projenin en kritik akislarinin hepsi. Tek tek duzeltseydim
     /// birini unutmam kacinilmazdi ve hata aylar sonra, rezervasyon
     /// akisinda ortaya çıkardı.
     ///

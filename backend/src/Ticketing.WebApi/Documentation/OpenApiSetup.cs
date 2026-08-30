@@ -22,14 +22,14 @@ namespace Ticketing.WebApi.Documentation;
 ///   9. Idempotency-Key         -> IdempotencyHeaderTransformer
 ///  10. API version bilgisi     -> DocumentInfoTransformer
 ///
-/// NEDEN TRANSFORMER? Neden her uca oznitelik yazmiyorum?
+/// Neden transformer? Neden her uca oznitelik yazmiyorum?
 ///
 /// Yazabilirdim ama 60'tan fazla ucum var. Her birine
 /// [ProducesResponseType(401)] eklemek:
 ///   - Yuzlerce satır tekrar
 ///   - Birini unutunca belgeyle gerçek arasında sessiz bir fark
 ///
-/// Transformer, kuralı TEK YERDEN uyguluyor: "kimlik dogrulamasi
+/// Transformer, kuralı tek yerden uyguluyor: "kimlik dogrulamasi
 /// gerektiren her uca 401 ekle" gibi. Yeni bir uc eklendiginde
 /// hiçbir sey yapmak gerekmiyor.
 /// </remarks>
@@ -44,7 +44,7 @@ internal static class OpenApiSetup
             options.AddDocumentTransformer<DocumentInfoTransformer>();
             options.AddDocumentTransformer<SecuritySchemeTransformer>();
 
-            // SIRA ONEMLI: XML önce çalışıyor ki Description'i
+            // Sira onemli: XML önce çalışıyor ki Description'i
             // olustursun; AuthorizationTransformer sonra yetki notunu
             // onun sonuna EKLIYOR. Ters sırada olsaydı XML açıklaması
             // yetki notunun uzerine yazilirdi.
@@ -317,7 +317,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
         var korumali = !anonim
             && metadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any();
 
-        // 429: HER UCA -- hiz sınırı genel limitleyiciyle tumune uygulaniyor
+        // 429: Her uca -- hiz sınırı genel limitleyiciyle tumune uygulaniyor
         //
         // Sprint 15'te politikasi olmayan uclar için de genel bir sinir
         // koymustuk ("varsayılan olarak güvenli"). Yani 429 her uctan
@@ -347,7 +347,7 @@ internal sealed class ProblemDetailsTransformer : IOpenApiOperationTransformer
         return Task.CompletedTask;
     }
 
-    /// <summary>Yanit zaten tanimliysa USTUNE YAZMIYOR.</summary>
+    /// <summary>Yanit zaten tanimliysa ustune yazmiyor.</summary>
     /// <remarks>
     /// Controller'da [ProducesResponseType] ile acikca yazilmis bir
     /// yanit, buradaki genel aciklamadan daha degerli: o uca ozgu.

@@ -30,7 +30,7 @@ public class SeatLayoutTests
     [Fact]
     public void AddSection_FarkliBuyukKucukHarf_YineDeCakismaSayilmali()
     {
-        // "Orta Blok" ile "ORTA BLOK" ayni bolumdur. Buyuk/kucuk harf
+        // "Orta Blok" ile "orta blok" ayni bolumdur. Buyuk/kucuk harf
         // farkiyla ayni bolumun iki kez eklenmesi kullaniciyi sasirtir
         // ve koltuk haritasini bozar.
         var plan = GecerliPlan();

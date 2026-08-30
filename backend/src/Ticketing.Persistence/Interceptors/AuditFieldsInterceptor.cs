@@ -20,7 +20,7 @@ namespace Ticketing.Persistence.Interceptors;
 ///
 ///     CreatedAt = -infinity     (yani DateTimeOffset.MinValue)
 ///
-/// AuditableEntity'de bu alanlar TANIMLI ama HICBIR YERDE
+/// AuditableEntity'de bu alanlar tanimli ama hicbir yerde
 /// DOLDURULMUYORDU. Sprint 2'den beri boyleymis.
 ///
 /// Etkilenen tablolar (dogrulandi):
@@ -37,7 +37,7 @@ namespace Ticketing.Persistence.Interceptors;
 ///     .Where(t =&gt; t.CreatedAt &gt;= start &amp;&amp; t.CreatedAt &lt; end)
 ///
 /// Ben bunu "dun hiç satış olmamış, normal" diye yorumladim ve
-/// gectim. Oysa rapor CreatedAt boş olduğu için HICBIR ZAMAN veri
+/// gectim. Oysa rapor CreatedAt boş olduğu için hicbir zaman veri
 /// bulamayacakti.
 ///
 /// Ders: bekledigim sonucu goren bir test, gecen bir test degildir.
@@ -54,10 +54,10 @@ namespace Ticketing.Persistence.Interceptors;
 ///   2) UpdatedAt'i entity içinde tutmak imkansiz: hangi metodun
 ///      "güncelleme" sayilacagini her seferinde elle isaretlemek
 ///      gerekirdi.
-///   3) Domain katmani ZAMANI ve KULLANICIYI bilmemeli. Interceptor
+///   3) Domain katmani zamani ve kullaniciyi bilmemeli. Interceptor
 ///      Persistence katmaninda; oraya ait.
 ///
-/// Interceptor TEK YERDE ve otomatik. Yeni bir entity eklendiginde
+/// Interceptor tek yerde ve otomatik. Yeni bir entity eklendiginde
 /// hiçbir sey yapmaya gerek yok.
 /// </summary>
 internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
@@ -134,7 +134,7 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     entry.Entity.UpdatedAt = now;
                     entry.Entity.UpdatedBy = userId;
 
-                    // CreatedAt UZERINE YAZILMASINI ENGELLE
+                    // CreatedAt uzerine yazilmasini engelle
                     //
                     // EF, bir entity Modified durumundayken TÜM
                     // ozelliklerini UPDATE cumlesine dahil edebilir.
@@ -156,7 +156,7 @@ internal sealed class AuditFieldsInterceptor : SaveChangesInterceptor
                     // (IsDeleted alanı ve global query filter).
                     //
                     // Ama birisi context.Remove(entity) cagirirsa EF
-                    // GERCEK bir DELETE üretir ve kayıt KAYBOLUR --
+                    // gercek bir DELETE üretir ve kayıt kaybolur --
                     // soft delete altyapisi hiçbir ise yaramaz.
                     //
                     // Burada durumu Modified'a cevirip IsDeleted

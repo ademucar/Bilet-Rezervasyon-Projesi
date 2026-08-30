@@ -75,16 +75,16 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => Boolean(get().accessToken),
 
       /**
-       * Kullanıcının verilen rollerden EN AZ BIRINE sahip olup olmadığı.
+       * Kullanıcının verilen rollerden en az birine sahip olup olmadığı.
        *
        * NOT: Bu YALNIZCA arayüz icindir -- menuyu gizlemek, butonu
-       * pasiflestirmek gibi. GÜVENLİK DEĞİLDİR.
+       * pasiflestirmek gibi. Güvenlik değildir.
        *
        * Kullanıcı tarayıcı konsolundan bu store'u değiştirip kendini
        * Admin yapabilir. Ama backend token'daki ROLLERE bakar ve token
        * imzalidir; sahte rol ise yaramaz.
        *
-       * Kural: frontend yetkilendirmesi KULLANICI DENEYİMİ icindir,
+       * Kural: frontend yetkilendirmesi kullanici deneyimi icindir,
        * gerçek kontrol her zaman sunucudadır.
        */
       hasRole: (...roles) => {
