@@ -71,9 +71,20 @@ export function SiteHeader() {
           {/* Panel: organizatör VEYA admin görebilir.
               Normal kullanıcı gorse de backend 403 döner. */}
           {(user?.roles.includes(Roles.Admin) || user?.roles.includes(Roles.Organizer)) && (
-            <NavLink to="/panel" className={linkClass}>
-              Panel
-            </NavLink>
+            <>
+              <NavLink to="/panel" className={linkClass}>
+                Panel
+              </NavLink>
+
+              {/* Etkinlik yonetimi Panel'den AYRI bir baglanti.
+                  Panel rapor ve metrik gosteriyor, burasi is
+                  yapiliyor. Ikisini tek baglantida toplasaydim
+                  organizator "etkinlik olusturmak icin nereye
+                  basacagim" diye aramak zorunda kalirdi. */}
+              <NavLink to="/panel/etkinlikler" className={linkClass}>
+                Etkinliklerim
+              </NavLink>
+            </>
           )}
 
           {user?.roles.includes(Roles.Admin) && (

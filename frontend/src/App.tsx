@@ -100,6 +100,21 @@ const SeatLayoutPage = lazy(() =>
   import('./features/admin/pages/SeatLayoutPage').then((m) => ({ default: m.SeatLayoutPage })),
 )
 
+// --- Organizator etkinlik yonetimi (Sprint 5) ---
+//
+// Bu ekranlar Sprint 5'te hic yazilmamisti; PDF uyum denetiminde
+// (docs/17) ortaya cikti. Uclar backend'de duruyordu ama organizator
+// arayuzden etkinlik olusturamiyordu.
+const MyEventsPage = lazy(() =>
+  import('./features/organizer/pages/MyEventsPage').then((m) => ({ default: m.MyEventsPage })),
+)
+
+const EventCreatePage = lazy(() =>
+  import('./features/organizer/pages/EventCreatePage').then((m) => ({
+    default: m.EventCreatePage,
+  })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -207,6 +222,17 @@ export default function App() {
                 <Route path="/biletlerim" element={<MyTicketsPage />} />
                 <Route path="/favorilerim" element={<MyFavoritesPage />} />
                 <Route path="/panel" element={<DashboardPage />} />
+              </Route>
+
+              {/* ---- Organizator etkinlik yonetimi ----
+                  Organizator VEYA admin. Admin de girebilsin cunku
+                  PDF sayfa 5: "Tum etkinlikleri goruntuleyebilir."
+                  Gercek kontrol backend'de: /events/mine organizator
+                  profilini sunucuda cozuyor, admin'in profili yoksa
+                  403 doner ve sebebini yazar. */}
+              <Route element={<ProtectedRoute roles={[Roles.Organizer, Roles.Admin]} />}>
+                <Route path="/panel/etkinlikler" element={<MyEventsPage />} />
+                <Route path="/panel/etkinlikler/yeni" element={<EventCreatePage />} />
               </Route>
 
               {/* ---- Admin paneli ----

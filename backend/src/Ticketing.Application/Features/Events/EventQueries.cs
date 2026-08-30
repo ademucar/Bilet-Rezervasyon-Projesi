@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.Caching;
 using Ticketing.Application.Abstractions.Persistence;
+using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Common.Pagination;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Enums;
@@ -556,5 +557,103 @@ internal sealed class GetEventByIdQueryHandler
                     .ToList()))
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+}
+
+// Organizatorun KENDI etkinlikleri -- PDF sayfa 5:
+// "Kendi etkinliklerini guncelleyebilir."
+
+/// <summary>
+/// Giris yapmis organizatorun kendi etkinlikleri.
+/// </summary>
+/// <remarks>
+/// Neden ayri bir sorgu? GetEventsQuery zaten OrganizerId ile
+/// filtreleyebiliyor ama iki sorun var.
+///
+/// Birincisi: istemci kendi OrganizerId'sini bilmiyor. Kullanici
+/// kimligi ile organizator profili kimligi ayri seyler ve profil
+/// kimligini donen bir uc yok. Istemciye "sen su organizatorsun"
+/// deyip ona guvenmek de olmazdi -- baskasinin kimligini yazip
+/// onun etkinliklerini isteyebilirdi.
+///
+/// Ikincisi: organizatorun kendi TASLAKLARINI gormesi gerekiyor.
+/// GetEventsQuery'de IncludeUnpublished bayragi var ama controller
+/// onu yalnizca admin icin aciyor; istemciden gelen degere
+/// guvenilmiyor (orada yazili gerekce). Burada bayragi sunucu
+/// kendisi aciyor ve sonuc zaten tek bir organizatorle sinirli.
+/// </remarks>
+public sealed record GetMyEventsQuery : PaginationRequest, IRequest<Result<PagedResult<EventListItem>>>
+{
+    /// <summary>Duruma gore filtre. Bos ise hepsi.</summary>
+    public EventStatus? Status { get; init; }
+
+    /// <summary>Siralama alani. GetEventsQuery ile ayni degerler.</summary>
+    public string? SortBy { get; init; }
+
+    /// <summary>asc veya desc.</summary>
+    public string? SortDirection { get; init; }
+}
+
+internal sealed class GetMyEventsQueryHandler
+    : IRequestHandler<GetMyEventsQuery, Result<PagedResult<EventListItem>>>
+{
+    private readonly IApplicationDbContext _context;
+    private readonly ICurrentUser _currentUser;
+    private readonly ISender _sender;
+
+    public GetMyEventsQueryHandler(
+        IApplicationDbContext context,
+        ICurrentUser currentUser,
+        ISender sender)
+    {
+        _context = context;
+        _currentUser = currentUser;
+        _sender = sender;
+    }
+
+    public async Task<Result<PagedResult<EventListItem>>> Handle(
+        GetMyEventsQuery request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (_currentUser.UserId is not Guid userId)
+        {
+            return Result.Failure<PagedResult<EventListItem>>(
+                Error.Unauthorized("auth.required", "Giriş yapmalısınız."));
+        }
+
+        var organizerId = await _context.OrganizerProfiles
+            .AsNoTracking()
+            .Where(p => p.UserId == userId)
+            .Select(p => (Guid?)p.Id)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        // Rol var ama profil yok: basvuru onaylanmamis olabilir.
+        // Bos liste donmek yaniltici olurdu ("hic etkinligim yok"
+        // sanirdi); sebebi acikca soyluyorum.
+        if (organizerId is null)
+        {
+            return Result.Failure<PagedResult<EventListItem>>(
+                Error.Forbidden(
+                    "event.not_organizer",
+                    "Organizatör profiliniz yok. Başvurunuz onaylanmamış olabilir."));
+        }
+
+        // Filtreleme ve projeksiyon GetEventsQuery'de zaten yazili;
+        // burada tekrar yazmak iki yerde bakim demek olurdu.
+        var query = new GetEventsQuery
+        {
+            OrganizerId = organizerId,
+            IncludeUnpublished = true,
+            Status = request.Status,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            SortBy = request.SortBy,
+            SortDirection = request.SortDirection,
+        };
+
+        return await _sender.Send(query, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -83,6 +83,26 @@ public sealed class EventsController : ApiControllerBase
     ///
     /// Ayrı uc, tek ve sabit bir anahtar demek.
     /// </remarks>
+    /// <summary>
+    /// Organizatorun KENDI etkinlikleri -- taslaklar dahil.
+    /// PDF: GET /api/v1/events/mine
+    /// </summary>
+    /// <remarks>
+    /// Yol sirasi onemli: bu satir "{id:guid}" kalibindan ONCE
+    /// gelmeli. Sonra gelseydi "mine" bir GUID gibi ayristirilmaya
+    /// calisilirdi. Rota kisitlamasi (:guid) yuzunden eslesme
+    /// olmazdi ama yine de acik yazmak, ileride kisitlama
+    /// kaldirilirsa sessizce bozulmasini engelliyor.
+    /// </remarks>
+    [HttpGet("mine")]
+    [Authorize(Policy = AuthenticationSetup.Policies.OrganizerOnly)]
+    [ProducesResponseType<PagedResult<EventListItem>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetMyEvents(
+        [FromQuery] GetMyEventsQuery query,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender.Send(query, cancellationToken).ConfigureAwait(false));
+
     [HttpGet("popular")]
     [AllowAnonymous]
     [ProducesResponseType<IReadOnlyList<EventListItem>>(StatusCodes.Status200OK)]

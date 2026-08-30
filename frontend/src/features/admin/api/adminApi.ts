@@ -96,7 +96,15 @@ export const adminApi = {
     return data
   },
 
-  getVenues: async (params: { search?: string; cityId?: string; pageNumber?: number }) => {
+  getVenues: async (params: {
+    search?: string
+    cityId?: string
+    pageNumber?: number
+    // pageSize'i etkinlik olusturma formu icin ekledim: mekan
+    // listesi orada acilir liste ve varsayilan 20 kayit, 21. mekani
+    // olan organizator kendi mekanini secemezdi.
+    pageSize?: number
+  }) => {
     const { data } = await api.get<Paged<VenueListItem>>('/venues', { params })
     return data
   },
