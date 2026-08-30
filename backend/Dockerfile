@@ -108,7 +108,23 @@ WORKDIR /app
 # tzdata: rezervasyon suresi ve etkinlik saatleri zaman dilimine
 # duyarli. Onsuz container UTC disinda hicbir dilimi tanimiyor.
 # ==================================================================
-RUN apk add --no-cache icu-libs icu-data-full tzdata
+# apk upgrade da var, sadece add degil.
+#
+# Trivy imaji taradiginda iki HIGH acik cikti:
+#
+#   libcrypto3 / libssl3  CVE-2026-14456  3.5.7-r0 -> 3.5.8-r0
+#
+# Temel imaj (aspnet:9.0-alpine) henuz yamali paketi almamis ama
+# Alpine deposunda duzeltme YAYINLANMIS. Yani beklemek yerine
+# derleme sirasinda cekebiliyorum.
+#
+# Bunun bir bedeli var ve bilerek odiyorum: `apk upgrade` her
+# derlemede o anki paket surumlerini alir, yani imaj tam olarak
+# yeniden uretilebilir degil. Alternatif, CVE'yi .trivyignore'a
+# yazip susturmakti -- ama duzeltmesi VAR olan bir acigi susturmak
+# guvenlik taramasini sus payina cevirir.
+RUN apk add --no-cache icu-libs icu-data-full tzdata \
+    && apk upgrade --no-cache
 
 # ---- ROOT OLMAYAN KULLANICI ----
 #
