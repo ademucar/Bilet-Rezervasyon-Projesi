@@ -115,6 +115,12 @@ const EventCreatePage = lazy(() =>
   })),
 )
 
+const EventManagePage = lazy(() =>
+  import('./features/organizer/pages/EventManagePage').then((m) => ({
+    default: m.EventManagePage,
+  })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -233,6 +239,7 @@ export default function App() {
               <Route element={<ProtectedRoute roles={[Roles.Organizer, Roles.Admin]} />}>
                 <Route path="/panel/etkinlikler" element={<MyEventsPage />} />
                 <Route path="/panel/etkinlikler/yeni" element={<EventCreatePage />} />
+                <Route path="/panel/etkinlikler/:eventId" element={<EventManagePage />} />
               </Route>
 
               {/* ---- Admin paneli ----

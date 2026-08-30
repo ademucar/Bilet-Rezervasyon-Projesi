@@ -257,6 +257,34 @@ public sealed class EventsController : ApiControllerBase
     /// Etkinligi admin onayina gönderir.
     /// En az bir oturum ve bir bilet türü gerektirir.
     /// </summary>
+    /// <summary>
+    /// Etkinligin afis gorselini ayarlar. PDF Sprint 5 "Gorsel yukleme".
+    /// </summary>
+    /// <remarks>
+    /// Iki adimli akis: once POST /api/v1/files ile dosya yuklenir
+    /// (MIME, imza ve boyut kontrolleri orada), donen indirme adresi
+    /// buraya gonderilir.
+    ///
+    /// Tek adimda dosyayi buraya da alabilirdim ama o zaman dosya
+    /// dogrulama mantigi iki ayri ucta tekrar ederdi.
+    ///
+    /// posterPath null gonderilirse afis kaldirilir.
+    /// </remarks>
+    [HttpPut("{id:guid}/poster")]
+    [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> SetPoster(
+        Guid id,
+        [FromBody] SetPosterRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        return HandleResult(await Sender
+            .Send(new SetEventPosterCommand(id, request.PosterPath), cancellationToken)
+            .ConfigureAwait(false));
+    }
+
     [HttpPost("{id:guid}/submit")]
     [Authorize(Policy = AuthenticationSetup.Policies.EventOwner)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -305,6 +333,8 @@ public sealed record AddSessionRequest(
     Guid SeatLayoutId);
 
 public sealed record CancelEventRequest(string? Reason);
+
+public sealed record SetPosterRequest(string? PosterPath);
 
 /// <summary>Etkinlik güncelleme isteği.</summary>
 /// <param name="Title">Etkinlik başlığı.</param>

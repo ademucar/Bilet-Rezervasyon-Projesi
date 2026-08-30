@@ -138,6 +138,17 @@ export const organizerApi = {
   },
 
   /**
+   * Etkinligi yayina alir -- YALNIZCA ADMIN.
+   *
+   * Backend'de POST /events/{id}/publish AdminOnly politikasinda.
+   * Organizatorun kendi etkinligini onaylamasi, onay surecini
+   * anlamsiz kilardi.
+   */
+  publishEvent: async (id: string): Promise<void> => {
+    await api.post(`/events/${id}/publish`)
+  },
+
+  /**
    * Etkinligi iptal eder.
    *
    * Sebep zorunlu degil ama arayuzde istiyorum: iptal, bilet almis
@@ -147,5 +158,76 @@ export const organizerApi = {
    */
   cancelEvent: async (id: string, reason: string): Promise<void> => {
     await api.post(`/events/${id}/cancel`, { reason })
+  },
+}
+
+export interface TicketTypeDto {
+  id: string
+  name: string
+  price: number
+  currency: string
+  priceDisplay: string
+  quota: number | null
+  isActive: boolean
+  requiresStudentVerification: boolean
+  salesStartDate: string | null
+  salesEndDate: string | null
+  assignedSectionIds: string[]
+}
+
+export interface CreateTicketTypeBody {
+  name: string
+  price: number
+  currency: string
+  quota?: number | null
+  requiresStudentVerification: boolean
+  salesStartDate?: string | null
+  salesEndDate?: string | null
+}
+
+export interface UploadedFile {
+  id: string
+  fileName: string
+  contentType: string
+  sizeInBytes: number
+  downloadUrl: string
+}
+
+export const ticketTypeApi = {
+  list: async (eventId: string): Promise<TicketTypeDto[]> => {
+    const { data } = await api.get<TicketTypeDto[]>(`/events/${eventId}/ticket-types`)
+    return data
+  },
+
+  create: async (eventId: string, body: CreateTicketTypeBody): Promise<string> => {
+    const { data } = await api.post<string>(`/events/${eventId}/ticket-types`, body)
+    return data
+  },
+
+  remove: async (id: string): Promise<void> => {
+    await api.delete(`/ticket-types/${id}`)
+  },
+}
+
+export const fileApi = {
+  /**
+   * Dosya yukler ve indirme adresini doner.
+   *
+   * Content-Type'i ELLE AYARLAMIYORUM. axios'a FormData verince
+   * sinirlayiciyi (boundary) kendisi uretip basliga koyuyor.
+   * "multipart/form-data" yazsaydim sinirlayici kaybolur ve sunucu
+   * govdeyi ayristiramazdi -- sessizce 400 donerdi.
+   */
+  upload: async (file: File): Promise<UploadedFile> => {
+    const govde = new FormData()
+    govde.append('file', file)
+    const { data } = await api.post<UploadedFile>('/files', govde)
+    return data
+  },
+}
+
+export const posterApi = {
+  set: async (eventId: string, posterPath: string | null): Promise<void> => {
+    await api.put(`/events/${eventId}/poster`, { posterPath })
   },
 }

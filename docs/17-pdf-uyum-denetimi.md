@@ -25,17 +25,17 @@
 | Etkinliklere yorum ve puan verebilir | Etkinlik detayında |
 | Bildirimlerini görüntüleyebilir | Üst çubuktaki zil |
 
-## Organizatör — 3/7 ❌
+## Organizatör — 7/7 ✅
 
 | PDF yetkisi | Backend | Ekran |
 |---|---|---|
-| **Etkinlik oluşturabilir** | ✅ `POST /events` | ❌ **yok** |
-| **Kendi etkinliklerini güncelleyebilir** | ✅ `PUT /events/{id}` | ❌ **yok** |
-| **Salon ve oturma planı seçebilir** | ✅ `POST /events/{id}/sessions` | ❌ **yok** |
-| **Bilet kategorileri ve fiyatları tanımlayabilir** | ✅ `TicketTypesController` (6 uç) | ❌ **yok** |
+| Etkinlik oluşturabilir | ✅ `POST /events` | ✅ `/panel/etkinlikler/yeni` |
+| Kendi etkinliklerini güncelleyebilir | ✅ `PUT /events/{id}` | ✅ yönetim ekranı |
+| Salon ve oturma planı seçebilir | ✅ `POST /events/{id}/sessions` | ✅ yönetim ekranı |
+| Bilet kategorileri ve fiyatları tanımlayabilir | ✅ `TicketTypesController` | ✅ yönetim ekranı |
 | Etkinlik satış durumunu görüntüleyebilir | ✅ | ✅ `/panel` |
 | Etkinlik raporlarını inceleyebilir | ✅ | ✅ `/panel` |
-| **Etkinliği yayına alabilir veya iptal edebilir** | ✅ `publish` / `cancel` | ❌ **yok** |
+| Etkinliği yayına alabilir veya iptal edebilir | ✅ `submit` / `publish` / `cancel` | ✅ yönetim ekranı |
 
 ## Admin — 2/7 ❌
 
@@ -51,26 +51,27 @@
 
 ## Sprint 5'in "Frontend Görevleri" listesi
 
-PDF sayfa 13'te on madde sayıyor. Yedisi yok:
+PDF sayfa 13'te on madde sayıyor. **Onu da tamamlandı:**
 
 | Madde | Durum |
 |---|---|
-| Etkinlik oluşturma formu | ❌ |
-| Etkinlik düzenleme | ❌ |
+| Etkinlik oluşturma formu | ✅ |
+| Etkinlik düzenleme | ✅ |
 | Etkinlik listesi | ✅ |
 | Etkinlik detay sayfası | ✅ |
-| Oturum ekleme | ❌ |
-| Görsel yükleme | ❌ (`FilesController` hazır) |
-| Önizleme | ❌ |
-| Yayına alma | ❌ |
-| İptal etme | ❌ |
-| Form doğrulama | ❌ (form yok) |
+| Oturum ekleme | ✅ |
+| Görsel yükleme | ✅ (`PUT /events/{id}/poster` eklendi) |
+| Önizleme | ✅ (gerçek detay sayfasına bağlantı) |
+| Yayına alma | ✅ (admin) |
+| İptal etme | ✅ (sebep zorunlu) |
+| Form doğrulama | ✅ (Zod + FluentValidation) |
 
 Diğer sprintlerin frontend listeleri (3, 4, 7, 10) **tam**.
 
 ## Özet
 
-**24 rol yetkisinin 12'sinde ekran yok.**
+**Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Organizatörün
+dördü tamamlandı; 8 madde kaldı.**
 
 Boşluklar ikiye ayrılıyor:
 

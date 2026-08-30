@@ -302,3 +302,93 @@ internal sealed partial class DeleteEventCommandHandler
         Message = "Etkinlik SILINDI (soft delete). Id: {EventId}, Baslik: {Title}")]
     private static partial void LogEventDeleted(ILogger logger, Guid eventId, string title);
 }
+
+// Afis gorseli baglama -- PDF Sprint 5 "Gorsel yukleme"
+
+/// <summary>
+/// Etkinlige afis gorseli baglar veya kaldirir.
+/// </summary>
+/// <remarks>
+/// Event.SetPosterImage domain'de Sprint 5'ten beri duruyordu ama
+/// HICBIR YERDEN cagrilmiyordu: dosya yuklenebiliyor
+/// (POST /api/v1/files) ama yuklenen dosyayi etkinlige baglamanin
+/// yolu yoktu. PDF uyum denetiminde (docs/17) ortaya cikti.
+///
+/// Yolu neden UpdateEventCommand'a eklemedim? Cunku o komut
+/// "yayina alinmis etkinligin kritik alanlari degistirilemez"
+/// kuralina tabi (PDF sayfa 13) ve afis kritik bir alan degil.
+/// Yayindaki bir etkinligin afisini degistirmek yasak olmamali;
+/// tarihini degistirmek yasak olmali.
+///
+/// Path null gelirse afis kaldiriliyor. Ayri bir "afisi sil" ucu
+/// acmak yerine boyle yaptim -- iki uc, iki yerde bakim demek.
+/// </remarks>
+public sealed record SetEventPosterCommand(Guid EventId, string? PosterPath) : IRequest<Result>;
+
+public sealed class SetEventPosterCommandValidator : AbstractValidator<SetEventPosterCommand>
+{
+    public SetEventPosterCommandValidator()
+    {
+        RuleFor(x => x.EventId).NotEmpty();
+
+        // Yol uzunlugu sutun sinirini asmasin. Icerigi dogrulamiyorum:
+        // dosya zaten UploadFileCommand'da MIME, imza ve boyut
+        // kontrolunden gecti; burasi yalnizca o kaydin adresini tutuyor.
+        RuleFor(x => x.PosterPath)
+            .MaximumLength(512)
+            .When(x => x.PosterPath is not null);
+    }
+}
+
+internal sealed partial class SetEventPosterCommandHandler
+    : IRequestHandler<SetEventPosterCommand, Result>
+{
+    private readonly IApplicationDbContext _context;
+    private readonly ICacheService _cache;
+    private readonly ILogger<SetEventPosterCommandHandler> _logger;
+
+    public SetEventPosterCommandHandler(
+        IApplicationDbContext context,
+        ICacheService cache,
+        ILogger<SetEventPosterCommandHandler> logger)
+    {
+        _context = context;
+        _cache = cache;
+        _logger = logger;
+    }
+
+    public async Task<Result> Handle(
+        SetEventPosterCommand request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var evt = await _context.Events
+            .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (evt is null)
+        {
+            return Result.Failure(EventErrors.NotFound);
+        }
+
+        evt.SetPosterImage(request.PosterPath);
+
+        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        LogPosterChanged(_logger, evt.Id, request.PosterPath is null);
+
+        // Liste ve detay onbellegi afis yolunu tasiyor; temizlenmezse
+        // kullanici eski afisi 10 dakika daha gorurdu.
+        await _cache.RemoveByPrefixAsync(CacheKeys.EventPrefix, cancellationToken)
+            .ConfigureAwait(false);
+
+        return Result.Success();
+    }
+
+    [LoggerMessage(
+        EventId = LogEvents.EtkinlikGuncellendi,
+        Level = LogLevel.Information,
+        Message = "Etkinlik afisi degisti. Id: {EventId}, Kaldirildi: {Removed}")]
+    private static partial void LogPosterChanged(ILogger logger, Guid eventId, bool removed);
+}
