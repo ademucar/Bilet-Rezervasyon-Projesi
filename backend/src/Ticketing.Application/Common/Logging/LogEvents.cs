@@ -161,6 +161,21 @@ public static class LogEvents
     /// <summary>Rezervasyon iptal edildi.</summary>
     public const int RezervasyonIptalEdildi = 1204;
 
+    /// <summary>
+    /// Kullanici kendi biletini iptal etti.
+    /// </summary>
+    /// <remarks>
+    /// Information degil Warning: bu islem para hareketi yaratiyor ve
+    /// koltugu tekrar satisa aciyor. Iade ve etkinlik iptali icin
+    /// verdigim kararin aynisi -- is etkisi olan olaylar normal
+    /// trafigin arasinda kaybolmamali.
+    ///
+    /// Iade YUZDESINI de logluyorum. Sebebi somut: musteri "ben tam
+    /// iade bekliyordum" diye sikayet ettiginde, o an politikanin ne
+    /// dedigini gosteren tek kayit bu olacak.
+    /// </remarks>
+    public const int BiletIptalEdildi = 1205;
+
     // ÖDEME -- PDF: "Ödeme", "İade"
 
     /// <summary>Ödeme baslatildi.</summary>

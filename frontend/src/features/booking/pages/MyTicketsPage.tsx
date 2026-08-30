@@ -7,6 +7,7 @@ import { Alert } from '../../../components/ui/Alert'
 import { toProblem } from '../../../lib/api/client'
 import { formatDateParts, formatDateTime, formatMoney } from '../../../lib/format'
 import { bookingApi, TicketStatus, type TicketDto } from '../api/bookingApi'
+import { TicketCancelPanel } from '../components/TicketCancelPanel'
 
 // Durum -> etiket metni + NOKTA rengi.
 //
@@ -27,6 +28,11 @@ const STATUS_LABELS: Record<number, { text: string; dot: string; tone: string }>
 export function MyTicketsPage() {
   const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<number | undefined>(undefined)
+
+  // Ayni anda tek bilet icin iptal paneli acik olsun. Hepsini birden
+  // acabilseydim ekran, kullanicinin hangi bileti iptal ettigini
+  // karistirmasi cok kolay bir liste olurdu.
+  const [iptalEdilen, setIptalEdilen] = useState<string | null>(null)
 
   // Ödeme sonrası buraya "?yeni=1" ile geliyorum.
   // Kullanıcının "odemem gecti mi?" tereddudunu ortadan kaldiriyor.
@@ -109,7 +115,11 @@ export function MyTicketsPage() {
         <ul className="mt-6 space-y-4">
           {ticketsQuery.data?.map((ticket) => (
             <li key={ticket.id}>
-              <TicketCard ticket={ticket} />
+              <TicketCard
+                ticket={ticket}
+                iptalAcik={iptalEdilen === ticket.id}
+                onIptalAc={() => setIptalEdilen(iptalEdilen === ticket.id ? null : ticket.id)}
+              />
             </li>
           ))}
         </ul>
@@ -118,7 +128,13 @@ export function MyTicketsPage() {
   )
 }
 
-function TicketCard({ ticket }: { ticket: TicketDto }) {
+interface KartProps {
+  ticket: TicketDto
+  iptalAcik: boolean
+  onIptalAc: () => void
+}
+
+function TicketCard({ ticket, iptalAcik, onIptalAc }: KartProps) {
   const badge = STATUS_LABELS[ticket.status] ?? {
     text: 'Bilinmiyor',
     dot: 'bg-slate-400',
@@ -144,64 +160,80 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
        Gradyan, emoji veya süs ikonu koymadım; yapı zaten söylüyor.
        */
     <article
-      className={`flex overflow-hidden rounded-[4px] border ${
+      className={`overflow-hidden rounded-[4px] border ${
         olu ? 'border-slate-200 bg-slate-50 opacity-75' : 'border-slate-300 bg-white'
       }`}
     >
-      {/* ---- SOL GÖVDE ---- */}
-      <div className="min-w-0 flex-grow p-4">
-        <div className="mb-2.5 flex items-center gap-2">
-          <span className={`size-1.5 shrink-0 rounded-full ${badge.dot}`} aria-hidden="true" />
-          <span className={`label-xs ${badge.tone}`}>
-            {badge.text}
-            {ticket.usedAt && ` \u00b7 ${formatDateTime(ticket.usedAt)}`}
-          </span>
-        </div>
+      <div className="flex">
+        {/* ---- SOL GÖVDE ---- */}
+        <div className="min-w-0 flex-grow p-4">
+          <div className="mb-2.5 flex items-center gap-2">
+            <span className={`size-1.5 shrink-0 rounded-full ${badge.dot}`} aria-hidden="true" />
+            <span className={`label-xs ${badge.tone}`}>
+              {badge.text}
+              {ticket.usedAt && ` \u00b7 ${formatDateTime(ticket.usedAt)}`}
+            </span>
+          </div>
 
-        <h2 className="font-display text-lg font-bold leading-tight tracking-tight text-slate-900">
-          {ticket.eventTitle}
-        </h2>
-        <p className="num mt-1 text-xs font-medium text-brand-600">
-          {tarih.gun} {tarih.ay.toLocaleUpperCase('tr-TR')} {tarih.yil} &middot; {tarih.saat}
-        </p>
+          <h2 className="font-display text-lg font-bold leading-tight tracking-tight text-slate-900">
+            {ticket.eventTitle}
+          </h2>
+          <p className="num mt-1 text-xs font-medium text-brand-600">
+            {tarih.gun} {tarih.ay.toLocaleUpperCase('tr-TR')} {tarih.yil} &middot; {tarih.saat}
+          </p>
 
-        {/* Koltuk / blok / tür: üç sütun, hepsi aynı hizada.
+          {/* Koltuk / blok / tür: üç sütun, hepsi aynı hizada.
             Eski hâlde bunlar iki sütunlu bir dl idi ve "Koltuk"
             satırı "Bilet no" ile aynı görsel ağırlıktaydı.
             Kapıda sorulan şey KOLTUK; en iri rakam o olmalı. */}
-        <dl className="mt-3.5 grid grid-cols-3 gap-3">
-          <div>
-            <dt className="label-xs">Koltuk</dt>
-            <dd className="num mt-1 text-[17px] font-semibold text-slate-900">
-              {ticket.seatLabel}
-            </dd>
-          </div>
-          <div className="min-w-0">
-            <dt className="label-xs">Blok</dt>
-            <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
-              {ticket.sectionName}
-            </dd>
-          </div>
-          <div className="min-w-0">
-            <dt className="label-xs">Tür</dt>
-            <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
-              {ticket.ticketTypeName}
-            </dd>
-          </div>
-        </dl>
+          <dl className="mt-3.5 grid grid-cols-3 gap-3">
+            <div>
+              <dt className="label-xs">Koltuk</dt>
+              <dd className="num mt-1 text-[17px] font-semibold text-slate-900">
+                {ticket.seatLabel}
+              </dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="label-xs">Blok</dt>
+              <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
+                {ticket.sectionName}
+              </dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="label-xs">Tür</dt>
+              <dd className="mt-1 truncate text-sm font-semibold text-slate-900">
+                {ticket.ticketTypeName}
+              </dd>
+            </div>
+          </dl>
 
-        <div className="mt-3.5 flex items-end justify-between gap-3 border-t border-dashed border-slate-300 pt-3">
-          <div className="min-w-0">
-            <p className="label-xs">Mekan</p>
-            <p className="truncate text-[13px] text-slate-700">{ticket.venueName}</p>
+          <div className="mt-3.5 flex items-end justify-between gap-3 border-t border-dashed border-slate-300 pt-3">
+            <div className="min-w-0">
+              <p className="label-xs">Mekan</p>
+              <p className="truncate text-[13px] text-slate-700">{ticket.venueName}</p>
+            </div>
+            <span className="num shrink-0 text-base font-semibold text-slate-900">
+              {formatMoney(ticket.price, ticket.currency)}
+            </span>
           </div>
-          <span className="num shrink-0 text-base font-semibold text-slate-900">
-            {formatMoney(ticket.price, ticket.currency)}
-          </span>
+
+          {/* Iptal, yalnizca gecerli biletlerde.
+            Kullanilmis veya zaten iptal edilmis bir bilette dugmeyi
+            gostermek, sunucunun reddedecegi bir islemi teklif etmek
+            olurdu. */}
+          {ticket.status === TicketStatus.Active && (
+            <button
+              type="button"
+              onClick={onIptalAc}
+              aria-expanded={iptalAcik}
+              className="mt-3 text-[13px] font-medium text-slate-500 underline-offset-2 transition-colors hover:text-red-700 hover:underline"
+            >
+              {iptalAcik ? 'Vazgeç' : 'Bileti iptal et'}
+            </button>
+          )}
         </div>
-      </div>
 
-      {/*
+        {/*
           SAĞ: QR KOÇANI
           Koparma çizgisi (border-l-dashed) biletin tamamını "koçan"
           yapan tek ayrıntı.
@@ -223,23 +255,28 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
           "H" daha dayanıklı ama kodu yoğunlaştırır; telefon
           ekranından okutmada M yeterli.
           */}
-      <div className="flex w-[140px] shrink-0 flex-col items-center justify-center gap-2.5 border-l border-dashed border-slate-400 bg-slate-50 p-4">
-        {ticket.qrValue ? (
-          <>
-            <div className="border border-slate-300 bg-white p-1.5">
-              <QRCodeSVG value={ticket.qrValue} size={96} level="M" />
-            </div>
-            <div className="text-center">
-              <p className="label-xs">Bilet no</p>
-              <p className="num mt-1 break-all text-[10px] text-slate-600">{ticket.ticketNumber}</p>
-            </div>
-          </>
-        ) : (
-          <p className="text-center text-[11px] leading-relaxed text-slate-500">
-            Bu bilet artık geçerli olmadığı için QR kodu gösterilmiyor.
-          </p>
-        )}
+        <div className="flex w-[140px] shrink-0 flex-col items-center justify-center gap-2.5 border-l border-dashed border-slate-400 bg-slate-50 p-4">
+          {ticket.qrValue ? (
+            <>
+              <div className="border border-slate-300 bg-white p-1.5">
+                <QRCodeSVG value={ticket.qrValue} size={96} level="M" />
+              </div>
+              <div className="text-center">
+                <p className="label-xs">Bilet no</p>
+                <p className="num mt-1 break-all text-[10px] text-slate-600">
+                  {ticket.ticketNumber}
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="text-center text-[11px] leading-relaxed text-slate-500">
+              Bu bilet artık geçerli olmadığı için QR kodu gösterilmiyor.
+            </p>
+          )}
+        </div>
       </div>
+
+      {iptalAcik && <TicketCancelPanel ticketId={ticket.id} onKapat={onIptalAc} />}
     </article>
   )
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing.Application.Features.Payments;
+using Ticketing.Application.Features.Tickets;
 using Ticketing.Domain.Enums;
 using Ticketing.WebApi.Security;
 
@@ -131,8 +132,13 @@ public sealed class PaymentsController : ApiControllerBase
     /// <remarks>
     /// Yalnizca admin. Kullanıcının kendi kendine iade baslatmasi,
     /// iade politikasini (CancellationPolicy) atlatmasi anlamina
-    /// gelirdi. Kullanıcı tarafli iade akışı Sprint 12'de bilet
-    /// iptali üzerinden gelecek ve politikayi uygulayacak.
+    /// gelirdi.
+    ///
+    /// Kullanıcı tarafli akış artık VAR:
+    ///     POST /users/me/tickets/{id}/cancel
+    /// Tutari cagirandan almiyor, CancellationPolicy'den hesapliyor.
+    /// (Buraya "Sprint 12'de gelecek" diye not dusmusum ama o sprintte
+    /// yapmamisim; PDF uyum denetiminde eksik olarak cikti.)
     /// </remarks>
     [HttpPost("{id:guid}/refund")]
     [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
@@ -182,6 +188,53 @@ public sealed class MyTicketsController : ApiControllerBase
         [FromQuery] TicketStatus? status,
         CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(new GetMyTicketsQuery(status), cancellationToken)
+            .ConfigureAwait(false));
+
+    /// <summary>
+    /// İptal edilirse ne kadar iade alinacagini soyler.
+    /// </summary>
+    /// <remarks>
+    /// Ayri bir uc, cunku kullanici "İptal et" dedigi anda ne
+    /// kaybedecegini GORMELI. İade yuzdesi etkinlige kalan sureye
+    /// gore degisiyor ve bu hesabi istemcide tekrarlamak istemedim:
+    /// politika etkinlik basina saklaniyor ve organizator
+    /// degistirebiliyor.
+    /// </remarks>
+    [HttpGet("tickets/{id:guid}/cancellation-preview")]
+    [Authorize]
+    [ProducesResponseType<TicketCancellationPreview>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCancellationPreview(
+        Guid id,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new GetTicketCancellationPreviewQuery(id), cancellationToken)
+            .ConfigureAwait(false));
+
+    /// <summary>
+    /// Kullanicinin kendi biletini iptal eder. PDF sayfa 4.
+    /// </summary>
+    /// <remarks>
+    /// Sahiplik kontrolu politikada degil, handler'in sorgusunda:
+    /// bilet hem kimlige hem KULLANICIYA gore araniyor. Baskasinin
+    /// bileti icin 403 degil 404 donuyor -- 403, o biletin var
+    /// oldugunu ele verirdi.
+    /// </remarks>
+    [HttpPost("tickets/{id:guid}/cancel")]
+    [Authorize]
+    [ProducesResponseType<TicketCancellationResult>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    // 422, 409 degil: bu projede 409 yalnizca ESZAMANLILIK cakismasina
+    // ayrilmis (ErrorType.Concurrency), is kurali ihlalleri 422 donuyor.
+    // Ilk yazista 409 yazmistim; ucu deneyince 422 geldi ve belgeyi
+    // gercege uydurdum. Yanlis birakmak, OpenAPI'den istemci ureten
+    // birinin yanlis dala kod yazmasi demekti.
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CancelMyTicket(
+        Guid id,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new CancelMyTicketCommand(id), cancellationToken)
             .ConfigureAwait(false));
 }
 

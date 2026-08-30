@@ -20,7 +20,7 @@
 | Rezervasyon oluşturabilir | Koltuk seçim ekranı |
 | Ödeme simülasyonu gerçekleştirebilir | `/rezervasyonlar/:id` |
 | Satın aldığı biletleri görüntüleyebilir | `/biletlerim` |
-| Biletini iptal edebilir | ⚠️ Rezervasyon iptali var, **bilet** iptali yok |
+| Biletini iptal edebilir | `/biletlerim` → İptal et (iade oranı önizlemeli) |
 | Favori etkinliklerini yönetebilir | `/favorilerim` + kalp düğmesi |
 | Etkinliklere yorum ve puan verebilir | Etkinlik detayında |
 | Bildirimlerini görüntüleyebilir | Üst çubuktaki zil |
@@ -89,7 +89,11 @@ domain'de duruyordu ama onları çağıran komut da, uç da, ekran da
 yoktu. Üçünü birden yazdım.
 
 **Hem uç hem ekran eksik** (tam yığın iş):
-- Bilet iptali
+- ~~Bilet iptali~~ ✅ yapıldı: `POST /users/me/tickets/{id}/cancel` +
+  `cancellation-preview`. Bu iş sırasında `CancellationPolicy`nin
+  (PDF Sprint 1, soru 10) hiçbir yerden çağrılmadığı ortaya çıktı —
+  var olan iade ucu tutarı çağırandan alıyordu, yani iade politikası
+  19 sprint boyunca hiç uygulanmamış.
 - Kategori ve şehir yönetimi
 - Audit log görüntüleme
 - Kullanıcı yönetimi

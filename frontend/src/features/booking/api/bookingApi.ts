@@ -459,4 +459,49 @@ export const bookingApi = {
     })
     return data
   },
+
+  /**
+   * İptal edilirse ne kadar iade alınacağını sorar.
+   *
+   * Bu hesabı burada YAPMIYORUM, sunucuya soruyorum. İade yüzdesi
+   * etkinliğe kalan süreye göre değişiyor (7 günden fazla %100,
+   * 48 saatten az %0) ve politika etkinlik başına saklanıyor --
+   * organizatör kendi oranlarını belirleyebiliyor. Burada
+   * kopyalasaydım, politika değiştiğinde kullanıcıya yanlış rakam
+   * gösterirdik.
+   */
+  getTicketCancellationPreview: async (ticketId: string): Promise<TicketCancellationPreview> => {
+    const { data } = await api.get<TicketCancellationPreview>(
+      `/users/me/tickets/${ticketId}/cancellation-preview`,
+    )
+    return data
+  },
+
+  cancelMyTicket: async (ticketId: string): Promise<TicketCancellationResult> => {
+    const { data } = await api.post<TicketCancellationResult>(
+      `/users/me/tickets/${ticketId}/cancel`,
+    )
+    return data
+  },
+}
+
+export interface TicketCancellationPreview {
+  ticketId: string
+  ticketNumber: string
+  eventTitle: string
+  sessionStartDate: string
+  price: number
+  currency: string
+  refundPercentage: number
+  refundAmount: number
+  canCancel: boolean
+  reason: string | null
+}
+
+export interface TicketCancellationResult {
+  ticketId: string
+  status: number
+  refundPercentage: number
+  refundAmount: number
+  currency: string
 }

@@ -19,4 +19,15 @@ public enum NotificationType
     ReportReady = 11,
     OrganizerApplicationApproved = 12,
     OrganizerApplicationRejected = 13,
+
+    /// <summary>
+    /// Kullanici kendi biletini iptal etti.
+    /// </summary>
+    /// <remarks>
+    /// RefundCompleted'dan ayri tutuyorum: iade tutari SIFIR da
+    /// olabiliyor (etkinlige 48 saatten az kala iptal edilirse).
+    /// O durumda "Iadeniz tamamlandi" baslikli bir bildirim gondermek
+    /// kullaniciyi yaniltirdi -- parasini bekler, gelmez.
+    /// </remarks>
+    TicketCancelled = 14,
 }
