@@ -98,8 +98,9 @@ takip edilebilir.
 
 **Bilinçli olarak ertelenenler** (her biri ilgili belgede yazılı):
 
-- SonarQube — yapılandırma hazır, hesap/token olmadığı için
-  çalıştırılmadı (`docs/16`)
+- SonarQube CI'da sürekli çalışmıyor — yerelde Docker ile
+  çalıştırıldı (kalite kapısı OK, 1 bug bulunup düzeltildi); sürekli
+  çalışması için sunucu veya SonarCloud hesabı gerekiyor (`docs/16`)
 - E2E testleri CI'da değil — ayrı test veritabanı gerekiyor
 - Etkinlik listesi giriş istiyor; anonim gezinme için ayrı bir üst
   çubuk gerekiyordu, yapmadım. Bedeli: etkinlik sayfaları arama
