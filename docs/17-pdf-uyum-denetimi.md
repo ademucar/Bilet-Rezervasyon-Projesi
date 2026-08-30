@@ -37,12 +37,12 @@
 | Etkinlik raporlarını inceleyebilir | ✅ | ✅ `/panel` |
 | Etkinliği yayına alabilir veya iptal edebilir | ✅ `submit` / `publish` / `cancel` | ✅ yönetim ekranı |
 
-## Admin — 2/7 ❌
+## Admin — 3/7
 
 | PDF yetkisi | Backend | Ekran |
 |---|---|---|
 | **Tüm kullanıcıları yönetebilir** | ❌ uç yok | ❌ |
-| **Organizatör başvurularını onaylayabilir** | ✅ 3 uç hazır | ❌ **yok** |
+| Organizatör başvurularını onaylayabilir | ✅ 3 uç | ✅ `/admin/basvurular` |
 | **Tüm etkinlikleri görüntüleyebilir** | ⚠️ genel liste var, durum filtresi yok | ❌ |
 | **Uygunsuz etkinlikleri pasif hâle getirebilir** | ✅ `cancel` | ❌ |
 | Kategori, şehir ve salon yönetimi | salon ✅ / kategori-şehir ❌ | salon ✅ |
@@ -71,7 +71,7 @@ Diğer sprintlerin frontend listeleri (3, 4, 7, 10) **tam**.
 ## Özet
 
 **Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Organizatörün
-dördü tamamlandı; 8 madde kaldı.**
+dördü ve adminin başvuru onayı tamamlandı; 7 madde kaldı.**
 
 Boşluklar ikiye ayrılıyor:
 

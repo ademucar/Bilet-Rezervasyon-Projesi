@@ -25,6 +25,7 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
           {/* nav + aria-label: ekran okuyucular birden fazla nav
               olduğunda hangisinin ne olduğunu bu etiketle ayırt eder. */}
           <nav aria-label="Yönetim menüsü" className="flex gap-1 text-sm">
+            <AdminLink to="/admin/basvurular">Başvurular</AdminLink>
             <AdminLink to="/admin/mekanlar">Mekanlar</AdminLink>
           </nav>
 

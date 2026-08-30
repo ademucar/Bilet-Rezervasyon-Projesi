@@ -121,6 +121,18 @@ const EventManagePage = lazy(() =>
   })),
 )
 
+const OrganizerApplyPage = lazy(() =>
+  import('./features/organizer/pages/OrganizerApplyPage').then((m) => ({
+    default: m.OrganizerApplyPage,
+  })),
+)
+
+const OrganizerApplicationsPage = lazy(() =>
+  import('./features/admin/pages/OrganizerApplicationsPage').then((m) => ({
+    default: m.OrganizerApplicationsPage,
+  })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -228,6 +240,10 @@ export default function App() {
                 <Route path="/biletlerim" element={<MyTicketsPage />} />
                 <Route path="/favorilerim" element={<MyFavoritesPage />} />
                 <Route path="/panel" element={<DashboardPage />} />
+
+                {/* Basvuru ekrani organizator ROLU ISTEMIYOR --
+                    zaten rolu olmayanlar basvuruyor. */}
+                <Route path="/organizator-basvurusu" element={<OrganizerApplyPage />} />
               </Route>
 
               {/* ---- Organizator etkinlik yonetimi ----
@@ -247,6 +263,7 @@ export default function App() {
                   UNUTMA: bu bir GÜVENLİK önlemi değil, kullanıcı deneyimi.
                   Gerçek kontrol backend'de AdminOnly policy'sinde. */}
               <Route element={<ProtectedRoute roles={[Roles.Admin]} />}>
+                <Route path="/admin/basvurular" element={<OrganizerApplicationsPage />} />
                 <Route path="/admin/mekanlar" element={<VenuesPage />} />
                 <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
                 <Route path="/admin/salonlar/:hallId" element={<HallDetailPage />} />

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { Roles } from '../../types/auth'
 import { SiteHeader } from '../../components/layout/SiteHeader'
 
 /**
@@ -81,6 +82,24 @@ export function HomePage() {
                 </dd>
               </div>
             </dl>
+
+            {/* Organizator olmayan kullaniciya basvuru yolu.
+                Bu baglanti olmadan, arayuzde organizator olmanin
+                hicbir yolu yoktu: uc backend'de duruyordu ama
+                cagiran kimse yoktu. */}
+            {!user.roles.includes(Roles.Organizer) && !user.roles.includes(Roles.Admin) && (
+              <div className="mt-5 border-t border-slate-200 pt-4">
+                <p className="text-[13px] text-slate-600">
+                  Kendi etkinliğinizi düzenleyip bilet satmak ister misiniz?
+                </p>
+                <Link
+                  to="/organizator-basvurusu"
+                  className="mt-1 inline-block text-sm font-medium text-brand-600 hover:underline"
+                >
+                  Organizatör başvurusu yap
+                </Link>
+              </div>
+            )}
           </section>
         )}
       </main>
