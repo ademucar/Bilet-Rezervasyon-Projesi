@@ -162,8 +162,8 @@ internal sealed partial class UpdateEventCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikGuncellendi,
         Level = LogLevel.Information,
-        Message = "Etkinlik güncellendi. Id: {EventId}, Baslik: {Title}")]
-    private static partial void LogEventUpdated(ILogger logger, Guid eventId, string title);
+        Message = "Etkinlik güncellendi. Id: {EtkinlikId}, Baslik: {Title}")]
+    private static partial void LogEventUpdated(ILogger logger, Guid etkinlikId, string title);
 }
 
 /// <summary>
@@ -299,8 +299,8 @@ internal sealed partial class DeleteEventCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikSilindi,
         Level = LogLevel.Warning,
-        Message = "Etkinlik SILINDI (soft delete). Id: {EventId}, Baslik: {Title}")]
-    private static partial void LogEventDeleted(ILogger logger, Guid eventId, string title);
+        Message = "Etkinlik SILINDI (soft delete). Id: {EtkinlikId}, Baslik: {Title}")]
+    private static partial void LogEventDeleted(ILogger logger, Guid etkinlikId, string title);
 }
 
 // Afis gorseli baglama -- PDF Sprint 5 "Gorsel yukleme"
@@ -389,6 +389,6 @@ internal sealed partial class SetEventPosterCommandHandler
     [LoggerMessage(
         EventId = LogEvents.EtkinlikGuncellendi,
         Level = LogLevel.Information,
-        Message = "Etkinlik afisi degisti. Id: {EventId}, Kaldirildi: {Removed}")]
-    private static partial void LogPosterChanged(ILogger logger, Guid eventId, bool removed);
+        Message = "Etkinlik afisi degisti. Id: {EtkinlikId}, Kaldirildi: {Removed}")]
+    private static partial void LogPosterChanged(ILogger logger, Guid etkinlikId, bool removed);
 }
