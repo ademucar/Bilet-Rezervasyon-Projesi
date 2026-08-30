@@ -131,9 +131,8 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
   const tarih = formatDateParts(ticket.sessionStartDate)
 
   return (
-    /* ==============================================================
+    /*
        BİLET, KART GİBİ DEĞİL BİLET GİBİ GÖRÜNMELİ
-       ==============================================================
        Önceki hâl köşesi 16px yuvarlatılmış, gölgeli bir kutuydu --
        sitedeki diğer her kutuyla aynı. Oysa bu ekrandaki nesne
        gerçek dünyada bir KOÇAN: kapıda uzatılan şey.
@@ -143,7 +142,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
          2. Keskin köşe + tek çizgi çerçeve, gölge yok
 
        Gradyan, emoji veya süs ikonu koymadım; yapı zaten söylüyor.
-       ============================================================== */
+       */
     <article
       className={`flex overflow-hidden rounded-[4px] border ${
         olu ? 'border-slate-200 bg-slate-50 opacity-75' : 'border-slate-300 bg-white'
@@ -202,9 +201,8 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
         </div>
       </div>
 
-      {/* ============================================================
+      {/*
           SAĞ: QR KOÇANI
-          ============================================================
           Koparma çizgisi (border-l-dashed) biletin tamamını "koçan"
           yapan tek ayrıntı.
 
@@ -224,7 +222,7 @@ function TicketCard({ ticket }: { ticket: TicketDto }) {
           zarar görse bile (ekran çiziği, parmak izi) okunabilir.
           "H" daha dayanıklı ama kodu yoğunlaştırır; telefon
           ekranından okutmada M yeterli.
-          ============================================================ */}
+          */}
       <div className="flex w-[140px] shrink-0 flex-col items-center justify-center gap-2.5 border-l border-dashed border-slate-400 bg-slate-50 p-4">
         {ticket.qrValue ? (
           <>

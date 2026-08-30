@@ -46,7 +46,6 @@ function bolum(): SeatMapSection[] {
 
 describe('SeatMap', () => {
   /**
-   *
    * ERİŞİLEBİLİR AD, MODA GÖRE FARKLI YERDEN GELİYOR
    *
    * İlk yazdığımda salt okunur haritada getByLabelText kullandım ve
@@ -104,7 +103,6 @@ describe('SeatMap', () => {
   })
 
   /**
-   *
    * SATILMIŞ KOLTUK TIKLANAMAMALI
    *
    * Sunucu zaten reddeder — ama kullanıcıya tıklatıp sonra hata
@@ -145,7 +143,6 @@ describe('SeatMap', () => {
   })
 
   /**
-   *
    * KLAVYE ERİŞİMİ
    *
    * Koltuk seçimi yalnızca fareyle yapılabilseydi, klavye kullanan

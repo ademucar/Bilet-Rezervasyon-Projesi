@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { bookingApi } from '../api/bookingApi'
 
 /**
- *
  * FAVORI DUGMESI -- PDF Sprint 12
  *
  * PDF uclari:

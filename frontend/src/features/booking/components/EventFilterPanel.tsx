@@ -11,7 +11,6 @@ interface EventFilterPanelProps {
 }
 
 /**
- *
  * ETKİNLİK FILTRE PANELİ -- PDF Sprint 11
  *
  * PDF'in saydığı sekiz filtre:

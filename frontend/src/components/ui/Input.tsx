@@ -26,9 +26,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="space-y-1.5">
         {/* htmlFor + id eslesmesi: etikete tıklayınca alan odaklanir.
             Ekran okuyucular da alanin ne olduğunu bu sayede söyler. */}
-        {/* ============================================================
+        {/*
             ETIKET KUCUK BUYUK HARF
-            ============================================================
             14px normal metin yerine 10px büyük harf.
 
             Sebep: etiket bir BASLIK değil, alanin ADI. Govde
@@ -38,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             Küçük ve harf aralığı açık olunca etiket geri çekiliyor,
             KULLANICININ YAZDIGI deger one cikiyor.
-            ============================================================ */}
+            */}
         <label htmlFor={inputId} className="label-xs block text-slate-500">
           {label}
         </label>

@@ -3,7 +3,6 @@ import { bookingApi, EventStatus, type EventFilters } from '../api/bookingApi'
 import { formatDate } from '../../../lib/format'
 
 /**
- *
  * AKTİF FİLTRE ROZETLERİ
  *
  * Yan paneldeki filtreler sayfayı aşağı doğru uzatıyor ve kullanıcı

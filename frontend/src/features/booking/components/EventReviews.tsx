@@ -83,7 +83,6 @@ interface EventReviewsProps {
 }
 
 /**
- *
  * ETKİNLİK YORUMLARI -- PDF Sprint 12
  *
  * PDF is kurallarinin arayuze yansimasi:

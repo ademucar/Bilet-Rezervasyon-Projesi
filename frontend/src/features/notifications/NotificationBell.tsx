@@ -65,7 +65,6 @@ function gorunum(type: number): { ikon: string; renk: string } {
 }
 
 /**
- *
  * BILDIRIM ZILI -- PDF Sprint 14
  *
  * Ust cubukta duruyor; rozet okunmamış sayisini gosteriyor.

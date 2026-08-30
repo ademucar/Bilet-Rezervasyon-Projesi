@@ -17,7 +17,6 @@ import {
 } from '../api/bookingApi'
 
 /**
- *
  * REZERVASYON VE ÖDEME EKRANI -- PDF Sprint 7 + Sprint 8
  *
  * Iki sprintin frontend'i tek sayfada bulusuyor çünkü kullanıcı
@@ -350,7 +349,6 @@ interface PaymentSimulationProps {
 }
 
 /**
- *
  * ÖDEME SIMULASYONU -- PDF Sprint 8
  *
  * PDF: "Gerçek bir ödeme sağlayıcısı entegre edilmeyecektir. Ancak

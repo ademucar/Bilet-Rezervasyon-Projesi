@@ -18,7 +18,6 @@ interface AuthLayoutProps {
 }
 
 /**
- *
  * KİMLİK DOĞRULAMA EKRANLARININ ORTAK ÇERÇEVESİ
  *
  * Beş ekran (giriş, kayıt, şifremi unuttum, şifre sıfırla,
@@ -46,9 +45,7 @@ export function AuthLayout({ title, subtitle, children, footer, aside }: AuthLay
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-3xl">
         <div className="flex overflow-hidden rounded-[4px] border border-slate-300 bg-white">
-          {/* ============================================================
-              SOL SÜTUN -- bağlam
-              ============================================================ */}
+          {/* SOL SÜTUN -- bağlam */}
           <aside className="hidden w-[280px] shrink-0 flex-col justify-between bg-slate-900 p-6 md:flex">
             <div>
               <Link to="/" className="mb-7 flex items-center gap-2">
@@ -81,12 +78,11 @@ export function AuthLayout({ title, subtitle, children, footer, aside }: AuthLay
             </p>
           </aside>
 
-          {/* ============================================================
+          {/*
               SAĞ SÜTUN -- form
-              ============================================================
               main: sayfanın ana içeriği. Ekran okuyucular "ana içeriğe
               atla" komutuyla doğrudan buraya gelebiliyor.
-              ============================================================ */}
+              */}
           <main className="min-w-0 flex-grow p-7">
             {/* Mobilde sol sütun gizli olduğu için marka buraya taşınıyor.
                 Yoksa telefonda ekranda hiçbir yerde ad görünmezdi. */}

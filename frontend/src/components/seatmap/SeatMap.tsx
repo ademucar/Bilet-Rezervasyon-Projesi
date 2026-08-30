@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
 /**
- *
  * PAYLASILAN KOLTUK HARITASI
  *
  * Bu bileşen ONCE admin panelinde (Sprint 4) yazildi ve yalnızca
@@ -96,7 +95,6 @@ const SECTION_GAP = 32
 const SECTION_TITLE_HEIGHT = 24
 
 /**
- *
  * NEDEN SVG? Neden div/CSS grid değil?
  *
  * 1) OLCEKLENEBILIRLIK: SVG vektoreldir. viewBox ile harita, kapsayici
@@ -210,9 +208,8 @@ export function SeatMap({
         koyu ? 'border-slate-800 bg-slate-900' : 'border-slate-300 bg-white'
       }`}
     >
-      {/* ============================================================
+      {/*
           SAHNE -- düz çubuk değil, YAY
-          ============================================================
           Kullanıcının yönünü bulması için: koltuk haritasında "ön
           taraf neresi?" sorusu cevapsız kalırsa hangi koltuğun
           sahneye yakın olduğu anlaşılmaz.
@@ -224,7 +221,7 @@ export function SeatMap({
           Yay, gerçek bir salonun perspektifini taklit ediyor:
           seyirci sahneyi çevreliyor. Tek bir kenarlık çizgisi
           olduğu için de hiçbir koltukla karışmıyor.
-          ============================================================ */}
+          */}
       <div className="mb-6 flex justify-center">
         <div
           className={`flex h-8 w-[min(300px,70%)] justify-center rounded-t-full border-t-2 pt-1.5 ${

@@ -61,7 +61,6 @@ describe('EventFilterPanel', () => {
   })
 
   /**
-   *
    * FİLTRE DEĞİŞİKLİĞİ YALNIZCA DEĞİŞEN ALANI BİLDİRMELİ
    *
    * onChange, Partial<EventFilters> alıyor — yani "yalnızca bunu

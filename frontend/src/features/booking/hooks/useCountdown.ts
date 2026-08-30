@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
- *
  * GERİ SAYIM -- PDF Sprint 7: "Geri sayım göstergesi"
  *
  * 1) NEDEN SUNUCUNUN SANIYESINDEN BASLIYORUZ?

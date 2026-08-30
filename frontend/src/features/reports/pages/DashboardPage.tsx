@@ -24,7 +24,6 @@ import { Roles } from '../../../types/auth'
 import { ReportFormat, ReportType, reportsApi } from '../api/reportsApi'
 
 /**
- *
  * TEK BİR METRİK KARTI
  *
  * Çıplak bir sayı hiçbir şey anlatmıyor. "Bugün 50 bilet satıldı"
@@ -80,7 +79,6 @@ function MetricCard({
 const GRAFIK_RENKLERI = ['#2563eb', '#7c3aed', '#0891b2', '#ea580c', '#65a30d']
 
 /**
- *
  * ORGANİZATÖR VE ADMIN PANELİ -- PDF Sprint 13
  *
  * Iki panel TEK sayfada, sekmeli.
@@ -467,16 +465,15 @@ function ReportExportPanel() {
         </div>
       </div>
 
-      {/* ==============================================================
+      {/*
           BEKLENTIYI ACIKCA SOYLUYORUM
-          ==============================================================
           PDF: "Rapor üretimi background job olarak calistirilmali ve
           tamamlandiginda kullanıcıya bildirim gonderilmelidir."
 
           Yani dugmeye basinca dosya INMEZ. Bunu yazmasaydik kullanıcı
           bir sey olmadigini dusunup dugmeye tekrar tekrar basardi --
           ve her basis yeni bir rapor üretirdi.
-          ============================================================== */}
+          */}
       {exportMutation.isSuccess && (
         <div className="mt-4">
           <Alert variant="success">

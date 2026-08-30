@@ -3,7 +3,6 @@ import { persist } from 'zustand/middleware'
 import type { AuthResponse, UserSummary } from '../types/auth'
 
 /**
- *
  * TOKEN NEREDE SAKLANMALI? -- DURUSTCE ANLATIYORUM
  *
  * Uc seçenek var ve HICBIRI kusursuz değil:

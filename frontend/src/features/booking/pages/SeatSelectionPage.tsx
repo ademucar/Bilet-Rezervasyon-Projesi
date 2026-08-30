@@ -67,7 +67,6 @@ function seatStatusLabel(status: number): string {
 }
 
 /**
- *
  * GORSEL KOLTUK SECIMI -- PDF Sprint 7
  *
  * PDF'in bu sprintten bekledikleri:
@@ -271,7 +270,6 @@ export function SeatSelectionPage() {
   )
 
   /**
-   *
    * IDEMPOTENCY ANAHTARININ OMRU
    *
    * Anahtar, SECIME bağlı. Kullanıcı aynı koltuklarla ikinci kez

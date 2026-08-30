@@ -67,9 +67,8 @@ export function LoginPage() {
       title="Giriş yap"
       subtitle="Hesabınıza erişin"
       aside={
-        /* ==========================================================
+        /*
            HESAP KİLİDİ KURALINI ÖNCEDEN SÖYLÜYORUM
-           ==========================================================
            Sprint 15'te "5 dakikada 10 deneme" hız sınırı ve hesap
            kilidi eklemiştik. Kullanıcı bunu ancak KİLİTLENDİKTEN
            sonra öğreniyordu -- yani öğrenmenin hiçbir işe
@@ -78,7 +77,7 @@ export function LoginPage() {
            Kuralı önden yazmak, şifresini hatırlamaya çalışan
            kullanıcıyı yavaşlatıyor ve altıncı denemeden önce
            "şifremi unuttum"a yönlendiriyor.
-           ========================================================== */
+           */
         <AuthAsideNote
           icon={
             <svg

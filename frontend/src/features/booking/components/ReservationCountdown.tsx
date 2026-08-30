@@ -1,36 +1,11 @@
 import type { ReactNode } from 'react'
 import { formatCountdown } from '../hooks/useCountdown'
 
-/**
- *
- * ÖDEME GERİ SAYIMI -- ÜÇ AŞAMA
- *
- * Sayaç tek bir görünüme sahip olmamalı. Kalan süre azaldıkça
- * BİÇİMİ de değişmeli: kullanıcı saati okumadan, çevresel görüşüyle
- * aciliyeti sezmeli.
- *
- *   > 3 dk     nötr    -- "vaktin var, acele etme"
- *   1-3 dk     kehribar -- "koltukların birazdan serbest kalacak"
- *   < 1 dk     kırmızı  -- "şimdi tamamla"
- *
- * Önceki hâlde iki aşama vardı (kehribar / son 60 sn kırmızı) ve
- * kehribar ta baştan yanıyordu. Ekranın ilk saniyesinden itibaren
- * uyarı rengi göstermek, uyarıyı anlamsızlaştırıyor: kullanıcı
- * sarıya alışıyor ve gerçekten acil olduğunda fark etmiyor.
- *
- * NEDEN İLERLEME ÇUBUĞU YOK?
- *
- * Tasarım taslağında sayaçın altında bir dolu/boş çubuk vardı.
- * Çizmedim: çubuğun paydası "toplam tutma süresi" olmalı, ama
- * ReservationDto bunu döndürmüyor (yalnızca expiresAt ve
- * remainingSeconds var; rezervasyonun NE ZAMAN oluştuğu yok).
- *
- * Paydayı uydurabilirdim -- "herhalde 10 dakikadır" diye. O zaman
- * backend tutma süresini değiştirdiğinde çubuk sessizce yalan
- * söylemeye başlardı ve kimse fark etmezdi. Renk zaten aynı bilgiyi
- * doğru veriyor.
- *
- */
+// Sayacın eski hâlinde iki durum vardı: kehribar, son 60 saniyede
+// kırmızı. Kendi ekranımda deneyince kehribarın daha ilk saniyeden
+// yandığını gördüm. Dokuz dakika boyunca sarı bir kutuya bakınca
+// insan ona alışıyor, sonra gerçekten acil olduğunda fark etmiyor.
+// Araya bir "sakin" aşama koydum.
 
 type Asama = 'normal' | 'uyari' | 'kritik'
 
@@ -79,6 +54,13 @@ interface ReservationCountdownProps {
 export function ReservationCountdown({ remaining, actions }: ReservationCountdownProps) {
   const asama = asamaBul(remaining)
 
+  // Taslakta sayacın altında dolu/boş bir çubuk vardı, çizmeye
+  // kalkınca çıkmaz sokağa girdim: çubuğun paydası toplam tutma
+  // süresi olmalı ama ReservationDto onu vermiyor. Elimde yalnızca
+  // expiresAt ve remainingSeconds var, rezervasyonun ne zaman
+  // açıldığı yok. "Herhalde 10 dakikadır" deyip sabit yazabilirdim;
+  // backend süreyi değiştirdiği gün çubuk sessizce yalan söylerdi.
+  // Vazgeçtim, rengi yeterli buldum.
   return (
     <div className={`mt-6 rounded-[4px] border ${KUTU[asama]}`}>
       <div className={`flex items-center gap-2 border-b px-3.5 py-2.5 ${BASLIK[asama]}`}>

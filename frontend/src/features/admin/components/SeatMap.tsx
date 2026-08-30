@@ -15,7 +15,6 @@ const SELECTED_COLOR = '#16a34a'
 const INACTIVE_COLOR = '#e2e8f0'
 
 /**
- *
  * ADMIN KOLTUK PLANI
  *
  * Sprint 4'te bu dosya koltuk haritasinin KENDISIYDI. Sprint 7'de

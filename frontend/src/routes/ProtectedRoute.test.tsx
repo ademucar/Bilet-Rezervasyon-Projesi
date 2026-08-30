@@ -68,7 +68,6 @@ describe('ProtectedRoute', () => {
   })
 
   /**
-   *
    * 401 VE 403 AYRIMI ARAYÜZDE DE VAR
    *
    * Backend'de 401 "kim olduğunu bilmiyorum", 403 "biliyorum ama

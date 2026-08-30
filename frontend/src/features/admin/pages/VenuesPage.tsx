@@ -154,9 +154,8 @@ export function VenuesPage() {
       )}
 
       {venuesQuery.data && venuesQuery.data.items.length > 0 && (
-        /* ==========================================================
+        /*
            LİSTE DEĞİL TABLO
-           ==========================================================
            Önceki hâl, her mekan için ayrı çerçeveli bir kutuydu.
            Yönetim ekranında asıl iş KARŞILAŞTIRMAK: hangi mekanda
            kaç salon var, hangi şehirde yığılma var.
@@ -170,7 +169,7 @@ export function VenuesPage() {
            <table> kullanıyorum, grid'li div'ler değil: ekran
            okuyucu "3. satır, Salon sütunu: 12" diye okuyabiliyor.
            Div'lerle bu ilişki kaybolurdu.
-           ========================================================== */
+           */
         <div className="overflow-x-auto rounded-[4px] border border-slate-300 bg-white">
           <div className="flex items-center gap-2.5 border-b border-slate-300 bg-slate-50 px-3.5 py-2.5">
             <span className="font-display text-sm font-semibold text-slate-900">Mekanlar</span>

@@ -2,7 +2,6 @@ import { api } from '../../../lib/api/client'
 import type { Paged } from '../../admin/api/adminApi'
 
 /**
- *
  * BİLET ALMA API KATMANI -- PDF Sprint 7 ve 8
  *
  * Backend DTO'lariyla birebir eşleyen tipler.
@@ -209,7 +208,6 @@ export interface TicketDto {
 }
 
 /**
- *
  * IDEMPOTENCY ANAHTARI
  *
  * Backend hem rezervasyon hem ödeme olustururken "Idempotency-Key"

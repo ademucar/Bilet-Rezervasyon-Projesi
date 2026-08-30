@@ -4,7 +4,6 @@ import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
 /**
- *
  * TESTLER İÇİN ORTAK SARMALAYICI
  *
  * Bileşenlerimizin çoğu iki bağlama ihtiyaç duyuyor:

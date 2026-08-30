@@ -46,7 +46,6 @@ describe('LoginPage', () => {
   })
 
   /**
-   *
    * BOŞ FORM SUNUCUYA GİTMEMELİ
    *
    * Sunucu zaten reddedecek — ama boşuna bir istek atmak hem
@@ -133,7 +132,6 @@ describe('LoginPage', () => {
   // PDF: "API hata ekranı"
 
   /**
-   *
    * HATA KULLANICIYA GÖSTERİLMELİ, KONSOLA DEĞİL
    *
    * En yaygın arayüz hatası: istek başarısız oluyor, konsola log

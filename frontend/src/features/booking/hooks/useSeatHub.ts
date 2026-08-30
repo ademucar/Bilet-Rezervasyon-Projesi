@@ -7,7 +7,6 @@ import {
 } from '@microsoft/signalr'
 
 /**
- *
  * GERCEK ZAMANLI KOLTUK GUNCELLEME -- PDF Sprint 10
  *
  * Sprint 7'de koltuk haritasini 10 saniyede bir yokluyorduk
@@ -45,7 +44,6 @@ export function useSeatHub(
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
 
   /**
-   *
    * HANDLER'LARI REF'TE TUTMANIN SEBEBI
    *
    * Bu kancayi cagiran bileşen her render'da YENI bir handlers

@@ -12,7 +12,6 @@ import { EventFilterPanel } from '../components/EventFilterPanel'
 import { bookingApi, EventStatus, type EventFilters, type EventListItem } from '../api/bookingApi'
 
 /**
- *
  * ETKİNLİK LISTESI -- PDF Sprint 11
  *
  * Sprint 7'de bu sayfa yalnızca metin aramasi ve sayfalama
@@ -28,7 +27,6 @@ export function EventsPage() {
   const [search, setSearch] = useState('')
 
   /**
-   *
    * NEDEN TEK BIR `filters` NESNESI?
    *
    * Her filtre için ayrı useState acabilirdim: cityId, categoryId,
@@ -228,9 +226,8 @@ export function EventsPage() {
             )}
 
             {eventsQuery.isPending && (
-              /* ========================================================
+              /*
                  İSKELET, GELECEK İÇERİĞİN BİÇİMİNİ TAKLİT ETMELİ
-                 ========================================================
                  Önceki hâl altı tane düz gri dikdörtgendi. Veri
                  gelince sayfa tamamen başka bir şeye dönüşüyordu ve
                  her şey yerinden zıplıyordu.
@@ -241,7 +238,7 @@ export function EventsPage() {
                  yerleşim aynı kalıyor.
 
                  PDF Sprint 18: "Skeleton loading hazırlanmalıdır."
-                 ======================================================== */
+                 */
               <div
                 className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
                 aria-busy="true"
@@ -264,16 +261,15 @@ export function EventsPage() {
             )}
 
             {data && data.items.length === 0 && (
-              /* ========================================================
+              /*
                  "SONUÇ BULUNAMADI" TEK BAŞINA YETMİYOR
-                 ========================================================
                  Eski hâl kullanıcıyı ölü bir ekranda bırakıyordu:
                  hangi filtrenin sonucu boşalttığını kendisi
                  bulmak zorundaydı.
 
                  Artık üç şey var: ne arandığı, neden boş olduğu ve
                  tek tıkla çıkış yolu.
-                 ======================================================== */
+                 */
               <div className="flex flex-col items-center gap-3 rounded-[4px] border border-slate-300 bg-white px-5 py-10 text-center">
                 <svg
                   className="size-8 text-slate-300"
@@ -377,9 +373,8 @@ function EventCard({ event }: { event: EventListItem }) {
       to={`/etkinlikler/${event.id}`}
       className="group flex h-full rounded-[4px] border border-slate-300 bg-white transition-colors hover:border-slate-900"
     >
-      {/* ============================================================
+      {/*
           TAKVİM YIRTMACI
-          ============================================================
           Tarihi cümle olarak yazmıyorum ("27 Ekim 2026 20:00").
           Listede on kart alt alta olduğunda o cümleleri kimse
           okumuyor -- hepsi aynı uzunlukta gri bir şerit gibi
@@ -391,7 +386,7 @@ function EventCard({ event }: { event: EventListItem }) {
 
           Koyu blok aynı zamanda kartın "tutamağı": ekranda göz
           hangi satırdayım sorusunu buradan cevaplıyor.
-          ============================================================ */}
+          */}
       <div className="flex w-[72px] shrink-0 flex-col items-center justify-center border-r border-slate-300 bg-slate-900 py-3 text-white">
         <span className="label-xs text-slate-400">{tarih.ay}</span>
         <span className="num mt-0.5 text-[26px] font-semibold leading-none">{tarih.gun}</span>
@@ -434,9 +429,8 @@ function EventCard({ event }: { event: EventListItem }) {
           {event.venueName}, {event.cityName}
         </p>
 
-        {/* ============================================================
+        {/*
             FİYAT YOK -- ÇÜNKÜ VERİ YOK
-            ============================================================
             Tasarım taslağında sağ altta "450 ₺'den başlayan" vardı
             ve kart bununla çok daha iyi çalışıyor: kullanıcının ilk
             sorduğu şey fiyat.
@@ -448,7 +442,7 @@ function EventCard({ event }: { event: EventListItem }) {
             Olmayan veriyi uydurmak yerine boş bırakıyorum. Fiyatı
             göstermek istersek önce backend'de EventListItem'a
             minPrice eklenmeli -- bu bir frontend işi değil.
-            ============================================================ */}
+            */}
         <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
           <span className="border border-slate-200 px-1.5 py-px text-[11px] text-slate-600">
             {event.categoryName}

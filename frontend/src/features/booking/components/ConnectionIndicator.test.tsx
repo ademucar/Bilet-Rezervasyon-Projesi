@@ -43,7 +43,6 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   *
    * BAĞLANTI YOKKEN KULLANICI BUNU BİLMELİ
    *
    * Bu göstergenin var olma sebebi Sprint 10'da somut bir hatayı
@@ -66,7 +65,6 @@ describe('ConnectionIndicator', () => {
   })
 
   /**
-   *
    * DURUM DEĞİŞİKLİĞİ EKRAN OKUYUCUYA DA BİLDİRİLMELİ
    *
    * role="status" + aria-live="polite" ikilisi, ekran okuyucunun

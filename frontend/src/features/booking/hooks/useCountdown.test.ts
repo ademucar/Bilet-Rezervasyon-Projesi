@@ -57,7 +57,6 @@ describe('useCountdown', () => {
   })
 
   /**
-   *
    * EN ÖNEMLİ TEST: SIFIRIN ALTINA İNMEMELİ
    *
    * Negatife inseydi ekranda "-3:12 kaldı" gibi bir şey yazardı.
