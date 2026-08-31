@@ -84,8 +84,8 @@ kalkarsanız test kırmızı yanıyor.
 ## Testler
 
 ```bash
-cd backend  && dotnet test          # 258 birim + 16 mimari + 23 entegrasyon
-cd frontend && npm test             # 36 bileşen testi
+cd backend  && dotnet test          # 273 birim + 16 mimari + 23 entegrasyon
+cd frontend && npm test             # 42 bileşen testi
 cd frontend && npm run test:coverage
 ```
 
@@ -132,10 +132,11 @@ Dürüst olmak gerekirse tamamlanmayanlar:
   çalıştırıldı; sürekli çalışması için sunucu veya SonarCloud hesabı
   gerekiyor.
 - **Askıya alma sebebi organizatöre gösterilmiyor.** Admin bir
-  etkinliği askıya alırken sebep yazmak zorunda ve bu sebep denetim
-  kaydına (log 1106) yazılıyor; ama `Event` üzerinde sebep sütunu yok,
-  bu yüzden organizatör panelinde yalnızca "askıya alındı" görünüyor.
-  Göstermek için migration gerekiyor.
+  etkinliği askıya alırken sebep yazmak zorunda; sebep hem Serilog'a
+  (1106) hem de denetim kaydına yazılıyor ve `/admin/denetim`
+  ekranında görünüyor. Ama `Event` üzerinde sebep sütunu yok, bu
+  yüzden ORGANIZATÖR kendi panelinde yalnızca "askıya alındı"
+  görüyor. Göstermek için migration gerekiyor.
 - **Ödeme simülasyon.** PDF gerçek sağlayıcı istemiyor; `IPaymentService`
   arkasında soyutlandı, gerçek entegrasyon tek sınıf değiştirmekle
   gelir.

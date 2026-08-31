@@ -93,10 +93,10 @@ export function OrganizerApplyPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
           Organizatör başvurusu
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-kagit-soluk">
           Etkinlik oluşturup bilet satmak için organizatör olmanız gerekiyor. Başvurunuz yönetici
           onayından sonra aktifleşir.
         </p>

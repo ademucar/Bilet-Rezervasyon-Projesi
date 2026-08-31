@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             Küçük ve harf aralığı açık olunca etiket geri çekiliyor,
             KULLANICININ YAZDIGI deger one cikiyor.
             */}
-        <label htmlFor={inputId} className="label-xs block text-slate-500">
+        <label htmlFor={inputId} className="label-xs block text-slate-600">
           {label}
         </label>
 

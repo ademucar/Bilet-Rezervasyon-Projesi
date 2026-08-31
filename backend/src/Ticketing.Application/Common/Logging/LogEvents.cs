@@ -176,6 +176,16 @@ public static class LogEvents
     /// </remarks>
     public const int BiletIptalEdildi = 1205;
 
+    // KULLANICI YONETIMI (admin) -- 1000 blogunda, cunku kimlik ve
+    // yetkiyle ilgili. Ikisi de Warning: bir hesabi kapatmak veya rol
+    // vermek, o kisinin sistemde yapabileceklerini degistiriyor.
+
+    /// <summary>Admin bir hesabi aktif/pasif yapti.</summary>
+    public const int KullaniciDurumuDegisti = 1010;
+
+    /// <summary>Admin bir kullanicinin rolunu degistirdi.</summary>
+    public const int KullaniciRoluDegisti = 1011;
+
     // ÖDEME -- PDF: "Ödeme", "İade"
 
     /// <summary>Ödeme baslatildi.</summary>

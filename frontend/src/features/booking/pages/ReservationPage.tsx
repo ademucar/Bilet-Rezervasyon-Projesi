@@ -186,10 +186,8 @@ export function ReservationPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-          Rezervasyon
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">Rezervasyon</h1>
+        <p className="mt-1 text-sm text-kagit-soluk">
           Kod: <span className="num text-slate-900">{reservation.reservationCode}</span>
         </p>
 

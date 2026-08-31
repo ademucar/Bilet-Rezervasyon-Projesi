@@ -38,10 +38,10 @@ export function HomePage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-10">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
           Hoş geldiniz{user ? `, ${user.firstName}` : ''}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">Nereden devam etmek istersiniz?</p>
+        <p className="mt-1 text-sm text-kagit-soluk">Nereden devam etmek istersiniz?</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {cards.map((card) => (

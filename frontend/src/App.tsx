@@ -145,6 +145,14 @@ const ReferenceDataPage = lazy(() =>
   })),
 )
 
+const UsersPage = lazy(() =>
+  import('./features/admin/pages/UsersPage').then((m) => ({ default: m.UsersPage })),
+)
+
+const AuditLogsPage = lazy(() =>
+  import('./features/admin/pages/AuditLogsPage').then((m) => ({ default: m.AuditLogsPage })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -278,6 +286,8 @@ export default function App() {
                 <Route path="/admin/basvurular" element={<OrganizerApplicationsPage />} />
                 <Route path="/admin/etkinlikler" element={<AdminEventsPage />} />
                 <Route path="/admin/tanimlar" element={<ReferenceDataPage />} />
+                <Route path="/admin/kullanicilar" element={<UsersPage />} />
+                <Route path="/admin/denetim" element={<AuditLogsPage />} />
                 <Route path="/admin/mekanlar" element={<VenuesPage />} />
                 <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
                 <Route path="/admin/salonlar/:hallId" element={<HallDetailPage />} />

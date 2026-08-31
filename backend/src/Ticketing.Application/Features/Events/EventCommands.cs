@@ -7,6 +7,7 @@ using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.RealTime;
 using Ticketing.Application.Abstractions.Security;
 using Microsoft.Extensions.Logging;
+using Ticketing.Application.Common.Auditing;
 using Ticketing.Application.Common.Logging;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Enums;
@@ -389,6 +390,7 @@ internal sealed partial class EventStatusCommandHandler
     private readonly IApplicationDbContext _context;
     private readonly ISeatNotifier _seatNotifier;
     private readonly ICacheService _cache;
+    private readonly ICurrentUser _currentUser;
     private readonly ILogger<EventStatusCommandHandler> _logger;
 
     // PDF Sprint 16: "Etkinlik yayinlama" loglanmalidir.
@@ -443,11 +445,13 @@ internal sealed partial class EventStatusCommandHandler
         IApplicationDbContext context,
         ISeatNotifier seatNotifier,
         ICacheService cache,
+        ICurrentUser currentUser,
         ILogger<EventStatusCommandHandler> logger)
     {
         _context = context;
         _seatNotifier = seatNotifier;
         _cache = cache;
+        _currentUser = currentUser;
         _logger = logger;
     }
 
@@ -526,6 +530,33 @@ internal sealed partial class EventStatusCommandHandler
         }
 
         evt.Publish();
+
+        // Denetim kaydi -- PDF sayfa 5.
+        //
+        // Yayinlama, etkinligi herkese gorunur kilan ve bilet satisini
+        // baslatan esik. Serilog'a da yaziyorum ama o kayitlar 14 gun
+        // sonra donuyor; "bu etkinligi kim onaylamis?" sorusu aylar
+        // sonra sorulabiliyor.
+        _context.AddAudit(
+            _currentUser,
+
+            // "Event", nameof(EventEntity) DEGIL.
+            //
+            // Bu dosyanin basinda "using EventEntity =
+            // Ticketing.Domain.Entities.Event;" takma adi var (Event
+            // adi System.Event ile karisiyordu). nameof takma adi
+            // aldigi icin denetim kaydina "EventEntity" yaziyordu ve
+            // arayuzdeki "Etkinlik" suzgeci hicbir sey bulamiyordu --
+            // suzgec "Event" ariyor.
+            //
+            // Bunu ancak denetim ekranini gercek veriyle deneyince
+            // fark ettim. Sabit metin yazmak burada dogru tercih:
+            // EntityName veriye yazilan bir DEGER, kod icindeki tip
+            // adiyla ayni kalmak zorunda degil.
+            "Event",
+            evt.Id,
+            "EventPublished",
+            newValues: new { evt.Title, Status = evt.Status.ToString() });
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
@@ -651,6 +682,19 @@ internal sealed partial class EventStatusCommandHandler
         // -> 422.
         evt.Suspend();
 
+        // Askiya alma sebebi BURADA kalici oluyor.
+        //
+        // Event uzerinde sebep sutunu yok (migration acmadim) ama
+        // denetim kaydinda newValues JSON'u icinde duruyor. Yani
+        // "neden askiya alindi?" sorusunun cevabi artik yalnizca
+        // Serilog'da degil, kalici tabloda da var.
+        _context.AddAudit(
+            _currentUser,
+            "Event",
+            evt.Id,
+            "EventSuspended",
+            newValues: new { evt.Title, request.Reason });
+
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         // Sebep su an YALNIZCA loga yaziliyor, veritabaninda tutulmuyor.
@@ -692,6 +736,13 @@ internal sealed partial class EventStatusCommandHandler
         // satis bitis tarihi gecmis bir etkinligi tekrar satisa
         // acmis olabilirdim.
         evt.Reinstate();
+
+        _context.AddAudit(
+            _currentUser,
+            "Event",
+            evt.Id,
+            "EventReinstated",
+            newValues: new { evt.Title });
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 

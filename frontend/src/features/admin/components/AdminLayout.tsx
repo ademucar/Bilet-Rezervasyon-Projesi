@@ -28,7 +28,9 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
             <AdminLink to="/admin/etkinlikler">Etkinlikler</AdminLink>
             <AdminLink to="/admin/basvurular">Başvurular</AdminLink>
             <AdminLink to="/admin/mekanlar">Mekanlar</AdminLink>
+            <AdminLink to="/admin/kullanicilar">Kullanıcılar</AdminLink>
             <AdminLink to="/admin/tanimlar">Tanımlar</AdminLink>
+            <AdminLink to="/admin/denetim">Denetim</AdminLink>
           </nav>
 
           <span className="text-sm text-slate-500">{user?.email}</span>
@@ -43,8 +45,8 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
         )}
 
         <div className="mb-6">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+          <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">{title}</h1>
+          {subtitle && <p className="mt-1 text-sm text-kagit-soluk">{subtitle}</p>}
         </div>
 
         {children}

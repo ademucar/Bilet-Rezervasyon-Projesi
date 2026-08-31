@@ -128,14 +128,20 @@ export function EventsPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-          Etkinlikler
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">Etkinlikler</h1>
+        <p className="mt-1 text-sm text-kagit-soluk">
           Bir etkinlik seçin, oturumunu belirleyin ve koltuğunuzu ayırtın.
         </p>
 
-        <form onSubmit={onSearch} className="mt-6 flex flex-wrap gap-3">
+        {/* Arama kutusunu krem kartin ICINE aldim.
+            Once dogrudan koyu zemindeydi ve "ARA" etiketi
+            okunmuyordu. Etiketi kreme cevirmek yerine kutuyu karta
+            almayi sectim: form alanlari zaten krem ve etrafinda
+            zemin olmasi onlari havada birakiyordu. */}
+        <form
+          onSubmit={onSearch}
+          className="mt-6 flex flex-wrap gap-3 rounded-[4px] border border-slate-300 bg-white p-4"
+        >
           <div className="min-w-64 flex-1">
             <Input
               label="Ara"
@@ -153,10 +159,8 @@ export function EventsPage() {
         {/* ---- POPULER ETKINLIKLER ---- */}
         {filtresizMi && popularQuery.data && popularQuery.data.length > 0 && (
           <section className="mt-8">
-            <h2 className="font-display text-lg font-semibold text-slate-900">
-              Popüler etkinlikler
-            </h2>
-            <p className="mt-0.5 text-xs text-slate-500">En çok bilet satılanlar</p>
+            <h2 className="font-display text-lg font-semibold text-kagit">Popüler etkinlikler</h2>
+            <p className="mt-0.5 text-xs text-kagit-soluk">En çok bilet satılanlar</p>
 
             <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {popularQuery.data.map((ev, sira) => (

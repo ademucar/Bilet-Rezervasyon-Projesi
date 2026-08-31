@@ -37,17 +37,17 @@
 | Etkinlik raporlarını inceleyebilir | ✅ | ✅ `/panel` |
 | Etkinliği yayına alabilir veya iptal edebilir | ✅ `submit` / `publish` / `cancel` | ✅ yönetim ekranı |
 
-## Admin — 6/7
+## Admin — 7/7 ✅
 
 | PDF yetkisi | Backend | Ekran |
 |---|---|---|
-| **Tüm kullanıcıları yönetebilir** | ❌ uç yok | ❌ |
+| Tüm kullanıcıları yönetebilir | ✅ liste + aktif/pasif + rol | ✅ `/admin/kullanicilar` |
 | Organizatör başvurularını onaylayabilir | ✅ 3 uç | ✅ `/admin/basvurular` |
 | Tüm etkinlikleri görüntüleyebilir | ✅ `GET /events` admine taslakları da döner | ✅ `/admin/etkinlikler` |
 | Uygunsuz etkinlikleri pasif hâle getirebilir | ✅ `suspend` / `reinstate` (yeni) | ✅ `/admin/etkinlikler` |
 | Kategori, şehir ve salon yönetimi | ✅ üçü de | ✅ `/admin/tanimlar` + `/admin/mekanlar` |
 | Sistem raporlarını görüntüleyebilir | ✅ | ✅ `/panel` → Yönetici |
-| **Audit log kayıtlarını inceleyebilir** | ❌ uç yok | ❌ |
+| Audit log kayıtlarını inceleyebilir | ✅ `GET /admin/audit-logs` | ✅ `/admin/denetim` |
 
 ## Sprint 5'in "Frontend Görevleri" listesi
 
@@ -70,8 +70,8 @@ Diğer sprintlerin frontend listeleri (3, 4, 7, 10) **tam**.
 
 ## Özet
 
-**Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Kullanıcı ve
-organizatör tarafı tamamlandı; adminde 2 madde kaldı.**
+**Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Üç rolün de
+tüm yetkileri tamamlandı: 24/24.**
 
 Boşluklar ikiye ayrılıyor:
 
@@ -87,7 +87,7 @@ Pasifleştirme bu listede değildi: `Event.Suspend()` ve `Reinstate()`
 domain'de duruyordu ama onları çağıran komut da, uç da, ekran da
 yoktu. Üçünü birden yazdım.
 
-**Hem uç hem ekran eksik** (tam yığın iş):
+**Hem uç hem ekran eksikti** (tam yığın iş) — **hepsi tamamlandı:**
 - ~~Bilet iptali~~ ✅ yapıldı: `POST /users/me/tickets/{id}/cancel` +
   `cancellation-preview`. Bu iş sırasında `CancellationPolicy`nin
   (PDF Sprint 1, soru 10) hiçbir yerden çağrılmadığı ortaya çıktı —
@@ -96,8 +96,15 @@ yoktu. Üçünü birden yazdım.
 - ~~Kategori ve şehir yönetimi~~ ✅ yapıldı: `/admin/tanimlar`.
   Kullanımdaki kategori/şehir silinemiyor; ikisinin de 24 saatlik
   Redis önbelleği her değişiklikte temizleniyor.
-- Audit log görüntüleme
-- Kullanıcı yönetimi
+- ~~Audit log görüntüleme~~ ✅ `/admin/denetim`. Bu işi yaparken
+  `AuditLogs` tablosunun TAMAMEN BOŞ olduğu ortaya çıktı: tek yazım
+  noktası bilet türü fiyat değişikliğiydi ve o da hiç tetiklenmemişti.
+  Ekranı yapmadan önce denetim kaydı yazımını kritik işlemlere
+  yaydım (hesap aç/kapa, rol ver/al, etkinlik yayınla/askıya al/geri
+  al, başvuru onayla/reddet).
+- ~~Kullanıcı yönetimi~~ ✅ `/admin/kullanicilar`. Silme YOK,
+  pasifleştirme var: hesabı silmek geçmiş rezervasyon, bilet ve
+  ödemeleri sahipsiz bırakırdı.
 
 ## Neden ilk denetimde kaçtı
 

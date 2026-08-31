@@ -20,9 +20,7 @@ export function MyFavoritesPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-          Favorilerim
-        </h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">Favorilerim</h1>
 
         {favoritesQuery.isError && (
           <div className="mt-6">
