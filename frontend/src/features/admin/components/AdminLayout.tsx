@@ -28,6 +28,7 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
             <AdminLink to="/admin/etkinlikler">Etkinlikler</AdminLink>
             <AdminLink to="/admin/basvurular">Başvurular</AdminLink>
             <AdminLink to="/admin/mekanlar">Mekanlar</AdminLink>
+            <AdminLink to="/admin/tanimlar">Tanımlar</AdminLink>
           </nav>
 
           <span className="text-sm text-slate-500">{user?.email}</span>

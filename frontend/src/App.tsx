@@ -139,6 +139,12 @@ const AdminEventsPage = lazy(() =>
   })),
 )
 
+const ReferenceDataPage = lazy(() =>
+  import('./features/admin/pages/ReferenceDataPage').then((m) => ({
+    default: m.ReferenceDataPage,
+  })),
+)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -271,6 +277,7 @@ export default function App() {
               <Route element={<ProtectedRoute roles={[Roles.Admin]} />}>
                 <Route path="/admin/basvurular" element={<OrganizerApplicationsPage />} />
                 <Route path="/admin/etkinlikler" element={<AdminEventsPage />} />
+                <Route path="/admin/tanimlar" element={<ReferenceDataPage />} />
                 <Route path="/admin/mekanlar" element={<VenuesPage />} />
                 <Route path="/admin/mekanlar/:venueId" element={<VenueDetailPage />} />
                 <Route path="/admin/salonlar/:hallId" element={<HallDetailPage />} />

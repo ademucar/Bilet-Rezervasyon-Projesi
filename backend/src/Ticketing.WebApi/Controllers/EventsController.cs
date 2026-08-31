@@ -69,20 +69,65 @@ public sealed class EventsController : ApiControllerBase
             .Send(new GetCategoriesQuery(), cancellationToken)
             .ConfigureAwait(false));
 
+    // KATEGORI YONETIMI -- PDF sayfa 5:
+    // "Admin: Kategori, sehir ve salon yonetimi."
+    //
+    // Yazma uclarini ayri bir CategoriesController'a koymadim.
+    // Koysaydim liste ucu ya iki yerde birden dururdu ya da okuma
+    // /events/categories'te, yazma /categories'te olurdu -- ayni
+    // kaynak iki farkli adreste. Tek yerde tutmak, OpenAPI'ye bakan
+    // birinin kategoriyle ilgili her seyi ayni baslikta gormesini
+    // sagliyor.
+
+    /// <summary>Yeni kategori ekler. Yalnizca admin.</summary>
+    [HttpPost("categories")]
+    [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
+    [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CreateCategory(
+        [FromBody] SaveCategoryRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await Sender
+            .Send(
+                new CreateEventCategoryCommand(
+                    request.Name, request.Slug, request.IconName, request.DisplayOrder),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return HandleCreated(
+            result,
+            $"/api/v1/events/categories/{(result.IsSuccess ? result.Value : Guid.Empty)}");
+    }
+
+    /// <summary>Kategoriyi gunceller. Yalnizca admin.</summary>
+    [HttpPut("categories/{id:guid}")]
+    [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateCategory(
+        Guid id,
+        [FromBody] SaveCategoryRequest request,
+        CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(
+                new UpdateEventCategoryCommand(
+                    id, request.Name, request.Slug, request.IconName, request.DisplayOrder),
+                cancellationToken)
+            .ConfigureAwait(false));
+
     /// <summary>
-    /// En popüler etkinlikler. PDF Sprint 11.
+    /// Kategoriyi siler (soft delete). Etkinligi olan kategori silinemez.
     /// </summary>
-    /// <remarks>
-    /// Redis te 10 dakika onbellekleniyor.
-    ///
-    /// Neden ayrı bir uc? Ana sayfada gösterilecek ve listeleme
-    /// ucundan farklı bir sıralama mantığı var (bilet satışı).
-    /// Listeye "sortBy=popular" olarak eklemek de mumkundu ama o
-    /// zaman filtrelerle birlesince önbellek anahtari patlardi:
-    /// şehir + kategori + tarih + popüler = binlerce kombinasyon.
-    ///
-    /// Ayrı uc, tek ve sabit bir anahtar demek.
-    /// </remarks>
+    [HttpDelete("categories/{id:guid}")]
+    [Authorize(Policy = AuthenticationSetup.Policies.AdminOnly)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> DeleteCategory(Guid id, CancellationToken cancellationToken)
+        => HandleResult(await Sender
+            .Send(new DeleteEventCategoryCommand(id), cancellationToken)
+            .ConfigureAwait(false));
+
     /// <summary>
     /// Organizatorun KENDI etkinlikleri -- taslaklar dahil.
     /// PDF: GET /api/v1/events/mine
@@ -103,6 +148,20 @@ public sealed class EventsController : ApiControllerBase
         CancellationToken cancellationToken)
         => HandleResult(await Sender.Send(query, cancellationToken).ConfigureAwait(false));
 
+    /// <summary>
+    /// En popüler etkinlikler. PDF Sprint 11.
+    /// </summary>
+    /// <remarks>
+    /// Redis te 10 dakika onbellekleniyor.
+    ///
+    /// Neden ayrı bir uc? Ana sayfada gösterilecek ve listeleme
+    /// ucundan farklı bir sıralama mantığı var (bilet satışı).
+    /// Listeye "sortBy=popular" olarak eklemek de mumkundu ama o
+    /// zaman filtrelerle birlesince önbellek anahtari patlardi:
+    /// şehir + kategori + tarih + popüler = binlerce kombinasyon.
+    ///
+    /// Ayrı uc, tek ve sabit bir anahtar demek.
+    /// </remarks>
     [HttpGet("popular")]
     [AllowAnonymous]
     [ProducesResponseType<IReadOnlyList<EventListItem>>(StatusCodes.Status200OK)]
@@ -367,6 +426,12 @@ public sealed record AddSessionRequest(
 public sealed record CancelEventRequest(string? Reason);
 
 public sealed record SuspendEventRequest(string Reason);
+
+public sealed record SaveCategoryRequest(
+    string Name,
+    string Slug,
+    string? IconName,
+    int DisplayOrder);
 
 public sealed record SetPosterRequest(string? PosterPath);
 

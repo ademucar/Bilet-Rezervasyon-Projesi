@@ -56,4 +56,41 @@ public class EventCategory : AuditableEntity
             DisplayOrder = displayOrder,
         };
     }
+
+    /// <summary>
+    /// Kategoriyi gunceller.
+    /// </summary>
+    /// <remarks>
+    /// Slug'i degistirilebilir yaptim ama bunun bir BEDELI var ve
+    /// burada yaziyor: slug adreste geciyor
+    /// (/etkinlikler?kategori=rock-konseri). Degistirildigi anda eski
+    /// adresle paylasilmis her baglanti kirilir ve arama motorundaki
+    /// sirasi sifirlanir.
+    ///
+    /// Yine de engellemedim: ilk yazista yapilan yazim hatasini
+    /// (ornegin "tiaytro") duzeltmenin baska yolu olmazdi ve bir
+    /// kategori genellikle daha adresi paylasilmadan duzeltilir.
+    /// Karar admine ait; arayuzde de uyariyorum.
+    ///
+    /// Dogrulama kurallarini Create ile ayni tuttum. Ayri yazsaydim
+    /// ikisi zamanla ayrisirdi: olusturmada reddedilen bir deger
+    /// guncellemede kabul edilirdi.
+    /// </remarks>
+    public void Update(string name, string slug, string? iconName, int displayOrder)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException("Kategori adı boş olamaz.", "category.name_required");
+        }
+
+        if (string.IsNullOrWhiteSpace(slug))
+        {
+            throw new DomainException("Kategori slug'i boş olamaz.", "category.slug_required");
+        }
+
+        Name = name.Trim();
+        Slug = slug.Trim().ToLowerInvariant();
+        IconName = string.IsNullOrWhiteSpace(iconName) ? null : iconName.Trim();
+        DisplayOrder = displayOrder;
+    }
 }

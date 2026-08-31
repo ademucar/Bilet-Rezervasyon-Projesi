@@ -37,7 +37,7 @@
 | Etkinlik raporlarını inceleyebilir | ✅ | ✅ `/panel` |
 | Etkinliği yayına alabilir veya iptal edebilir | ✅ `submit` / `publish` / `cancel` | ✅ yönetim ekranı |
 
-## Admin — 5/7
+## Admin — 6/7
 
 | PDF yetkisi | Backend | Ekran |
 |---|---|---|
@@ -45,7 +45,7 @@
 | Organizatör başvurularını onaylayabilir | ✅ 3 uç | ✅ `/admin/basvurular` |
 | Tüm etkinlikleri görüntüleyebilir | ✅ `GET /events` admine taslakları da döner | ✅ `/admin/etkinlikler` |
 | Uygunsuz etkinlikleri pasif hâle getirebilir | ✅ `suspend` / `reinstate` (yeni) | ✅ `/admin/etkinlikler` |
-| Kategori, şehir ve salon yönetimi | salon ✅ / kategori-şehir ❌ | salon ✅ |
+| Kategori, şehir ve salon yönetimi | ✅ üçü de | ✅ `/admin/tanimlar` + `/admin/mekanlar` |
 | Sistem raporlarını görüntüleyebilir | ✅ | ✅ `/panel` → Yönetici |
 | **Audit log kayıtlarını inceleyebilir** | ❌ uç yok | ❌ |
 
@@ -70,9 +70,8 @@ Diğer sprintlerin frontend listeleri (3, 4, 7, 10) **tam**.
 
 ## Özet
 
-**Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Organizatörün
-dördü, adminin başvuru onayı, etkinlik listesi ve pasifleştirmesi
-tamamlandı; 5 madde kaldı.**
+**Başlangıçta 24 rol yetkisinin 12'sinde ekran yoktu. Kullanıcı ve
+organizatör tarafı tamamlandı; adminde 2 madde kaldı.**
 
 Boşluklar ikiye ayrılıyor:
 
@@ -94,7 +93,9 @@ yoktu. Üçünü birden yazdım.
   (PDF Sprint 1, soru 10) hiçbir yerden çağrılmadığı ortaya çıktı —
   var olan iade ucu tutarı çağırandan alıyordu, yani iade politikası
   19 sprint boyunca hiç uygulanmamış.
-- Kategori ve şehir yönetimi
+- ~~Kategori ve şehir yönetimi~~ ✅ yapıldı: `/admin/tanimlar`.
+  Kullanımdaki kategori/şehir silinemiyor; ikisinin de 24 saatlik
+  Redis önbelleği her değişiklikte temizleniyor.
 - Audit log görüntüleme
 - Kullanıcı yönetimi
 
