@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Ticketing.Application.Abstractions.Persistence;
 using Ticketing.Application.Abstractions.Security;
 using Ticketing.Application.Abstractions.Time;
+using Ticketing.Application.Common.Auditing;
 using Ticketing.Application.Common.Results;
 using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
@@ -162,6 +163,18 @@ internal sealed class ApproveOrganizerApplicationCommandHandler
         // bir basvuru tekrar onaylanamaz (DomainException -> 422).
         application.Approve(_currentUser.UserId ?? Guid.Empty, _clock.UtcNow);
 
+        // Denetim kaydi -- PDF sayfa 5.
+        //
+        // Bu islem bir kullaniciya YENI YETKI veriyor: onaydan sonra
+        // etkinlik olusturup bilet satabiliyor. Yetki degisikligi,
+        // denetimde ilk bakilan seydir.
+        _context.AddAudit(
+            _currentUser,
+            nameof(OrganizerApplication),
+            application.Id,
+            "OrganizerApplicationApproved",
+            newValues: new { application.CompanyName, application.UserId });
+
         // Onay = uc islem, tek SaveChanges
         //
         //   1. Basvuruyu onayla
@@ -253,6 +266,13 @@ internal sealed class RejectOrganizerApplicationCommandHandler
         // Entity, gerekcenin boş olmasini reddediyor.
         // Gerekcesiz red, kullanıcının ne duzeltecegini bilmemesi demek.
         application.Reject(_currentUser.UserId ?? Guid.Empty, request.Reason, _clock.UtcNow);
+
+        _context.AddAudit(
+            _currentUser,
+            nameof(OrganizerApplication),
+            application.Id,
+            "OrganizerApplicationRejected",
+            newValues: new { application.CompanyName, request.Reason });
 
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
