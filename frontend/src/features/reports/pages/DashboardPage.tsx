@@ -104,7 +104,7 @@ export function DashboardPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">Panel</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">Panel</h1>
 
         {isAdmin && (
           <div className="mt-4 flex gap-2">

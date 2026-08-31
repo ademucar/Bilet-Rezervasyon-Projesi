@@ -44,13 +44,24 @@ import {
 //   satildi   en koyu  -- zeminle neredeyse ayni, gorulmesi gerekmiyor
 //   bos       orta     -- tiklanabilir, ama one cikmiyor
 //   tutuluyor kehribar -- "simdilik degil"
-//   secili    marka moru + halka -- sayfanin tek mor lekesi
+//   secili    turuncu + halka -- sayfanin tek turuncu lekesi
+//
+// TEMA GECISI: mavi-gri -> yesil.
+//
+// Eski degerler slate ailesindendi (#334155 gibi) ve harita
+// sitenin geri kalanindan AYRI bir ada gibi duruyordu. Yeni temada
+// sayfa zemini de koyu yesil oldugu icin koltuklari da yesil
+// ailesine cektim; harita artik sayfanin devami gibi duruyor.
+//
+// Secili renk mordan TURUNCUYA gecti. Sebep sadece uyum degil:
+// turuncu artik sitedeki TEK eylem rengi (butonlar da turuncu).
+// Koltuk secmek de bir eylem; ayni dili konusmasi gerekiyor.
 const SEAT_COLORS = {
-  available: '#334155',
-  selected: '#4f46e5',
+  available: '#2f5643',
+  selected: '#e05a2b',
   locked: '#b45309',
-  sold: '#1e293b',
-  blocked: '#131c2e',
+  sold: '#1b3d2f',
+  blocked: '#143025',
 } as const
 
 function seatStatusLabel(status: number): string {
@@ -437,7 +448,7 @@ export function SeatSelectionPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
             Koltuk seçimi
           </h1>
 

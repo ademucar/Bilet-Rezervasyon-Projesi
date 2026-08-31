@@ -74,10 +74,10 @@ export function EventDetailPage() {
 
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
               {ev.title}
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-kagit-soluk">
               {ev.venueName} - {ev.venueAddress}, {ev.cityName}
             </p>
           </div>

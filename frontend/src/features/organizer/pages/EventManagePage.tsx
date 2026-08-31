@@ -148,10 +148,8 @@ export function EventManagePage() {
 
         <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-              {e.title}
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">{e.title}</h1>
+            <p className="mt-1 text-sm text-kagit-soluk">
               {e.venueName}, {e.cityName} &middot; {formatDateTime(e.eventDate)}
             </p>
           </div>

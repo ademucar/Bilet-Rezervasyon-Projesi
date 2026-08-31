@@ -31,14 +31,76 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
 
 @theme {
-  /* Marka rengi — Sprint 2'den beri aynı, korunuyor.
-     Artık daha AZ yerde kullanılıyor: renk süs değil, anlam taşıyor. */
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
+  /* ----------------------------------------------------------------
+     RENK: indigo/gri → koyu yeşil + turuncu
+
+     Neden ramp'ları YENİDEN EŞLİYORUM da sınıfları değiştirmiyorum?
+
+     Bileşenlerde 400'den fazla yerde "bg-white", "text-slate-900",
+     "border-slate-300" gibi somut sınıflar var. Bunları tek tek
+     değiştirmek 27 sayfada arama-değiştirme demekti ve bir yeri
+     atlamak kaçınılmazdı.
+
+     Tailwind v4'te @theme içinde --color-slate-500 gibi bir değeri
+     yeniden tanımlayınca, o rengi kullanan HER sınıf birden
+     değişiyor. Yani "slate" artık gri değil, bu projede yeşil-krem
+     ailesinin adı.
+
+     Bunun bedeli şu: sınıf adı ile renk artık örtüşmüyor
+     ("bg-white" krem veriyor). Kafa karıştırıcı olabilir, o yüzden
+     burada açıkça yazıyorum. Alternatifi -- her sınıfı elle
+     değiştirmek -- daha kırılgandı.
+
+     Palet, referans olarak verilen kulüp afişi tasarımından:
+     koyu orman yeşili zemin, krem kâğıt kartlar, turuncu eylem.
+     ---------------------------------------------------------------- */
+
+  /* TURUNCU: birincil eylem. "Koltukları ayırt", "Öde", "Giriş yap".
+     Sayfada tek bir turuncu olmalı; ikinci turuncu ilkini
+     değersizleştirir. */
+  --color-brand-50: #fff3ea;
+  --color-brand-100: #ffe4d3;
+  --color-brand-200: #fbc7a9;
+  --color-brand-500: #e86b3c;
+  --color-brand-600: #e05a2b;
+  --color-brand-700: #c24a20;
+
+  /* SLATE RAMP'I YENİDEN EŞLENDİ
+
+     Kritik ayrım: 100 SAYFA ZEMİNİ (koyu yeşil), 50 ve üstü ise
+     KART İÇİ (krem). Yani ramp ortada yön değiştiriyor. Sebep,
+     mevcut kodun kullandığı kalıplar:
+
+       bg-slate-100  -> sayfa zemini   -> koyu olmalı
+       bg-white      -> kart yüzeyi    -> krem olmalı
+       text-slate-900-> kart içi metin -> koyu olmalı
+
+     Bu yüzden 100'ü koyu, gerisini krem-yeşil ailesinde tuttum. */
+  --color-slate-50: #eae3ce;
+  --color-slate-100: #16332a;
+  --color-slate-200: #ddd5bf;
+  --color-slate-300: #cfc7b0;
+  --color-slate-400: #8b9e90;
+  --color-slate-500: #5b7a68;
+  --color-slate-600: #4a6555;
+  --color-slate-700: #2f5643;
+  --color-slate-800: #234535;
+  --color-slate-900: #1e4232;
+
+  /* "Beyaz" artık krem. Kart yüzeyi -- koyu yeşil zeminde kâğıt
+     gibi duruyor, bilet metaforuyla da örtüşüyor. */
+  --color-white: #f2eddd;
+
+  /* Koyu zemin ÜZERİNDEKİ metin için. Sayfa başlıkları, üst çubuk.
+     Ayrı bir ad verdim çünkü "text-slate-900" bu iş için yanlış
+     tarafta kalıyor. */
+  --color-kagit: #f2eddd;
+  --color-kagit-soluk: #9db5a6;
+
+  /* Koyu zeminde kenarlık ve ayırıcı. */
+  --color-gece: #16332a;
+  --color-gece-acik: #1e4232;
+  --color-gece-cizgi: #2f5643;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
@@ -77,7 +139,9 @@ html {
 }
 
 body {
-  @apply bg-slate-100 text-slate-900 antialiased;
+  /* Zemin koyu, metin krem. Kartlar (bg-white) kendi içinde
+     koyu metne dönüyor. */
+  @apply bg-slate-100 text-kagit antialiased;
 }
 
 /* ==================================================================

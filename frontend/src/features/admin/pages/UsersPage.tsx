@@ -82,7 +82,7 @@ export function UsersPage() {
 
   return (
     <AdminLayout title="Kullanıcılar" subtitle="Hesapları ve rolleri yönetin">
-      <div className="mb-4 flex flex-wrap items-end gap-3">
+      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-[4px] border border-slate-300 bg-white p-4">
         <div className="w-full sm:w-64">
           <Input
             label="Ara"

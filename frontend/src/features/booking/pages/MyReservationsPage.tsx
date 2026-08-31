@@ -41,7 +41,7 @@ export function MyReservationsPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
           Rezervasyonlarım
         </h1>
 

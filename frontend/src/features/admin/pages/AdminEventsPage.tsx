@@ -79,7 +79,7 @@ export function AdminEventsPage() {
 
   return (
     <AdminLayout title="Etkinlikler" subtitle="Tüm etkinlikleri görüntüleyin ve denetleyin">
-      <div className="mb-4 flex flex-wrap items-end gap-3">
+      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-[4px] border border-slate-300 bg-white p-4">
         <div className="flex flex-wrap gap-2">
           {SUZGECLER.map((s) => (
             <button

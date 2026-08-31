@@ -41,10 +41,10 @@ export function MyEventsPage() {
       <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">
               Etkinliklerim
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-kagit-soluk">
               Etkinlik oluştur, oturum ve bilet türü tanımla, yayına gönder.
             </p>
           </div>

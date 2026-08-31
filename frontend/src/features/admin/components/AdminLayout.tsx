@@ -45,8 +45,8 @@ export function AdminLayout({ title, subtitle, children, backTo }: AdminLayoutPr
         )}
 
         <div className="mb-6">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+          <h1 className="font-display text-2xl font-bold tracking-tight text-kagit">{title}</h1>
+          {subtitle && <p className="mt-1 text-sm text-kagit-soluk">{subtitle}</p>}
         </div>
 
         {children}

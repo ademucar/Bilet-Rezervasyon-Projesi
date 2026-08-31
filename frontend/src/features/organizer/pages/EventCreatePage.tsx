@@ -144,10 +144,10 @@ export function EventCreatePage() {
           &larr; Etkinliklerim
         </Link>
 
-        <h1 className="mt-3 font-display text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="mt-3 font-display text-2xl font-bold tracking-tight text-kagit">
           Yeni etkinlik
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-kagit-soluk">
           Etkinlik taslak olarak oluşturulur. Oturum ve bilet türlerini ekledikten sonra onaya
           gönderebilirsiniz.
         </p>
